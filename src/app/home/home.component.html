@@ -1,3 +1,67 @@
-<p>
-  home works!
-</p>
+<div class="container-fluid" style="padding-left: 0px">
+  <div class="col-sm-2" style="padding-left: 0px">
+    <img src="icon.png"> <span style="font-size: 15px"> Score Card</span>
+  </div>
+  <div class="col-sm-8" style="margin-top: 14px">
+    <input type="search" class="form-control input-sm" placeholder="Search score card by name">
+  </div>
+  <div class="col-sm-2" style="margin-top: 14px">
+    <button class="btn btn-default btn-sm pull-right" [routerLink]="['create']"> Create</button>
+  </div>
+</div>
+<!--if there is no scorecard created-->
+<div class="container-fluid" style="padding-left: 0px; border-top: 1px solid blanchedalmond; margin-top: 20px; padding-top: 23px" *ngIf="scorecards.length == 0 && !scorecards_loading">
+  <div class="jumbotron" >
+    <h1>Welcome to Scorecard App!</h1>
+    <p>Seems like there are no scorecards created, Start by creating some new scorecards</p>
+    <p><a class="btn btn-primary btn-lg" href="#" role="button">New Scorecard</a></p>
+  </div>
+</div>
+
+<!--if the scorecards are being loaded-->
+<div class="container-fluid" style="padding-left: 0px; border-top: 1px solid blanchedalmond; margin-top: 20px; padding-top: 23px" *ngIf="scorecards_loading" >
+  <div class="well well-lg">
+    <h3>Loading score cards...</h3>
+    <h4>{{loading_message}}</h4>
+  </div>
+</div>
+
+<div class="container-fluid" style="padding-left: 0px; border-top: 1px solid blanchedalmond; margin-top: 20px; padding-top: 23px" *ngIf="scorecards.length != 0 && !scorecards_loading" >
+
+
+  <div class="col-sm-4" *ngFor="let scorecard of scorecards | paginate: { itemsPerPage: 3, currentPage: p } " style="padding-left: 0px">
+    <div class="thumbnail scorecard_details" [routerLink]="['view',scorecard.id]">
+      <h3 >{{ scorecard.data.header.title }}</h3>
+      <h5>{{ scorecard.data.header.description }}</h5>
+      <p class="icons">
+        <a [routerLink]="['view',scorecard.id]" class="btn btn-primary sans-pro" role="button" title="Open {{ scorecard.data.header.title }}">
+          View
+        </a>
+        <a title="edit {{ scorecard.data.header.title }}" [routerLink]="['edit',scorecard.id]" class="btn btn-default sans-pro" role="button">
+          <span class="glyphicon glyphicon-pencil text-primary"></span>
+        </a>
+        <a title="delete {{ scorecard.data.header.title }}" (click)="deleteScoreCard(scorecard.id)" class="btn btn-default sans-pro" role="button">
+          <span class="glyphicon glyphicon-trash text-danger"></span>
+        </a>
+      </p>
+    </div>
+  </div>
+ <!--<div class="row">-->
+   <!--<div class="col-sm-6">-->
+     <!--<ul>-->
+       <!--<li *ngFor="let item of groups">{{ item.name }}</li>-->
+     <!--</ul>-->
+   <!--</div>-->
+   <!--<div class="col-sm-6">-->
+     <!--<ul>-->
+       <!--<li *ngFor="let item of indicators">{{ item.name (item.indicatorType.name) }}</li>-->
+     <!--</ul>-->
+   <!--</div>-->
+ <!--</div>-->
+
+</div>
+
+
+<div class="row">
+  <pagination-controls (pageChange)="p = $event" autoHide="true" maxSize="5"></pagination-controls>
+</div>

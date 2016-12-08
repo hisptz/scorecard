@@ -114,7 +114,7 @@ export class DataService {
       .catch( this.handleError );
   }
 
-  
+
   getDataValuesRequest( orgunit, period, dataset ) {
     return this.http.get(this.constant.root_dir + "api/dataValueSets.json?dataSet=" + dataset + "&period="+period+"&orgUnit=" + orgunit)
       .map((response: Response) => response.json())

@@ -3,12 +3,27 @@
 <head>
   <meta charset="utf-8">
   <title>Scorecard</title>
-  <base href="/">
+  <base href="">
 
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link rel="icon" type="image/x-icon" href="favicon.ico">
+  <link rel="icon" type="image/x-icon" href="src/favicon.ico">
+  <script>
+    window.dhis2 = window.dhis2 || {};
+    window.dhis2.settings = window.dhis2.settings || {};
+    window.dhis2.settings.baseUrl = '../../..';
+  </script>
+  <script src="../../../dhis-web-commons/javascripts/jQuery/jquery.min.js"></script>
+  <script src="../../../dhis-web-commons/javascripts/dhis2/dhis2.translate.js"></script>
+
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="icon" type="image/x-icon" href="src/favicon.ico">
 </head>
 <body>
+<div style="margin-top:50px;margin-left: 10px; margin-right: 10px">
   <app-root>Loading...</app-root>
+</div>
+
+<script src="../../../dhis-web-commons/javascripts/dhis2/dhis2.menu.js"></script>
+<script src="../../../dhis-web-commons/javascripts/dhis2/dhis2.menu.ui.js"></script>
 </body>
 </html>

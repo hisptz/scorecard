@@ -7,6 +7,8 @@ import {HomeComponent} from "./home/home.component";
 
 const routes: Routes = [
   { path: '', component: HomeComponent , pathMatch: 'full' },
+  { path: 'create', loadChildren: 'app/create/create.module#CreateModule' },
+  { path: 'view', loadChildren: 'app/view/view.module#ViewModule' },
   { path: '**',redirectTo: 'HomeComponent' }
 ];
 

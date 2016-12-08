@@ -1,0 +1,73 @@
+<div class="container-fluid" style="padding-left: 0px">
+  <div class="col-sm-2" style="padding-left: 0px">
+    <img src="icon.png"> <span style="font-size: 15px"> Score Card</span>
+  </div>
+  <div class="col-sm-8">
+      <h3 class="text-center" style="margin-top: 0px"><small>Create a new scorecard</small></h3>
+  </div>
+  <div class="col-sm-2" style="margin-top: 14px">
+    <button class="btn btn-default btn-sm pull-right" [routerLink]="['']"><span class="glyphicon glyphicon-home"></span> home</button>
+  </div>
+</div>
+<div class="container-fluid no-left-padding" style="height: 100px; border-top: 1px solid blanchedalmond; padding-top: 23px">
+  Score card sample
+</div>
+<div class="container-fluid" style="padding-left: 0px; font-size: 11px">
+  <div class="col-sm-3 no-left-padding">
+    <div class="thumbnail">
+      <div class="form-group">
+        <label for="title">Title</label>
+        <input type="email" class="form-control input-sm" id="title" placeholder="Title">
+      </div>
+      <p class="help-block">Scorecard title.</p>
+      <div class="form-group">
+        <label for="description">Description</label>
+        <textarea type="email" class="form-control input-sm" id="description" placeholder="Scorecard description"></textarea>
+      </div>
+      <p class="help-block">Scorecard description</p>
+
+      <div class="checkbox">
+        <label>
+          <input type="checkbox"> Show Legend
+        </label>
+      </div>
+      <p class="help-block">Show legend on top menu</p>
+
+      <div class="checkbox">
+        <label>
+          <input type="checkbox"> Show Score
+        </label>
+      </div>
+      <p class="help-block">Add the score column on score card</p>
+
+      <div class="checkbox">
+        <label>
+          <input type="checkbox"> Show rank
+        </label>
+      </div>
+      <p class="help-block">Add the rank column on score card</p>
+
+      <div class="checkbox">
+        <label>
+          <input type="checkbox"> Display arrows
+        </label>
+      </div>
+      <p class="help-block">Add arrows to show data comparison with last period</p>
+    </div>
+  </div>
+  <div class="col-sm-2 no-left-padding">
+    <div class="thumbnail">
+      Group Listing
+    </div>
+  </div>
+  <div class="col-sm-2 no-left-padding">
+    <div class="thumbnail">
+      Item listing
+    </div>
+  </div>
+  <div class="col-sm-5 no-left-padding">
+    <div class="thumbnail">
+      Item details
+    </div>
+  </div>
+</div>

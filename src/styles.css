@@ -1,1 +1,9 @@
 /* You can add global styles to this file, and also import other style files */
+.ng2-pagination li {
+  -moz-user-select: none;
+  -webkit-user-select: none;
+  -ms-user-select: none;
+  font-size: 2rem;
+  margin-right: 0.0625rem;
+  border-radius: 0;
+}
