@@ -78,9 +78,9 @@
     <div class="thumbnail scorecard_details">
       <!--<h4 style="margin-top: 0px;margin-bottom: 1px">Data Type</h4>-->
       <div class="form-group">
-        <select class="form-control input-sm" style="height: 25px">
+        <select class="form-control input-sm" style="height: 25px"  #t (change)="switchType(t.value)">
           <option value="indicators">Indicators</option>
-          <option value="data Elements">Data Elements</option>
+          <option value="dataElements">Data Elements</option>
           <option value="Completeness">Completeness</option>
           <option value="Timeliness">Timeliness</option>
         </select>
@@ -90,7 +90,11 @@
         <input type="text" class="form-control input-sm" placeholder="Search by name" style="height: 25px; margin-top: 3px">
       </div>
       <ul class="list-group" *ngIf="done_loading_groups">
-        <li class="list-group-item selection_link" *ngFor="let group of current_groups | paginate: { id: 'groups', itemsPerPage: 6, currentPage: p }">
+        <li
+          class="list-group-item selection_link"
+          *ngFor="let group of current_groups | paginate: { id: 'groups', itemsPerPage: 8, currentPage: p }"
+          (click)="load_list(group.id, t.value)"
+        >
           {{ group.name }}
         </li>
       </ul>
@@ -98,13 +102,30 @@
     </div>
 
   </div>
+
+  <!--item listing-->
   <div class="col-sm-3 no-left-padding1">
-    <div class="thumbnail">
-      Item listing
+    <div class="thumbnail scorecard_details">
+      <div *ngIf="listReady">
+        <img src="loading.gif" style="height: 70px; padding-top: 20px" *ngIf="!done_loading_list">
+        <div class="form-group" *ngIf="done_loading_list">
+          <input type="text" class="form-control input-sm" placeholder="Search by name" style="height: 25px; margin-top: 3px">
+        </div>
+        <ul class="list-group" *ngIf="done_loading_list">
+          <li
+            class="list-group-item selection_link"
+            *ngFor="let item of current_listing | paginate: { id: 'list', itemsPerPage: 8, currentPage: r }"
+            (click)="load_item(item.id)"
+          >
+            {{ item.name }}
+          </li>
+        </ul>
+        <pagination-controls  id="list" (pageChange)="r = $event" directionLinks="true" autoHide="true"></pagination-controls>
+      </div>
     </div>
   </div>
   <div class="col-sm-4 no-left-padding1">
-    <div class="thumbnail">
+    <div class="thumbnail scorecard_details">
       Item details
     </div>
   </div>
