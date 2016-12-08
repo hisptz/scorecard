@@ -33,7 +33,9 @@ mainController.controller('MainController',['$scope','$timeout','$translate','$a
 
                         });
                     });
-                }
+                }else {
+					$scope.loading = false;
+				}
             });
             console.log('Data:');
             console.log($scope.scoreCards);
