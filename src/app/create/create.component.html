@@ -13,8 +13,11 @@
   Score card sample
 </div>
 <div class="container-fluid" style="padding-left: 0px; font-size: 11px">
+
+  <!--basic details of the scorecard-->
   <div class="col-sm-3 no-left-padding">
-    <div class="thumbnail">
+    <div class="thumbnail scorecard_details">
+      <h4 style="margin-top: 0px">Basic Details</h4>
       <div class="form-group">
         <label for="title">Title</label>
         <input type="email" class="form-control input-sm" id="title" placeholder="Title">
@@ -25,39 +28,63 @@
         <textarea type="email" class="form-control input-sm" id="description" placeholder="Scorecard description"></textarea>
       </div>
       <p class="help-block">Scorecard description</p>
-
-      <div class="checkbox">
-        <label>
-          <input type="checkbox"> Show Legend
-        </label>
-      </div>
-      <p class="help-block">Show legend on top menu</p>
-
-      <div class="checkbox">
-        <label>
-          <input type="checkbox"> Show Score
-        </label>
-      </div>
-      <p class="help-block">Add the score column on score card</p>
-
-      <div class="checkbox">
-        <label>
-          <input type="checkbox"> Show rank
-        </label>
-      </div>
-      <p class="help-block">Add the rank column on score card</p>
-
-      <div class="checkbox">
-        <label>
-          <input type="checkbox"> Display arrows
-        </label>
+      <div class="form-group">
+        <label>Show</label>
+        <div class="row">
+          <div class="col-sm-6">
+            <div class="checkbox">
+              <label>
+                <input type="checkbox"> Legend
+              </label>
+            </div>
+          </div>
+          <div class="col-sm-6">
+            <div class="checkbox">
+              <label>
+                <input type="checkbox"> Score
+              </label>
+            </div>
+          </div>
+          <div class="col-sm-6">
+            <div class="checkbox">
+              <label>
+                <input type="checkbox"> rank
+              </label>
+            </div>
+          </div>
+          <div class="col-sm-6">
+            <div class="checkbox">
+              <label>
+                <input type="checkbox"> arrows
+              </label>
+            </div>
+          </div>
+        </div>
       </div>
       <p class="help-block">Add arrows to show data comparison with last period</p>
+      <!--legend definition-->
+      <div class="row">
+        <div *ngFor="let legend of legends_definitions">
+          <div class="col-sm-9" style="padding-right: 2px"><input [value]="legend.definition" class="form-control color-input input-sm"/></div>
+          <div class="col-sm-3" style="padding-left: 2px"><input [(colorPicker)]="legend.color" [style.background]="legend.color" [value]="legend.color" class="form-control color-input input-sm"/></div>
+        </div>
+      </div>
+
     </div>
   </div>
+
+  <!--Group selection-->
   <div class="col-sm-2 no-left-padding">
-    <div class="thumbnail">
-      Group Listing
+    <div class="thumbnail scorecard_details">
+      <h4 style="margin-top: 0px">Data Type</h4>
+      <div class="form-group">
+        <select class="form-control">
+          <option value="indicators">Indicators</option>
+          <option value="data Elements">Data Elements</option>
+          <option value="Completeness">Completeness</option>
+          <option value="Timeliness">Timeliness</option>
+        </select>
+      </div>
     </div>
   </div>
   <div class="col-sm-2 no-left-padding">
