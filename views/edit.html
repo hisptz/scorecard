@@ -1,0 +1,286 @@
+<div class="row" style="margin-top: 55px">
+
+
+
+    <div class="col-sm-4" style="font-family:source-sans-pro">
+        <div>
+            <label style="padding-bottom: 8px" class="sans-pro" for="inputHelpBlock">Title</label>
+            <input required="required" ng-model="score_card.header.title" type="text" id="inputHelpBlock" class="form-control input-sm" placeholder="Score Card Title"  aria-describedby="helpBlock">
+            <span id="helpBlock" class="help-block sans-pro" style="font-size: 0.5em">Score card title.</span>
+        </div>
+        <div>
+            <div class="col-sm-6">
+                <label class="sans-pro" style="font-size: 10px">
+                    <input ng-model="score_card.header.show_arrows_definition" type="checkbox" > Display Arrows
+                </label>
+            </div>
+            <div class="col-sm-6">
+                <label class="sans-pro" style="font-size: 10px">
+                    <input ng-model="score_card.header.show_legend_definition" type="checkbox" > Display Legend Definition on title
+                </label>
+            </div>
+            <!--<span id="helpBlock2" class="help-block sans-pro" style="font-size: 0.5em">Check if you want to display arrows(up and down).</span>-->
+        </div>
+        <div>
+            <div class="col-sm-6">
+                <label class="sans-pro"  style="font-size: 10px">
+                    <input ng-model="score_card.show_rank" type="checkbox"> Show Ranks
+                </label>
+            </div>
+            <div class="col-sm-6">
+                <label class="sans-pro" style="font-size: 10px">
+                    <input ng-model="score_card.show_score" type="checkbox"> Show Score
+                </label>
+            </div>
+
+            <!--<span id="helpBlock1" class="help-block sans-pro" style="font-size: 0.5em">Check if you want to display legend definition.</span>-->
+        </div>
+    </div>
+    <div class="col-sm-4">
+        <label style="padding-bottom: 8px" class="sans-pro" for="inputHelpBlock">Description</label>
+        <textarea required="required" rows="5" class="form-control input-sm" placeholder="Score Card Description..."></textarea>
+        <span id="helpBlock3" class="help-block sans-pro" style="font-size: 0.5em">Score card description.</span>
+    </div>
+    <div class="col-sm-4">
+        <div class="row">
+            <div ng-repeat="legendset_definition in score_card.legendset_definitions">
+                <div class="col-sm-9">
+                    <input style="padding-bottom: 8px" ng-model="legendset_definition.definition" type="text" class="form-control input-sm" placeholder="Legendset defintion">
+                </div>
+                <div class="col-sm-3">
+                    <input colorpicker="hex" class="form-control input-sm" ng-model="legendset_definition.color" type="text" style="background-color: {{ legendset_definition.color }}"/>
+                    <!--Implement add another and delete existing feature-->
+                </div>
+            </div>
+        </div>
+
+
+    </div>
+    <!--a table to add new indicator definition-->
+    <div class="col-sm-12" style="margin-top: 10px">
+        <table class="table table-bordered table-responsive">
+            <tr style="height: 28px">
+                <th width="80px" class="sans-pro">Indicator group name</th>
+                <th width="50px"
+                    ng-repeat="indicator_holder_group in score_card.data_settings.indicator_holder_groups"
+
+                    colspan="{{ indicator_holder_group.indicator_holder_ids.length}}"
+                    class="indicator_holder_group-{{indicator_holder_group.name==null ? 'null':indicator_holder_group.name }}">
+                    <div  class="row">
+                        <div  class="col-sm-9">
+                            <input ng-model="indicator_holder_group.name"
+                                   type="text"
+                                   class="form-control input-sm"
+                                   placeholder="Placeholder"
+                                   ng-click="highlight_indicator_holder_group_and_update_selections(indicator_holder_group)"
+                                    >
+                        </div>
+                        <div class="col-sm-3">
+                            <button class="btn add_another_placeholder_group_button" ng-click="addAnotherPlaceholderGroup()">Add Another</button>
+                        </div>
+                    </div>
+                </th>
+            </tr>
+            <tr style="height: 28px">
+                <td class="sans-pro">Indicator name(s)</td>
+                <td class="last holder_name"
+                    ng-repeat="indicator_holder in score_card.data_settings.indicator_holders"
+                    id="indicator_holder{{ indicator_holder.holder_position }}"
+                    colspan="{{ indicator_holder_group.indicator_holder_ids.length}}"
+                    ng-class="list_indicator_holder_group_classes(indicator_holder)">
+                    <label class="sans-pro">{{ indicator_holder_label(indicator_holder) }}</label>
+                    <a style="cursor: pointer" class="" ng-click="updatePlaceholder(indicator_holder)"><span class="glyphicon glyphicon-edit text-primary"></span></a>
+                    <a style="cursor: pointer" ng-click="deletePlaceholder(indicator_holder)"><span class="glyphicon glyphicon-trash text-danger"></span></a>
+                    <button class="add_another_placeholder_button btn btn-sm btn-default" ng-if="indicator_holder.indicators.length>=1" ng-click="addAnotherPlaceholder()"> Add Another</button>
+
+                </td>
+            </tr>
+            <tr>
+                <td class="sans-pro" style="width: 10%">Select your indicators <br><span class="help-block"><small>You can add two indicators at the same box, simply select the second indicator without moving to the holder</small> </span></td>
+                <td colspan="11" class="last indicator_holder_group_selection_area">
+                    <div class="row" style="height: 400px;">
+                        <!--indicator,dataelements and datasets groups-->
+                        <div class="col-sm-3" style="height: 400px;padding: 3px">
+                            <div class="panel panel-default" style="height: 400px">
+                                <div class="panel-body" style="padding: 5px">
+                                    <select ng-model="score_card.indicator_dataElement_reporting_rate_selection" class="form-control input-sm" ng-change="updateIndicatorDataElementReportingList()">
+                                        <option value="Indicators">Indicators</option>
+                                        <option value="DataElements">Data Elements</option>
+                                        <option value="DataSets">Reporting Rates</option>
+                                    </select>
+
+                                    <ul class="list-group">
+                                        <li class="list-group-item" style="padding: 0px">
+                                            <input class="form-control input-sm" ng-model="group_search" placeholder="search" >
+                                        </li>
+                                        <li ng-click="selectItemGroupOrAddDataSet(itemGroup)"
+                                            dir-paginate="itemGroup in itemGroupSelection | itemsPerPage: 5 | filter:group_search"
+                                            pagination-id="groupss"
+                                            class="list-group-item sans-pro" style="padding-bottom: 14px;padding-top: 14px;cursor: pointer">
+                                            {{ itemGroup.name }}
+                                        </li>
+                                        <li class="list-group-item" style="padding-bottom: 0px;padding-top: 0px">
+                                            <dir-pagination-controls
+                                                    pagination-id="groupss"
+                                                    max-size="2"
+                                                    direction-links="true"
+                                                    boundary-links="false"
+                                                    class="pull-right"
+                                                    auto-hide="true"
+                                                    template-url="views/partials/dirPagination.tpl.html">
+                                            </dir-pagination-controls>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+
+                        </div>
+                        <!--list of indicators,dataelents or datasets-->
+                        <div class="col-sm-3 dataElementsIndicatorsFilter" style="height: 400px;padding: 3px">
+                            <div class="panel panel-default"  style="height: 400px">
+                                <div class="panel-body" style="padding: 5px">
+                                    <ul class="list-group">
+                                        <li class="list-group-item" style="padding: 0px">
+                                            <input class="form-control input-sm" ng-model="item_search" placeholder="search" >
+                                        </li>
+                                        <li ng-click="displayItemToPlaceholder(item);checkCtrClickEvent($event);"
+                                            dir-paginate="item in displayItems | itemsPerPage: 5 | filter:item_search"
+                                            pagination-id="itemss"
+                                            class="list-group-item sans-pro" style="padding-bottom: 14px;padding-top: 14px;cursor: pointer">
+                                            {{ item.name }}
+                                        </li>
+                                        <li class="list-group-item" style="padding-bottom: 0px;padding-top: 0px">
+                                            <dir-pagination-controls
+                                                    pagination-id="itemss"
+                                                    max-size="2"
+                                                    direction-links="true"
+                                                    boundary-links="false"
+                                                    class="pull-right"
+                                                    auto-hide="true">
+                                            </dir-pagination-controls>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        <!--configuration settings-->
+                        <div class="col-sm-6" style="height: 400px;padding: 3px">
+                            <div class="panel panel-default"  style="height: 400px;overflow-y: scroll">
+                                <div class="panel-body" style="padding: 5px">
+                                    <div class="no_selection_field">No selection</div>
+                                    <div class="selection_field" style="display:none;">
+                                        <div style="border: 1px grey solid;" class="row" ng-repeat="indicator in score_card.data_settings.indicator_holders[current_indicator_holder_position].indicators">
+                                            <button title="remove {{ indicator.name }}" class="btn btn-danger btn-xs pull-right sans-pro" ng-click="dropIndicator(score_card.data_settings.indicator_holders[current_indicator_holder_position].indicators, indicator)"><span class="glyphicon glyphicon-trash"></span></button>
+                                            <div class="col-sm-7" style="padding-top: 21px">
+                                                <!--<div class="row" style="padding-bottom: 5px ">-->
+                                                <!--<div class="col-sm-3">-->
+                                                <!--<label class="sans-pro">Id:</label>-->
+                                                <!--</div>-->
+                                                <!--<div class="col-sm-9">-->
+                                                <!--<input ng-model="indicator.id" class="form-control input-sm" disabled/>-->
+                                                <!--&lt;!&ndash;Implement add another and delete existing feature&ndash;&gt;-->
+                                                <!--</div>-->
+                                                <!--</div>-->
+                                                <div class="row" style="padding-bottom: 5px">
+                                                    <div class="col-sm-3">
+                                                        <label class="sans-pro">Name:</label>
+                                                    </div>
+                                                    <div class="col-sm-9">
+                                                        <input ng-model="indicator.name"  class="form-control input-sm" disabled/>
+                                                        <!--Implement add another and delete existing feature-->
+                                                    </div>
+                                                </div>
+                                                <div class="row" style="padding-bottom: 5px">
+                                                    <div class="col-sm-3">
+                                                        <label class="sans-pro">Title:</label>
+                                                    </div>
+                                                    <div class="col-sm-9">
+                                                        <input ng-model="indicator.title" class="form-control input-sm"/>
+                                                        <!--Implement add another and delete existing feature-->
+                                                    </div>
+                                                </div>
+                                                <div class="row" style="padding-bottom: 5px">
+                                                    <div class="col-sm-3">
+                                                        <label class="sans-pro">Weight:</label>
+                                                    </div>
+                                                    <div class="col-sm-9">
+                                                        <input type="number" min="0" max="200" ng-model="indicator.weight" class="form-control input-sm" ng-disabled="!score_card.show_score"/>
+                                                        <!--Implement add another and delete existing feature-->
+                                                    </div>
+                                                </div>
+                                                <div class="row" style="padding-bottom: 5px">
+                                                    <div class="col-sm-3">
+                                                        <label class="sans-pro">Effective Gap:</label>
+                                                    </div>
+                                                    <div class="col-sm-3">
+                                                        <input type="number" min="0" ng-model="indicator.arrow_settings.effective_gap" class="form-control input-sm" ng-disabled="!indicator.arrow_settings.display"/>
+                                                        <!--Implement add another and delete existing feature-->
+                                                    </div>
+                                                    <div class="col-sm-3">
+                                                        <label class="sans-pro">Display arrows:</label>
+                                                    </div>
+                                                    <div class="col-sm-3">
+                                                        <input type="checkbox" ng-model="indicator.arrow_settings.display" >
+                                                        <!--Implement add another and delete existing feature-->
+                                                    </div>
+                                                </div>
+                                                <div class="row" style="padding-bottom: 5px">
+                                                    <div class="col-sm-3">
+                                                        <label class="sans-pro">High is good:</label>
+                                                    </div>
+                                                    <div class="col-sm-9">
+                                                        <input type="checkbox" ng-model="indicator.high_is_good" >
+                                                        <!--Implement add another and delete existing feature-->
+                                                    </div>
+                                                </div>
+                                                <div class="row" style="padding-bottom: 5px">
+                                                    <div class="col-sm-3">
+                                                        <label class="sans-pro">Show Colours:</label>
+                                                    </div>
+                                                    <div class="col-sm-9">
+                                                        <input type="checkbox" ng-model="indicator.legend_display" >
+                                                        <!--Implement add another and delete existing feature-->
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="col-sm-5">
+                                                <div ng-repeat="legend in indicator.legendset">
+                                                    <div class="row" style="padding-top: 4px">
+                                                        <div class="col-sm-10">
+                                                            <label class="sans-pro">{{ getDefitionColor(score_card.legendset_definitions,$index).definition }}</label>
+                                                        </div>
+                                                        <div class="col-sm-1" style="background-color: {{ getDefitionColor(score_card.legendset_definitions,$index).color }}">&nbsp;</div>
+
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="col-sm-6">
+                                                            <label class="sans-pro">Min</label>
+                                                            <input type="text" ng-model="legend.min" class="form-control input-sm" ng-disabled="!indicator.legend_display">
+                                                        </div>
+                                                        <div class="col-sm-6">
+                                                            <label class="sans-pro">Max</label>
+                                                            <input type="text" ng-model="legend.max" class="form-control input-sm"ng-disabled="!indicator.legend_display">
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </td>
+            </tr>
+        </table>
+    </div>
+</div>
+<div class="row">
+    <div class="col-sm-12" >
+        <button class="btn pull-right" ng-click="saveScoreCardAfterVerification()">Update Score card</button>
+        <a href="#/" class="btn btn-default pull-right">Cancel</a>
+    </div>
+</div>

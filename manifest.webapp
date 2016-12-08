@@ -1,0 +1,21 @@
+{
+    "version": "0.1",
+    "name": "Score Card",
+    "description": "Score Card Generation",
+    "launch_path": "index.html",
+    "icons": {
+        "16": "/img/icon.png",
+        "48": "/img/icon.png",
+        "128": "/img/icon.png"
+    },
+    "developer": {
+        "name": "HISP Tanzania",
+        "url": "http://hisptanzania.org/"
+    },
+    "default_locale": "en",
+    "activities": {
+        "dhis": {
+            "href": "../../.."
+        }
+    }
+}

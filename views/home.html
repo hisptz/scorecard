@@ -1,0 +1,63 @@
+<div class="row" style="padding-bottom: 15px">
+	<div class="col-sm-3">
+		<a href="#/" style="text-decoration: none"><img src="img/icon.png" style="height: 50px; width: 40px">
+		<span class="text-muted sans-pro" style="font-size: 24px; vertical-align: text-bottom"> Score Cards</span></a>
+	</div>
+	<div class="col-sm-6" style="margin-top: 15px">
+		<input type="text" ng-model="score_search" class="form-control input-sm" placeholder="Search Score Cards...">
+	</div>
+	<div class="col-sm-3">
+		<a class="btn btn-default sans-pro pull-right btn-sm" style="margin-top: 15px" href="#/create">Create New</a>
+	</div>
+</div>
+<three-bounce-spinner ng-if="loading"></three-bounce-spinner>
+<div ng-if="!loading">
+	<div class="panel panel-default">
+		<div class="row" style="padding-top: 20px; ">
+			<div class="col-sm-6 col-md-4" dir-paginate="scorecard in scoreCards | itemsPerPage: 3 | filter:{name:score_search}"
+				 pagination-id="scorecards"
+				 class="list-group-item sans-pro" style="padding-bottom: 14px;padding-top: 14px;cursor: pointer">
+				<div class="thumbnail " style="height: 400px;background-image: url('img/score_card.png')" >
+					<div class="caption sans-pro">
+						<h3 >{{ scorecard.name }}</h3>
+						<p>{{ scorecard.header.description }}</p>
+						<p>
+							<a href="#/show/{{ scorecard.key }}" class="btn btn-primary sans-pro" role="button">
+								View
+							</a>
+							<a title="edit {{ scorecard.name }}" href="#/edit/{{ scorecard.key }}" class="btn btn-default sans-pro" role="button">
+								<span class="glyphicon glyphicon-pencil text-primary"></span>
+							</a>
+							<a title="delete {{ scorecard.name }}" ng-click="deleteScoreCard(scorecard.key)" class="btn btn-default sans-pro" role="button">
+								<span class="glyphicon glyphicon-trash text-danger"></span>
+							</a>
+						</p>
+					</div>
+				</div>
+			</div>
+
+			<div class="col-sm-6 col-md-4" ng-if="scoreCards.length >=0 && scoreCards.length <=2 " >
+				<div class="thumbnail" style="height: 400px;background-image: url('img/score_card.png')" >
+					<div class="caption">
+						<h3 class="sans-pro">CREATE NEW SCORE CARD</h3>
+						<p>...</p>
+						<p> <a class="btn btn-default sans-pro" role="button" href="#/create">Create New</a></p>
+					</div>
+				</div>
+			</div>
+
+		</div>
+            <div class="text-center">
+				<dir-pagination-controls
+						pagination-id="scorecards"
+						max-size="2"
+						direction-links="true"
+						boundary-links="true"
+						style="text-align: center"
+						auto-hide="true"
+						template-url="views/partials/dirPagination.tpl.html">
+				</dir-pagination-controls>
+			</div>
+
+	</div>
+</div>

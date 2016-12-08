@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html manifest="scorecard.appcache" ng-app="scorecard">
+    <head>
+        <title>Score Card App - iscore</title>
+
+        <meta name="description" content="DHIS 2">
+        <meta name="keywords" content="DHIS 2">
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+        <style>
+            @font-face{
+                font-family: 'Source Sans Pro';
+                font-weight: 300;
+                font-style: normal;
+                font-stretch: normal;
+                src: url('fonts/source-sans-pro/EOT/SourceSansPro-Light.eot') format('embedded-opentype'),
+                url('fonts/source-sans-pro/WOFF2/TTF/SourceSansPro-Light.ttf.woff2') format('woff2'),
+                url('fonts/source-sans-pro/WOFF/OTF/SourceSansPro-Light.otf.woff') format('woff'),
+                url('fonts/source-sans-pro/OTF/SourceSansPro-Light.otf') format('opentype'),
+                url('fonts/source-sans-pro/TTF/SourceSansPro-Light.ttf') format('truetype');
+            }
+            .sans-pro{
+                font-family: "Source Sans Pro" !important;
+            }
+        </style>
+        <style type="text/css" media="print">
+            @page {
+                size: auto;   /* auto is the initial value */
+                margin: 0;  /* this affects the margin in the printer settings */
+            }
+            .hide_on_print {
+                display: none;
+            }
+        </style>
+      </head>
+
+    <body>
+    <d2-header-bar></d2-header-bar>
+    <div id="scorecard-body" style="margin-top:45px;">
+
+        <!--put details of your views here-->
+		<div ng-view></div>
+	</div>
+
+    <!-- DHIS2 Settings initialization for a baseUrl that is used for the menu -->
+    <script type="text/javascript">
+        window.dhis2 = window.dhis2 || {};
+        dhis2.settings = dhis2.settings || {};
+        dhis2.settings.baseUrl = '../../..';
+
+     </script>
+    <script type="text/javascript" src="../../../dhis-web-commons/javascripts/jQuery/jquery.min.js"></script>
+    <script type="text/javascript" src="../../../dhis-web-commons/javascripts/jQuery/ui/jquery-ui.min.js"></script>
+    <script type="text/javascript" src="../../../dhis-web-commons/javascripts/jQuery/jquery.plugin.min.js"></script>
+
+    <script type="text/javascript" src="../../../dhis-web-commons/bootstrap/js/bootstrap.min.js"></script>
+    <link type="text/css" rel="stylesheet"  href="styles/bootstrap.min.css">
+
+    <script type="text/javascript" src="../../../dhis-web-commons/javascripts/angular/angular.js"></script>
+    <script type="text/javascript" src="../../../dhis-web-commons/javascripts/angular/angular-resource.js"></script>
+    <script type="text/javascript" src="../../../dhis-web-commons/javascripts/angular/angular-route.js"></script>
+    <script type="text/javascript" src="../../../dhis-web-commons/javascripts/angular/angular-cookies.js"></script>
+    <script type="text/javascript" src="../../../dhis-web-commons/javascripts/angular/angular-sanitize.js"></script>
+    <script type="text/javascript" src="../../../dhis-web-commons/javascripts/angular/angular-animate.js"></script>
+    <script type="text/javascript" src="../../../dhis-web-commons/javascripts/dhis2/dhis2.util.js"></script>
+    <script type="text/javascript" src="../../../dhis-web-commons/javascripts/commons.js"></script>
+
+    <script type="text/javascript" src="../../../dhis-web-commons/javascripts/angular/plugins/angularLocalStorage.js"></script>
+    <script type="text/javascript" src="../../../dhis-web-commons/javascripts/angular/plugins/angular-translate.min.js"></script>
+    <script type="text/javascript" src="../../../dhis-web-commons/javascripts/dhis2/dhis2.angular.services.js"></script>
+    <script type="text/javascript" src="../../../dhis-web-commons/javascripts/dhis2/dhis2.angular.controllers.js"></script>
+
+    <link rel="stylesheet" href="libs/tree/angular-multi-select-tree-0.1.0.min.css">
+    <link rel="stylesheet" href="libs/angular-bootstrap-colorpicker/css/colorpicker.min.css">
+    <script src="libs/tree/angular-multi-select-tree-0.1.0.min.js"></script>
+    <script src="libs/tree/angular-multi-select-tree-0.1.0.tpl.js"></script>
+    <script src="libs/angular-bootstrap-multiselect/angular-bootstrap-multiselect.js"></script>
+    <script src="libs/spinkit/angular-spinkit.min.js"></script>
+    <script src="libs/ng-csv/ng-csv.js"></script>
+    <script src="libs/moment/moment.min.js"></script>
+
+    <script type="text/javascript" src="scripts/app.js"></script>
+    <script type="text/javascript" src="scripts/services.js"></script>
+    <script type="text/javascript" src="scripts/directives.js"></script>
+    <script type="text/javascript" src="scripts/controllers.js"></script>
+    <script type="text/javascript" src="scripts/filters.js"></script>
+    <!-- Controllers -->
+    <script type="text/javascript" src="scripts/controllers/mainController.js"></script>
+    <script type="text/javascript" src="scripts/controllers/createScoreCardController.js"></script>
+    <script type="text/javascript" src="scripts/controllers/viewCardController.js"></script>
+    <script type="text/javascript" src="scripts/controllers/editCardController.js"></script>
+    <script type="text/javascript" src="scripts/services/mainServices.js"></script>
+    <script type="text/javascript" src="scripts/services/chartServices.js"></script>
+    <script type="text/javascript" src="scripts/services/tableService.js"></script>
+    <script type="text/javascript" src="scripts/services/filterServices.js"></script>
+
+    <!--data models-->
+    <script type="text/javascript" src="scripts/Models/Indicator.js"></script>
+    <script type="text/javascript" src="scripts/Models/DataElement.js"></script>
+    <script type="text/javascript" src="scripts/Models/DataElementGroup.js"></script>
+    <script type="text/javascript" src="scripts/Models/IndicatorGroup.js"></script>
+    <script type="text/javascript" src="scripts/Models/Dataset.js"></script>
+    <script type="text/javascript" src="scripts/Models/ScoreCard.js"></script>
+
+    <!-- Menu scripts -->
+    <script type="text/javascript" src="../../../dhis-web-commons/javascripts/dhis2/dhis2.translate.js"></script>
+    <script type="text/javascript" src="../../../dhis-web-commons/javascripts/dhis2/dhis2.menu.js"></script>
+    <script type="text/javascript" src="../../../dhis-web-commons/javascripts/dhis2/dhis2.menu.ui.js"></script>
+    <!--<script type="text/javascript" src="../../../dhis-web-commons/javascripts/dhis2/dhis2.angular.services.js"></script>-->
+
+    <!--pagination script-->
+    <script src="libs/pagination/dirPagination.js"></script>
+
+    <script src="libs/angular-strap/angular-strap.js" data-semver="v2.3.7"></script>
+    <script src="libs/angular-strap/angular-strap.tpl.js" data-semver="v2.3.7"></script>
+    <script src="libs/angular-strap/angular-strap.docs.tpl.js" data-semver="v2.3.7"></script>
+
+    <link type="text/css" rel="stylesheet" href="../../../dhis-web-commons/font-awesome/css/font-awesome.min.css"/>
+    <link type="text/css" rel="stylesheet" media="screen" href="../../../dhis-web-commons/css/menu.css">
+    <link type="text/css" rel="stylesheet" media="screen" href="libs/dragDrop/jquery-ui.css">
+
+    <link type="text/css" rel="stylesheet" href="styles/style.css">
+
+    <link type="text/css" rel="stylesheet" href="libs/spinkit/angular-spinkit.min.css">
+    <link type="text/css" rel="stylesheet" href="libs/angular-motion/dist/angular-motion.min.css">
+
+    <script type="text/javascript" src="libs/Highcharts/js/highcharts.js"></script>
+    <script type="text/javascript" src="libs/Highcharts/js/modules/exporting.js"></script>
+    <script type="text/javascript" src="libs/Highcharts/js/highcharts-more.js"></script>
+    <script type="text/javascript" src="libs/Highcharts/js/modules/solid-gauge.js"></script>
+    <script type="text/javascript" src="libs/Highcharts/js/modules/data.js"></script>
+    <script type="text/javascript" src="libs/highcharts-ng/dist/highcharts-ng.min.js"></script>
+    <script type="text/javascript" src="libs/dragDrop/angular-drag-and-drop-lists.min.js"></script>
+    <script type="text/javascript" src="libs/angular-bootstrap-colorpicker/js/bootstrap-colorpicker-module.min.js"></script>
+    <!-- Reading from local storage -->
+    <script type="text/javascript" src="libs/ngStorage/ngStorage.js"></script>
+     <!-- open layer maps-->
+    <link rel="stylesheet" href="styles/libs.min.css">
+
+   </body>
+</html>

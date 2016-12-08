@@ -1,0 +1,213 @@
+<div class="modal" tabindex="-1" role="dialog" aria-hidden="true" style="background: transparent;"
+     xmlns="http://www.w3.org/1999/html">
+    <style>
+        html, body {
+            height: 100%;
+        }
+        body
+        {
+            background-color: #0064a3;
+        }
+    </style>
+    <div class="modal-dialog" style="margin-top: 100px; margin-right: auto; margin-left: auto; width: 95%; height: 800px">
+        <div class="modal-content">
+            <div class="modal-header" style="padding-top:5px;padding-bottom: 5px">
+                 <h4>{{ getIndicatorTitle(indicator) }}
+                <button type="button" class="close" aria-label="Close" ng-click="$hide()"><span aria-hidden="true">&times;</span></button>
+                 </h4>
+            </div>
+            <div class="modal-body" style="padding:0px;z-index: 100">
+                <div class="row hide_on_print" ng-hide="chartType=='info'">
+                    <div class="col-sm-3">
+                        <label class="text-muted sans-pro">Organisation Unit</label>
+                        <wave-spinner ng-show="!loadOrgunits"></wave-spinner>
+                        <multi-select-tree ng-show="loadOrgunits"
+                                           data-input-model="data.analysisOrgUnitTree"
+                                           multi-select="true"
+                                           data-output-model="data.outAnalysisOrganisationUnits"
+                                           data-default-label="Select Organization Units"
+                                           data-callback="selectOnly1Or2(item, selectedItems)">
+                        </multi-select-tree>
+                    </div>
+                    <div class="col-sm-3">
+                        <label class="text-muted sans-pro">Period Type</label>
+                        <select id="periodType" class="form-control" ng-model="analysisperiodType" ng-change="AnalysisChangePeriodType(analysisperiodType)">
+                            <option value="">[ Select period type ]</option>
+                            <!--<option value="Weekly">Weekly</option>-->
+                            <option value="Monthly">Monthly</option>
+                            <option value="BiMonthly">Bimonthly</option>
+                            <option value="Quarterly">Quarterly</option>
+                            <option value="SixMonthly">Six-monthly</option>
+                            <option value="SixMonthlyApril">Six-monthly April</option>
+                            <option value="Yearly">Yearly</option>
+                            <option value="FinancialApril">Financial-April</option>
+                            <option value="FinancialJuly">Financial-July</option>
+                            <option value="FinancialOct">Financial-Oct</option>
+                            <option value="Relative Weeks">Relative Weeks </option>
+                            <option value="Relative Month">Relative Month </option>
+                            <option value="Relative Bi-Month">Relative Bi-Month </option>
+                            <option value="Relative Quarter">Relative Quarter </option>
+                            <option value="Relative Six Monthly">Relative Six Monthly </option>
+                            <option value="Relative Year">Relative Year </option>
+                            <option value="Relative Financial Year">Relative Financial Year </option>
+                        </select>
+                    </div>
+                    <div class="col-sm-4">
+                        <div class="col-sm-12"> <label class="text-muted sans-pro">Period</label></div>
+                        <div class="col-sm-7">
+                            <multi-select-tree
+                                    data-input-model="data.analysisperiods"
+                                    multi-select=multiPeriod
+                                    data-output-model="data.outAnalysisOrPeriods"
+                                    data-default-label="Select Period"
+                                    data-callback="selectOnly1Or3(item, selectedItems)"
+                                    >
+                            </multi-select-tree></div>
+                        <div class="col-sm-5">
+                            <button type="button" class="btn btn-default btn-sm sans-pro" style="width: 50%" ng-click="analysisPreviousYear(analysisperiodType)"><< Prev Year</button>
+                            <button type="button" class="pull-right btn btn-default btn-sm sans-pro" style="width: 50%" ng-click="analysisNextYear(analysisperiodType)">Next Year >></button>
+                        </div>
+
+                    </div>
+
+                    <div class="col-sm-2">
+                        <div class="col-sm-12"> <label class="text-muted sans-pro">&nbsp;</label></div>
+                        <button class="btn btn-default sans-pro btn-sm" ng-click="updateIndicatorCard(indicator,'column')">Update</button>
+                    </div>
+                </div>
+
+                <div class="row" style="min-height: 400px">
+                    <div ng-if="analysis_show_table" style="font-size:14px;">
+                        <three-bounce-spinner ng-show="loading_analysis_data"></three-bounce-spinner>
+                      <table ng-show="!loading_analysis_data" class="table table-bordered table-condensed table-striped" compile="analysisChart">
+                      </table>
+                    </div>
+                    <div ng-if="analysis_show_chart">
+                        <three-bounce-spinner ng-show="loading_analysis_data"></three-bounce-spinner>
+                        <highchart ng-show="!loading_analysis_data" config="analysisChart"></highchart>
+
+                    </div>
+                    <div ng-if="analysis_show_info" style="padding: 100px">
+                       <h1 class="text-muted text-center">Make your selections and then click Update, View your data as Chats and tables, Download the charts as images and save as Excel for Further analysis</h1>
+                    </div>
+                    <div ng-if="analysis_show_details" style="padding: 10px;font-size:14px;">
+                        <three-bounce-spinner ng-show="loading_analysis_data"></three-bounce-spinner>
+                        <h3>Dictionary details</h3>
+                        <div ng-if="dataElements" class="panel-group" ng-model="panels.activePanel" role="tablist" aria-multiselectable="true" bs-collapse>
+                            <div class="panel panel-default" ng-repeat="data in dataElements">
+                                <div class="panel-heading" role="tab">
+                                    <h4 class="panel-title">
+                                        <a bs-collapse-toggle>
+                                            {{ data.name }}
+                                        </a>
+                                    </h4>
+                                </div>
+                                <div class="panel-collapse" role="tabpanel" bs-collapse-target>
+                                    <div class="panel-body">
+                                        <div>
+                                            <table class="table table-hover table-striped">
+                                                <tr>
+                                                    <td> <strong>Name</strong> </td>
+                                                    <td> {{data.name}} </td>
+                                                </tr>
+                                                <tr>
+                                                    <td> Aggregation Type: </td>
+                                                    <td> {{data.aggregationType}} </td>
+                                                </tr>
+                                                <tr ng-repeat="dataSets in data.dataSets">
+                                                    <td>Data Source:</td>
+                                                    <td><a href="" data-animation="am-flip-x" bs-tooltip="dataSets.periodType">{{dataSets.name}}</a></td>
+                                                </tr>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div ng-if="indicators" class="panel-group" ng-model="panels.activePanel" role="tablist" aria-multiselectable="true" bs-collapse>
+                            <div class="panel panel-default" ng-repeat="data in indicators">
+                                <div class="panel-heading" role="tab">
+                                    <h4 class="panel-title">
+                                        <a bs-collapse-toggle>
+                                            {{ data.name }}
+                                        </a>
+                                    </h4>
+                                </div>
+                                <div class="panel-collapse" role="tabpanel" bs-collapse-target>
+                                    <div class="panel-body">
+                                        <div>
+                                            <table class="table table-hover table-striped">
+                                                <tr>
+                                                    <td> <strong>Name</strong> </td>
+                                                    <td> {{data.name}} </td>
+                                                </tr>
+                                                <tr>
+                                                    <td> Description </td>
+                                                    <td> {{data.numeratorDescription}}</td>
+                                                </tr>
+                                                <tr>
+                                                    <td> Numerator </td>
+                                                    <td><a href="" data-animation="am-flip-x" bs-tooltip="data.numerator"> {{data.numeratorDescription}} </a></td>
+                                                </tr>
+                                                <tr>
+                                                    <td> Denominator </td>
+                                                    <td> <a href="" data-animation="am-flip-x" bs-tooltip="data.denominator">{{data.denominatorDescription}}</a></td>
+                                                </tr>
+                                                <tr>
+                                                    <td> Indicator Type:</td>
+                                                    <td> {{data.indicatorType.name}} </td>
+                                                </tr>
+                                                <tr ng-repeat="dataSets in data.dataSets">
+                                                    <td> Data set </td>
+                                                    <td><a href="" data-animation="am-flip-x" bs-tooltip="dataSets.periodType"> {{dataSets.name}}</a> </td>
+                                                </tr>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div ng-if="datasets" class="panel-group" ng-model="panels.activePanel" role="tablist" aria-multiselectable="true" bs-collapse>
+                            <div class="panel panel-default" ng-repeat="data in datasets">
+                                <div class="panel-heading" role="tab">
+                                    <h4 class="panel-title">
+                                        <a bs-collapse-toggle>
+                                            {{ data.name }}
+                                        </a>
+                                    </h4>
+                                </div>
+                                <div class="panel-collapse" role="tabpanel" bs-collapse-target>
+                                    <div class="panel-body">
+                                        <div>
+                                            <table class="table table-hover table-striped">
+                                                <tr>
+                                                    <td> <strong>Name</strong> </td>
+                                                    <td> {data.name}} </td>
+                                                </tr>
+                                                <tr>
+                                                    <td> Reporting Period: </td>
+                                                    <td> {{data.periodType}} </td>
+                                                </tr>
+
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer" style="background: transparent">
+                <p style="margin: 3px">
+                    <a ng-click="updateIndicatorCard(indicator,icon.name)" ng-repeat="icon in icons" title="{{ icon.name }}" class="btn btn-small btn-info" style="background-color: #DDD; border-color: #5BC0DE;border-radius:50%;padding-bottom: 8px; padding-top: 10px;padding-left: 10px;margin-right: 2px;"><img src="img/{{icon.image}}" style="height: 25px;width: 25px"/></a>
+                    <a ng-csv="prepareDataForCSV(indicator,currentAnalytics)" csv-label="true" filename="{{ getIndicatorTitle(indicator) }}-data.csv" field-separator="," decimal-separator="."  title="Download Excel" class="btn btn-small btn-info" style="background-color: #DDD; border-color: #5BC0DE; border-radius:50%;padding-bottom: 8px; padding-top: 10px;padding-left: 10px;margin-right: 2px;"><img src="img/cvs.jpg" style="height: 25px;width: 25px"/></a>
+                    <a ng-click="updateIndicatorCard(indicator,'info')"  title="card details" class="btn btn-small btn-info" style="background-color: #DDD; border-color: #5BC0DE; border-radius:50%;padding-bottom: 8px; padding-top: 10px;padding-left: 10px;margin-right: 2px;"><img src="img/inficon.png" style="height: 25px;width: 25px"/></a>
+                    <a ng-click="switchXandY(indicator)"  title="Switch X and Y axis" class="btn btn-small btn-info" style="background-color: #DDD; border-color: #5BC0DE; border-radius:50%;padding-bottom: 8px; padding-top: 10px;padding-left: 10px;margin-right: 2px;"><span class="glyphicon glyphicon-sort" style="height: 25px;width: 25px"/></span></a>
+                    <button type="button" class="btn btn-default pull-right" ng-click="$hide()">Close</button>
+                </p>
+
+            </div>
+        </div>
+    </div>
+</div>

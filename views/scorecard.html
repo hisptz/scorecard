@@ -1,0 +1,343 @@
+<div class="row" style="padding-bottom: 15px">
+    <div class="col-sm-3">
+        <a href="#/" style="text-decoration: none"><img src="img/icon.png" style="height: 50px; width: 40px">
+            <span class="text-muted sans-pro" style="font-size: 24px; vertical-align: text-bottom"> Score Cards</span></a>
+    </div>
+    <div class="col-sm-6" style="padding-top: 15px">
+
+    </div>
+    <div class="col-sm-3">
+    </div>
+</div>
+
+<!--filters-->
+<div class="row hide_on_print">
+    <div class="col-sm-3">
+        <label class="text-muted sans-pro">Organisation Unit</label>
+        <img ng-show="!loadOrgunits" src="/images/ajax-loader-circle.gif" style="height: 25px; width: 25px">
+
+        <multi-select-tree ng-show="loadOrgunits"
+                           data-input-model="data.orgUnitTree"
+                           multi-select="fasle"
+                           data-output-model="data.outOrganisationUnits"
+                           data-default-label="Select Organization Units"
+                           data-callback="selectOnly1Or2(item, selectedItems)">
+        </multi-select-tree>
+    </div>
+    <div class="col-sm-3">
+        <label class="text-muted sans-pro">Period Type</label>
+        <select id="periodType" class="form-control" ng-model="periodType" ng-change="changePeriodType(periodType)">
+            <option value="">[ Select period type ]</option>
+            <!--<option value="Weekly">Weekly</option>-->
+            <option value="Monthly">Monthly</option>
+            <option value="BiMonthly">Bimonthly</option>
+            <option value="Quarterly">Quarterly</option>
+            <option value="SixMonthly">Six-monthly</option>
+            <option value="SixMonthlyApril">Six-monthly April</option>
+            <option value="Yearly">Yearly</option>
+            <option value="FinancialApril">Financial-April</option>
+            <option value="FinancialJuly">Financial-July</option>
+            <option value="FinancialOct">Financial-Oct</option>
+        </select>
+    </div>
+    <div class="col-sm-4">
+        <div class="col-sm-12"> <label class="text-muted sans-pro">Period</label></div>
+        <div class="col-sm-7">
+            <multi-select-tree
+                data-input-model="data.dataperiods"
+                multi-select="false"
+                data-output-model="data.outOrPeriods"
+                data-default-label="Select Period"
+                data-callback="selectOnly1Or3(item, selectedItems)"
+                >
+        </multi-select-tree></div>
+        <div class="col-sm-5">
+            <button type="button" class="btn btn-default btn-sm sans-pro" style="width: 50%" ng-click="previousYear(periodType)"><< Prev Year</button>
+            <button type="button" class="pull-right btn btn-default btn-sm sans-pro" style="width: 50%" ng-click="nextYear(periodType)">Next Year >></button>
+        </div>
+    </div>
+
+    <div class="col-sm-2">
+        <div class="col-sm-12"> <label class="text-muted sans-pro">&nbsp;</label></div>
+        <button class="btn btn-default sans-pro btn-sm" ng-click="updateScoreCard()">Update</button>
+        <button class="ngcsvv btn btn-default btn-sm sans-pro"
+                ng-csv="prepareDataForCSV(orgdata)" csv-header="getHeader()"
+                filename="{{ reportDimensions.orgUnit.name }} {{ selectedPeriod.name }} Score Card.csv"
+                field-separator=","
+                decimal-separator="."
+                >Export to CSV</button>
+    </div>
+</div>
+<!--<h4  ><img src="/images/ajax-loader-circle.gif" style="height: 25px; width: 25px"> Wait ...</h4>-->
+<h4 ng-if="loading">{{ loading_message1 }}</h4>
+<div class="progress" ng-if="loading" style="margin-top: 20px; margin-bottom: 20px">
+    <div class="progress-bar progress-bar-info progress-bar-striped" role="progressbar" aria-valuenow="{{ loading_amount }}" aria-valuemin="0" aria-valuemax="100" style="width: {{ loading_amount }}%">
+        <span class="sr-only">{{ loading_amount }}% Complete</span>
+    </div>
+</div>
+
+
+<wave-spinner ng-if="loading" ></wave-spinner>
+
+<div id="exportthis" ng-if="!loading">
+    <div id="container" style="font-size:11px;" >
+        <!--<div ng-if="currentSocreCard.header.template.display" compile="currentSocreCard.header.template.content"> </div>-->
+        <div class="row" style="padding-left: 18px;">
+            <!--<div style="width:720px; float: left;">&nbsp;-->
+                <!--<div ng-if="currentSocreCard.highlighted_indicators.display">-->
+                    <!--Highlighted Indicators-->
+                    <!--<hr style="border-top: 2px solid #8c8b8b">-->
+                    <!--<div class="row">-->
+                        <!--<div ng-repeat="highlighted_indicators in currentSocreCard.highlighted_indicators.definition" style="margin-right:10px;margin-bottom: 15px; width: 170px;float: left;">-->
+                            <!--<table border="1">-->
+                                <!--<tr style="padding: 10px">-->
+                                    <!--<td style="width: 120px;height: 28px">{{ highlighted_indicators.title }}</td>-->
+                                    <!--<td style="width: 50px;text-align: center;height: 28px;line-height: 10%">-->
+                                        <!--<svg  viewbox="0 0 50 28" width="50" height="28">-->
+                                            <!--<polygon points="0 0 50 0 50 28 0 28" fill="{{ assignBgColor(highlighted_indicators,highlighted_indicators.value) }}"/>-->
+                                            <!--<text fill="#000" x="20" y="14" font-size="11" font-family="Source Sans Pro">-->
+                                                <!--<tspan>{{ highlighted_indicators.value }}</tspan>-->
+                                            <!--</text>-->
+                                        <!--</svg>-->
+                                    <!--</td>-->
+                                <!--</tr>-->
+                            <!--</table>-->
+                        <!--</div>-->
+                    <!--</div>-->
+                <!--</div>-->
+            <!--</div>-->
+            <div style="width:400px; float: left;margin-left: 20px">
+                <label ng-if="!currentSocreCard.header.show_legend_definition" class="pull-right"><input type="checkbox" ng-model="currentSocreCard.header.show_legend_definition">
+                    <span>Show Legend Definition</span>
+                </label>
+                <div ng-if="currentSocreCard.header.show_legend_definition">
+                    Legend  <label class="pull-right"><input type="checkbox" ng-model="currentSocreCard.header.show_legend_definition">
+                    <span ng-if="currentSocreCard.header.show_legend_definition">Hide</span>
+                    <span ng-if="!currentSocreCard.header.show_legend_definition">Show</span>
+                </label>
+                    <hr style="border-top: 2px solid #8c8b8b">
+                    <div class="row" style="padding-left: 15px">
+                        <div style="width:230px; float: left;margin-right: 20px">
+                            <div class="row" ng-repeat="legendset_definitions in currentSocreCard.legendset_definitions" style="padding-bottom: 5px">
+                                <div style="width:30px; float: left;margin-right: 20px; line-height: 10%">
+                                    <svg  viewbox="0 0 30 20" width="30" height="20">
+                                        <polygon points="0 0 30 0 30 20 0 20" fill="{{legendset_definitions.color }}" style="stroke:black;stroke-width:1"/>
+                                    </svg>
+                                </div>
+                                <div style="width:180px; float: left; font-size: 11px">{{ legendset_definitions.definition }}</div>
+                            </div>
+                        </div>
+                        <div  style="width:100px; float: left;">
+                            <span class="glyphicon glyphicon-triangle-top" aria-hidden="true"></span>&nbsp; Increase from last period<br><br>
+                            <span class="glyphicon glyphicon-triangle-bottom" aria-hidden="true"></span> Decrease from last period
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <div class="row" style="padding-left: 20px">
+            <h3 class="sans-pro"> {{ reportDimensions.orgUnit.name }} - {{ selectedPeriod.name }} </h3>
+            <table style="font-size: 9px;border: 1px solid #ddd;border-spacing: 0;border-collapse: collapse;display: table;" class="table table-bordered table-striped" >
+                <tr>
+                    <th></th>
+                    <th
+                            style="font-size: 9px; "
+                            ng-repeat="indicator_holder_group in currentSocreCard.data_settings.indicator_holder_groups"
+                            colspan="{{ indicator_holder_group.indicator_holder_ids.length}}"
+                            class="sans-pro">
+                        {{ indicator_holder_group.name }}
+                    </th>
+                </tr>
+                <tr>
+                    <th style="vertical-align: bottom">
+                        <div class="row">
+                            <div class="col-sm-10" >
+                                <input ng-if="show_orgunit_filter" class="form-control input-sm" ng-model="orgunit_filter" placeholder="Filter Orgunit">
+                            </div>
+                            <div class="col-sm-2">
+                                <span class="glyphicon glyphicon-search" ng-if="!show_orgunit_filter" ng-click="showFilter()"></span>
+                                <span class="glyphicon glyphicon-remove" ng-if="show_orgunit_filter" ng-click="hideFilter()"></span>
+                            </div>
+                        </div>
+
+                    </th>
+                    <th ng-repeat="indicator in indicators_list" style="font-size: 10px;width: 70px;cursor: pointer" class="sans-pro"
+                        data-animation="am-fade-and-slide-top" data-template-url="views/partials/indicatorModel.html"
+                        bs-modal="modal" title="Click to Analyse {{ getIndicatorTitle(indicator) }}" on-show="updateIndicatorCard(indicator,'column')">
+                        {{ getIndicatorTitle(indicator) }}
+                        <!--<a >-->
+                            <!--<span-->
+                                <!--class="glyphicon glyphicon-fullscreen">-->
+                            <!--</span>-->
+                        <!--</a>-->
+                    </th>
+                </tr>
+                <tr>
+                    <td style="cursor: pointer" ng-click="redirectTo(reportDimensions.orgUnit.id)" title="View National" class="sans-pro">{{ reportDimensions.orgUnit.name }}</td>
+                    <td  style="padding: 0px;line-height: 10%; cursor: pointer" ng-repeat="indicator in indicators_list">
+                        <!--if there is more than one indicator to display-->
+                        <svg ng-if="indicator.indicators.length == 2" viewbox="0 0 70 35" width="70" height="35">
+                            <polygon points="0 0 70 0 70 0 0 35" fill="{{ assignBgColor(indicator.indicators[0],indicator.indicators[0].values[reportDimensions.orgUnit.id]) }}" style="stroke:#CAC0C0;stroke-width:0.4"/>
+                            <text fill="#000" x="3" y="20" font-size="11" font-family="Source Sans Pro">
+                                <tspan>{{ indicator.indicators[0].values[reportDimensions.orgUnit.id] }}</tspan>
+                            </text>
+                            <!--top arrow-->
+                            <path ng-if="indicator.indicators[0].showTopArrow[reportDimensions.orgUnit.id]" d="M2,10H12L7,4" style="fill:black;stroke:black;stroke-width:1"/>
+                            <!--bottom arrow showing decrease-->
+                            <path ng-if="indicator.indicators[0].showBottomArrow[reportDimensions.orgUnit.id]" d="M2,22H12L7,30" style="fill:black;stroke:black;stroke-width:1"/>
+
+                            <!--second triangle-->
+                            <polygon points="0 35 70 0 70 35 0 35" fill="{{ assignBgColor(indicator.indicators[1],indicator.indicators[1].values[reportDimensions.orgUnit.id]) }}" style="stroke:#CAC0C0;stroke-width:0.4"/>
+                            <!--number for the second triangle-->
+                            <text fill="#000" x="48" y="20" font-size="11" font-family="Source Sans Pro">
+                                <tspan>{{ indicator.indicators[1].values[reportDimensions.orgUnit.id] }}</tspan>
+                            </text>
+                            <!--top arrow for the right triagle-->
+                            <path ng-if="indicator.indicators[1].showTopArrow[reportDimensions.orgUnit.id]" d="M65,10H55L60,4" style="fill:black;stroke:black;stroke-width:1"/>
+                            <!--below arrow for the triangle-->
+                            <path ng-if="indicator.indicators[1].showBottomArrow[reportDimensions.orgUnit.id]" d="M65,22H55L60,28" style="fill:black;stroke:black;stroke-width:1"/>
+                        </svg>
+
+                        <!--if there is only one indicator to display-->
+                        <svg ng-if="indicator.indicators.length == 1" viewbox="0 0 90 35" width="90" height="35">
+                            <!--full box to cover all area-->
+                            <polygon points="0 0 90 0 90 35 0 35" fill="{{ assignBgColor(indicator.indicators[0],indicator.indicators[0].values[reportDimensions.orgUnit.id]) }}"/>
+                            <text fill="#000" x="30" y="20" font-size="11" font-family="Source Sans Pro">
+                                <tspan>{{ indicator.indicators[0].values[reportDimensions.orgUnit.id] }}</tspan>
+                            </text>
+                            <!--top arrow-->
+                            <path ng-if="indicator.indicators[0].showTopArrow[reportDimensions.orgUnit.id]" d="M2,10H12L7,4" style="fill:black;stroke:black;stroke-width:1"/>
+                            <!--bottom arrow showing decrease-->
+                            <path ng-if="indicator.indicators[0].showBottomArrow[reportDimensions.orgUnit.id]" d="M2,22H12L7,30" style="fill:black;stroke:black;stroke-width:1"/>
+
+                        </svg>
+                    </td>
+                </tr>
+                <tr ng-repeat-start="orgUnit in reportDimensions.orgUnitChildren | orderBy : 'name' |  filter:{name:orgunit_filter}">
+                    <td ng-click="redirectTo(orgUnit)" style="cursor: pointer" title="Click to see {{ orgUnit.name }} Score Card"> {{ orgUnit.name }}</td>
+                    <td style="padding: 0px;line-height: 10%" ng-repeat="indicator in indicators_list">
+                        <!--if there is more than one indicator to display-->
+                        <svg ng-if="indicator.indicators.length == 2" viewbox="0 0 70 35" width="70" height="35">
+                            <polygon points="0 0 70 0 70 0 0 35" fill="{{ assignBgColor(indicator.indicators[0],indicator.indicators[0].values[orgUnit.id]) }}" style="stroke:#CAC0C0;stroke-width:0.4"/>
+                            <text fill="#000" x="3" y="20" font-size="11" font-family="Source Sans Pro">
+                                <tspan>{{ indicator.indicators[0].values[orgUnit.id] }}</tspan>
+                            </text>
+                            <!--top arrow-->
+                            <path ng-if="indicator.indicators[0].showTopArrow[orgUnit.id]" d="M2,10H12L7,4" style="fill:black;stroke:black;stroke-width:1"/>
+                            <!--bottom arrow showing decrease-->
+                            <path ng-if="indicator.indicators[0].showBottomArrow[orgUnit.id]" d="M2,22H12L7,30" style="fill:black;stroke:black;stroke-width:1"/>
+
+                            <!--second triangle-->
+                            <polygon points="0 35 70 0 70 35 0 35" fill="{{ assignBgColor(indicator.indicators[1],indicator.indicators[1].values[orgUnit.id]) }}" style="stroke:#CAC0C0;stroke-width:0.4"/>
+                            <!--number for the second triangle-->
+                            <text fill="#000" x="48" y="20" font-size="11" font-family="Source Sans Pro">
+                                <tspan>{{ indicator.indicators[1].values[orgUnit.id] }}</tspan>
+                            </text>
+                            <!--top arrow for the right triagle-->
+                            <path ng-if="indicator.indicators[1].showTopArrow[orgUnit.id]" d="M65,10H55L60,4" style="fill:black;stroke:black;stroke-width:1"/>
+                            <!--below arrow for the triangle-->
+                            <path ng-if="indicator.indicators[1].showBottomArrow[orgUnit.id]" d="M65,22H55L60,28" style="fill:black;stroke:black;stroke-width:1"/>
+                        </svg>
+
+                        <!--if there is only one indicator to display-->
+                        <svg ng-if="indicator.indicators.length == 1" viewbox="0 0 90 35" width="90" height="35">
+                            <!--full box to cover all area-->
+                            <polygon points="0 0 90 0 90 35 0 35" fill="{{ assignBgColor(indicator.indicators[0],indicator.indicators[0].values[orgUnit.id]) }}"/>
+                            <text fill="#000" x="30" y="20" font-size="11" font-family="Source Sans Pro">
+                                <tspan>{{ indicator.indicators[0].values[orgUnit.id] }}</tspan>
+                            </text>
+                            <!--top arrow-->
+                            <path ng-if="indicator.indicators[0].showTopArrow[orgUnit.id]" d="M2,10H12L7,4" style="fill:black;stroke:black;stroke-width:1"/>
+                            <!--bottom arrow showing decrease-->
+                            <path ng-if="indicator.indicators[0].showBottomArrow[orgUnit.id]" d="M2,22H12L7,30" style="fill:black;stroke:black;stroke-width:1"/>
+
+                        </svg>
+                    </td>
+                </tr>
+
+                <!--showing the child data-->
+                <tr ng-show="subshow[orgUnit.id]" ng-repeat-end="orgUnit in reportDimensions.orgUnitChildren | orderBy : 'name' |  filter:{name:orgunit_filter}">
+                    <!--<td ng-click="redirectTo(orgUnit.id)" style="cursor: pointer" title="Click to see {{ orgUnit.name }} Score Card"> {{ orgUnit.name }}</td>-->
+                    <td colspan="{{indicators_list.length + 1}}" style="background-color: rgba(81,131,162,0.3); padding-bottom: 15px;border: 1px solid #000000">
+                        <div class="row">
+                            <div class="col-sm-8"><h5>{{ orgUnit.name }}  - {{ selectedPeriod.name }} </h5></div>
+                            <div class="col-sm-4">
+                                <button class="ngcsvv btn btn-default btn-xs pull-right sans-pro"
+                                        ng-csv="prepareDataForCSV(orgUnit)" csv-header="getHeader()"
+                                        filename="{{ orgUnit.name }} {{ selectedPeriod.name }} Score Card.csv"
+                                        field-separator=","
+                                        decimal-separator=".">Export to csv</button>
+                                <button class="btn btn-default btn-xs pull-right sans-pro" ng-click="redirectTo(orgUnit)">close</button>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <table class="table table-responsive table-bordered table-stripped">
+                                <tr>
+                                    <th></th>
+                                    <th
+                                            style="font-size: 9px; "
+                                            ng-repeat="indicator_holder_group in currentSocreCard.data_settings.indicator_holder_groups"
+                                            colspan="{{ indicator_holder_group.indicator_holder_ids.length}}"
+                                            class="sans-pro">
+                                        {{ indicator_holder_group.name }}
+                                    </th>
+                                </tr>
+                                <tr>
+                                    <th ></th>
+                                    <th ng-repeat="indicator in indicators_list" style="font-size: 10px;width: 70px" class="sans-pro">{{ getIndicatorTitle(indicator) }}</th>
+                                </tr>
+                                <tr ng-repeat="childorgUnit in orgUnit.children | orderBy : 'name'">
+                                    <td ng-click="redirectTo(childorgUnit.id)" style="cursor: pointer" title="Click to see {{ childorgUnit.name }} Score Card"> {{ childorgUnit.name }}</td>
+                                    <td style="padding: 0px;line-height: 10%" ng-repeat="indicator in indicators_list">
+                                        <!--if there is more than one indicator to display-->
+                                        <svg ng-if="indicator.indicators.length == 2" viewbox="0 0 70 35" width="70" height="35">
+                                            <polygon points="0 0 70 0 70 0 0 35" fill="{{ assignBgColor(indicator.indicators[0],indicator.indicators[0].values[childorgUnit.id]) }}" style="stroke:#CAC0C0;stroke-width:0.4"/>
+                                            <text fill="#000" x="3" y="20" font-size="11" font-family="Source Sans Pro">
+                                                <tspan>{{ indicator.indicators[0].values[childorgUnit.id] }}</tspan>
+                                            </text>
+                                            <!--top arrow-->
+                                            <path ng-if="indicator.indicators[0].showTopArrow[childorgUnit.id]" d="M2,10H12L7,4" style="fill:black;stroke:black;stroke-width:1"/>
+                                            <!--bottom arrow showing decrease-->
+                                            <path ng-if="indicator.indicators[0].showBottomArrow[childorgUnit.id]" d="M2,22H12L7,30" style="fill:black;stroke:black;stroke-width:1"/>
+
+                                            <!--second triangle-->
+                                            <polygon points="0 35 70 0 70 35 0 35" fill="{{ assignBgColor(indicator.indicators[1],indicator.indicators[1].values[childorgUnit.id]) }}" style="stroke:#CAC0C0;stroke-width:0.4"/>
+                                            <!--number for the second triangle-->
+                                            <text fill="#000" x="48" y="20" font-size="11" font-family="Source Sans Pro">
+                                                <tspan>{{ indicator.indicators[1].values[childorgUnit.id] }}</tspan>
+                                            </text>
+                                            <!--top arrow for the right triagle-->
+                                            <path ng-if="indicator.indicators[1].showTopArrow[childorgUnit.id]" d="M65,10H55L60,4" style="fill:black;stroke:black;stroke-width:1"/>
+                                            <!--below arrow for the triangle-->
+                                            <path ng-if="indicator.indicators[1].showBottomArrow[childorgUnit.id]" d="M65,22H55L60,28" style="fill:black;stroke:black;stroke-width:1"/>
+                                        </svg>
+
+                                        <!--if there is only one indicator to display-->
+                                        <svg ng-if="indicator.indicators.length == 1" viewbox="0 0 90 35" width="90" height="35">
+                                            <!--full box to cover all area-->
+                                            <polygon points="0 0 90 0 90 35 0 35" fill="{{ assignBgColor(indicator.indicators[0],indicator.indicators[0].values[childorgUnit.id]) }}"/>
+                                            <text fill="#000" x="30" y="20" font-size="11" font-family="Source Sans Pro">
+                                                <tspan>{{ indicator.indicators[0].values[childorgUnit.id] }}</tspan>
+                                            </text>
+                                            <!--top arrow-->
+                                            <path ng-if="indicator.indicators[0].showTopArrow[childorgUnit.id]" d="M2,10H12L7,4" style="fill:black;stroke:black;stroke-width:1"/>
+                                            <!--bottom arrow showing decrease-->
+                                            <path ng-if="indicator.indicators[0].showBottomArrow[childorgUnit.id]" d="M2,22H12L7,30" style="fill:black;stroke:black;stroke-width:1"/>
+
+                                        </svg>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                    </td>
+                </tr>
+                <tr ng-repeat="label in currentSocreCard.additional_labels">
+                    <th>{{ label.name }}</th>
+                    <th ng-repeat="indicator in indicators_list">{{ getIndicatorLabel(indicator, label) }}</th>
+                </tr>
+            </table>
+        </div>
+    </div>
+</div>
