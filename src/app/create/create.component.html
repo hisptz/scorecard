@@ -15,7 +15,7 @@
 <div class="container-fluid" style="padding-left: 0px; font-size: 11px">
 
   <!--basic details of the scorecard-->
-  <div class="col-sm-3 no-left-padding">
+  <div class="col-sm-3 no-left-padding1">
     <div class="thumbnail scorecard_details">
       <h4 style="margin-top: 0px">Basic Details</h4>
       <div class="form-group">
@@ -74,25 +74,36 @@
   </div>
 
   <!--Group selection-->
-  <div class="col-sm-2 no-left-padding">
+  <div class="col-sm-2 no-left-padding1">
     <div class="thumbnail scorecard_details">
-      <h4 style="margin-top: 0px">Data Type</h4>
+      <!--<h4 style="margin-top: 0px;margin-bottom: 1px">Data Type</h4>-->
       <div class="form-group">
-        <select class="form-control">
+        <select class="form-control input-sm" style="height: 25px">
           <option value="indicators">Indicators</option>
           <option value="data Elements">Data Elements</option>
           <option value="Completeness">Completeness</option>
           <option value="Timeliness">Timeliness</option>
         </select>
       </div>
+      <img src="loading.gif" style="height: 70px; padding-top: 20px" *ngIf="!done_loading_groups">
+      <div class="form-group" *ngIf="done_loading_groups">
+        <input type="text" class="form-control input-sm" placeholder="Search by name" style="height: 25px; margin-top: 3px">
+      </div>
+      <ul class="list-group" *ngIf="done_loading_groups">
+        <li class="list-group-item selection_link" *ngFor="let group of current_groups | paginate: { id: 'groups', itemsPerPage: 6, currentPage: p }">
+          {{ group.name }}
+        </li>
+      </ul>
+      <pagination-controls  id="groups" (pageChange)="p = $event" directionLinks="true" autoHide="true"></pagination-controls>
     </div>
+
   </div>
-  <div class="col-sm-2 no-left-padding">
+  <div class="col-sm-3 no-left-padding1">
     <div class="thumbnail">
       Item listing
     </div>
   </div>
-  <div class="col-sm-5 no-left-padding">
+  <div class="col-sm-4 no-left-padding1">
     <div class="thumbnail">
       Item details
     </div>

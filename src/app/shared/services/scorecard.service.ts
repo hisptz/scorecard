@@ -35,28 +35,11 @@ export class ScorecardService {
   }
 
   load(id: string ) {
-    return this.http.get(`${this.baseUrl}/api/dataStore/scorecards/${id}`)
+    return this.http.get(`${this.baseUrl}api/dataStore/scorecards/${id}`)
       .map((response: Response) => response.json())
       .catch(this.handleError);
   }
 
-  // get all scorecards
-  getAll(){
-    this.loadAll().subscribe(
-      scorecards => {
-        for( let scorecard of scorecards ){
-          this.load(scorecard).subscribe(
-            scorecard_details => {
-              this._scorecards.push({
-                id: scorecard,
-                data: scorecard_details
-              })
-            }
-          )
-        }
-      }
-    )
-  }
   create(scorecard: ScoreCard) {
 
   }

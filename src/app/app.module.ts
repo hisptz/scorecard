@@ -15,6 +15,8 @@ import {Ng2PaginationModule} from "ng2-pagination";
 import {ScorecardService} from "./shared/services/scorecard.service";
 import {IndicatorGroupService} from "./shared/services/indicator-group.service";
 import {IndicatorService} from "./shared/services/indicator.service";
+import {DatasetService} from "./shared/services/dataset.service";
+import {DataElementGroupService} from "./shared/services/data-element-group.service";
 
 @NgModule({
   declarations: [
@@ -34,7 +36,8 @@ import {IndicatorService} from "./shared/services/indicator.service";
     Constants,
     ScorecardService,
     IndicatorGroupService,
-    IndicatorService
+    DatasetService,
+    DataElementGroupService
   ],
   bootstrap: [AppComponent]
 })
