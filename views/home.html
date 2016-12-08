@@ -36,11 +36,25 @@
 				</div>
 			</div>
 
-			<div class="col-sm-6 col-md-4" ng-if="scoreCards.length >=0 && scoreCards.length <=2 " >
+			<div class="col-sm-6 col-md-4" ng-if="scoreCards.length >=0 && scoreCards.length <=2 " style="margin-top:14px;">
 				<div class="thumbnail" style="height: 400px;background-image: url('img/score_card.png')" >
 					<div class="caption">
 						<h3 class="sans-pro">CREATE NEW SCORE CARD</h3>
-						<p>...</p>
+						<p>Create a score card instantly, over tea break...</p>
+						<ol style="margin-left:20px;">
+							<li style="padding:2px;">Click create new, Write your score card a title and description</li>
+							<li style="padding:2px;">Write group header name for indicators you will create in next step</li>
+							<li style="padding:2px;">Select indicator group and click indicator to add to the group
+								<ul style="margin-left:20px;">
+									<li style="padding:2px;">Edit title to change title to use on heading</li>
+									<li style="padding:2px;">Enter effective gap to show increase/decrease from last period</li>
+									<li style="padding:2px;">Set minimum and maximum range for each color code</li>
+								</ul>
+							</li>
+							<li style="padding:2px;">Click "Add another" to add another indicator in next column in the group</li>
+							<li style="padding:2px;">Select the second indicator to add indicator in the same group</li>
+							<li style="padding:2px;">Click "Add another" in Group row to add next group</li>
+						</ol>
 						<p> <a class="btn btn-default sans-pro" role="button" href="#/create">Create New</a></p>
 					</div>
 				</div>

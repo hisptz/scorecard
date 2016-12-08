@@ -429,6 +429,11 @@ mainController.controller('createScoreCardController',['$scope','$timeout','$tra
                 console.log( 'errors happens');
             });
         };
+        
+        $scope.cancelScoreCard = function() {
+            //Submit the created score-card
+            $location.path( "/" );
+        };
 
         $scope.deleteScoreCard = function(scorecardKey) {
             var deletionUrl=DHIS2URL+"/api/dataStore/scorecards/"+scorecardKey;
