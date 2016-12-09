@@ -25,6 +25,8 @@ export class CreateComponent implements OnInit {
   error_loading_list: any = {occurred:false, message: ""};
   scorecard: ScoreCard;
   listReady:boolean = false;
+  listQuery: string = null;
+  groupQuery: string = null;
   constructor(private http: Http,
               private indicatorService: IndicatorGroupService,
               private datasetService: DatasetService,
@@ -37,32 +39,7 @@ export class CreateComponent implements OnInit {
     this.current_listing = [];
 
     // initialize the scorecard with a uid
-    this.scorecard = {
-      id: this.makeid(),
-      data: []
-    };
-    this.legends_definitions = [
-      {
-        color: "#0F7F11",
-        definition: "Target achieved / on track"
-      },
-      {
-        color: "#FFFD38",
-        definition: "Progress, but more effort required"
-      },
-      {
-        color: "#FD0C1C",
-        definition: "Not on track"
-      },
-      {
-        color: "#D3D3D3",
-        definition: "N/A"
-      },
-      {
-        color: "#FFFFFF",
-        definition: "No data"
-      }
-    ];
+    this.scorecard = this.getEmptyScoreCard();
   }
 
   ngOnInit() {
@@ -137,6 +114,7 @@ export class CreateComponent implements OnInit {
 
   // load items to be displayed in a list of indicators/ data Elements / Data Sets
   load_list(group_id,current_type): void{
+    console.log(this.scorecard);
     this.listReady = true;
     this.current_listing = [];
     this.done_loading_list = false;
@@ -219,5 +197,118 @@ export class CreateComponent implements OnInit {
   //////////////////////////////////////////////////////////////////////////////
   ////////////////////////Define default data sources//////////////////////////
   /////////////////////////////////////////////////////////////////////////////
-
+  getEmptyScoreCard():ScoreCard{
+    return {
+      id: this.makeid(),
+      data: {
+        "orgunit_settings": {
+          "parent": "USER_ORGUNIT",
+          "level": "LEVEL-2"
+        },
+        "show_score": false,
+        "show_rank": false,
+        "rank_position_last": true,
+        "header": {
+          "title": "",
+          "sub_title":"",
+          "description": "",
+          "show_arrows_definition": true,
+          "show_legend_definition": false,
+          "template": {
+            "display": false,
+            "content": ""
+          }
+        },
+        "legendset_definitions": [
+          {
+            "color": "#008000",
+            "definition": "Target achieved / on track"
+          },
+          {
+            "color": "#FFFF00",
+            "definition": "Progress, but more effort required"
+          },
+          {
+            "color": "#FF0000",
+            "definition": "Not on track"
+          },
+          {
+            "color": "#D3D3D3",
+            "definition": "N/A"
+          },
+          {
+            "color": "#FFFFFF",
+            "definition": "No data"
+          }
+        ],
+        "highlighted_indicators": {
+          "display": false,
+          "definitions": []
+        },
+        "data_settings": {
+          "indicator_holders": [
+            {
+              "holder_id": 1,
+              "indicators": [
+                {
+                  "name": "",
+                  "id": "",
+                  "title": "",
+                  "high_is_good": true,
+                  "legendset": [
+                    {
+                      "color": "#008000",
+                      "min": "80",
+                      "max": "-"
+                    },
+                    {
+                      "color": "#FFFF00",
+                      "min": "60",
+                      "max": "80"
+                    },
+                    {
+                      "color": "#FF0000",
+                      "min": "0",
+                      "max": "60"
+                    }
+                  ],
+                  "additional_label_values": [],
+                  "arrow_settings": {
+                    "effective_gap": 5,
+                    "display": true
+                  },
+                  "label_settings": {
+                    "display": true,
+                    "font_size": ""
+                  }
+                }
+              ]
+            }
+          ],
+          "indicator_holder_groups": [
+            {
+              "name": "",
+              "indicator_holder_ids": [],
+              "background_color": "#ffffff",
+              "holder_style": null
+            }
+          ]
+        },
+        "additional_labels": [
+          {
+            "id": "source",
+            "name": "Source"
+          }
+        ],
+        "footer": {
+          "display_generated_date": false,
+          "display_title": false,
+          "sub_title": null,
+          "description": null,
+          "template": null
+        },
+        "indicator_dataElement_reporting_rate_selection": "Indicators"
+      }
+    }
+  }
 }

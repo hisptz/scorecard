@@ -3,7 +3,7 @@
     <img src="icon.png"> <span style="font-size: 15px"> Score Card</span>
   </div>
   <div class="col-sm-8" style="margin-top: 14px">
-    <input type="search" class="form-control input-sm" placeholder="Search score card by name">
+    <input type="search" class="form-control input-sm" placeholder="Search score card by name" [(ngModel)]="queryterm">
   </div>
   <div class="col-sm-2" style="margin-top: 14px">
     <button class="btn btn-default btn-sm pull-right" [routerLink]="['create']"> Create</button>
@@ -29,7 +29,7 @@
 <div class="container-fluid" style="padding-left: 0px; border-top: 1px solid blanchedalmond; margin-top: 20px; padding-top: 23px" *ngIf="scorecards.length != 0 && !scorecards_loading" >
 
 
-  <div class="col-sm-4" *ngFor="let scorecard of scorecards | paginate: { itemsPerPage: 3, currentPage: p } " style="padding-left: 0px">
+  <div class="col-sm-4" *ngFor="let scorecard of scorecards | scoreCardFilter:queryterm | paginate: { itemsPerPage: 3, currentPage: p } " style="padding-left: 0px">
     <div class="thumbnail scorecard_details" [routerLink]="['view',scorecard.id]">
       <h3 >{{ scorecard.data.header.title }}</h3>
       <h5>{{ scorecard.data.header.description }}</h5>

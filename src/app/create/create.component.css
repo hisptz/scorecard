@@ -69,7 +69,7 @@
   transform: scale(1.001, 1.001);
   -webkit-box-shadow: 0 0 10px rgba(0,0,0,0.1);
   box-shadow: 0 0 10px rgba(0,0,0,0.1);
-  background-color: rgba(0,0,0,0.03);
+  background-color: rgba(0,0,0,0.05);
 }
 
 a:hover{

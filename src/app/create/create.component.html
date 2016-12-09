@@ -17,15 +17,14 @@
   <!--basic details of the scorecard-->
   <div class="col-sm-3 no-left-padding1">
     <div class="thumbnail scorecard_details">
-      <h4 style="margin-top: 0px">Basic Details</h4>
       <div class="form-group">
         <label for="title">Title</label>
-        <input type="email" class="form-control input-sm" id="title" placeholder="Title">
+        <input type="text" class="form-control input-sm" id="title" placeholder="Title" style="height: 25px" [(ngModel)]="scorecard.data.header.title">
       </div>
       <p class="help-block">Scorecard title.</p>
       <div class="form-group">
         <label for="description">Description</label>
-        <textarea type="email" class="form-control input-sm" id="description" placeholder="Scorecard description"></textarea>
+        <textarea class="form-control input-sm" id="description" placeholder="Scorecard description" [(ngModel)]="scorecard.data.header.description"></textarea>
       </div>
       <p class="help-block">Scorecard description</p>
       <div class="form-group">
@@ -34,28 +33,28 @@
           <div class="col-sm-6">
             <div class="checkbox">
               <label>
-                <input type="checkbox"> Legend
+                <input type="checkbox" [(ngModel)]="scorecard.data.header.show_legend_definition"> Legend
               </label>
             </div>
           </div>
           <div class="col-sm-6">
             <div class="checkbox">
               <label>
-                <input type="checkbox"> Score
+                <input type="checkbox" [(ngModel)]="scorecard.data.show_score"> Score
               </label>
             </div>
           </div>
           <div class="col-sm-6">
             <div class="checkbox">
               <label>
-                <input type="checkbox"> rank
+                <input type="checkbox" [(ngModel)]="scorecard.data.show_rank"> rank
               </label>
             </div>
           </div>
           <div class="col-sm-6">
             <div class="checkbox">
               <label>
-                <input type="checkbox"> arrows
+                <input type="checkbox" [(ngModel)]="scorecard.data.header.show_arrows_definition"> arrows
               </label>
             </div>
           </div>
@@ -64,9 +63,9 @@
       <p class="help-block">Add arrows to show data comparison with last period</p>
       <!--legend definition-->
       <div class="row">
-        <div *ngFor="let legend of legends_definitions">
-          <div class="col-sm-9" style="padding-right: 2px"><input [value]="legend.definition" class="form-control color-input input-sm"/></div>
-          <div class="col-sm-3" style="padding-left: 2px"><input [(colorPicker)]="legend.color" [style.background]="legend.color" [value]="legend.color" class="form-control color-input input-sm"/></div>
+        <div *ngFor="let legend of scorecard.data.legendset_definitions">
+          <div class="col-sm-9" style="padding-right: 2px"><input [(ngModel)]="legend.definition" class="form-control color-input input-sm" style="height: 25px"/></div>
+          <div class="col-sm-3" style="padding-left: 2px"><input  style="height: 25px" [(colorPicker)]="legend.color" [style.background]="legend.color" [(ngModel)]="legend.color" class="form-control color-input input-sm"/></div>
         </div>
       </div>
 
@@ -87,12 +86,12 @@
       </div>
       <img src="loading.gif" style="height: 70px; padding-top: 20px" *ngIf="!done_loading_groups">
       <div class="form-group" *ngIf="done_loading_groups">
-        <input type="text" class="form-control input-sm" placeholder="Search by name" style="height: 25px; margin-top: 3px">
+        <input type="text" class="form-control input-sm" placeholder="Search by name" style="height: 25px; margin-top: 3px" [(ngModel)]="groupQuery">
       </div>
       <ul class="list-group" *ngIf="done_loading_groups">
         <li
           class="list-group-item selection_link"
-          *ngFor="let group of current_groups | paginate: { id: 'groups', itemsPerPage: 8, currentPage: p }"
+          *ngFor="let group of current_groups | filterByName:groupQuery | paginate: { id: 'groups', itemsPerPage: 8, currentPage: p }"
           (click)="load_list(group.id, t.value)"
         >
           {{ group.name }}
@@ -109,12 +108,12 @@
       <div *ngIf="listReady">
         <img src="loading.gif" style="height: 70px; padding-top: 20px" *ngIf="!done_loading_list">
         <div class="form-group" *ngIf="done_loading_list">
-          <input type="text" class="form-control input-sm" placeholder="Search by name" style="height: 25px; margin-top: 3px">
+          <input type="text" class="form-control input-sm" placeholder="Search by name" style="height: 25px; margin-top: 3px" [(ngModel)]="listQuery">
         </div>
         <ul class="list-group" *ngIf="done_loading_list">
           <li
             class="list-group-item selection_link"
-            *ngFor="let item of current_listing | paginate: { id: 'list', itemsPerPage: 8, currentPage: r }"
+            *ngFor="let item of current_listing | filterByName:listQuery | paginate: { id: 'list', itemsPerPage: 8, currentPage: r }"
             (click)="load_item(item.id)"
           >
             {{ item.name }}

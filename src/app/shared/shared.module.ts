@@ -5,6 +5,7 @@ import { DhisOrgUnitTreeComponent } from "./dhis-org-unit-tree.component";
 import { TreeModule } from 'angular2-tree-component';
 import {Ng2PaginationModule} from 'ng2-pagination';
 import {ColorPickerModule} from "angular2-color-picker";
+import { FilterByNamePipe } from './filter-by-name.pipe';
 // import {FilterPipe} from "./filter.pipe";
 
 @NgModule({
@@ -14,7 +15,14 @@ import {ColorPickerModule} from "angular2-color-picker";
     ColorPickerModule
 
   ],
-  declarations: [ DhisOrgUnitTreeComponent ],
-  exports: [ DhisOrgUnitTreeComponent, TreeModule, FormsModule, CommonModule, Ng2PaginationModule,ColorPickerModule ]
+  declarations: [ DhisOrgUnitTreeComponent, FilterByNamePipe ],
+  exports: [
+    DhisOrgUnitTreeComponent,
+    TreeModule,
+    FormsModule,
+    CommonModule,
+    Ng2PaginationModule,
+    ColorPickerModule,
+    FilterByNamePipe ]
 })
 export class SharedModule { }

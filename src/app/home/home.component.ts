@@ -13,6 +13,7 @@ export class HomeComponent implements OnInit {
   complete_percent: number;
   total: number = 0;
   loading_message:string;
+  queryterm: string = null;
 
   constructor( private scoreCardService: ScorecardService) {
     this.scorecards = []
