@@ -93,6 +93,7 @@ export class CreateComponent implements OnInit {
 
   switchType(current_type): void{
     this.listReady = false;
+    this.groupQuery = null;
     if(current_type == "indicators"){
       this.current_groups = this.indicatorGroups;
     }else if(current_type == "dataElements"){
@@ -102,11 +103,13 @@ export class CreateComponent implements OnInit {
       this.current_listing = this.datasets;
       this.listReady = true;
       this.done_loading_list = true;
+      this.listQuery = null;
     }else if(current_type == "Timeliness"){
       this.current_groups = [];
       this.current_listing = this.datasets;
       this.listReady = true;
       this.done_loading_list = true;
+      this.listQuery = null;
     }else{
 
     }
@@ -114,6 +117,7 @@ export class CreateComponent implements OnInit {
 
   // load items to be displayed in a list of indicators/ data Elements / Data Sets
   load_list(group_id,current_type): void{
+    this.listQuery = null;
     console.log(this.scorecard);
     this.listReady = true;
     this.current_listing = [];
