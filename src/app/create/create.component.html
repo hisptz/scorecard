@@ -9,8 +9,60 @@
     <button class="btn btn-default btn-sm pull-right" [routerLink]="['']"><span class="glyphicon glyphicon-home"></span> home</button>
   </div>
 </div>
-<div class="container-fluid no-left-padding" style="height: 100px; border-top: 1px solid blanchedalmond; padding-top: 23px">
-  Score card sample
+<div class="container-fluid no-left-padding" style="border-top: 1px solid blanchedalmond; padding-top: 8px">
+  <!--sample score card-->
+  <table class="table table-bordered table-hover table-responsive table-condensed" style="margin-bottom: 3px">
+    <tr>
+      <th>
+        <button class="btn btn-xs" *ngIf="need_for_group">Add Group</button>
+      </th>
+      <th
+        style="font-size: 9px; "
+        *ngFor="let indicator_holder_group of scorecard.data.data_settings.indicator_holder_groups"
+        [attr.colspan]="indicator_holder_group.indicator_holder_ids.length"
+        class="sans-pro">
+        {{ indicator_holder_group.name }}
+      </th>
+    </tr>
+    <tr>
+      <th style="vertical-align: bottom">
+        <button class="btn btn-xs" *ngIf="need_for_indicator">Add Indicator</button>
+      </th>
+      <th *ngFor="let indicator of getItemsFromGroups()" style="font-size: 10px;width: 70px;cursor: pointer" class="sans-pro"
+           title="Click to Analyse {{ getIndicatorTitle(indicator) }}">
+        {{ getIndicatorTitle(indicator) }}
+      </th>
+    </tr>
+    <tr>
+      <th style="vertical-align: bottom">
+        Organisation Unit
+      </th>
+      <th *ngFor="let indicator of getItemsFromGroups()" style="font-size: 10px;width: 70px;cursor: pointer" class="sans-pro"
+          title="Click to Analyse {{ getIndicatorTitle(indicator) }}">
+        <svg *ngIf="indicator.indicators.length == 2" viewbox="0 0 70 35" width="70" height="35">
+          <polygon points="0 0 70 0 70 0 0 35" [attr.fill]="assignBgColor(indicator.indicators[0],indicator.indicators[0].value)" style="stroke:#CAC0C0;stroke-width:0.4"/>
+          <text fill="#000" x="3" y="20" font-size="11" font-family="Source Sans Pro">
+            <tspan>{{ indicator.indicators[0].value }}</tspan>
+          </text>
+          <!--second triangle-->
+          <polygon points="0 35 70 0 70 35 0 35" [attr.fill]="assignBgColor(indicator.indicators[1],indicator.indicators[1].value)" style="stroke:#CAC0C0;stroke-width:0.4"/>
+          <!--number for the second triangle-->
+          <text fill="#000" x="48" y="20" font-size="11" font-family="Source Sans Pro">
+            <tspan>{{ indicator.indicators[1].value }}</tspan>
+          </text>
+        </svg>
+
+        <!--if there is only one indicator to display-->
+        <svg *ngIf="indicator.indicators.length == 1" viewbox="0 0 90 35" width="90" height="35">
+          <!--full box to cover all area-->
+          <polygon points="0 0 90 0 90 35 0 35" [attr.fill]="assignBgColor(indicator.indicators[0],indicator.indicators[0].value)"/>
+          <text fill="#000" x="30" y="20" font-size="11" font-family="Source Sans Pro">
+            <tspan>{{ indicator.indicators[0].value }}</tspan>
+          </text>
+        </svg>
+      </th>
+    </tr>
+  </table>
 </div>
 <div class="container-fluid" style="padding-left: 0px; font-size: 11px">
 
@@ -18,8 +70,8 @@
   <div class="col-sm-3 no-left-padding1">
     <div class="thumbnail scorecard_details">
       <div class="form-group">
-        <label for="title">Title</label>
-        <input type="text" class="form-control input-sm" id="title" placeholder="Title" style="height: 25px" [(ngModel)]="scorecard.data.header.title">
+        <label for="title" style="padding-top: 3px">Title</label>
+        <input type="text" class="form-control input-sm" id="title" placeholder="Title" style="height: 25px; margin-top: 5px" [(ngModel)]="scorecard.data.header.title">
       </div>
       <p class="help-block">Scorecard title.</p>
       <div class="form-group">
@@ -63,9 +115,10 @@
       <p class="help-block">Add arrows to show data comparison with last period</p>
       <!--legend definition-->
       <div class="row">
+        <label>Legend Definition</label>
         <div *ngFor="let legend of scorecard.data.legendset_definitions">
-          <div class="col-sm-9" style="padding-right: 2px"><input [(ngModel)]="legend.definition" class="form-control color-input input-sm" style="height: 25px"/></div>
-          <div class="col-sm-3" style="padding-left: 2px"><input  style="height: 25px" [(colorPicker)]="legend.color" [style.background]="legend.color" [(ngModel)]="legend.color" class="form-control color-input input-sm"/></div>
+          <div class="col-sm-3" style="padding-right: 2px"><input  style="height: 25px" [(colorPicker)]="legend.color" [style.background]="legend.color" [(ngModel)]="legend.color" class="form-control color-input input-sm"/></div>
+          <div class="col-sm-9" style="padding-left: 2px"><input [(ngModel)]="legend.definition" class="form-control color-input input-sm" style="height: 25px"/></div>
         </div>
       </div>
 
@@ -92,9 +145,10 @@
         <li
           class="list-group-item selection_link"
           *ngFor="let group of current_groups | filterByName:groupQuery | paginate: { id: 'groups', itemsPerPage: 8, currentPage: p }"
+          [ngClass]="{'listSelected': group.id == activeGroup}"
           (click)="load_list(group.id, t.value)"
         >
-          {{ group.name }}
+          {{ group.name }} {{ group.id == activeGroup }}
         </li>
       </ul>
       <pagination-controls  id="groups" (pageChange)="p = $event" directionLinks="true" autoHide="true"></pagination-controls>
@@ -103,18 +157,18 @@
   </div>
 
   <!--item listing-->
-  <div class="col-sm-3 no-left-padding1">
+  <div class="col-sm-2 no-left-padding1">
     <div class="thumbnail scorecard_details">
       <div *ngIf="listReady">
         <img src="loading.gif" style="height: 70px; padding-top: 20px" *ngIf="!done_loading_list">
         <div class="form-group" *ngIf="done_loading_list">
-          <input type="text" class="form-control input-sm" placeholder="Search by name" style="height: 25px; margin-top: 3px" [(ngModel)]="listQuery">
+          <input type="text" class="form-control input-sm" placeholder="Search by name" style="height: 25px;" [(ngModel)]="listQuery">
         </div>
         <ul class="list-group" *ngIf="done_loading_list">
           <li
             class="list-group-item selection_link"
             *ngFor="let item of current_listing | filterByName:listQuery | paginate: { id: 'list', itemsPerPage: 8, currentPage: r }"
-            (click)="load_item(item.id)"
+            (click)="load_item(item)"
           >
             {{ item.name }}
           </li>
@@ -123,9 +177,95 @@
       </div>
     </div>
   </div>
-  <div class="col-sm-4 no-left-padding1">
+
+  <!--item details-->
+  <div class="col-sm-5 no-left-padding1" style="padding-right: 0px">
     <div class="thumbnail scorecard_details">
-      Item details
+      <div class="row" *ngFor="let indicator of current_indicator_holder.indicators" style="border-bottom: 1px solid black; padding-top: 3px">
+        <div class="col-sm-7">
+          <div class="row" style="padding-bottom: 5px">
+            <div class="col-sm-3">
+              <label class="sans-pro lebal">Name:</label>
+            </div>
+            <div class="col-sm-9">
+              <input [value]="indicator.name" class="form-control input-sm" disabled/>
+            </div>
+          </div>
+          <div class="row" style="padding-bottom: 5px">
+            <div class="col-sm-3">
+              <label class="sans-pro lebal">Title:</label>
+            </div>
+            <div class="col-sm-9">
+              <input [(ngModel)]="indicator.title" class="form-control input-sm"/>
+            </div>
+          </div>
+          <div class="row" style="padding-bottom: 5px">
+            <div class="col-sm-3">
+              <label class="sans-pro lebal">Weight:</label>
+            </div>
+            <div class="col-sm-9">
+              <input type="number" min="0" max="200" [(ngModel)]="indicator.weight" class="form-control input-sm" [disabled]="!scorecard.data.show_score"/>
+            </div>
+          </div>
+          <div class="row" style="padding-bottom: 5px">
+            <div class="col-sm-3">
+              <label class="sans-pro lebal">Effective Gap:</label>
+            </div>
+            <div class="col-sm-3">
+              <input type="number" min="0" [(ngModel)]="indicator.arrow_settings.effective_gap" class="form-control input-sm" [disabled]="!indicator.arrow_settings.display"/>
+            </div>
+            <div class="col-sm-4">
+              <label class="sans-pro lebal">Display arrows:</label>
+            </div>
+            <div class="col-sm-2">
+              <input type="checkbox" [(ngModel)]="indicator.arrow_settings.display" >
+            </div>
+          </div>
+          <div class="row" style="padding-bottom: 5px">
+            <div class="col-sm-4">
+              <label class="sans-pro lebal">High is good:</label>
+            </div>
+            <div class="col-sm-2">
+              <input type="checkbox" [(ngModel)]="indicator.high_is_good" >
+            </div>
+
+            <div class="col-sm-4">
+              <label class="sans-pro lebal">Show Colours:</label>
+            </div>
+            <div class="col-sm-2">
+              <input type="checkbox" [(ngModel)]="indicator.legend_display" >
+            </div>
+          </div>
+        </div>
+        <div class="col-sm-5">
+          <div *ngFor="let legend of indicator.legendset; let i = index;">
+            <div class="row" style="padding-top: 2px">
+              <div class="col-sm-10">
+                <label class="sans-pro label">Target achieved / on track</label>
+              </div>
+              <div class="col-sm-1" style="background-color: green">&nbsp;</div>
+            </div>
+
+            <div class="row">
+              <div class="col-sm-6">
+                <label class="sans-pro label">Min</label>
+                <input type="text" [(ngModel)]="legend.min" class="form-control input-sm" [disabled]="!indicator.legend_display">
+              </div>
+              <div class="col-sm-6">
+                <label class="sans-pro label" >Max</label>
+                <input type="text" [(ngModel)]="legend.max" class="form-control input-sm" [disabled]="!indicator.legend_display">
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
     </div>
   </div>
+</div>
+
+
+<div class="container-fluid no-left-padding">
+  <button class="btn btn-sm btn-info pull-right" style="margin-left: 5px">Create</button>
+  <button class="btn btn-xs btn-warning pull-right" style="margin-top: 8px">Cancel</button>
 </div>

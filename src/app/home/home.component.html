@@ -10,10 +10,25 @@
   </div>
 </div>
 <!--if there is no scorecard created-->
+<!--<div class="container-fluid" style="padding-left: 0px; border-top: 1px solid blanchedalmond; margin-top: 20px; padding-top: 23px">-->
 <div class="container-fluid" style="padding-left: 0px; border-top: 1px solid blanchedalmond; margin-top: 20px; padding-top: 23px" *ngIf="scorecards.length == 0 && !scorecards_loading">
   <div class="jumbotron" >
     <h1>Welcome to Scorecard App!</h1>
-    <p>Seems like there are no scorecards created, Start by creating some new scorecards</p>
+    <p>Create a score card instantly, over tea break...</p>
+    <ol style="margin-left:20px; font-size: 12px">
+      <li style="padding:2px;">Click create new, Write your score card a title and description</li>
+      <li style="padding:2px;">Write group header name for indicators you will create in next step</li>
+      <li style="padding:2px;">Select indicator group and click indicator to add to the group
+        <ul style="margin-left:20px;">
+          <li style="padding:2px;">Edit title to change title to use on heading</li>
+          <li style="padding:2px;">Enter effective gap to show increase/decrease from last period</li>
+          <li style="padding:2px;">Set minimum and maximum range for each color code</li>
+        </ul>
+      </li>
+      <li style="padding:2px;">Click "Add another" to add another indicator in next column in the group</li>
+      <li style="padding:2px;">Select the second indicator to add indicator in the same group</li>
+      <li style="padding:2px;">Click "Add another" in Group row to add next group</li>
+    </ol>
     <p><a class="btn btn-primary btn-lg" href="#" role="button">New Scorecard</a></p>
   </div>
 </div>

@@ -12,13 +12,13 @@ import {ScoreCard} from "../shared/services/scorecard.service";
 })
 export class CreateComponent implements OnInit {
 
-  legends_definitions: any[];
-  color: string = "#127bdc";
+  // variable initializations
   datasets: Dataset[];
   indicatorGroups: IndicatorGroup[];
   dataElementGroups: DataElementGroup[];
   current_groups: any[];
   current_listing: any[];
+  activeGroup: string = null;
   done_loading_groups: boolean = false;
   done_loading_list: boolean = false;
   error_loading_groups: any = {occurred:false, message: ""};
@@ -27,6 +27,13 @@ export class CreateComponent implements OnInit {
   listReady:boolean = false;
   listQuery: string = null;
   groupQuery: string = null;
+  need_for_group: boolean = false;
+  need_for_indicator: boolean = false;
+  current_group_id: number = 1;
+  current_holder_group_id: number = 1;
+  current_indicator_holder: any;
+  current_holder_group: any;
+  indicators_list: any[] = [];
   constructor(private http: Http,
               private indicatorService: IndicatorGroupService,
               private datasetService: DatasetService,
@@ -37,9 +44,22 @@ export class CreateComponent implements OnInit {
     this.datasets = [];
     this.current_groups = [];
     this.current_listing = [];
+    this.current_indicator_holder = {
+      "holder_id": 1,
+      "indicators": []
+    };
+    this.current_holder_group = {
+      "id": 1,
+      "name": "",
+      "indicator_holder_ids": [],
+      "background_color": "#ffffff",
+      "holder_style": null
+    };
 
     // initialize the scorecard with a uid
     this.scorecard = this.getEmptyScoreCard();
+    console.log(this.scorecard);
+    // this.getItemsFromGroups();
   }
 
   ngOnInit() {
@@ -118,6 +138,7 @@ export class CreateComponent implements OnInit {
   // load items to be displayed in a list of indicators/ data Elements / Data Sets
   load_list(group_id,current_type): void{
     this.listQuery = null;
+    this.activeGroup = group_id;
     console.log(this.scorecard);
     this.listReady = true;
     this.current_listing = [];
@@ -187,9 +208,56 @@ export class CreateComponent implements OnInit {
   }
 
   // load a single item for use in a score card
-  load_item(): void{
+  load_item(item): void{
+    if(this.indicatorExist(this.scorecard.data.data_settings.indicator_holders,item)){
+      alert("Selected indicator has already been added");
+    }else{
+      let indicator = this.getIndicatorStructure(item.name, item.id);
+      this.current_indicator_holder.holder_id = this.current_group_id;
+      if(this.current_indicator_holder.indicators.length < 2){
+        indicator.value = Math.floor(Math.random()*100) + 1;
+        this.current_indicator_holder.indicators.push( indicator );
+      }else{
+        alert("There are two items already")
+      }
+      this.addIndicatorHolder(this.current_indicator_holder);
+      this.current_holder_group.id = this.current_holder_group_id;
+      this.addHolderGroups(this.current_holder_group, this.current_indicator_holder);
+    }
 
+
+    // this.scorecard.data.indicator_holders.push()
   }
+
+  addIndicatorHolder(indicator_holder): void{
+    let add_new = true;
+    for( let holder of this.scorecard.data.data_settings.indicator_holders ){
+      if (holder.id == indicator_holder.id){
+        holder = indicator_holder;
+        add_new = false;
+      }
+    }
+    if(add_new){
+      this.scorecard.data.data_settings.indicator_holders.push(indicator_holder);
+    }
+    console.log( this.scorecard.data.data_settings);
+  }
+
+  addHolderGroups(holder_group,holder): void{
+    let add_new = true;
+    for( let group of this.scorecard.data.data_settings.indicator_holder_groups ){
+      if (group.id == holder_group.id){
+        if( group.indicator_holder_ids.indexOf(holder.holder_id) ) group.indicator_holder_ids.push(holder.holder_id);
+        add_new = false;
+      }
+    }
+    if(add_new){
+      if( holder_group.indicator_holder_ids.indexOf(holder.holder_id) ) holder_group.indicator_holder_ids.push(holder.holder_id);
+      this.scorecard.data.data_settings.indicator_holder_groups.push(holder_group);
+    }
+  }
+
+
   makeid(): string{
     let text = "";
     let possible_combinations = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
@@ -250,60 +318,10 @@ export class CreateComponent implements OnInit {
           "definitions": []
         },
         "data_settings": {
-          "indicator_holders": [
-            {
-              "holder_id": 1,
-              "indicators": [
-                {
-                  "name": "",
-                  "id": "",
-                  "title": "",
-                  "high_is_good": true,
-                  "legendset": [
-                    {
-                      "color": "#008000",
-                      "min": "80",
-                      "max": "-"
-                    },
-                    {
-                      "color": "#FFFF00",
-                      "min": "60",
-                      "max": "80"
-                    },
-                    {
-                      "color": "#FF0000",
-                      "min": "0",
-                      "max": "60"
-                    }
-                  ],
-                  "additional_label_values": [],
-                  "arrow_settings": {
-                    "effective_gap": 5,
-                    "display": true
-                  },
-                  "label_settings": {
-                    "display": true,
-                    "font_size": ""
-                  }
-                }
-              ]
-            }
-          ],
-          "indicator_holder_groups": [
-            {
-              "name": "",
-              "indicator_holder_ids": [],
-              "background_color": "#ffffff",
-              "holder_style": null
-            }
-          ]
+          "indicator_holders": [],
+          "indicator_holder_groups": []
         },
-        "additional_labels": [
-          {
-            "id": "source",
-            "name": "Source"
-          }
-        ],
+        "additional_labels": [],
         "footer": {
           "display_generated_date": false,
           "display_title": false,
@@ -315,4 +333,105 @@ export class CreateComponent implements OnInit {
       }
     }
   }
+
+  getIndicatorStructure(name:string, id:string){
+    return {
+          "name": name,
+          "id": id,
+          "title": name,
+          "high_is_good": true,
+          "value": 0,
+          "weight": 100,
+          "legend_display": true,
+          "legendset": [
+            {
+              "color": "#008000",
+              "min": "80",
+              "max": "-"
+            },
+            {
+              "color": "#FFFF00",
+              "min": "60",
+              "max": "80"
+            },
+            {
+              "color": "#FF0000",
+              "min": "0",
+              "max": "60"
+            }
+          ],
+          "additional_label_values": [],
+          "arrow_settings": {
+            "effective_gap": 5,
+            "display": true
+          },
+          "label_settings": {
+            "display": true,
+            "font_size": ""
+          }
+        }
+
+  }
+
+  getIndicatorGroupStructure(){
+    return {
+      "name": "",
+      "indicator_holder_ids": [],
+      "background_color": "#ffffff",
+      "holder_style": null
+    }
+  }
+
+  getItemsFromGroups(): any[]{
+    let indicators_list = [];
+    for(let data of this.scorecard.data.data_settings.indicator_holder_groups ){
+      for( let holders_list of data.indicator_holder_ids ){
+        for( let holder of this.scorecard.data.data_settings.indicator_holders ){
+          if(holder.holder_id == holders_list){
+            indicators_list.push(holder)
+          }
+        }
+      }
+    }
+    return indicators_list;
+  }
+
+  getIndicatorTitle(holder): string{
+    var title = [];
+    for( let data of holder.indicators ){
+      title.push(data.title)
+    }
+    return title.join(' / ')
+  }
+
+  assignBgColor(object,value): string{
+    var color = "#BBBBBB";
+    for( let data of object.legendset ){
+      if(data.max == "-"){
+
+        if(parseInt(value) >= parseInt(data.min) ){
+          color = data.color;
+        }
+      }else{
+        if(parseInt(value) >= parseInt(data.min) && parseInt(value) <= parseInt(data.max)){
+          color = data.color;
+        }
+      }
+    };
+    return color;
+  }
+
+  //check if the indicator is already added
+  indicatorExist(holders,indicator){
+  let check = false;
+  for( let holder of holders ){
+    for( let indicatorValue of holder.indicators ){
+      if(indicatorValue.id == indicator.id){
+        check = true;
+      }
+    }
+  }
+  return check;
+};
+
 }
