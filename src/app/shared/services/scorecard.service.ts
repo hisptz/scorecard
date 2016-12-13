@@ -41,15 +41,21 @@ export class ScorecardService {
   }
 
   create(scorecard: ScoreCard) {
-
+    return this.http.post(this.baseUrl+"api/dataStore/scorecards/"+scorecard.id, scorecard.data)
+      .map((response: Response) => response.json())
+      .catch(this.handleError);
   }
 
   update(scorecard: ScoreCard) {
-
+    return this.http.put(this.baseUrl+"api/dataStore/scorecards/"+scorecard.id, scorecard.data)
+      .map((response: Response) => response.json())
+      .catch(this.handleError);
   }
 
-  remove(scorecardId: string) {
-
+  remove(scorecard: ScoreCard) {
+    return this.http.delete(this.baseUrl+"api/dataStore/scorecards/"+scorecard.id)
+      .map((response: Response) => response.json())
+      .catch(this.handleError);
   }
 
   private extractData(res: Response) {

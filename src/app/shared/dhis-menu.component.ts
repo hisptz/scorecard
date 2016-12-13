@@ -41,12 +41,6 @@ export class DhisMenuComponent implements OnInit, AfterViewInit {
   }
 
   ngAfterViewInit() {
-    // Adding menu_css file for Menu Icons
-    const menu_css = document.createElement('link');
-    menu_css.setAttribute('rel', 'stylesheet');
-    menu_css.setAttribute('type', 'text/css');
-    menu_css.setAttribute('href', this.dhis2_url + 'dhis-web-commons/css/menu.css' );
-    document.getElementsByTagName('head')[0].appendChild(menu_css);
 
     this.getSystemSettings()
       .subscribe(

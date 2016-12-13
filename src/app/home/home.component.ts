@@ -14,7 +14,10 @@ export class HomeComponent implements OnInit {
   total: number = 0;
   loading_message:string;
   queryterm: string = null;
-
+  deleting: boolean[] = [];
+  deleted: boolean[] = [];
+  error_deleting: boolean[] = [];
+  confirm_deleting: boolean[] = [];
   constructor( private scoreCardService: ScorecardService) {
     this.scorecards = []
     this.scorecards_loading = true;
@@ -35,6 +38,10 @@ export class HomeComponent implements OnInit {
                 id: scorecard,
                 data: scorecard_details
               });
+              this.deleting[scorecard] = false;
+              this.confirm_deleting[scorecard] = false;
+              this.deleted[scorecard] = false;
+              this.error_deleting[scorecard] = false;
               scorecard_count ++;
               // set loading equal to false when all scorecards are loaded
               if(scorecard_count == this.scorecards.length){
@@ -60,8 +67,29 @@ export class HomeComponent implements OnInit {
     )
   }
 
-  deleteScoreCard( scorecardId ){
-    console.log("Score card with id "+scorecardId+" is deleted");
+  deleteScoreCard( scorecard ){
+    this.deleting[scorecard.id] = true;
+    this.confirm_deleting[scorecard.id] = false;
+    this.scoreCardService.remove( scorecard ).subscribe(
+      data => {
+        this.deleted[scorecard.id] = true;
+        this.error_deleting[scorecard.id] = false;
+        this.scorecards.forEach((item, index) => {
+          if( item.id == scorecard.id ){
+            this.scorecards.splice(index,1);
+          }
+        });
+      },
+      error => {
+        this.deleted[scorecard.id] = false;
+        this.deleting[scorecard.id] = false;
+        this.error_deleting[scorecard.id] = true;
+        setTimeout(function() {
+          this.error_deleting[scorecard.id] = false;
+        }, 4000);
+      }
+    )
   }
+
 
 }

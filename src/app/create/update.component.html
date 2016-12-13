@@ -3,7 +3,7 @@
     <img src="icon.png"> <span style="font-size: 15px"> Score Card</span>
   </div>
   <div class="col-sm-8">
-      <h3 class="text-center" style="margin-top: 0px"><small>Create a new scorecard</small></h3>
+    <h3 class="text-center" style="margin-top: 0px"><small>Create a new scorecard</small></h3>
   </div>
   <div class="col-sm-2" style="margin-top: 14px">
     <button class="btn btn-default btn-sm pull-right" [routerLink]="['']"><span class="glyphicon glyphicon-home"></span> home</button>
@@ -31,7 +31,7 @@
         <button class="btn btn-xs" *ngIf="need_for_indicator" (click)="enableAddIndicator()">Add Indicator</button>
       </th>
       <th *ngFor="let indicator of getItemsFromGroups()" style="font-size: 10px;width: 70px;cursor: pointer" class="sans-pro"
-           title="Click to update {{ getIndicatorTitle(indicator) }}"
+          title="Click to update {{ getIndicatorTitle(indicator) }}"
           [ngClass]="{'current':is_current_indicator(indicator)}"
           (click)="updateIndicator(indicator)">
         {{ getIndicatorTitle(indicator) }}
@@ -294,7 +294,7 @@
           [disabled]="scorecard.data.data_settings.indicator_holders.length == 0 || scorecard.data.header.title == '' || scorecard.data.header.description == ''"
           (click)="saveScoreCard()"
           *ngIf="!saving_scorecard">
-    Create
+    Update
   </button>
   <button class="btn btn-xs btn-warning pull-right" style="margin-top: 8px" (click)="cancelCreate()" *ngIf="!saving_scorecard">Cancel</button>
   <h5 class="pull-right" *ngIf="saving_scorecard"><img src="loading.gif" style="height: 50px;"> Saving score card Information, Please wait...</h5>

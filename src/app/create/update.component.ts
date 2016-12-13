@@ -4,14 +4,15 @@ import {IndicatorGroupService, IndicatorGroup} from "../shared/services/indicato
 import {DatasetService, Dataset} from "../shared/services/dataset.service";
 import {DataElementGroupService, DataElementGroup} from "../shared/services/data-element-group.service";
 import {ScoreCard, ScorecardService} from "../shared/services/scorecard.service";
-import {Router} from "@angular/router";
+import {Router, ActivatedRoute} from "@angular/router";
+import {Subscription} from "rxjs";
 
 @Component({
-  selector: 'app-create',
-  templateUrl: './create.component.html',
-  styleUrls: ['./create.component.css']
+  selector: 'app-update',
+  templateUrl: './update.component.html',
+  styleUrls: ['./update.component.css']
 })
-export class CreateComponent implements OnInit {
+export class UpdateComponent implements OnInit {
 
   // variable initializations
   datasets: Dataset[];
@@ -36,12 +37,14 @@ export class CreateComponent implements OnInit {
   current_holder_group: any;
   saving_scorecard: boolean = false;
   saving_error: boolean = false;
+  private subscription: Subscription;
   constructor(private http: Http,
               private indicatorService: IndicatorGroupService,
               private datasetService: DatasetService,
               private dataElementService: DataElementGroupService,
               private router: Router,
-              private scorecardService: ScorecardService
+              private scorecardService: ScorecardService,
+              private activatedRouter: ActivatedRoute
   )
   {
     this.indicatorGroups = [];
@@ -63,6 +66,19 @@ export class CreateComponent implements OnInit {
 
     // initialize the scorecard with a uid
     this.scorecard = this.getEmptyScoreCard();
+    this.subscription = activatedRouter.params.subscribe(
+      (params: any) => {
+        let id = params['scorecardid'];
+        this.scorecardService.load(id).subscribe(
+          scorecard_details => {
+            this.scorecard = {
+              id: id,
+              data: scorecard_details
+            };
+
+          })
+      });
+
     // this.getItemsFromGroups();
   }
 
@@ -148,6 +164,7 @@ export class CreateComponent implements OnInit {
   load_list(group_id,current_type): void{
     this.listQuery = null;
     this.activeGroup = group_id;
+    console.log(this.scorecard);
     this.listReady = true;
     this.current_listing = [];
     this.done_loading_list = false;
@@ -238,6 +255,7 @@ export class CreateComponent implements OnInit {
   // add an indicator holder to a scorecard
   addIndicatorHolder(indicator_holder): void{
     let add_new = true;
+    console.log("id:",indicator_holder.holder_id);
     for( let holder of this.scorecard.data.data_settings.indicator_holders ){
       if (holder.holder_id == indicator_holder.holder_id){
         holder = indicator_holder;
@@ -247,6 +265,7 @@ export class CreateComponent implements OnInit {
     if(add_new){
       this.scorecard.data.data_settings.indicator_holders.push(indicator_holder);
     }
+    console.log( this.scorecard.data.data_settings);
     this.need_for_indicator = true;
   }
 
@@ -388,40 +407,40 @@ export class CreateComponent implements OnInit {
   // define a default indicator structure
   getIndicatorStructure(name:string, id:string): any{
     return {
-          "name": name,
-          "id": id,
-          "title": name,
-          "high_is_good": true,
-          "value": 0,
-          "weight": 100,
-          "legend_display": true,
-          "legendset": [
-            {
-              "color": "#008000",
-              "min": "80",
-              "max": "-"
-            },
-            {
-              "color": "#FFFF00",
-              "min": "60",
-              "max": "80"
-            },
-            {
-              "color": "#FF0000",
-              "min": "0",
-              "max": "60"
-            }
-          ],
-          "additional_label_values": [],
-          "arrow_settings": {
-            "effective_gap": 5,
-            "display": true
-          },
-          "label_settings": {
-            "display": true,
-            "font_size": ""
-          }
+      "name": name,
+      "id": id,
+      "title": name,
+      "high_is_good": true,
+      "value": 0,
+      "weight": 100,
+      "legend_display": true,
+      "legendset": [
+        {
+          "color": "#008000",
+          "min": "80",
+          "max": "-"
+        },
+        {
+          "color": "#FFFF00",
+          "min": "60",
+          "max": "80"
+        },
+        {
+          "color": "#FF0000",
+          "min": "0",
+          "max": "60"
         }
+      ],
+      "additional_label_values": [],
+      "arrow_settings": {
+        "effective_gap": 5,
+        "display": true
+      },
+      "label_settings": {
+        "display": true,
+        "font_size": ""
+      }
+    }
 
   }
 
@@ -469,16 +488,16 @@ export class CreateComponent implements OnInit {
 
   //check if the indicator is already added in a scorecard
   indicatorExist(holders,indicator): boolean {
-  let check = false;
-  for( let holder of holders ){
-    for( let indicatorValue of holder.indicators ){
-      if(indicatorValue.id == indicator.id){
-        check = true;
+    let check = false;
+    for( let holder of holders ){
+      for( let indicatorValue of holder.indicators ){
+        if(indicatorValue.id == indicator.id){
+          check = true;
+        }
       }
     }
-  }
-  return check;
-};
+    return check;
+  };
 
   // check if this is the current group
   is_current_group(group: any):boolean {

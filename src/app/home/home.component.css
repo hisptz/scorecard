@@ -24,7 +24,6 @@
 
 .scorecard_details:hover{
   transform: scale(1.01, 1.01);
-  z-index: 10000;
   -webkit-box-shadow: 0 0 10px rgba(0,0,0,0.2);
   box-shadow: 0 0 10px rgba(0,0,0,0.2);
   background-color: rgba(0,0,0,0.03);
