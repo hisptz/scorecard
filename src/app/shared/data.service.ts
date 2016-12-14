@@ -102,14 +102,10 @@ export class DataService {
     return Observable.throw( error );
   }
 
-  getIndicatorsRequest ( orgunit, period, dataElementsArray ) {
-    let indicatorsArray = [];
-    for ( let dataElement of dataElementsArray ) {
-      let temp_array = dataElement.split('-');
-      indicatorsArray.push(temp_array[0]);
-    }
-    let indicators = indicatorsArray.join(';');
-    return this.http.get(this.constant.root_dir + 'api/analytics.json?dimension=dx:'+indicators+'&dimension=ou:'+orgunit+'&filter=pe:'+period+'&displayProperty=NAME')
+  getIndicatorsRequest ( orgunit, period, indicator ) {
+
+    // let indicators = indicatorArray.join(';');
+    return this.http.get(this.constant.root_dir + 'api/analytics.json?dimension=dx:'+indicator+'&dimension=ou:LEVEL-1;LEVEL-2&filter=pe:'+period+'&displayProperty=NAME')
       .map((response: Response) => response.json())
       .catch( this.handleError );
   }
@@ -121,13 +117,11 @@ export class DataService {
       .catch( this.handleError );
   }
 
-  getIndicatorData ( indicatorId , indicatorsObject) {
-    let return_object: any = {};
-    return_object['available'] = false;
+  getIndicatorData ( orgunitId , indicatorsObject) {
+    let return_object: 0;
     for ( let row of indicatorsObject.rows ) {
-      if( row[0] == indicatorId ){
-        return_object['available'] = true;
-        return_object['data'] =  row[2];
+      if( row[1] == orgunitId ){
+        return_object =  row[2];
       }
     }
     return return_object

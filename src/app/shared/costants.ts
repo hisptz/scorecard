@@ -12,6 +12,7 @@ export class Constants {
         this.root_dir = 'http://127.0.0.1:9000/';
       // this.root_dir = 'http://41.217.202.50:9002/dhis/'
       // this.root_dir = 'https://dhis.moh.go.tz/'
+      // this.root_dir = 'https://play.dhis2.org/demo/';
     }
 
     getPeriods (period_type: string, year: number, years: number) : Array<any> {

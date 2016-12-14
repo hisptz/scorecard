@@ -11,7 +11,7 @@
 </div>
 <div class="container-fluid no-left-padding" style="border-top: 1px solid blanchedalmond; padding-top: 8px">
   <!--sample score card-->
-  <table class="table table-bordered table-hover table-responsive table-condensed" style="margin-bottom: 3px">
+  <table class="table table-bordered" style="margin-bottom: 3px">
     <tr>
       <th>
         <button class="btn btn-xs" *ngIf="need_for_group">Add Group</button>
@@ -38,11 +38,11 @@
       </th>
     </tr>
     <tr>
-      <td style="vertical-align: bottom; padding: 0px;">
+      <td style="vertical-align: bottom; padding: 0px">
         Organisation Unit
       </td>
       <th *ngFor="let indicator of getItemsFromGroups()"
-          style="font-size: 10px;width: 70px; cursor: pointer; padding: 0px"
+          style="font-size: 10px;width: 70px; cursor: pointer; padding: 0px;line-height: 10%"
           class="sans-pro" [ngClass]="{'current':is_current_indicator(indicator)}"
           title="Click to Update {{ getIndicatorTitle(indicator) }}"
           (click)="updateIndicator(indicator)">
