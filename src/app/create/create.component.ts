@@ -286,7 +286,7 @@ export class CreateComponent implements OnInit {
 
   // enable adding of new Indicator
   enableAddIndicator(): void{
-    this.current_group_id = this.current_group_id + 1;
+    this.current_group_id = this.getStartingIndicatorId() + 1;
     this.current_indicator_holder = {
       "holder_id": this.current_group_id,
       "indicators": []
@@ -297,6 +297,17 @@ export class CreateComponent implements OnInit {
     this.addIndicatorHolder(this.current_indicator_holder);
     this.current_holder_group.id = this.current_holder_group_id;
     this.addHolderGroups(this.current_holder_group, this.current_indicator_holder);
+  }
+
+  //try to deduce last number needed to start adding indicator
+  getStartingIndicatorId(): number{
+    let last_id = 0;
+    for(let holder of this.scorecard.data.data_settings.indicator_holders){
+      if( holder.holder_id > last_id){
+        last_id = holder.holder_id;
+      }
+    }
+    return last_id;
   }
 
   //pass through the scorecard and delete all empty rows
@@ -548,21 +559,35 @@ export class CreateComponent implements OnInit {
   }
 
   // saving scorecard details
-  saveScoreCard(): void {
+  saveScoreCard(action: string = "save"): void {
     // delete all empty indicators if any
     this.cleanUpEmptyColumns();
 
     // post the data
     this.saving_scorecard = true;
-    this.scorecardService.create(this.scorecard).subscribe(
-      (data) => {
-        this.saving_scorecard = false;
-        this.router.navigate(['view',this.scorecard.id]);
-      },
-      error => {
-        this.saving_error = true;
-        this.saving_scorecard = false
-      }
-    );
+    if(action == "save"){
+      this.scorecardService.create(this.scorecard).subscribe(
+        (data) => {
+          this.saving_scorecard = false;
+          this.router.navigate(['view',this.scorecard.id]);
+        },
+        error => {
+          this.saving_error = true;
+          this.saving_scorecard = false
+        }
+      );
+    }else{
+      this.scorecardService.update(this.scorecard).subscribe(
+        (data) => {
+          this.saving_scorecard = false;
+          this.router.navigate(['view',this.scorecard.id]);
+        },
+        error => {
+          this.saving_error = true;
+          this.saving_scorecard = false
+        }
+      );
+    }
+
   }
 }

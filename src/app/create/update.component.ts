@@ -29,7 +29,7 @@ export class UpdateComponent implements OnInit {
   listReady:boolean = false;
   listQuery: string = null;
   groupQuery: string = null;
-  need_for_group: boolean = false;
+  need_for_group: boolean = true;
   need_for_indicator: boolean = false;
   current_group_id: number = 1;
   current_holder_group_id: number = 1;
@@ -37,6 +37,7 @@ export class UpdateComponent implements OnInit {
   current_holder_group: any;
   saving_scorecard: boolean = false;
   saving_error: boolean = false;
+  deleting: boolean[] = [];
   private subscription: Subscription;
   constructor(private http: Http,
               private indicatorService: IndicatorGroupService,
@@ -164,7 +165,6 @@ export class UpdateComponent implements OnInit {
   load_list(group_id,current_type): void{
     this.listQuery = null;
     this.activeGroup = group_id;
-    console.log(this.scorecard);
     this.listReady = true;
     this.current_listing = [];
     this.done_loading_list = false;
@@ -239,6 +239,7 @@ export class UpdateComponent implements OnInit {
     }else{
       let indicator = this.getIndicatorStructure(item.name, item.id);
       this.current_indicator_holder.holder_id = this.current_group_id;
+      console.log(this.current_indicator_holder);
       if(this.current_indicator_holder.indicators.length < 2){
         indicator.value = Math.floor(Math.random() * 60) + 40;
         this.current_indicator_holder.indicators.push( indicator );
@@ -255,7 +256,6 @@ export class UpdateComponent implements OnInit {
   // add an indicator holder to a scorecard
   addIndicatorHolder(indicator_holder): void{
     let add_new = true;
-    console.log("id:",indicator_holder.holder_id);
     for( let holder of this.scorecard.data.data_settings.indicator_holders ){
       if (holder.holder_id == indicator_holder.holder_id){
         holder = indicator_holder;
@@ -265,12 +265,12 @@ export class UpdateComponent implements OnInit {
     if(add_new){
       this.scorecard.data.data_settings.indicator_holders.push(indicator_holder);
     }
-    console.log( this.scorecard.data.data_settings);
     this.need_for_indicator = true;
   }
 
   // add a group of holders to a scorecard
   addHolderGroups(holder_group,holder): void{
+    this.need_for_group = true;
     let add_new = true;
     for( let group of this.scorecard.data.data_settings.indicator_holder_groups ){
       if (group.id == holder_group.id){
@@ -281,19 +281,53 @@ export class UpdateComponent implements OnInit {
       }
     }
     if(add_new){
+      this.deleting[holder_group.id] = false;
       if( holder_group.indicator_holder_ids.indexOf(holder.holder_id) == -1 ) holder_group.indicator_holder_ids.push(holder.holder_id);
       this.scorecard.data.data_settings.indicator_holder_groups.push(holder_group);
     }
   }
 
+  // enabling creating of group
+  createGroup(): void {
+    this.current_holder_group_id = this.scorecard.data.data_settings.indicator_holders.length + 1;
+    this.current_holder_group = {
+      "id": this.current_holder_group_id,
+      "name": "New Group",
+      "indicator_holder_ids": [],
+      "background_color": "#ffffff",
+      "holder_style": null
+    };
+    this.enableAddIndicator();
+  }
+
   // enable adding of new Indicator
   enableAddIndicator(): void{
-    this.current_group_id = this.current_group_id + 1;
+    this.current_group_id = this.getStartingIndicatorId() + 1;
     this.current_indicator_holder = {
       "holder_id": this.current_group_id,
       "indicators": []
     };
     this.need_for_indicator = false;
+    this.cleanUpEmptyColumns();
+
+    this.addIndicatorHolder(this.current_indicator_holder);
+    this.current_holder_group.id = this.current_holder_group_id;
+    this.addHolderGroups(this.current_holder_group, this.current_indicator_holder);
+  }
+
+  //try to deduce last number needed to start adding indicator
+  getStartingIndicatorId(): number{
+    let last_id = 0;
+    for(let holder of this.scorecard.data.data_settings.indicator_holders){
+      if( holder.holder_id > last_id){
+        last_id = holder.holder_id;
+      }
+    }
+    return last_id;
+  }
+
+  //pass through the scorecard and delete all empty rows
+  cleanUpEmptyColumns(){
     let deleted_id = null;
     this.scorecard.data.data_settings.indicator_holders.forEach((item, index) => {
       if(item.indicators.length == 0){
@@ -301,32 +335,55 @@ export class UpdateComponent implements OnInit {
         this.scorecard.data.data_settings.indicator_holders.splice(index,1);
       }
     });
-    for (let group of this.scorecard.data.data_settings.indicator_holder_groups ){
+    this.scorecard.data.data_settings.indicator_holder_groups.forEach( (group, groupIndex)=>{
       group.indicator_holder_ids.forEach((item, index) => {
         if(item == deleted_id){
           group.indicator_holder_ids.splice(index,1);
         }
+        if(group.indicator_holder_ids.length == 0){
+          this.scorecard.data.data_settings.indicator_holder_groups.splice(groupIndex,1);
+        }
+      })
+    });
+  }
+
+  //function to remove the indicator holder group form the scorecard
+  deleteGroup(holderGroup){
+    for( let holder of holderGroup.indicator_holder_ids ){
+      this.scorecard.data.data_settings.indicator_holders.forEach((item, index)=>{
+        if(item.holder_id == holder){
+          this.scorecard.data.data_settings.indicator_holders.splice(index,1);
+        }
       })
     }
-
-
-    this.addIndicatorHolder(this.current_indicator_holder);
-    this.current_holder_group.id = this.current_holder_group_id;
-    this.addHolderGroups(this.current_holder_group, this.current_indicator_holder);
+    this.scorecard.data.data_settings.indicator_holder_groups.forEach((item, index)=>{
+      if(item.id == holderGroup.id){
+        this.scorecard.data.data_settings.indicator_holder_groups.splice(index,1);
+      }
+    })
   }
 
   // this will enable updating of indicator
   updateIndicator(indicator:any): void{
     this.current_indicator_holder = indicator;
     this.need_for_indicator = true;
+    this.scorecard.data.data_settings.indicator_holder_groups.forEach( (group, groupIndex) => {
+      if(group.indicator_holder_ids.indexOf(indicator.holder_id) > -1){
+        this.current_holder_group = group;
+        this.current_holder_group_id = group.id;
+      }
+    });
+    this.cleanUpEmptyColumns();
   }
 
+  //deleting indicator from score card
   deleteIndicator(indicator): void{
     this.current_indicator_holder.indicators.forEach((item, index) => {
       if (item.id == indicator.id){
         this.current_indicator_holder.indicators.splice(index,1);
       }
     });
+    this.cleanUpEmptyColumns();
   }
 
   // generate a random list of Id for use as scorecard id
@@ -482,7 +539,7 @@ export class UpdateComponent implements OnInit {
           color = data.color;
         }
       }
-    };
+    }
     return color;
   }
 
@@ -499,7 +556,7 @@ export class UpdateComponent implements OnInit {
     return check;
   };
 
-  // check if this is the current group
+  // check if this is the current selected group
   is_current_group(group: any):boolean {
     let check = false;
     if(group.id == this.current_holder_group.id) {
@@ -508,6 +565,7 @@ export class UpdateComponent implements OnInit {
     return check;
   }
 
+  // check if this is the current selected indicator
   is_current_indicator(indicator: any):boolean {
     let check = false;
     if ( indicator.holder_id == this.current_indicator_holder.holder_id ){
@@ -516,42 +574,36 @@ export class UpdateComponent implements OnInit {
     return check;
   }
 
-  scorecardReady(): boolean{
-    if(this.scorecard.data.data_settings.indicator_holders.length == 0 || this.scorecard.data.header.title == "" || this.scorecard.data.header.description == ""){
-      return false;
-    }else{
-      return true
-    }
-  }
-
-  saveScoreCard(): void {
+  // saving scorecard details
+  saveScoreCard(action: string = "save"): void {
     // delete all empty indicators if any
-    let deleted_id = null;
-    this.scorecard.data.data_settings.indicator_holders.forEach((item, index) => {
-      if(item.indicators.length == 0){
-        deleted_id = item.holder_id;
-        this.scorecard.data.data_settings.indicator_holders.splice(index,1);
-      }
-    });
-    for (let group of this.scorecard.data.data_settings.indicator_holder_groups ){
-      group.indicator_holder_ids.forEach((item, index) => {
-        if(item == deleted_id){
-          group.indicator_holder_ids.splice(index,1);
-        }
-      })
-    }
+    this.cleanUpEmptyColumns();
 
     // post the data
     this.saving_scorecard = true;
-    this.scorecardService.create(this.scorecard).subscribe(
-      (data) => {
-        this.saving_scorecard = false;
-        this.router.navigate(['view',this.scorecard.id]);
-      },
-      error => {
-        this.saving_error = true;
-        this.saving_scorecard = false
-      }
-    );
+    if(action == "save"){
+      this.scorecardService.create(this.scorecard).subscribe(
+        (data) => {
+          this.saving_scorecard = false;
+          this.router.navigate(['view',this.scorecard.id]);
+        },
+        error => {
+          this.saving_error = true;
+          this.saving_scorecard = false
+        }
+      );
+    }else{
+      this.scorecardService.update(this.scorecard).subscribe(
+        (data) => {
+          this.saving_scorecard = false;
+          this.router.navigate(['view',this.scorecard.id]);
+        },
+        error => {
+          this.saving_error = true;
+          this.saving_scorecard = false
+        }
+      );
+    }
+
   }
 }
