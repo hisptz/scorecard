@@ -14,7 +14,8 @@
   <table class="table table-bordered" style="margin-bottom: 3px">
     <tr>
       <th>
-        <button class="btn btn-xs" *ngIf="need_for_group">Add Group</button>
+        <button class="btn btn-xs" *ngIf="need_for_group" (click)="createGroup()">Add Group</button>
+        <!--<span class="help-block">If you do not need groups don't add a new group just add all indicators under default group </span>-->
       </th>
       <th
         style="font-size: 9px; "
@@ -23,7 +24,17 @@
         class="sans-pro"
         [ngClass]="{'current':is_current_group(indicator_holder_group)}"
       >
-        {{ indicator_holder_group.name }}
+        <input type="text" [(ngModel)]="indicator_holder_group.name" class="group-text">
+        <span *ngIf="indicator_holder_group.id != 1 && !deleting[indicator_holder_group.id]"
+              class="glyphicon glyphicon-trash text-danger"
+              style="cursor: pointer; padding-left: 5px"
+              (click)="deleting[indicator_holder_group.id] = true"
+        ></span>
+        <p *ngIf="indicator_holder_group.id != 1 && deleting[indicator_holder_group.id]">
+          Please Confirm, indicators will be deleted too.<br>
+          <button class="btn btn-xs btn-warning" (click)="deleting[indicator_holder_group.id] = false">cancel</button>
+          <button class="btn btn-xs btn-danger" (click)="deleteGroup(indicator_holder_group)">delete</button>
+        </p>
       </th>
     </tr>
     <tr>
