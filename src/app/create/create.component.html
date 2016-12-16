@@ -99,8 +99,8 @@
       <p class="help-block">Scorecard description</p>
       <div class="form-group">
         <label>Show</label>
-        <div class="row">
-          <div class="col-sm-6">
+        <div>
+          <div class="col-sm-6" style="padding-left: 0px">
             <div class="checkbox">
               <label>
                 <input type="checkbox" [(ngModel)]="scorecard.data.header.show_legend_definition"> Legend
@@ -114,7 +114,7 @@
               </label>
             </div>
           </div>
-          <div class="col-sm-6">
+          <div class="col-sm-6"  style="padding-left: 0px">
             <div class="checkbox">
               <label>
                 <input type="checkbox" [(ngModel)]="scorecard.data.show_rank"> rank
@@ -129,14 +129,15 @@
             </div>
           </div>
         </div>
+
       </div>
       <p class="help-block">Add arrows to show data comparison with last period</p>
       <!--legend definition-->
-      <div class="row">
+      <div class="form-group">
         <label>Legend Definition</label>
-        <div *ngFor="let legend of scorecard.data.legendset_definitions">
-          <div class="col-sm-3" style="padding-right: 2px"><input  style="height: 25px" [(colorPicker)]="legend.color" [style.background]="legend.color" [(ngModel)]="legend.color" class="form-control color-input input-sm"/></div>
-          <div class="col-sm-9" style="padding-left: 2px"><input [(ngModel)]="legend.definition" class="form-control color-input input-sm" style="height: 25px"/></div>
+        <div *ngFor="let legend of scorecard.data.legendset_definitions" class="">
+          <div class="col-sm-3" style="padding-right: 2px;padding-left: 2px"><input  style="height: 25px" [(colorPicker)]="legend.color" [style.background]="legend.color" [(ngModel)]="legend.color" class="form-control color-input input-sm"/></div>
+          <div class="col-sm-9" style="padding-left: 2px;padding-right: 2px"><input [(ngModel)]="legend.definition" class="form-control color-input input-sm" style="height: 25px"/></div>
         </div>
       </div>
 
@@ -199,14 +200,14 @@
   <!--item details-->
   <div class="col-sm-5 no-left-padding1" style="padding-right: 0px">
     <div class="thumbnail scorecard_details">
-      <div class="row" *ngFor="let indicator of current_indicator_holder.indicators" style="border-bottom: 1px solid darkblue; padding-top: 3px">
+      <div class="row" *ngFor="let indicator of current_indicator_holder.indicators" style="border-bottom: 1px solid #B3B3B3; padding-top: 3px">
         <div class="row" style="margin-right: 20px">
           <button class="btn btn-danger btn-xs pull-right" (click)="deleteIndicator(indicator)">
             <span class="glyphicon glyphicon-trash" ></span>
           </button>
         </div>
         <div class="col-sm-7">
-          <div class="row" style="padding-bottom: 5px">
+          <div style="padding-bottom: 5px">
             <div class="col-sm-3">
               <label class="sans-pro lebal">Name:</label>
             </div>
@@ -214,7 +215,7 @@
               <input [value]="indicator.name" class="form-control input-sm" disabled/>
             </div>
           </div>
-          <div class="row" style="padding-bottom: 5px">
+          <div style="padding-bottom: 5px">
             <div class="col-sm-3">
               <label class="sans-pro lebal">Title:</label>
             </div>
@@ -222,7 +223,7 @@
               <input [(ngModel)]="indicator.title" class="form-control input-sm"/>
             </div>
           </div>
-          <div class="row" style="padding-bottom: 5px">
+          <div  style="padding-bottom: 5px">
             <div class="col-sm-3">
               <label class="sans-pro lebal">Weight:</label>
             </div>
@@ -230,7 +231,7 @@
               <input type="number" min="0" max="200" [(ngModel)]="indicator.weight" class="form-control input-sm" [disabled]="!scorecard.data.show_score"/>
             </div>
           </div>
-          <div class="row" style="padding-bottom: 5px">
+          <div  style="padding-bottom: 5px">
             <div class="col-sm-3">
               <label class="sans-pro lebal">Effective Gap:</label>
             </div>
@@ -244,7 +245,7 @@
               <input type="checkbox" [(ngModel)]="indicator.arrow_settings.display" >
             </div>
           </div>
-          <div class="row" style="padding-bottom: 5px">
+          <div style="padding-bottom: 5px">
             <div class="col-sm-4">
               <label class="sans-pro lebal">High is good:</label>
             </div>
@@ -261,13 +262,14 @@
           </div>
         </div>
         <!--Legend set definition-->
-        <div class="col-sm-5">
+        <div class="col-sm-5" style="padding-bottom: 5px">
           <div *ngFor="let legend of indicator.legendset; let i = index;">
             <div class="row" style="padding-top: 2px">
-              <div class="col-sm-10">
+              <div class="col-sm-12">
+                <span [style.background-color]="scorecard.data.legendset_definitions[i].color">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>&nbsp;
                 <label class="sans-pro lebal">{{ scorecard.data.legendset_definitions[i].definition }}</label>
               </div>
-              <div class="col-sm-1" [style.background-color]="scorecard.data.legendset_definitions[i].color">&nbsp;</div>
+
             </div>
 
             <div class="row">

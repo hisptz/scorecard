@@ -10,7 +10,7 @@ import {Subscription} from "rxjs";
 @Component({
   selector: 'app-update',
   templateUrl: './update.component.html',
-  styleUrls: ['./update.component.css']
+  styleUrls: ['./create.component.css']
 })
 export class UpdateComponent implements OnInit {
 

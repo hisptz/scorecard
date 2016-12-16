@@ -17,6 +17,7 @@ import {IndicatorGroupService} from "./shared/services/indicator-group.service";
 import {DatasetService} from "./shared/services/dataset.service";
 import {DataElementGroupService} from "./shared/services/data-element-group.service";
 import { ScoreCardFilterPipe } from './home/score-card-filter.pipe';
+import {FilterService} from "./shared/services/filter.service";
 
 @NgModule({
   declarations: [
@@ -38,7 +39,8 @@ import { ScoreCardFilterPipe } from './home/score-card-filter.pipe';
     ScorecardService,
     IndicatorGroupService,
     DatasetService,
-    DataElementGroupService
+    DataElementGroupService,
+    FilterService
   ],
   bootstrap: [AppComponent]
 })
