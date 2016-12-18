@@ -4,6 +4,9 @@ import {ScoreCard, ScorecardService} from "../shared/services/scorecard.service"
 import {ActivatedRoute} from "@angular/router";
 import {Subscription} from "rxjs";
 import {DataService} from "../shared/data.service";
+import {FilterService} from "../shared/services/filter.service";
+import {TreeNode} from "angular2-tree-component";
+import {Constants} from "../shared/costants";
 
 @Component({
   selector: 'app-view',
@@ -23,15 +26,27 @@ export class ViewComponent implements OnInit {
   proccessed_percent = 0;
   loading: boolean = true;
   searchQuery: string = null;
+  tree_orgunits: any[] = [];
+  orgunit_levels: any = 1;
+  base_url: string;
+  tree_config: any = {
+    show_search : false,
+    search_text : 'Search',
+    level: null,
+    loading_message: 'Loading Organisation units...'
+  };
   constructor(private scorecardService: ScorecardService,
               private dataService: DataService,
-              private activatedRouter: ActivatedRoute) {
+              private activatedRouter: ActivatedRoute,
+              private filterService: FilterService,
+              private costant: Constants
+  ) {
+    this.base_url = this.costant.root_dir;
     this.subscription = this.activatedRouter.params.subscribe(
       (params: any) => {
         this.scorecardId = params['scorecardid'];
         this.scorecard = this.getEmptyScoreCard();
       });
-
   }
 
   ngOnInit() {
@@ -94,7 +109,21 @@ export class ViewComponent implements OnInit {
         }
 
 
-      })
+      });
+
+
+  }
+
+  options = {
+
+  };
+
+  loadOrgunitsCildren(type: string, uid: string=null, level: number = 0){
+    if(type = "level"){
+      for( let orgunit of this.tree_orgunits ){
+
+      }
+    }
   }
 
   checkOrgunitAvailability(id, array){

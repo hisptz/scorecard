@@ -53,18 +53,18 @@ export class UpdateComponent implements OnInit {
     this.datasets = [];
     this.current_groups = [];
     this.current_listing = [];
+    // this.getItemsFromGroups();
     this.current_indicator_holder = {
       "holder_id": 1,
       "indicators": []
     };
     this.current_holder_group = {
       "id": 1,
-      "name": "",
+      "name": "Default",
       "indicator_holder_ids": [],
       "background_color": "#ffffff",
       "holder_style": null
     };
-
     // initialize the scorecard with a uid
     this.scorecard = this.getEmptyScoreCard();
     this.subscription = activatedRouter.params.subscribe(
@@ -76,11 +76,24 @@ export class UpdateComponent implements OnInit {
               id: id,
               data: scorecard_details
             };
+            // this.getItemsFromGroups();
+            let i = 0;
+            for( let item of this.scorecard.data.data_settings.indicator_holder_groups ){
+              i++;
+              if(i == 1){
+                this.current_holder_group = item;
+              }else{ continue; }
 
+            }
+            let j = 0;
+            for( let item of this.scorecard.data.data_settings.indicator_holders){
+              j++;
+              if(j == 1){
+                this.current_indicator_holder = item;
+              }else{ continue; }
+            }
           })
       });
-
-    // this.getItemsFromGroups();
   }
 
   ngOnInit() {
@@ -234,17 +247,23 @@ export class UpdateComponent implements OnInit {
 
   // load a single item for use in a score card
   load_item(item): void{
-    if(this.indicatorExist(this.scorecard.data.data_settings.indicator_holders,item)){
+    if( this.indicatorExist( this.scorecard.data.data_settings.indicator_holders, item )){
       alert("Selected indicator has already been added");
     }else{
       let indicator = this.getIndicatorStructure(item.name, item.id);
-      this.current_indicator_holder.holder_id = this.current_group_id;
-      console.log(this.current_indicator_holder);
+      indicator.value = Math.floor(Math.random() * 60) + 40;
+      // this.current_indicator_holder.holder_id = this.current_group_id;
       if(this.current_indicator_holder.indicators.length < 2){
-        indicator.value = Math.floor(Math.random() * 60) + 40;
         this.current_indicator_holder.indicators.push( indicator );
       }else{
-        alert("There are two items already")
+        this.current_group_id = this.getStartingIndicatorId() + 1;
+        this.current_indicator_holder = {
+          "holder_id": this.current_group_id,
+          "indicators": []
+        };
+        this.current_indicator_holder.indicators.push( indicator );
+        this.need_for_indicator = false;
+        this.cleanUpEmptyColumns();
       }
       this.addIndicatorHolder(this.current_indicator_holder);
       this.current_holder_group.id = this.current_holder_group_id;
@@ -317,10 +336,21 @@ export class UpdateComponent implements OnInit {
 
   //try to deduce last number needed to start adding indicator
   getStartingIndicatorId(): number{
-    let last_id = 0;
+    let last_id = 1;
     for(let holder of this.scorecard.data.data_settings.indicator_holders){
       if( holder.holder_id > last_id){
         last_id = holder.holder_id;
+      }
+    }
+    return last_id;
+  }
+
+  //try to deduce last number needed to start adding holder group
+  getStartingGroupHolderId(): number{
+    let last_id = 1;
+    for(let group of this.scorecard.data.data_settings.indicator_holder_groups){
+      if( group.id > last_id){
+        last_id = group.id;
       }
     }
     return last_id;

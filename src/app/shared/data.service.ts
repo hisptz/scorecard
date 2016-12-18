@@ -97,11 +97,6 @@ export class DataService {
       .catch( this.handleError );
   }
 
-  // Handling error
-  handleError (error: any) {
-    return Observable.throw( error );
-  }
-
   getIndicatorsRequest ( orgunit, period, indicator ) {
 
     // let indicators = indicatorArray.join(';');
@@ -137,6 +132,10 @@ export class DataService {
       }
     }
     return return_object
+  }
+  // Handling error
+  handleError (error: any) {
+    return Observable.throw( error );
   }
 
 }

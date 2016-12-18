@@ -1,10 +1,11 @@
-import { Component, OnInit, Input, Output, EventEmitter, OnDestroy } from '@angular/core';
+import {Component, OnInit, Input, Output, EventEmitter, OnDestroy, ViewEncapsulation} from '@angular/core';
 import { Http, Response } from '@angular/http';
 import 'rxjs/Rx';
 import { Subscription } from 'rxjs/Rx';
 import {Observable} from 'rxjs';
-import { TreeNode, TREE_ACTIONS, IActionMapping } from 'angular2-tree-component';
+import {TreeNode, TREE_ACTIONS, IActionMapping, TreeComponent} from 'angular2-tree-component';
 import {DataService} from "./data.service";
+import {FilterService} from "./services/filter.service";
 
 const actionMapping:IActionMapping = {
     mouse: {
@@ -18,7 +19,7 @@ const actionMapping:IActionMapping = {
 };
 
 @Component({
-  selector: 'app-dhis-org-unit-tree',
+  selector: 'dhis-org-unit-tree',
   templateUrl: `
 <div *ngIf="loading">{{ tree_config.loading_message }}</div>
 <form *ngIf="!loading && tree_config.show_search" >
@@ -37,11 +38,11 @@ const actionMapping:IActionMapping = {
   </template>
 </Tree>
 `,
-  styleUrls: [``]
+  encapsulation: ViewEncapsulation.None
 })
 export class DhisOrgUnitTreeComponent implements OnInit, OnDestroy {
     nodes: any[] = null;
-    loading = true;
+    loading:boolean = true;
     out_orgunits = [];
     @Output() selected = new EventEmitter<any>();
     @Input() dhis2_url: string = '../../../';
@@ -54,24 +55,29 @@ export class DhisOrgUnitTreeComponent implements OnInit, OnDestroy {
 
     private subscription: Subscription;
 
-    constructor(  private http: Http, private dataService: DataService)  {
+    constructor(  private http: Http, private dataService: DataService, private filterService: FilterService)  {
       if (dataService.nodes == null){
         this.subscription = this.getOrgunitLevelsInformation()
             .subscribe(
                 (data: any) => {
-                    let fields = this.generateUrlBasedOnLevels( data.pager.total);
-                    this.getAllOrgunitsForTree( fields )
+                  this.filterService.getInitialOrgunitsForTree().subscribe(
+                    (initial_data) => {
+                      this.nodes = initial_data.organisationUnits;
+                      this.loading = false;
+                      let fields = this.generateUrlBasedOnLevels( data.pager.total);
+                      this.getAllOrgunitsForTree( fields )
                         .subscribe(
-                            (orgUnits: any) => {
-                                this.loading = false;
-                                this.nodes = orgUnits.organisationUnits;
-                                dataService.nodes = orgUnits.organisationUnits;
-                                this.sortOrgUnits( data.pager.total );
-                            },
-                            error => {
-                                console.log('something went wrong while fetching Organisation units')
-                            }
+                          (orgUnits: any) => {
+
+                            this.nodes = orgUnits.organisationUnits;
+                            dataService.nodes = orgUnits.organisationUnits;
+                            this.sortOrgUnits( data.pager.total );
+                          },
+                          error => {
+                            console.log('something went wrong while fetching Organisation units')
+                          }
                         );
+                    });
                 },
                 error => {
                     console.log('something went wrong while fetching Organisation units ')

@@ -1,0 +1,5 @@
+<div class="tree-input" (click)="displayTree()">
+  <div class="tree-view" *ngIf="showTree">
+    <dhis-org-unit-tree [dhis2_url]="" [tree_config]="tree_config"></dhis-org-unit-tree>
+  </div>
+</div>
