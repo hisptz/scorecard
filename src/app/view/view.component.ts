@@ -30,10 +30,11 @@ export class ViewComponent implements OnInit {
   orgunit_levels: any = 1;
   base_url: string;
   tree_config: any = {
-    show_search : false,
+    show_search : true,
     search_text : 'Search',
     level: null,
-    loading_message: 'Loading Organisation units...'
+    loading_message: 'Loading Organisation units...',
+    multiple: true
   };
   constructor(private scorecardService: ScorecardService,
               private dataService: DataService,
@@ -49,6 +50,41 @@ export class ViewComponent implements OnInit {
       });
   }
 
+  nodes = [
+    {
+      id: 1,
+      name: 'root1',
+      children: [
+        { id: 2, name: 'child1' },
+        { id: 3, name: 'child2' }
+      ]
+    },
+    {
+      id: 4,
+      name: 'root2',
+      children: [
+        { id: 5, name: 'child2.1' },
+        { id: 7, name: 'child2.3' },
+        { id: 8, name: 'child2.4' },
+        { id: 9, name: 'child2.5' },
+        {
+          id: 6,
+          name: 'child2.2',
+          focused: true,
+          children: [
+            { id: 14, name: 'subsub' },
+            { id: 10, name: 'subsub1' },
+            { id: 11, name: 'subsub2' },
+            { id: 12, name: 'subsub3' }
+          ]
+        }
+      ]
+    }
+  ];
+
+  getSelectedItems($event){
+    console.log("selected",$event);
+  }
   ngOnInit() {
     this.loading_message = "loading scorecard details";
     this.scorecardService.load(this.scorecardId).subscribe(

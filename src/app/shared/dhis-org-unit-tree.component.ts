@@ -3,7 +3,7 @@ import { Http, Response } from '@angular/http';
 import 'rxjs/Rx';
 import { Subscription } from 'rxjs/Rx';
 import {Observable} from 'rxjs';
-import {TreeNode, TREE_ACTIONS, IActionMapping, TreeComponent} from 'angular2-tree-component';
+import {TreeNode, TREE_ACTIONS, IActionMapping} from 'angular2-tree-component';
 import {DataService} from "./data.service";
 import {FilterService} from "./services/filter.service";
 
@@ -37,8 +37,7 @@ const actionMapping:IActionMapping = {
     <span>{{ node.data.name }}</span>
   </template>
 </Tree>
-`,
-  encapsulation: ViewEncapsulation.None
+`
 })
 export class DhisOrgUnitTreeComponent implements OnInit, OnDestroy {
     nodes: any[] = null;

@@ -1,5 +1,35 @@
+
 <div class="tree-input" (click)="displayTree()">
-  <div class="tree-view" *ngIf="showTree">
-    <dhis-org-unit-tree [dhis2_url]="" [tree_config]="tree_config"></dhis-org-unit-tree>
+  <div>
+    <div class="show_items">
+      <span *ngFor="let item of selected_items" class="selected-item ng-binding ng-scope">
+        {{ item.name }}
+        <!--<span class="selected-item-close" (click)="deleteNode(item.id)">X</span>-->
+      </span>
+    </div>
+    <div class="tree-view" [ngClass]="{'showTree':!showTree}" id="tree_view">
+      <div class="search-area">
+        <form *ngIf="!loading && tree_config.show_search" style="border-bottom: solid 1px blanchedalmond;">
+          <input #filter (keyup)="filterNodes(filter.value, tree)" placeholder="{{ tree_config.search_text }}" id="search_field"/>
+
+        </form>
+      </div>
+      <div *ngIf="loading">{{ tree_config.loading_message }}</div>
+      <div class="tree-area">
+        <Tree
+          #tree
+          [nodes]="nodes"
+          [focused]="true"
+          [options]="customTemplateStringOptions"
+          (onActivate)="activate($event)"
+          (onDeactivate)="deactivate($event)"
+        >
+          <template #treeNodeTemplate let-node>
+            <span>{{ node.data.name }}</span>
+          </template>
+        </Tree>
+      </div>
+    </div>
   </div>
+  <button class="btn btn-xs" (click)="hideTree()">X</button>
 </div>
