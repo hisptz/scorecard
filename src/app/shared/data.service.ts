@@ -97,26 +97,18 @@ export class DataService {
       .catch( this.handleError );
   }
 
-  getIndicatorsRequest ( orgunit, period, indicator ) {
-
-    // let indicators = indicatorArray.join(';');
-    return this.http.get(this.constant.root_dir + 'api/analytics.json?dimension=dx:'+indicator+'&dimension=ou:LEVEL-1;LEVEL-2&filter=pe:'+period+'&displayProperty=NAME')
+  getIndicatorsRequest ( orgunits: string, period:string, indicator:string ) {
+    return this.http.get(this.constant.root_dir + 'api/analytics.json?dimension=dx:'+indicator+'&dimension=ou:'+orgunits+'&dimension=pe:'+period+'&displayProperty=NAME')
       .map((response: Response) => response.json())
       .catch( this.handleError );
   }
 
 
-  getDataValuesRequest( orgunit, period, dataset ) {
-    return this.http.get(this.constant.root_dir + "api/dataValueSets.json?dataSet=" + dataset + "&period="+period+"&orgUnit=" + orgunit)
-      .map((response: Response) => response.json())
-      .catch( this.handleError );
-  }
-
-  getIndicatorData ( orgunitId , indicatorsObject) {
+  getIndicatorData ( orgunitId ,period, indicatorsObject) {
     let return_object: 0;
     for ( let row of indicatorsObject.rows ) {
-      if( row[1] == orgunitId ){
-        return_object =  row[2];
+      if( row[1] == orgunitId && row[2] == period ){
+        return_object =  row[3];
       }
     }
     return return_object

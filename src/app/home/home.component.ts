@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import {ScoreCard,ScorecardService} from "../shared/services/scorecard.service";
+import {OrgUnitService} from "../shared/services/org-unit.service";
 
 @Component({
   selector: 'app-home',
@@ -18,7 +19,7 @@ export class HomeComponent implements OnInit {
   deleted: boolean[] = [];
   error_deleting: boolean[] = [];
   confirm_deleting: boolean[] = [];
-  constructor( private scoreCardService: ScorecardService) {
+  constructor( private scoreCardService: ScorecardService, private orgUnitService: OrgUnitService) {
     this.scorecards = []
     this.scorecards_loading = true;
     this.complete_percent = 0;
@@ -64,7 +65,8 @@ export class HomeComponent implements OnInit {
         this.loading_message = "Error Occurred while loading scorecards";
         this.scorecards_loading = false;
       }
-    )
+    );
+    this.orgUnitService.populateOrgunit();
   }
 
   deleteScoreCard( scorecard ){

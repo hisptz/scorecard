@@ -1,4 +1,7 @@
 .tree-input {
+
+}
+.show_items{
   position: relative;
   display: inline-block;
   text-align: center;
@@ -18,6 +21,7 @@
   background-color: #fff;
   background-image: linear-gradient(#fff,#f7f7f7);
   width: 100%;
+  height: 34px;
 }
 
 .tree-view {
@@ -34,8 +38,6 @@
   max-height: 360px;
   overflow: auto;
   padding: 10px 5px;
-  margin-top: 8px;
-  left: 0px;
 }
 
 .tree-area{
@@ -43,7 +45,7 @@
   overflow: auto;
   width: 100%;
 }
-.showTree{
+.hiddenTree{
   display: none;
 }
 
@@ -129,6 +131,11 @@ span.selected-item {
 }
 #tree_view .tree-node-active > .node-content-wrapper, .tree-node-focused > .node-content-wrapper, .node-content-wrapper:hover {
   box-shadow: none !important;
+}
+
+.close-area{
+  border-top: 1px solid blanchedalmond;
+  padding-top: 5px;
 }
 
 

@@ -1,21 +1,144 @@
-<div class="container-fluid" style="padding-left: 0px">
+<div class="container-fluid no-print" style="padding-left: 0px">
   <div class="col-sm-2" style="padding-left: 0px">
     <img src="icon.png"> <span style="font-size: 15px"> Score Card</span>
   </div>
   <div class="col-sm-8">
     <h3 class="text-center" style="margin-top: 0px"><small></small></h3>
   </div>
-  <div class="col-sm-2" style="margin-top: 14px">
+  <div class="col-sm-2" style="margin-top: 14px;padding-right: 0px">
     <button class="btn btn-default btn-sm pull-right" [routerLink]="['']"><span class="glyphicon glyphicon-home"></span> home</button>
   </div>
 </div>
 
-<div class="container-fluid" id="filters">
-  <!--<dhis-org-unit-tree id="middle1" [dhis2_url]="base_url" [tree_config]="tree_config"> </dhis-org-unit-tree>-->
-  <!--<app-filter [nodes]="nodes" [tree_config]="tree_config" (selected)="getSelectedItems($event)"></app-filter>-->
+<div class="container-fluid no-print" id="filters" style="padding: 0px">
+  <div class="col-sm-3" style="padding-left: 5px">
+    <label>Organisation Units</label>
+
+    <div class="tree-input" >
+      <div>
+        <div class="show_items" (click)="displayOrgTree()">
+      <span *ngFor="let item of selected_orgunits" class="selected-item ng-binding ng-scope">
+        {{ item.name }}
+      </span>
+          <span class="no-selection"*ngIf="selected_orgunits.length == 0 && !orgunit_tree_config.loading">{{ orgunit_tree_config.placeholder }}</span>
+          <span class="glyphicon glyphicon-triangle-bottom pull-right" *ngIf="!orgunit_tree_config.loading"></span>
+          <span *ngIf="orgunit_tree_config.loading">{{ orgunit_tree_config.loading_message }}</span>
+        </div>
+        <div class="tree-view" [ngClass]="{'hiddenTree':showOrgTree}" id="tree_view">
+          <div class="search-area">
+            <form *ngIf="!orgunit_tree_config.loading && orgunit_tree_config.show_search" style="border-bottom: solid 1px blanchedalmond;">
+              <input #filter (keyup)="filterNodes(filter.value, orgtree)" placeholder="{{ orgunit_tree_config.search_text }}" class="search_field"/>
+
+            </form>
+          </div>
+          <div *ngIf="orgunit_tree_config.loading">{{ orgunit_tree_config.loading_message }}</div>
+          <div class="tree-area" *ngIf="!orgunit_tree_config.loading">
+            <Tree
+              #orgtree
+              [nodes]="organisationunits"
+              [focused]="true"
+              [options]="customTemplateStringOptions"
+              (onActivate)="activateOrg($event)"
+              (onDeactivate)="deactivateOrg($event)"
+            >
+              <template #treeNodeTemplate let-node>
+                <span>{{ node.data.name }}</span>
+              </template>
+            </Tree>
+          </div>
+          <div class="close-area">
+            <button class="btn btn-xs pull-right" (click)="displayOrgTree()">Close</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+  <div class="col-sm-7">
+    <div class="row">
+      <div class="col-sm-4">
+        <label>Period Type</label>
+        <select id="periodType" [(ngModel)]="period_type" class="form-control" style="height: 38px " (change)="changePeriodType()">
+          <option value="">[ Select period type ]</option>
+          <option value="Monthly">Monthly</option>
+          <option value="BiMonthly">Bimonthly</option>
+          <option value="Quarterly">Quarterly</option>
+          <option value="SixMonthly">Six-monthly</option>
+          <option value="SixMonthlyApril">Six-monthly April</option>
+          <option value="Yearly">Yearly</option>
+          <option value="FinancialApril">Financial-April</option>
+          <option value="FinancialJuly">Financial-July</option>
+          <option value="FinancialOct">Financial-Oct</option>
+        </select>
+      </div>
+      <div class="col-sm-4">
+        <label>Selected Period</label>
+
+        <div class="tree-input" >
+          <div>
+            <div class="show_items" (click)="displayPerTree()">
+      <span *ngFor="let item of selected_periods" class="selected-item ng-binding ng-scope">
+        {{ item.name }}
+      </span>
+              <span class="no-selection"*ngIf="selected_periods.length == 0 && !period_tree_config.loading">{{ period_tree_config.placeholder }}</span>
+              <span class="glyphicon glyphicon-triangle-bottom pull-right" *ngIf="!period_tree_config.loading"></span>
+              <span *ngIf="period_tree_config.loading">{{ period_tree_config.loading_message }}</span>
+            </div>
+            <div class="tree-view" [ngClass]="{'hiddenTree':showPerTree}">
+              <div class="search-area">
+                <form *ngIf="!period_tree_config.loading && period_tree_config.show_search" style="border-bottom: solid 1px blanchedalmond;">
+                  <input #filter (keyup)="filterNodes(filter.value, pertree)" placeholder="{{ period_tree_config.search_text }}" id="search_field"/>
+
+                </form>
+              </div>
+              <div *ngIf="period_tree_config.loading">{{ period_tree_config.loading_message }}</div>
+              <div class="tree-area" *ngIf="!period_tree_config.loading">
+                <Tree
+                  #pertree
+                  [nodes]="periods"
+                  [focused]="true"
+                  [options]="customTemplateStringOptions"
+                  (onActivate)="activatePer($event)"
+                  (onDeactivate)="deactivatePer($event)"
+                >
+                  <template #treeNodeTemplate let-node>
+                    <span>{{ node.data.name }}</span>
+                  </template>
+                </Tree>
+              </div>
+              <div class="close-area">
+                <button class="btn btn-xs pull-right" (click)="displayPerTree()">Close</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-sm-4">
+        <label>&nbsp;</label>
+        <div class="btn-group" style="width: 100%">
+          <button type="button" class="btn btn-default" style="height: 38px" (click)="pushPeriodForward()">>> year</button>
+          <button type="button" class="btn btn-default" style="height: 38px" (click)="pushPeriodBackward()"><< year</button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+  <div class="col-sm-2">
+    <label>&nbsp;&nbsp;</label>
+    <div>
+      <button type="button" class="btn btn-default pull-right"  style="height: 38px" (click)="loadScoreCard()">Update</button>
+      <button type="button" class="btn btn-default pull-right"  style="height: 38px" (click)="downloadCSV()">
+        <span class="glyphicon glyphicon-save-file"></span>  CSV
+      </button>
+      <button type="button" class="btn btn-default pull-right"  style="height: 38px" (click)="browserPrint()">
+        <span class="glyphicon glyphicon-print"></span>
+      </button>
+    </div>
+  </div>
+
 </div>
 
-<div class="row" *ngIf="loading">
+<div class="container-fluid no-print" *ngIf="loading" style="margin-top: 10px;padding-left: 5px">
   <!--<img src="loading.gif" style="height: 70px; padding-top: 20px">-->
   {{ loading_message }}
 
@@ -25,12 +148,13 @@
     </div>
   </div>
 </div>
-<div class="container-fluid" id="scorecard">
+
+<div class="container-fluid" id="scorecard" style="padding-left: 5px;margin-top: 10px">
   <table class="table table-bordered"
          style="margin-bottom: 3px;font-size: 9px;border: 1px solid #ddd;border-spacing: 0;border-collapse: collapse;display: table;"
-         *ngIf="!loading">
+  >
     <tr>
-      <th>
+      <th class="orgUnitName">
 
       </th>
       <th
@@ -43,7 +167,7 @@
     </tr>
     <tr>
       <th style="vertical-align: bottom">
-        <input type="text" class="form-control input-sm" [(ngModel)]="searchQuery" placeholer="Search">
+        <input type="text" class="form-control input-sm no-print" [(ngModel)]="searchQuery" placeholer="Search">
       </th>
       <th *ngFor="let indicator of getItemsFromGroups()" style="font-size: 10px;width: 70px;cursor: pointer" class="sans-pro"
           title="Click to analyse {{ getIndicatorTitle(indicator) }}">
@@ -51,11 +175,11 @@
       </th>
     </tr>
     <tr *ngFor="let current_orgunit of orgunits | filterByName:searchQuery" style="height: 35px">
-      <td style="vertical-align: bottom;font-size: 10px;">
+      <td style="vertical-align: bottom;font-size: 10px;" class="orgUnitName">
         {{ current_orgunit.name }}
       </td>
       <td *ngFor="let indicator of getItemsFromGroups()"
-          style="font-size: 10px;width: 70px; cursor: pointer; padding: 0px;line-height: 10%" class="sans-pro">
+          style="font-size: 10px;width: 70px; cursor: pointer; padding: 0px;line-height: 10%;"  class="sans-pro">
         <svg *ngIf="indicator.indicators.length == 2" viewbox="0 0 70 35" width="70" height="35">
           <polygon points="0 0 70 0 70 0 0 35" [attr.fill]="assignBgColor(indicator.indicators[0],indicator.indicators[0].values[current_orgunit.id])" style="stroke:#CAC0C0;stroke-width:0.4"/>
           <text fill="#000" x="3" y="20" font-size="11" font-family="Source Sans Pro">

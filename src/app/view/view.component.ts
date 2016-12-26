@@ -1,25 +1,43 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, OnInit, AfterViewInit, ViewChild, ValueProvider} from '@angular/core';
 import {Http} from "@angular/http";
 import {ScoreCard, ScorecardService} from "../shared/services/scorecard.service";
 import {ActivatedRoute} from "@angular/router";
 import {Subscription} from "rxjs";
 import {DataService} from "../shared/data.service";
 import {FilterService} from "../shared/services/filter.service";
-import {TreeNode} from "angular2-tree-component";
 import {Constants} from "../shared/costants";
+import {OrgUnitService} from "../shared/services/org-unit.service";
+import {TreeNode, TREE_ACTIONS, IActionMapping, TreeComponent} from 'angular2-tree-component';
+import {Angular2Csv} from "angular2-csv";
+
+const actionMapping:IActionMapping = {
+  mouse: {
+    dblClick: TREE_ACTIONS.TOGGLE_EXPANDED,
+    click: (node, tree, $event) => {
+      $event.shiftKey
+        ? TREE_ACTIONS.TOGGLE_SELECTED_MULTI(node, tree, $event)
+        : TREE_ACTIONS.TOGGLE_SELECTED(node, tree, $event)
+    }
+  }
+};
+
+const WINDOW_PROVIDER: ValueProvider = {
+  provide: Window,
+  useValue: window
+};
 
 @Component({
   selector: 'app-view',
   templateUrl: './view.component.html',
   styleUrls: ['./view.component.css']
 })
-export class ViewComponent implements OnInit {
+export class ViewComponent implements OnInit, AfterViewInit {
 
   private subscription: Subscription;
   scorecard: ScoreCard;
   scorecardId: string;
-  orgUnit: string = "m0frOspS7JY";
-  period: string = "2016Q1";
+  orgUnit: any = {};
+  period: any = {};
   lastPeriod: string = "2015Q4";
   loading_message:string = "";
   orgunits: any[] = [];
@@ -29,18 +47,48 @@ export class ViewComponent implements OnInit {
   tree_orgunits: any[] = [];
   orgunit_levels: any = 1;
   base_url: string;
-  tree_config: any = {
+  orgunit_tree_config: any = {
     show_search : true,
     search_text : 'Search',
     level: null,
+    loading: false,
     loading_message: 'Loading Organisation units...',
-    multiple: true
+    multiple: true,
+    placeholder: "Select Organisation Unit"
   };
+
+  period_tree_config: any = {
+    show_search : true,
+    search_text : 'Search',
+    level: null,
+    loading: false,
+    loading_message: 'Loading Periods...',
+    multiple: true,
+    placeholder: "Select period"
+  };
+  organisationunits: any[] = [];
+  periods: any[] = [];
+  selected_orgunits: any[] = [];
+  selected_periods:any[] = [];
+  period_type: string = "Quarterly";
+  year: number = 2016;
+  default_orgUnit: string[] = [];
+  default_period: string[] = [];
+  showOrgTree:boolean = true;
+  showPerTree:boolean = true;
+
+  @ViewChild('orgtree')
+  orgtree: TreeComponent;
+
+  @ViewChild('pertree')
+  pertree: TreeComponent;
+
   constructor(private scorecardService: ScorecardService,
               private dataService: DataService,
               private activatedRouter: ActivatedRoute,
               private filterService: FilterService,
-              private costant: Constants
+              private costant: Constants,
+              private orgunitService: OrgUnitService
   ) {
     this.base_url = this.costant.root_dir;
     this.subscription = this.activatedRouter.params.subscribe(
@@ -48,45 +96,110 @@ export class ViewComponent implements OnInit {
         this.scorecardId = params['scorecardid'];
         this.scorecard = this.getEmptyScoreCard();
       });
+    this.periods = this.filterService.getPeriodArray( this.period_type, this.year );
+    this.period = {
+      id:this.filterService.getPeriodArray( this.period_type, this.year )[0].id,
+      name:this.filterService.getPeriodArray( this.period_type, this.year )[0].name
+    };
+
   }
 
-  nodes = [
-    {
-      id: 1,
-      name: 'root1',
-      children: [
-        { id: 2, name: 'child1' },
-        { id: 3, name: 'child2' }
-      ]
-    },
-    {
-      id: 4,
-      name: 'root2',
-      children: [
-        { id: 5, name: 'child2.1' },
-        { id: 7, name: 'child2.3' },
-        { id: 8, name: 'child2.4' },
-        { id: 9, name: 'child2.5' },
-        {
-          id: 6,
-          name: 'child2.2',
-          focused: true,
-          children: [
-            { id: 14, name: 'subsub' },
-            { id: 10, name: 'subsub1' },
-            { id: 11, name: 'subsub2' },
-            { id: 12, name: 'subsub3' }
-          ]
-        }
-      ]
-    }
-  ];
+  pushPeriodForward(){
+    this.year += 1;
+    this.periods = this.filterService.getPeriodArray(this.period_type,this.year);
+  }
 
-  getSelectedItems($event){
-    console.log("selected",$event);
+  pushPeriodBackward(){
+    this.year -= 1;
+    this.periods = this.filterService.getPeriodArray(this.period_type,this.year);
+  }
+
+  changePeriodType(){
+    this.periods = this.filterService.getPeriodArray(this.period_type,this.year);
   }
   ngOnInit() {
-    this.loading_message = "loading scorecard details";
+    //loading organisation units
+
+    this.periods = this.filterService.getPeriodArray( this.period_type, this.year );
+    this.orgunit_tree_config.loading = true;
+    if (this.orgunitService.nodes == null){
+      this.subscription = this.orgunitService.getOrgunitLevelsInformation()
+        .subscribe(
+          (data: any) => {
+            this.filterService.getInitialOrgunitsForTree().subscribe(
+              (initial_data) => {
+                this.orgUnit = {
+                  id:initial_data.organisationUnits[0].id,
+                  name: initial_data.organisationUnits[0].name,
+                  children: initial_data.organisationUnits[0].children
+                };
+                this.loadScoreCard();
+                this.organisationunits = initial_data.organisationUnits;
+                let fields = this.orgunitService.generateUrlBasedOnLevels( data.pager.total);
+                this.orgunitService.getAllOrgunitsForTree( fields )
+                  .subscribe(
+                    (orgUnits: any) => {
+                      this.organisationunits = orgUnits.organisationUnits;
+                      this.orgunitService.nodes = orgUnits.organisationUnits;
+                      this.orgunitService.sortOrgUnits( data.pager.total );
+                      // this.activateNode(this.orgUnit.id, this.orgtree);
+                      this.orgunit_tree_config.loading = false;
+                    },
+                    error => {
+                      console.log('something went wrong while fetching Organisation units');
+                      this.orgunit_tree_config.loading = false;
+                    }
+                  );
+              });
+          },
+          error => {
+            console.log('something went wrong while fetching Orga/////tion units ');
+            this.orgunit_tree_config.loading = false;
+          }
+        );
+    }
+    else{
+      this.orgunit_tree_config.loading = false;
+      this.default_orgUnit = [this.orgunitService.nodes[0].id];
+      this.orgUnit = {
+        id:this.orgunitService.nodes[0].id,
+        name: this.orgunitService.nodes[0].name,
+        children: this.orgunitService.nodes[0].children
+      };
+
+      this.organisationunits = this.orgunitService.nodes;
+
+      this.orgunitService.sortOrgUnits( 4 );
+
+      this.loadScoreCard();
+    }
+
+  }
+
+  ngAfterViewInit(){
+    this.activateNode(this.period.id, this.pertree);
+    // this.activateNode(this.orgUnit.id, this.orgtree);
+
+  }
+
+  // a function to prepare a list of organisation units for analytics
+  getOrgUnitsForAnalytics(selectedOrgunits): string{
+    let orgUnits = [];
+    orgUnits.push(selectedOrgunits.id);
+    for( let orgunit of selectedOrgunits.children ){
+      orgUnits.push(orgunit.id);
+    }
+    return orgUnits.join(";");
+  }
+
+  // a function that will be used to load scorecard
+  loadScoreCard(){
+    this.proccessed_percent = 0;
+    this.loading = true;
+    this.orgunits = [];
+    this.showOrgTree = true;
+    this.showPerTree = true;
+    this.loading_message = " Getting scorecard details ";
     this.scorecardService.load(this.scorecardId).subscribe(
       scorecard_details => {
         this.scorecard = {
@@ -95,16 +208,19 @@ export class ViewComponent implements OnInit {
         };
 
         let proccesed_indicators = 0;
+        let use_period = this.period.id+";"+this.filterService.getLastPeriod(this.period.id);
         let indicator_list = this.getIndicatorList(this.scorecard);
         for( let holder of this.scorecard.data.data_settings.indicator_holders ){
           for( let indicator of holder.indicators ){
             indicator['values'] = [];
+            indicator['loading'] = true;
             indicator['showTopArrow'] = [];
             indicator['showBottomArrow'] = [];
-            this.dataService.getIndicatorsRequest(this.orgUnit,this.period, indicator.id)
+            this.dataService.getIndicatorsRequest(this.getOrgUnitsForAnalytics(this.orgUnit),this.period.id, indicator.id)
               .subscribe(
                 (data) => {
-                  this.loading_message = " Getting data for "+indicator.title;
+                  indicator.loading = false;
+                  this.loading_message = " Done Fetching data for "+indicator.title;
                   proccesed_indicators++;
                   this.proccessed_percent = (proccesed_indicators / indicator_list.length) * 100;
                   if(proccesed_indicators == indicator_list.length ){
@@ -116,26 +232,9 @@ export class ViewComponent implements OnInit {
                       //noinspection TypeScriptUnresolvedVariable
                       this.orgunits.push({"id":orgunit, "name":data.metaData.names[orgunit]})
                     }
-
-                    indicator.values[orgunit] = this.dataService.getIndicatorData(orgunit, data);
-
+                    indicator.values[orgunit] = this.dataService.getIndicatorData(orgunit,this.period.id, data);
                   }
-                  this.dataService.getIndicatorsRequest(this.orgUnit,this.lastPeriod, indicator.id)
-                    .subscribe(
-                      (oldData) => {
-                        //noinspection TypeScriptUnresolvedVariable
-                        for ( let orgunit of oldData.metaData.ou ){
-                          let oldvalue = this.dataService.getIndicatorData(orgunit, oldData);
-                          if( (oldvalue - indicator.values[orgunit]) > indicator.arrow_settings.effective_gap){
-                            indicator.showBottomArrow[orgunit] = true;
-                          }
-                          if( ( indicator.values[orgunit] - oldvalue ) > indicator.arrow_settings.effective_gap){
-                            indicator.showTopArrow[orgunit] = true;
-                          }
-                        }
 
-                      }
-                    )
                 },
                 error => {
 
@@ -143,24 +242,37 @@ export class ViewComponent implements OnInit {
               )
           }
         }
-
-
       });
-
-
   }
 
-  options = {
-
-  };
-
-  loadOrgunitsCildren(type: string, uid: string=null, level: number = 0){
-    if(type = "level"){
-      for( let orgunit of this.tree_orgunits ){
-
+  downloadCSV(){
+    let data = [];
+      for ( let current_orgunit of this.orgUnit.children ){
+        let dataobject = {};
+        dataobject['orgunit'] = current_orgunit.name;
+        for ( let holder of this.scorecard.data.data_settings.indicator_holders ){
+          for( let indicator of holder.indicators ){
+            dataobject[indicator.title] = indicator.values[current_orgunit.id];
+          }
+        }
+        data.push( dataobject  );
       }
-    }
+
+    let options = {
+      fieldSeparator: ',',
+      quoteStrings: '"',
+      decimalseparator: '.',
+      showLabels: true,
+      showTitle: false
+    };
+
+    new Angular2Csv(data, 'My Report', options);
   }
+
+  browserPrint(){
+    window.print();
+  }
+
 
   checkOrgunitAvailability(id, array){
     let check = false;
@@ -172,6 +284,7 @@ export class ViewComponent implements OnInit {
     return check;
   }
 
+  // a function to prepare a list of indicators to pass into a table
   getIndicatorList(scorecard): string[]{
     let indicators = [];
     for( let holder of scorecard.data.data_settings.indicator_holders ){
@@ -290,5 +403,67 @@ export class ViewComponent implements OnInit {
     }
   }
 
+  // custom settings for tree
+  customTemplateStringOptions: any = {
+    isExpandedField: 'expanded',
+    actionMapping
+  };
 
+  // display Orgunit Tree
+  displayOrgTree(){
+    this.showOrgTree = !this.showOrgTree;
+  }
+
+  // display period Tree
+  displayPerTree(){
+    this.showPerTree = !this.showPerTree;
+  }
+
+  // action to be called when a tree item is deselected(Remove item in array of selected items
+  deactivateOrg ( $event ) {
+    // this.selected_items.forEach((item,index) => {
+    //   if( $event.node.data.id == item.id ) {
+    //     this.selected_items.splice(index, 1);
+    //   }
+    // });
+    // this.selected.emit(this.selected_items);
+  };
+
+  // action to be called when a tree item is deselected(Remove item in array of selected items
+  deactivatePer ( $event ) {
+    // this.selected_items.forEach((item,index) => {
+    //   if( $event.node.data.id == item.id ) {
+    //     this.selected_items.splice(index, 1);
+    //   }
+    // });
+    // this.selected.emit(this.selected_items);
+  };
+
+
+  // add item to array of selected items when item is selected
+  activateOrg = ($event) => {
+    this.selected_orgunits = [$event.node.data];
+    this.orgUnit = $event.node.data;
+    console.log(this.orgUnit);
+  };
+
+  // add item to array of selected items when item is selected
+  activatePer = ($event) => {
+    this.selected_periods = [$event.node.data];
+    this.period = $event.node.data;
+    console.log(this.period);
+  };
+
+  activateNode(nodeId:any, nodes){
+    setTimeout(() => {
+      let node = nodes.treeModel.getNodeById(nodeId);
+      if (node)
+        node.toggleActivated();
+    }, 0);
+  }
+
+  // function that is used to filter nodes
+  filterNodes(text, tree) {
+    tree.treeModel.filterNodes(text, true);
+  }
 }

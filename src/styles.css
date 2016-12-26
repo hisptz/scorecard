@@ -33,3 +33,18 @@
 .tree-node-active > .node-content-wrapper, .tree-node-focused > .node-content-wrapper, .node-content-wrapper:hover {
   box-shadow: none !important;
 }
+
+
+@media print {
+  .no-print *{
+    display: none;
+  }
+  .no-print{
+    display: none;
+  }
+
+  .orgUnitName{
+    width: 130px;
+    height: 35px;
+  }
+}
