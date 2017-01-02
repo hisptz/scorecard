@@ -5,9 +5,17 @@
     <div class="tree-input" >
       <div>
         <div class="show_items" (click)="displayOrgTree()">
-      <span *ngFor="let item of card_selected_orgunits" class="selected-item ng-binding ng-scope">
-        {{ item.name }}
-      </span>
+          <span *ngIf="card_selected_orgunits.length > 5">
+            <span class="selected-item">
+              {{ card_selected_orgunits.length }} selected
+            </span>
+          </span>
+          <span *ngIf="card_selected_orgunits.length <= 5">
+             <span *ngFor="let item of card_selected_orgunits" class="selected-item ng-binding ng-scope">
+              {{ item.name }}
+            </span>
+          </span>
+
           <span class="no-selection"*ngIf="card_selected_orgunits.length == 0 && !card_orgunit_tree_config.loading">{{ card_orgunit_tree_config.placeholder }}</span>
           <span class="glyphicon glyphicon-triangle-bottom pull-right" *ngIf="!card_orgunit_tree_config.loading"></span>
           <span *ngIf="card_orgunit_tree_config.loading">{{ card_orgunit_tree_config.loading_message }}</span>
@@ -65,9 +73,16 @@
         <div class="tree-input" >
           <div>
             <div class="show_items" (click)="displayPerTree()">
-      <span *ngFor="let item of card_selected_periods" class="selected-item ng-binding ng-scope">
-        {{ item.name }}
-      </span>
+              <span *ngIf="card_selected_periods.length > 5">
+            <span class="selected-item">
+              {{ card_selected_periods.length }} selected
+            </span>
+          </span>
+              <span *ngIf="card_selected_periods.length <= 5">
+                <span *ngFor="let item of card_selected_periods" class="selected-item ng-binding ng-scope">
+                  {{ item.name }}
+                </span>
+              </span>
               <span class="no-selection"*ngIf="card_selected_periods.length == 0 && !card_period_tree_config.loading">{{ card_period_tree_config.placeholder }}</span>
               <span class="glyphicon glyphicon-triangle-bottom pull-right" *ngIf="!card_period_tree_config.loading"></span>
               <span *ngIf="card_period_tree_config.loading">{{ card_period_tree_config.loading_message }}</span>
@@ -114,7 +129,7 @@
   <div class="col-sm-2">
     <label>&nbsp;&nbsp;</label>
     <div>
-      <button type="button" class="btn btn-default pull-right"  style="height: 38px" (click)="updateChart()">Update</button>
+      <button type="button" class="btn btn-default pull-right"  style="height: 38px" (click)="updateIndicatorCard(indicator, current_visualisation, card_selected_periods, card_selected_orgunits)">Update</button>
       <button type="button" class="btn btn-default pull-right"  style="height: 38px" (click)="downloadCSV()">
         <span class="glyphicon glyphicon-save-file"></span>  CSV
       </button>
@@ -126,7 +141,7 @@
 
 </div>
 
-<div class="container-fluid" style="height: 440px; overflow-y: auto">
+<div class="container-fluid card-content" style="height: 440px; padding-left: 5px; margin-top: 15px; overflow-y: auto">
   <div *ngIf="loading">
     <p style="text-align: center">
       <img src="loading.gif" style="padding-top: 80px; height: 190px;">
@@ -154,7 +169,7 @@
 
 <div class="container-fluid footer">
     <p style="margin: 3px">
-      <a (click)="updateIndicatorCard(indicator,icon.name)" *ngFor="let icon of icons" title="{{ icon.name }}" class="btn btn-small btn-info" style="background-color: #DDD; border-color: #5BC0DE;border-radius:50%;padding-bottom: 8px; padding-top: 10px;padding-left: 10px;margin-right: 2px;"><img src="assets/img/{{icon.image}}" style="height: 25px;width: 25px"/></a>
+      <a (click)="updateIndicatorCard(indicator,icon.name, card_selected_periods, card_selected_orgunits)" *ngFor="let icon of icons" title="{{ icon.name }}" class="btn btn-small btn-info" style="background-color: #DDD; border-color: #5BC0DE;border-radius:50%;padding-bottom: 8px; padding-top: 10px;padding-left: 10px;margin-right: 2px;"><img src="assets/img/{{icon.image}}" style="height: 25px;width: 25px"/></a>
       <a (click)="downloadCSV()" title="Download Excel" class="btn btn-small btn-info" style="background-color: #DDD; border-color: #5BC0DE; border-radius:50%;padding-bottom: 8px; padding-top: 10px;padding-left: 10px;margin-right: 2px;"><img src="assets/img/cvs.jpg" style="height: 25px;width: 25px"/></a>
       <a (click)="updateIndicatorCard(indicator,'info')"  title="card details" class="btn btn-small btn-info" style="background-color: #DDD; border-color: #5BC0DE; border-radius:50%;padding-bottom: 8px; padding-top: 10px;padding-left: 10px;margin-right: 2px;"><img src="assets/img/inficon.png" style="height: 25px;width: 25px"/></a>
       <a (click)="switchXandY(indicator)"  title="Switch X and Y axis" class="btn btn-small btn-info" style="background-color: #DDD; border-color: #5BC0DE; border-radius:50%;padding-bottom: 8px; padding-top: 10px;padding-left: 10px;margin-right: 2px;"><span class="glyphicon glyphicon-sort" style="height: 25px;width: 25px"></span></a>
