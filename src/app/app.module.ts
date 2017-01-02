@@ -19,6 +19,7 @@ import {DataElementGroupService} from "./shared/services/data-element-group.serv
 import { ScoreCardFilterPipe } from './home/score-card-filter.pipe';
 import {FilterService} from "./shared/services/filter.service";
 import {OrgUnitService} from "./shared/services/org-unit.service";
+import {VisulizerService} from "./view/ng2-dhis-visualizer/visulizer.service";
 
 @NgModule({
   declarations: [
@@ -42,7 +43,8 @@ import {OrgUnitService} from "./shared/services/org-unit.service";
     DatasetService,
     DataElementGroupService,
     FilterService,
-    OrgUnitService
+    OrgUnitService,
+    VisulizerService
   ],
   bootstrap: [AppComponent]
 })

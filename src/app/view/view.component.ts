@@ -1,4 +1,7 @@
-import {Component, OnInit, AfterViewInit, ViewChild, ValueProvider} from '@angular/core';
+import {
+  Component, OnInit, AfterViewInit, ViewChild, ValueProvider, style, state, animate, transition, trigger,
+  OnDestroy
+} from '@angular/core';
 import {Http} from "@angular/http";
 import {ScoreCard, ScorecardService} from "../shared/services/scorecard.service";
 import {ActivatedRoute} from "@angular/router";
@@ -29,11 +32,23 @@ const WINDOW_PROVIDER: ValueProvider = {
 @Component({
   selector: 'app-view',
   templateUrl: './view.component.html',
-  styleUrls: ['./view.component.css']
+  styleUrls: ['./view.component.css'],
+  animations: [
+    trigger('fadeInOut', [
+      transition(':enter', [   // :enter is alias to 'void => *'
+        style({opacity:0}),
+        animate(600, style({opacity:1}))
+      ]),
+      transition(':leave', [   // :leave is alias to '* => void'
+        animate(500, style({opacity:0}))
+      ])
+    ])
+  ]
 })
-export class ViewComponent implements OnInit, AfterViewInit {
+export class ViewComponent implements OnInit, AfterViewInit, OnDestroy {
 
   private subscription: Subscription;
+  private indicatorCalls: Subscription[] = []
   scorecard: ScoreCard;
   scorecardId: string;
   orgUnit: any = {};
@@ -77,11 +92,17 @@ export class ViewComponent implements OnInit, AfterViewInit {
   showOrgTree:boolean = true;
   showPerTree:boolean = true;
 
+  show_details:boolean = false;
+
   @ViewChild('orgtree')
   orgtree: TreeComponent;
 
   @ViewChild('pertree')
   pertree: TreeComponent;
+
+  selected_indicator: any = [];
+  orgunit_for_model:any = [];
+  period_for_model: any = [];
 
   constructor(private scorecardService: ScorecardService,
               private dataService: DataService,
@@ -216,7 +237,7 @@ export class ViewComponent implements OnInit, AfterViewInit {
             indicator['loading'] = true;
             indicator['showTopArrow'] = [];
             indicator['showBottomArrow'] = [];
-            this.dataService.getIndicatorsRequest(this.getOrgUnitsForAnalytics(this.orgUnit),this.period.id, indicator.id)
+            this.indicatorCalls.push(this.dataService.getIndicatorsRequest(this.getOrgUnitsForAnalytics(this.orgUnit),this.period.id, indicator.id)
               .subscribe(
                 (data) => {
                   indicator.loading = false;
@@ -239,12 +260,13 @@ export class ViewComponent implements OnInit, AfterViewInit {
                 error => {
 
                 }
-              )
+              ))
           }
         }
       });
   }
 
+  // prepare scorecard data and download them as csv
   downloadCSV(){
     let data = [];
       for ( let current_orgunit of this.orgUnit.children ){
@@ -269,8 +291,40 @@ export class ViewComponent implements OnInit, AfterViewInit {
     new Angular2Csv(data, 'My Report', options);
   }
 
+  // invoke a default browser print function
   browserPrint(){
     window.print();
+  }
+
+  // load a preview function
+  loadPreview(hodlerGroup,indicator, ou){
+    this.selected_indicator = [];
+    // prepare indicators
+    if(hodlerGroup == null){
+      this.selected_indicator = [indicator];
+    }else{
+      for( let holderid of hodlerGroup.indicator_holder_ids ){
+        for ( let holder of this.scorecard.data.data_settings.indicator_holders ){
+          if( holder.holder_id == holderid ){
+            this.selected_indicator.push(holder);
+          }
+        }
+      }
+    }
+
+    //prepare organisation units
+    if(ou == null){
+      this.orgunit_for_model = this.orgUnit;
+    }else{
+      let node = this.orgtree.treeModel.getNodeById(ou);
+      this.orgunit_for_model = node.data;
+    }
+
+    this.show_details = true;
+  }
+
+  removeModel(){
+    this.show_details = false;
   }
 
 
@@ -465,5 +519,21 @@ export class ViewComponent implements OnInit, AfterViewInit {
   // function that is used to filter nodes
   filterNodes(text, tree) {
     tree.treeModel.filterNodes(text, true);
+  }
+
+  getDetails($event){
+    this.show_details = $event
+  }
+
+  ngOnDestroy (){
+    if( this.subscription ){
+      this.subscription.unsubscribe();
+    }
+
+    for( let subscr of this.indicatorCalls ){
+      if( subscr ){
+        subscr.unsubscribe();
+      }
+    }
   }
 }

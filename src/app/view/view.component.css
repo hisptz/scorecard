@@ -188,4 +188,39 @@ span.selected-item {
   }
 }
 
+/*scorecard indicator details*/
+.indicator_details{
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 1050;
+  /*display: none;*/
+  overflow: hidden;
+  -webkit-overflow-scrolling: touch;
+  outline: 0;
+  -webkit-transition: opacity .15s linear;
+  -o-transition: opacity .15s linear;
+  transition: opacity .15s linear;
+  background-color: rgba(0,0,0,.4);
+}
 
+.indicator_dialog{
+  width: 86%;
+  margin: 100px 7% auto 7%;
+}
+.indicator-content {
+  -webkit-box-shadow: 0 5px 15px rgba(0,0,0,.5);
+  box-shadow: 0 5px 15px rgba(0,0,0,.5);
+  position: relative;
+  background-color: #fff;
+  -webkit-background-clip: padding-box;
+  background-clip: padding-box;
+  border: 1px solid #999;
+  border: 1px solid rgba(0,0,0,.2);
+  border-radius: 6px;
+  outline: 0;
+  min-height: 200px;
+  padding: 10px;
+}

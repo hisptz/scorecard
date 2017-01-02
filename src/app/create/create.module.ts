@@ -9,7 +9,6 @@ import { UpdateComponent } from './update.component';
   imports: [
     SharedModule,
     create_routing
-
   ],
   declarations: [CreateComponent, UpdateComponent]
 })
