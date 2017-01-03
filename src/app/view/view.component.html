@@ -127,7 +127,7 @@
     <label>&nbsp;&nbsp;</label>
     <div>
       <button type="button" class="btn btn-default pull-right"  style="height: 38px" (click)="loadScoreCard()">Update</button>
-      <button type="button" class="btn btn-default pull-right"  style="height: 38px" (click)="downloadCSV()">
+      <button type="button" class="btn btn-default pull-right"  style="height: 38px" (click)="downloadCSV(orgUnit.id)">
         <span class="glyphicon glyphicon-save-file"></span>  CSV
       </button>
       <button type="button" class="btn btn-default pull-right"  style="height: 38px" (click)="browserPrint()">
@@ -150,10 +150,11 @@
 </div>
 
 <div class="container-fluid" id="scorecard" style="padding-left: 5px;margin-top: 10px">
+  <h3>{{ scorecard.data.header.title }} &nbsp;&nbsp;&nbsp; {{ orgUnit.name }} &nbsp;&nbsp;&nbsp; {{ period.name }}</h3>
   <table class="table table-bordered"
          style="margin-bottom: 3px;font-size: 9px;border: 1px solid #ddd;border-spacing: 0;border-collapse: collapse;display: table;"
   >
-    <tr>
+    <tr [ngClass]="{'hide_no_group': scorecard.data.data_settings.indicator_holder_groups.length == 1}">
       <th class="orgUnitName">
 
       </th>
@@ -162,6 +163,7 @@
         *ngFor="let indicator_holder_group of scorecard.data.data_settings.indicator_holder_groups"
         [attr.colspan]="indicator_holder_group.indicator_holder_ids.length"
         class="sans-pro"
+
         (click)="loadPreview(indicator_holder_group,null,null)"
         title="Click to analyse indicators for {{ indicator_holder_group.name }}">
         {{ indicator_holder_group.name }}
@@ -223,12 +225,8 @@
       <tr *ngIf="showSubScorecard[current_orgunit.id]">
         <td [attr.colspan]="getItemsFromGroups().length +1" style="background-color: rgba(0,0,0,0.1)">
 
-          <!--another scorecard-->
-          <!--another scorecard-->
-          <!--another scorecard-->
-          <!--another scorecard-->
-          <!--another scorecard-->
-          <!--another scorecard-->
+          <!--First child scorecard-->
+          <!--First child scorecard-->
           <div class="container-fluid no-print" *ngIf="subScoreCard.loading" style="margin-top: 10px;padding-left: 5px">
             <!--<img src="loading.gif" style="height: 70px; padding-top: 20px">-->
             {{ subScoreCard.loading_message }}
@@ -241,10 +239,14 @@
           </div>
 
           <div class="container-fluid" id="inner_scorecard" style="padding-left: 5px;margin-top: 10px">
+            <h3>{{ scorecard.data.header.title }} &nbsp;&nbsp;&nbsp; {{ current_orgunit.name }} &nbsp;&nbsp;&nbsp; {{ period.name }}
+            <button class="btn btn-default btn-sm pull-right" (click)="downloadCSV(current_orgunit.id)">CSV</button>
+            <button class="btn btn-warning btn-sm pull-right" (click)="closeSubUnit()">Close</button>
+            </h3>
             <table class="table table-bordered"
                    style="margin-bottom: 3px;font-size: 9px;border: 1px solid #ddd;border-spacing: 0;border-collapse: collapse;display: table; background-color: rgba(0,0,0,0.05)"
             >
-              <tr>
+              <tr [ngClass]="{'hide_no_group': scorecard.data.data_settings.indicator_holder_groups.length == 1 }">
                 <th class="orgUnitName">
 
                 </th>
@@ -269,7 +271,7 @@
               </tr>
               <ng-container *ngFor="let current_inner_orgunit of subScoreCard.orgunits | filterByName:searchQuery1">
                 <tr style="height: 35px">
-                  <td style="vertical-align: bottom;font-size: 10px;" class="orgUnitName">
+                  <td style="vertical-align: bottom;font-size: 10px; cursor: pointer;" class="orgUnitName" (click)="loadGrandChildrenData(current_inner_orgunit)">
                     {{ current_inner_orgunit.name }}
                   </td>
                   <td *ngFor="let indicator of getItemsFromGroups()"
@@ -280,9 +282,9 @@
                         <tspan>{{ indicator.indicators[0].values[current_orgunit.id] }}</tspan>
                       </text>
                       <!--top arrow-->
-                      <path *ngIf="indicator.indicators[0].showTopArrow[current_orgunit.id]" d="M2,10H12L7,4" style="fill:black;stroke:black;stroke-width:1"/>
+                      <path *ngIf="indicator.indicators[0].showTopArrow[current_inner_orgunit.id]" d="M2,10H12L7,4" style="fill:black;stroke:black;stroke-width:1"/>
                       <!--bottom arrow showing decrease-->
-                      <path *ngIf="indicator.indicators[0].showBottomArrow[current_orgunit.id]" d="M2,22H12L7,30" style="fill:black;stroke:black;stroke-width:1"/>
+                      <path *ngIf="indicator.indicators[0].showBottomArrow[current_inner_orgunit.id]" d="M2,22H12L7,30" style="fill:black;stroke:black;stroke-width:1"/>
 
                       <!--second triangle-->
                       <polygon points="0 35 70 0 70 35 0 35" [attr.fill]="assignBgColor(indicator.indicators[1],indicator.indicators[1].values[current_inner_orgunit.id])" style="stroke:#CAC0C0;stroke-width:0.4"/>
@@ -291,9 +293,9 @@
                         <tspan>{{ indicator.indicators[1].values[current_inner_orgunit.id] }}</tspan>
                       </text>
                       <!--top arrow for the right triagle-->
-                      <path *ngIf="indicator.indicators[1].showTopArrow[current_orgunit.id]" d="M65,10H55L60,4" style="fill:black;stroke:black;stroke-width:1"/>
+                      <path *ngIf="indicator.indicators[1].showTopArrow[current_inner_orgunit.id]" d="M65,10H55L60,4" style="fill:black;stroke:black;stroke-width:1"/>
                       <!--below arrow for the triangle-->
-                      <path *ngIf="indicator.indicators[1].showBottomArrow[current_orgunit.id]" d="M65,22H55L60,28" style="fill:black;stroke:black;stroke-width:1"/>
+                      <path *ngIf="indicator.indicators[1].showBottomArrow[current_inner_orgunit.id]" d="M65,22H55L60,28" style="fill:black;stroke:black;stroke-width:1"/>
                     </svg>
 
                     <!--if there is only one indicator to display-->
@@ -312,15 +314,113 @@
                   </td>
 
                 </tr>
+                <tr *ngIf="showChildrenSubScorecard[current_inner_orgunit.id]">
+                  <td [attr.colspan]="getItemsFromGroups().length +1" style="background-color: rgba(0,0,0,0.1)">
+
+                    <!--Second child scorecard-->
+                    <!--Second child scorecard-->
+                    <div class="container-fluid no-print" *ngIf="childrenSubScoreCard.loading" style="margin-top: 10px;padding-left: 5px">
+                      <!--<img src="loading.gif" style="height: 70px; padding-top: 20px">-->
+                      {{ childrenSubScoreCard.loading_message }}
+
+                      <div class="progress">
+                        <div class="progress-bar" role="progressbar" [attr.aria-valuenow]="subScoreCard.proccessed_percent" [attr.aria-valuemin]="0" [attr.aria-valuemax]="100" [style.width]="subScoreCard.proccessed_percent+'%'">
+                          {{ childrenSubScoreCard.proccessed_percent | number : '1.2-2' }}%
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="container-fluid" id="child_inner_scorecard" style="padding-left: 5px;margin-top: 10px">
+                      <h3>{{ scorecard.data.header.title }} &nbsp;&nbsp;&nbsp; {{ current_inner_orgunit.name }} &nbsp;&nbsp;&nbsp; {{ period.name }}
+                        <button class="btn btn-default btn-sm pull-right" (click)="downloadCSV(current_inner_orgunit.id)">CSV</button>
+                        <button class="btn btn-warning btn-sm pull-right" (click)="closechildrenSubUnit()">Close</button>
+                      </h3>
+                      <table class="table table-bordered"
+                             style="margin-bottom: 3px;font-size: 9px;border: 1px solid #ddd;border-spacing: 0;border-collapse: collapse;display: table; background-color: rgba(0,0,0,0.05)"
+                      >
+                        <tr [ngClass]="{'hide_no_group': scorecard.data.data_settings.indicator_holder_groups.length == 1 }">
+                          <th class="orgUnitName">
+
+                          </th>
+                          <th
+                            style="font-size: 9px; cursor: pointer"
+                            *ngFor="let indicator_holder_group of scorecard.data.data_settings.indicator_holder_groups"
+                            [attr.colspan]="indicator_holder_group.indicator_holder_ids.length"
+                            class="sans-pro"
+                            (click)="loadPreview(indicator_holder_group,null,null)"
+                            title="Click to analyse indicators for {{ indicator_holder_group.name }}">
+                            {{ indicator_holder_group.name }}
+                          </th>
+                        </tr>
+                        <tr>
+                          <th style="vertical-align: bottom">
+                            <input type="text" class="form-control input-sm no-print" [(ngModel)]="searchQuery2" placeholer="Search">
+                          </th>
+                          <th *ngFor="let indicator of getItemsFromGroups()" style="font-size: 10px;width: 70px;cursor: pointer" class="sans-pro"
+                              title="Click to analyse {{ getIndicatorTitle(indicator) }}" (click)="loadPreview(null,indicator,null)">
+                            {{ getIndicatorTitle(indicator) }}
+                          </th>
+                        </tr>
+                        <ng-container *ngFor="let children_inner_orgunit of childrenSubScoreCard.orgunits | filterByName:searchQuery2">
+                          <tr style="height: 35px">
+                            <td style="vertical-align: bottom;font-size: 10px;" class="orgUnitName">
+                              {{ children_inner_orgunit.name }}
+                            </td>
+                            <td *ngFor="let indicator of getItemsFromGroups()"
+                                style="font-size: 10px;width: 70px; cursor: pointer; padding: 0px;line-height: 10%;"  class="sans-pro" (click)="loadPreview(null,indicator,current_orgunit.id)">
+                              <svg *ngIf="indicator.indicators.length == 2" viewbox="0 0 70 35" width="70" height="35">
+                                <polygon points="0 0 70 0 70 0 0 35" [attr.fill]="assignBgColor(indicator.indicators[0],indicator.indicators[0].values[current_inner_orgunit.id])" style="stroke:#CAC0C0;stroke-width:0.4"/>
+                                <text fill="#000" x="3" y="20" font-size="11" font-family="Source Sans Pro">
+                                  <tspan>{{ indicator.indicators[0].values[current_orgunit.id] }}</tspan>
+                                </text>
+                                <!--top arrow-->
+                                <path *ngIf="indicator.indicators[0].showTopArrow[children_inner_orgunit.id]" d="M2,10H12L7,4" style="fill:black;stroke:black;stroke-width:1"/>
+                                <!--bottom arrow showing decrease-->
+                                <path *ngIf="indicator.indicators[0].showBottomArrow[children_inner_orgunit.id]" d="M2,22H12L7,30" style="fill:black;stroke:black;stroke-width:1"/>
+
+                                <!--second triangle-->
+                                <polygon points="0 35 70 0 70 35 0 35" [attr.fill]="assignBgColor(indicator.indicators[1],indicator.indicators[1].values[children_inner_orgunit.id])" style="stroke:#CAC0C0;stroke-width:0.4"/>
+                                <!--number for the second triangle-->
+                                <text fill="#000" x="48" y="20" font-size="11" font-family="Source Sans Pro">
+                                  <tspan>{{ indicator.indicators[1].values[children_inner_orgunit.id] }}</tspan>
+                                </text>
+                                <!--top arrow for the right triagle-->
+                                <path *ngIf="indicator.indicators[1].showTopArrow[children_inner_orgunit.id]" d="M65,10H55L60,4" style="fill:black;stroke:black;stroke-width:1"/>
+                                <!--below arrow for the triangle-->
+                                <path *ngIf="indicator.indicators[1].showBottomArrow[children_inner_orgunit.id]" d="M65,22H55L60,28" style="fill:black;stroke:black;stroke-width:1"/>
+                              </svg>
+
+                              <!--if there is only one indicator to display-->
+                              <svg *ngIf="indicator.indicators.length == 1" viewbox="0 0 90 35" width="90" height="35">
+                                <!--full box to cover all area-->
+                                <polygon points="0 0 90 0 90 35 0 35" [attr.fill]="assignBgColor(indicator.indicators[0],indicator.indicators[0].values[current_inner_orgunit.id])"/>
+                                <text fill="#000" x="30" y="20" font-size="11" font-family="Source Sans Pro">
+                                  <tspan>{{ indicator.indicators[0].values[children_inner_orgunit.id] }}</tspan>
+                                </text>
+                                <!--top arrow-->
+                                <path *ngIf="indicator.indicators[0].showTopArrow[children_inner_orgunit.id]" d="M2,10H12L7,4" style="fill:black;stroke:black;stroke-width:1"/>
+                                <!--bottom arrow showing decrease-->
+                                <path *ngIf="indicator.indicators[0].showBottomArrow[children_inner_orgunit.id]" d="M2,22H12L7,30" style="fill:black;stroke:black;stroke-width:1"/>
+
+                              </svg>
+                            </td>
+
+                          </tr>
+                        </ng-container>
+                      </table>
+                    </div>
+
+                    <!--end of First child scorecard-->
+                    <!--end of First child scorecard-->
+
+
+                </tr>
               </ng-container>
             </table>
           </div>
 
-          <!--end of another scorecard-->
-          <!--end of another scorecard-->
-          <!--end of another scorecard-->
-          <!--end of another scorecard-->
-          <!--end of another scorecard-->
+          <!--end of First child scorecard-->
+          <!--end of First child scorecard-->
 
 
       </tr>

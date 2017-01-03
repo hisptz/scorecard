@@ -277,10 +277,8 @@ export class ViewComponent implements OnInit, AfterViewInit, OnDestroy {
                             }
                           }
                         }
-                      }
-                    )
-                  )
-                },
+                      })
+                  )},
                 error => {
 
                 }
@@ -291,18 +289,19 @@ export class ViewComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   // prepare scorecard data and download them as csv
-  downloadCSV(){
+  downloadCSV(orgunitId){
     let data = [];
-      for ( let current_orgunit of this.orgUnit.children ){
-        let dataobject = {};
-        dataobject['orgunit'] = current_orgunit.name;
-        for ( let holder of this.scorecard.data.data_settings.indicator_holders ){
-          for( let indicator of holder.indicators ){
-            dataobject[indicator.title] = indicator.values[current_orgunit.id];
-          }
+    let use_orgunit = this.orgtree.treeModel.getNodeById(orgunitId)
+    for ( let current_orgunit of use_orgunit.data.children ){
+      let dataobject = {};
+      dataobject['orgunit'] = current_orgunit.name;
+      for ( let holder of this.scorecard.data.data_settings.indicator_holders ){
+        for( let indicator of holder.indicators ){
+          dataobject[indicator.title] = indicator.values[current_orgunit.id];
         }
-        data.push( dataobject  );
       }
+      data.push( dataobject  );
+    }
 
     let options = {
       fieldSeparator: ',',
@@ -564,6 +563,82 @@ export class ViewComponent implements OnInit, AfterViewInit, OnDestroy {
     let use_period = this.period.id+";"+this.filterService.getLastPeriod(this.period.id);
     let indicator_list = this.getIndicatorList(this.scorecard);
     for( let holder of this.scorecard.data.data_settings.indicator_holders ){
+        for( let indicator of holder.indicators ){
+          // indicator['values'] = [];
+          indicator['loading'] = true;
+          // indicator['showTopArrow'] = [];
+          // indicator['showBottomArrow'] = [];
+          this.indicatorCalls.push(this.dataService.getIndicatorsRequest(this.getOrgUnitsForAnalytics(orgunit_with_children.data),this.period.id, indicator.id)
+            .subscribe(
+              (data) => {
+                indicator.loading = false;
+                this.subScoreCard.loading_message = " Done Fetching data for "+indicator.title;
+                proccesed_indicators++;
+                this.subScoreCard.proccessed_percent = (proccesed_indicators / indicator_list.length) * 100;
+                if(proccesed_indicators == indicator_list.length ){
+                  this.subScoreCard.loading = false;
+                }
+                //noinspection TypeScriptUnresolvedVariable
+                for ( let orgunit of data.metaData.ou ){
+                  if(!this.checkOrgunitAvailability(orgunit,this.subScoreCard.orgunits)){
+                    //noinspection TypeScriptUnresolvedVariable
+                    this.subScoreCard.orgunits.push({"id":orgunit, "name":data.metaData.names[orgunit]})
+                  }
+                  indicator.values[orgunit] = this.dataService.getIndicatorData(orgunit,this.period.id, data);
+                }
+
+                //load previous data
+                let effective_gap = parseInt( indicator.arrow_settings.effective_gap );
+                this.indicatorCalls.push(this.dataService.getIndicatorsRequest(this.getOrgUnitsForAnalytics(orgunit_with_children.data),this.filterService.getLastPeriod(this.period.id), indicator.id)
+                  .subscribe(
+                    ( olddata ) => {
+                      for( let prev_orgunit of this.subScoreCard.orgunits ){
+                        indicator.previous_values[prev_orgunit.id] = this.dataService.getIndicatorData(prev_orgunit.id,this.filterService.getLastPeriod(this.period.id), olddata);
+                      }
+                      if(indicator.hasOwnProperty("arrow_settings")){
+                        for( let key in indicator.values ) {
+                          if(parseInt(indicator.previous_values[key]) != 0){
+                            let check = parseInt( indicator.values[key] ) > ( parseInt( indicator.previous_values[key] ) + effective_gap );
+                            let check1 = parseInt( indicator.values[key] ) < ( parseInt( indicator.previous_values[key] ) - effective_gap );
+                            indicator.showTopArrow[key] = check;
+                            indicator.showBottomArrow[key] = check1;
+                          }
+                        }
+                      }
+                    }
+                  )
+                )
+              },
+              error => {
+
+              }
+            ))
+        }
+      }
+
+  }
+
+  closeSubUnit(){
+    this.showSubScorecard = [];
+  }
+
+  // loading sub orgunit details
+  showChildrenSubScorecard: any[] = [];
+  childrenSubScoreCard: any = {};
+  loadGrandChildrenData(selectedorgunit){
+    this.showChildrenSubScorecard = [];
+    this.childrenSubScoreCard.proccessed_percent = 0;
+    this.childrenSubScoreCard.loading = true;
+    this.childrenSubScoreCard.orgunits = [];
+    this.showOrgTree = true;
+    this.showPerTree = true;
+    this.childrenSubScoreCard.loading_message = " Getting scorecard details ";
+    this.showChildrenSubScorecard[selectedorgunit.id] = true;
+    let proccesed_indicators = 0;
+    let orgunit_with_children = this.orgtree.treeModel.getNodeById(selectedorgunit.id);
+    let use_period = this.period.id+";"+this.filterService.getLastPeriod(this.period.id);
+    let indicator_list = this.getIndicatorList(this.scorecard);
+    for( let holder of this.scorecard.data.data_settings.indicator_holders ){
       for( let indicator of holder.indicators ){
         // indicator['values'] = [];
         indicator['loading'] = true;
@@ -573,17 +648,17 @@ export class ViewComponent implements OnInit, AfterViewInit, OnDestroy {
           .subscribe(
             (data) => {
               indicator.loading = false;
-              this.subScoreCard.loading_message = " Done Fetching data for "+indicator.title;
+              this.childrenSubScoreCard.loading_message = " Done Fetching data for "+indicator.title;
               proccesed_indicators++;
-              this.subScoreCard.proccessed_percent = (proccesed_indicators / indicator_list.length) * 100;
+              this.childrenSubScoreCard.proccessed_percent = (proccesed_indicators / indicator_list.length) * 100;
               if(proccesed_indicators == indicator_list.length ){
-                this.subScoreCard.loading = false;
+                this.childrenSubScoreCard.loading = false;
               }
               //noinspection TypeScriptUnresolvedVariable
               for ( let orgunit of data.metaData.ou ){
-                if(!this.checkOrgunitAvailability(orgunit,this.subScoreCard.orgunits)){
+                if(!this.checkOrgunitAvailability(orgunit,this.childrenSubScoreCard.orgunits)){
                   //noinspection TypeScriptUnresolvedVariable
-                  this.subScoreCard.orgunits.push({"id":orgunit, "name":data.metaData.names[orgunit]})
+                  this.childrenSubScoreCard.orgunits.push({"id":orgunit, "name":data.metaData.names[orgunit]})
                 }
                 indicator.values[orgunit] = this.dataService.getIndicatorData(orgunit,this.period.id, data);
               }
@@ -593,7 +668,7 @@ export class ViewComponent implements OnInit, AfterViewInit, OnDestroy {
               this.indicatorCalls.push(this.dataService.getIndicatorsRequest(this.getOrgUnitsForAnalytics(orgunit_with_children.data),this.filterService.getLastPeriod(this.period.id), indicator.id)
                 .subscribe(
                   ( olddata ) => {
-                    for( let prev_orgunit of this.subScoreCard.orgunits ){
+                    for( let prev_orgunit of this.childrenSubScoreCard.orgunits ){
                       indicator.previous_values[prev_orgunit.id] = this.dataService.getIndicatorData(prev_orgunit.id,this.filterService.getLastPeriod(this.period.id), olddata);
                     }
                     if(indicator.hasOwnProperty("arrow_settings")){
@@ -618,75 +693,8 @@ export class ViewComponent implements OnInit, AfterViewInit, OnDestroy {
     }
   }
 
-  // loading sub orgunit details
-  showChildrenSubScorecard: any[] = [];
-  childrenSubScoreCard: any = {};
-  loadGrandChildrenData(selectedorgunit){
-    this.showSubScorecard = [];
-    this.subScoreCard.proccessed_percent = 0;
-    this.subScoreCard.loading = true;
-    this.subScoreCard.orgunits = [];
-    this.showOrgTree = true;
-    this.showPerTree = true;
-    this.subScoreCard.loading_message = " Getting scorecard details ";
-    this.showSubScorecard[selectedorgunit.id] = true;
-    let proccesed_indicators = 0;
-    let orgunit_with_children = this.orgtree.treeModel.getNodeById(selectedorgunit.id);
-    let use_period = this.period.id+";"+this.filterService.getLastPeriod(this.period.id);
-    let indicator_list = this.getIndicatorList(this.scorecard);
-    for( let holder of this.scorecard.data.data_settings.indicator_holders ){
-      for( let indicator of holder.indicators ){
-        // indicator['values'] = [];
-        indicator['loading'] = true;
-        // indicator['showTopArrow'] = [];
-        // indicator['showBottomArrow'] = [];
-        this.indicatorCalls.push(this.dataService.getIndicatorsRequest(this.getOrgUnitsForAnalytics(orgunit_with_children.data),this.period.id, indicator.id)
-          .subscribe(
-            (data) => {
-              indicator.loading = false;
-              this.subScoreCard.loading_message = " Done Fetching data for "+indicator.title;
-              proccesed_indicators++;
-              this.subScoreCard.proccessed_percent = (proccesed_indicators / indicator_list.length) * 100;
-              if(proccesed_indicators == indicator_list.length ){
-                this.subScoreCard.loading = false;
-              }
-              //noinspection TypeScriptUnresolvedVariable
-              for ( let orgunit of data.metaData.ou ){
-                if(!this.checkOrgunitAvailability(orgunit,this.subScoreCard.orgunits)){
-                  //noinspection TypeScriptUnresolvedVariable
-                  this.subScoreCard.orgunits.push({"id":orgunit, "name":data.metaData.names[orgunit]})
-                }
-                indicator.values[orgunit] = this.dataService.getIndicatorData(orgunit,this.period.id, data);
-              }
-
-              //load previous data
-              let effective_gap = parseInt( indicator.arrow_settings.effective_gap );
-              this.indicatorCalls.push(this.dataService.getIndicatorsRequest(this.getOrgUnitsForAnalytics(orgunit_with_children.data),this.filterService.getLastPeriod(this.period.id), indicator.id)
-                .subscribe(
-                  ( olddata ) => {
-                    for( let prev_orgunit of this.subScoreCard.orgunits ){
-                      indicator.previous_values[prev_orgunit.id] = this.dataService.getIndicatorData(prev_orgunit.id,this.filterService.getLastPeriod(this.period.id), olddata);
-                    }
-                    if(indicator.hasOwnProperty("arrow_settings")){
-                      for( let key in indicator.values ) {
-                        if(parseInt(indicator.previous_values[key]) != 0){
-                          let check = parseInt( indicator.values[key] ) > ( parseInt( indicator.previous_values[key] ) + effective_gap );
-                          let check1 = parseInt( indicator.values[key] ) < ( parseInt( indicator.previous_values[key] ) - effective_gap );
-                          indicator.showTopArrow[key] = check;
-                          indicator.showBottomArrow[key] = check1;
-                        }
-                      }
-                    }
-                  }
-                )
-              )
-            },
-            error => {
-
-            }
-          ))
-      }
-    }
+  closechildrenSubUnit(){
+    this.showChildrenSubScorecard = [];
   }
 
   ngOnDestroy (){

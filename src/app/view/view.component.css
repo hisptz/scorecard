@@ -224,3 +224,7 @@ span.selected-item {
   min-height: 200px;
   padding: 10px;
 }
+
+.hide_no_group{
+  display: none;
+}
