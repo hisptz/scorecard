@@ -30,7 +30,30 @@ export class DhisMenuComponent implements OnInit, AfterViewInit {
   }
 
   ngOnInit() {
+    window['dhis2'] = window['dhis2']|| {};
+    window['dhis2'].settings = window['dhis2'].settings || {};
+    this.loadBaseUrl().subscribe(
+      ( data ) => {
 
+        //noinspection TypeScriptUnresolvedVariable
+        window['dhis2'].settings.baseUrl = data.activities.dhis.href;
+        setTimeout(() => {
+          // adding nessesary script tags for the menu
+          const k = document.createElement('script');
+          k.type = 'text/javascript';
+          k.src = this.dhis2_url + 'dhis-web-commons/javascripts/dhis2/dhis2.translate.js';
+          this.elementRef.nativeElement.appendChild(k);
+          const j = document.createElement('script');
+          j.type = 'text/javascript';
+          j.src = this.dhis2_url + 'dhis-web-commons/javascripts/dhis2/dhis2.menu.js';
+          this.elementRef.nativeElement.appendChild(j);
+          const g = document.createElement('script');
+          g.type = 'text/javascript';
+          g.src = this.dhis2_url + 'dhis-web-commons/javascripts/dhis2/dhis2.menu.ui.js';
+          this.elementRef.nativeElement.appendChild(g);
+        }, 100);
+      }
+    )
   }
 
   /**
@@ -105,6 +128,12 @@ export class DhisMenuComponent implements OnInit, AfterViewInit {
             .map((response: Response) => response.json())
             .catch( this.handleError );
     }
+
+  loadBaseUrl() {
+    return this.http.get("manifest.webapp")
+      .map((response: Response) => response.json())
+      .catch(this.handleError);
+  }
     // Handling error
     handleError (error: any) {
         return Observable.throw( error );

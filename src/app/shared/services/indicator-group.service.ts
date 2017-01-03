@@ -17,6 +17,7 @@ export class IndicatorGroupService {
 
   constructor(private http: Http, private costant: Constants) {
     this.baseUrl = this.costant.root_dir;
+    console.log(this.baseUrl);
   }
 
   // get all indicator groups
