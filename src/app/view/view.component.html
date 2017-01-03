@@ -255,7 +255,7 @@
                   *ngFor="let indicator_holder_group of scorecard.data.data_settings.indicator_holder_groups"
                   [attr.colspan]="indicator_holder_group.indicator_holder_ids.length"
                   class="sans-pro"
-                  (click)="loadPreview(indicator_holder_group,null,null)"
+                  (click)="loadPreview(indicator_holder_group,null,current_orgunit.id)"
                   title="Click to analyse indicators for {{ indicator_holder_group.name }}">
                   {{ indicator_holder_group.name }}
                 </th>
@@ -265,7 +265,7 @@
                   <input type="text" class="form-control input-sm no-print" [(ngModel)]="searchQuery1" placeholer="Search">
                 </th>
                 <th *ngFor="let indicator of getItemsFromGroups()" style="font-size: 10px;width: 70px;cursor: pointer" class="sans-pro"
-                    title="Click to analyse {{ getIndicatorTitle(indicator) }}" (click)="loadPreview(null,indicator,null)">
+                    title="Click to analyse {{ getIndicatorTitle(indicator) }}" (click)="loadPreview(null,indicator,current_orgunit.id)">
                   {{ getIndicatorTitle(indicator) }}
                 </th>
               </tr>
@@ -275,7 +275,7 @@
                     {{ current_inner_orgunit.name }}
                   </td>
                   <td *ngFor="let indicator of getItemsFromGroups()"
-                      style="font-size: 10px;width: 70px; cursor: pointer; padding: 0px;line-height: 10%;"  class="sans-pro" (click)="loadPreview(null,indicator,current_orgunit.id)">
+                      style="font-size: 10px;width: 70px; cursor: pointer; padding: 0px;line-height: 10%;"  class="sans-pro" (click)="loadPreview(null,indicator,current_inner_orgunit.id)">
                     <svg *ngIf="indicator.indicators.length == 2" viewbox="0 0 70 35" width="70" height="35">
                       <polygon points="0 0 70 0 70 0 0 35" [attr.fill]="assignBgColor(indicator.indicators[0],indicator.indicators[0].values[current_inner_orgunit.id])" style="stroke:#CAC0C0;stroke-width:0.4"/>
                       <text fill="#000" x="3" y="20" font-size="11" font-family="Source Sans Pro">
@@ -347,7 +347,7 @@
                             *ngFor="let indicator_holder_group of scorecard.data.data_settings.indicator_holder_groups"
                             [attr.colspan]="indicator_holder_group.indicator_holder_ids.length"
                             class="sans-pro"
-                            (click)="loadPreview(indicator_holder_group,null,null)"
+                            (click)="loadPreview(indicator_holder_group,null,current_inner_orgunit.id)"
                             title="Click to analyse indicators for {{ indicator_holder_group.name }}">
                             {{ indicator_holder_group.name }}
                           </th>
@@ -357,7 +357,7 @@
                             <input type="text" class="form-control input-sm no-print" [(ngModel)]="searchQuery2" placeholer="Search">
                           </th>
                           <th *ngFor="let indicator of getItemsFromGroups()" style="font-size: 10px;width: 70px;cursor: pointer" class="sans-pro"
-                              title="Click to analyse {{ getIndicatorTitle(indicator) }}" (click)="loadPreview(null,indicator,null)">
+                              title="Click to analyse {{ getIndicatorTitle(indicator) }}" (click)="loadPreview(null,indicator,current_inner_orgunit.id)">
                             {{ getIndicatorTitle(indicator) }}
                           </th>
                         </tr>
@@ -367,7 +367,7 @@
                               {{ children_inner_orgunit.name }}
                             </td>
                             <td *ngFor="let indicator of getItemsFromGroups()"
-                                style="font-size: 10px;width: 70px; cursor: pointer; padding: 0px;line-height: 10%;"  class="sans-pro" (click)="loadPreview(null,indicator,current_orgunit.id)">
+                                style="font-size: 10px;width: 70px; cursor: pointer; padding: 0px;line-height: 10%;"  class="sans-pro" (click)="loadPreview(null,indicator,children_inner_orgunit.id)">
                               <svg *ngIf="indicator.indicators.length == 2" viewbox="0 0 70 35" width="70" height="35">
                                 <polygon points="0 0 70 0 70 0 0 35" [attr.fill]="assignBgColor(indicator.indicators[0],indicator.indicators[0].values[current_inner_orgunit.id])" style="stroke:#CAC0C0;stroke-width:0.4"/>
                                 <text fill="#000" x="3" y="20" font-size="11" font-family="Source Sans Pro">

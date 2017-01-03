@@ -342,7 +342,6 @@ export class ViewComponent implements OnInit, AfterViewInit, OnDestroy {
       let node = this.orgtree.treeModel.getNodeById(ou);
       this.orgunit_for_model = node.data;
     }
-
     this.show_details = true;
   }
 

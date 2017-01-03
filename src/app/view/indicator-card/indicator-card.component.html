@@ -23,7 +23,7 @@
         <div class="tree-view" [ngClass]="{'hiddenTree':showOrgTree}" id="tree_view">
           <div class="search-area">
             <form *ngIf="!card_orgunit_tree_config.loading && card_orgunit_tree_config.show_search" style="border-bottom: solid 1px blanchedalmond;">
-              <input #filter (keyup)="filterNodes(filter.value, orgtree)" placeholder="{{ card_orgunit_tree_config.search_text }}" class="search_field"/>
+              <input #filter (keyup)="filterNodes(filter.value, orgtree, 'orgunit')" placeholder="{{ card_orgunit_tree_config.search_text }}" class="search_field"/>
 
             </form>
           </div>

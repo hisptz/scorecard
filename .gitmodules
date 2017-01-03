@@ -1,3 +1,6 @@
 [submodule "src/app/view/ng2-dhis-visualizer"]
 	path = src/app/view/ng2-dhis-visualizer
 	url = git@github.com:hisptz/ng2-dhis-visualizer.git
+[submodule "src/app/shared/angular2-tree-component"]
+	path = src/app/shared/angular2-tree-component
+	url = https://github.com/500tech/angular2-tree-component.git

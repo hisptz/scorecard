@@ -120,13 +120,8 @@ export class IndicatorCardComponent implements OnInit, AfterViewInit, OnDestroy 
   }
 
   ngAfterViewInit(){
-    console.log("Orgunits:",this.default_orgunit);
-    console.log("Periods:",this.default_period);
-    console.log("Period Type:",this.default_period_type);
-    console.log("indicator:", this.indicator);
     this.activateNode( this.default_period.id, this.pertree );
     this.activateNode( this.default_orgunit.id, this.orgtree );
-
     this.updateIndicatorCard(this.indicator, "table", [this.default_period], [this.default_orgunit], true);
 
   }
@@ -283,8 +278,16 @@ export class IndicatorCardComponent implements OnInit, AfterViewInit, OnDestroy 
   }
 
   // function that is used to filter nodes
-  filterNodes(text, tree) {
-    tree.treeModel.filterNodes(text, true);
+  filterNodes(text, tree, type:string = null) {
+    if(type == "orgunit"){
+      if(text.length >=3 ){
+        tree.treeModel.filterNodes(text, true);
+      }else if(text.length == 0){
+        tree.treeModel.filterNodes('', false);
+      }
+    }else{
+      tree.treeModel.filterNodes(text, true);
+    }
   }
 
   // custom settings for tree
