@@ -7,6 +7,7 @@ import { Http, Response } from '@angular/http';
 import 'rxjs/Rx';
 import {Observable} from 'rxjs';
 import { Subscription } from 'rxjs/Rx';
+import {Angular2Csv} from "angular2-csv";
 
 const actionMapping:IActionMapping = {
   mouse: {
@@ -195,8 +196,12 @@ export class IndicatorCardComponent implements OnInit, AfterViewInit, OnDestroy 
     this.subscription = this.loadAnalytics(url).subscribe(
       (data) => {
         this.loading = false;
-        this.chartData = this.visulizationService.drawChart( data, this.visualizer_config.chartConfiguration );
-        this.tableData = this.visulizationService.drawTable( data, this.visualizer_config.tableConfiguration );
+        if(type == "csv"){
+          this.downloadCSV(data);
+        }else{
+          this.chartData = this.visulizationService.drawChart( data, this.visualizer_config.chartConfiguration );
+          this.tableData = this.visulizationService.drawTable( data, this.visualizer_config.tableConfiguration );
+        }
       },
       error => {
         console.log(error)
@@ -315,6 +320,56 @@ export class IndicatorCardComponent implements OnInit, AfterViewInit, OnDestroy 
   // hide the model
   removeModel(){
     this.show_details.emit(false);
+  }
+
+  // prepare scorecard data and download them as csv
+  downloadCSV(analytics_data){
+    let data = [];
+    let visualizer_config = {
+      'type': 'chart',
+      'tableConfiguration': {
+        'rows': ['ou', 'dx'] ,
+        'columns': ['pe']
+      },
+      'chartConfiguration': {
+        'type':'bar',
+        'title': 'My chart',
+        'xAxisType': 'pe',
+        'yAxisType': 'dx'
+      }
+    }
+    let chartObject = this.visulizationService.drawChart(analytics_data, visualizer_config.chartConfiguration)
+    let items = [];
+    for ( let value of chartObject.series){
+      let obj = {name:value.name};
+      let i = 0;
+      for( let val of chartObject.options.xAxis.categories){
+        obj[val] = value.data[i];
+        i++;
+      };
+      items.push(obj);
+      data.push(obj);
+    };
+    // for ( let current_orgunit of this.orgUnit.children ){
+    //   let dataobject = {};
+    //   dataobject['orgunit'] = current_orgunit.name;
+    //   for ( let holder of this.scorecard.data.data_settings.indicator_holders ){
+    //     for( let indicator of holder.indicators ){
+    //       dataobject[indicator.title] = indicator.values[current_orgunit.id];
+    //     }
+    //   }
+    //   data.push( dataobject  );
+    // }
+
+    let options = {
+      fieldSeparator: ',',
+      quoteStrings: '"',
+      decimalseparator: '.',
+      showLabels: true,
+      showTitle: false
+    };
+
+    new Angular2Csv(data, 'My Report', options);
   }
 
   // handle errors from requests

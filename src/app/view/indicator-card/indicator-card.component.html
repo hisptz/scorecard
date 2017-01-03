@@ -130,7 +130,7 @@
     <label>&nbsp;&nbsp;</label>
     <div>
       <button type="button" class="btn btn-default pull-right"  style="height: 38px" (click)="updateIndicatorCard(indicator, current_visualisation, card_selected_periods, card_selected_orgunits)">Update</button>
-      <button type="button" class="btn btn-default pull-right"  style="height: 38px" (click)="downloadCSV()">
+      <button type="button" class="btn btn-default pull-right"  style="height: 38px" (click)="updateIndicatorCard(indicator, 'csv', card_selected_periods, card_selected_orgunits)">
         <span class="glyphicon glyphicon-save-file"></span>  CSV
       </button>
       <button type="button" class="btn btn-default pull-right"  style="height: 38px" (click)="browserPrint()">
