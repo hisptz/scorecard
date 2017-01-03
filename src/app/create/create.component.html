@@ -187,6 +187,7 @@
           <li
             class="list-group-item selection_link"
             *ngFor="let item of current_listing | filterByName:listQuery | paginate: { id: 'list', itemsPerPage: 8, currentPage: r }"
+            [ngClass]="{'already_selected': indicatorExist(scorecard.data.data_settings.indicator_holders, item)}"
             (click)="load_item(item)"
           >
             {{ item.name }}

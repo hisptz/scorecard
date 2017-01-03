@@ -144,6 +144,8 @@ export class CreateComponent implements OnInit {
     }
   }
 
+
+
   // load items to be displayed in a list of indicators/ data Elements / Data Sets
   load_list(group_id,current_type): void{
     this.listQuery = null;
@@ -218,7 +220,7 @@ export class CreateComponent implements OnInit {
   // load a single item for use in a score card
   load_item(item): void{
     if( this.indicatorExist( this.scorecard.data.data_settings.indicator_holders, item )){
-      alert("Selected indicator has already been added");
+      // TODO: Implement a popup to tell a user that this has already been added
     }else{
       let indicator = this.getIndicatorStructure(item.name, item.id);
       indicator.value = Math.floor(Math.random() * 60) + 40;

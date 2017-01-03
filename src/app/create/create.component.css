@@ -93,6 +93,11 @@
   background-color: rgba(0,0,0,0.05);
 }
 
+.already_selected{
+  background-color: rgba(0,0,0,0.08);
+  cursor: not-allowed;
+}
+
 a:hover{
   transform: scale(1.02, 1.02);
 }
