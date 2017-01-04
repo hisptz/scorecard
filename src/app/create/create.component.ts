@@ -1,10 +1,11 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, OnInit, ViewChild, ElementRef} from '@angular/core';
 import {Http} from "@angular/http";
 import {IndicatorGroupService, IndicatorGroup} from "../shared/services/indicator-group.service";
 import {DatasetService, Dataset} from "../shared/services/dataset.service";
 import {DataElementGroupService, DataElementGroup} from "../shared/services/data-element-group.service";
 import {ScoreCard, ScorecardService} from "../shared/services/scorecard.service";
 import {Router} from "@angular/router";
+import {$} from "protractor";
 
 @Component({
   selector: 'app-create',
@@ -37,6 +38,14 @@ export class CreateComponent implements OnInit {
   saving_scorecard: boolean = false;
   saving_error: boolean = false;
   deleting: boolean[] = [];
+  someErrorOccured: boolean = false;
+
+  @ViewChild('title')
+  title_element:ElementRef;
+
+  @ViewChild('description')
+  discription_element:ElementRef;
+
   constructor(private http: Http,
               private indicatorService: IndicatorGroupService,
               private datasetService: DatasetService,
@@ -143,8 +152,6 @@ export class CreateComponent implements OnInit {
 
     }
   }
-
-
 
   // load items to be displayed in a list of indicators/ data Elements / Data Sets
   load_list(group_id,current_type): void{
@@ -578,34 +585,51 @@ export class CreateComponent implements OnInit {
 
   // saving scorecard details
   saveScoreCard(action: string = "save"): void {
-    // delete all empty indicators if any
-    this.cleanUpEmptyColumns();
+    // display error if some fields are missing
+    if(this.scorecard.data.data_settings.indicator_holders.length == 0 || this.scorecard.data.header.title == '' || this.scorecard.data.header.description == ''){
+      this.someErrorOccured = true;
+      if(this.scorecard.data.header.description == ''){
+        this.discription_element.nativeElement.focus();
+      }
+      if(this.scorecard.data.header.title == ''){
+        this.title_element.nativeElement.focus();
+      }
+      setTimeout(() => {
+        this.someErrorOccured = false;
+      }, 3000);
 
-    // post the data
-    this.saving_scorecard = true;
-    if(action == "save"){
-      this.scorecardService.create(this.scorecard).subscribe(
-        (data) => {
-          this.saving_scorecard = false;
-          this.router.navigate(['view',this.scorecard.id]);
-        },
-        error => {
-          this.saving_error = true;
-          this.saving_scorecard = false
-        }
-      );
     }else{
-      this.scorecardService.update(this.scorecard).subscribe(
-        (data) => {
-          this.saving_scorecard = false;
-          this.router.navigate(['view',this.scorecard.id]);
-        },
-        error => {
-          this.saving_error = true;
-          this.saving_scorecard = false
-        }
-      );
+      // delete all empty indicators if any
+      this.cleanUpEmptyColumns();
+
+      // post the data
+      this.saving_scorecard = true;
+      if(action == "save"){
+        this.scorecardService.create(this.scorecard).subscribe(
+          (data) => {
+            this.saving_scorecard = false;
+            this.router.navigate(['view',this.scorecard.id]);
+          },
+          error => {
+            this.saving_error = true;
+            this.saving_scorecard = false
+          }
+        );
+      }
+      else{
+        this.scorecardService.update(this.scorecard).subscribe(
+          (data) => {
+            this.saving_scorecard = false;
+            this.router.navigate(['view',this.scorecard.id]);
+          },
+          error => {
+            this.saving_error = true;
+            this.saving_scorecard = false
+          }
+        );
+      }
     }
+
 
   }
 }
