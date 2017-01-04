@@ -17,7 +17,6 @@ import Key = webdriver.Key;
 
 const actionMapping:IActionMapping = {
   mouse: {
-    dblClick: TREE_ACTIONS.TOGGLE_EXPANDED,
     click: (node, tree, $event) => {
       $event.shiftKey
         ? TREE_ACTIONS.TOGGLE_SELECTED_MULTI(node, tree, $event)
@@ -93,6 +92,7 @@ export class ViewComponent implements OnInit, AfterViewInit, OnDestroy {
   default_period: string[] = [];
   showOrgTree:boolean = true;
   showPerTree:boolean = true;
+  showAdditionalOptions:boolean = true;
 
   show_details:boolean = false;
 
@@ -165,7 +165,6 @@ export class ViewComponent implements OnInit, AfterViewInit, OnDestroy {
                       this.organisationunits = orgUnits.organisationUnits;
                       this.orgunitService.nodes = orgUnits.organisationUnits;
                       this.orgunitService.sortOrgUnits( data.pager.total );
-                      // this.activateNode(this.orgUnit.id, this.orgtree);
                       this.orgunit_tree_config.loading = false;
                     },
                     error => {
@@ -191,9 +190,8 @@ export class ViewComponent implements OnInit, AfterViewInit, OnDestroy {
       };
 
       this.organisationunits = this.orgunitService.nodes;
-
+      // TODO: make a sort level information dynamic
       this.orgunitService.sortOrgUnits( 4 );
-
       this.loadScoreCard();
     }
 
@@ -694,6 +692,10 @@ export class ViewComponent implements OnInit, AfterViewInit, OnDestroy {
 
   closechildrenSubUnit(){
     this.showChildrenSubScorecard = [];
+  }
+
+  showOptions(){
+    this.showAdditionalOptions = !this.showAdditionalOptions;
   }
 
   ngOnDestroy (){

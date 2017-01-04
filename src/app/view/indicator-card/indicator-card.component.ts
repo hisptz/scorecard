@@ -78,6 +78,7 @@ export class IndicatorCardComponent implements OnInit, AfterViewInit, OnDestroy 
   visualizer_config = {
     'type': 'table',
     'tableConfiguration': {
+      'title':"My table",
       'rows': ['ou', 'dx'] ,
       'columns': ['pe']
     },
@@ -97,10 +98,10 @@ export class IndicatorCardComponent implements OnInit, AfterViewInit, OnDestroy 
     {name: 'bar', image: 'column.png'},
     {name: 'area', image: 'area.jpg'},
     {name: 'pie', image: 'pie.png'},
-    {name: 'radar', image: 'radar.png'},
+    // {name: 'radar', image: 'radar.png'},
     {name: 'stacked_column', image: 'column-stacked.png'},
     {name: 'stacked_bar', image: 'bar-stacked.png'},
-    {name: 'gauge', image: 'gauge.jpg'}
+    // {name: 'gauge', image: 'gauge.jpg'}
     ];
   constructor(private filterService: FilterService,
               private visulizationService: VisulizerService,
@@ -157,12 +158,13 @@ export class IndicatorCardComponent implements OnInit, AfterViewInit, OnDestroy 
       this.visualizer_config = {
         'type': 'table',
         'tableConfiguration': {
+          'title': this.prepareCardTitle(this.indicator),
           'rows': ['ou'],
           'columns': ['dx','pe']
         },
         'chartConfiguration': {
           'type':type,
-          'title': 'My chart',
+          'title': this.prepareCardTitle(this.indicator),
           'xAxisType': 'pe',
           'yAxisType': 'ou'
         }
@@ -171,12 +173,13 @@ export class IndicatorCardComponent implements OnInit, AfterViewInit, OnDestroy 
       this.visualizer_config = {
         'type': 'chart',
         'tableConfiguration': {
+          'title': this.prepareCardTitle(this.indicator),
           'rows': ['ou'] ,
           'columns': ['pe']
         },
         'chartConfiguration': {
           'type':type,
-          'title': 'My chart',
+          'title': this.prepareCardTitle(this.indicator),
           'xAxisType': 'pe',
           'yAxisType': 'ou'
         }
@@ -192,6 +195,7 @@ export class IndicatorCardComponent implements OnInit, AfterViewInit, OnDestroy 
       (data) => {
         this.loading = false;
         if(type == "csv"){
+          console.log("this is what is working");
           this.downloadCSV(data);
         }else{
           this.chartData = this.visulizationService.drawChart( data, this.visualizer_config.chartConfiguration );
@@ -206,7 +210,7 @@ export class IndicatorCardComponent implements OnInit, AfterViewInit, OnDestroy 
   }
 
   // a function to reverse the content of X axis and Y axis
-  switchXandY(indicator){
+  switchXandY(indicator,visualizer_config){
 
   }
 
@@ -296,23 +300,6 @@ export class IndicatorCardComponent implements OnInit, AfterViewInit, OnDestroy 
     actionMapping
   };
 
-  // update chart
-  updateChart(){
-    this.visualizer_config = {
-      'type': 'chart',
-      'tableConfiguration': {
-        'rows': ['ou', 'dx'] ,
-        'columns': ['pe']
-      },
-      'chartConfiguration': {
-        'type':'line',
-        'title': 'My chart',
-        'xAxisType': 'pe',
-        'yAxisType': 'dx'
-      }
-    };
-  }
-
   // a function to simplify loading of analytics data
   loadAnalytics(url) {
     return this.http.get(url)
@@ -328,41 +315,21 @@ export class IndicatorCardComponent implements OnInit, AfterViewInit, OnDestroy 
   // prepare scorecard data and download them as csv
   downloadCSV(analytics_data){
     let data = [];
-    let visualizer_config = {
+    let some_config = {
       'type': 'chart',
       'tableConfiguration': {
+        'title': this.prepareCardTitle(this.indicator),
         'rows': ['ou', 'dx'] ,
         'columns': ['pe']
       },
       'chartConfiguration': {
         'type':'bar',
-        'title': 'My chart',
+        'title': this.prepareCardTitle(this.indicator),
         'xAxisType': 'pe',
-        'yAxisType': 'dx'
+        'yAxisType': 'ou'
       }
-    }
-    let chartObject = this.visulizationService.drawChart(analytics_data, visualizer_config.chartConfiguration)
-    let items = [];
-    for ( let value of chartObject.series){
-      let obj = {name:value.name};
-      let i = 0;
-      for( let val of chartObject.options.xAxis.categories){
-        obj[val] = value.data[i];
-        i++;
-      };
-      items.push(obj);
-      data.push(obj);
     };
-    // for ( let current_orgunit of this.orgUnit.children ){
-    //   let dataobject = {};
-    //   dataobject['orgunit'] = current_orgunit.name;
-    //   for ( let holder of this.scorecard.data.data_settings.indicator_holders ){
-    //     for( let indicator of holder.indicators ){
-    //       dataobject[indicator.title] = indicator.values[current_orgunit.id];
-    //     }
-    //   }
-    //   data.push( dataobject  );
-    // }
+    data = this.visulizationService.getCsvData(analytics_data, some_config.chartConfiguration);
 
     let options = {
       fieldSeparator: ',',
@@ -373,6 +340,16 @@ export class IndicatorCardComponent implements OnInit, AfterViewInit, OnDestroy 
     };
 
     new Angular2Csv(data, 'My Report', options);
+  }
+
+  prepareCardTitle(holders_array: any[]): string{
+    let indicators_title = [];
+    for ( let holder of holders_array ){
+      for ( let indicator of holder.indicators ){
+        indicators_title.push(indicator.name);
+      }
+    }
+    return indicators_title.join(", ");
   }
 
   // handle errors from requests

@@ -11,7 +11,7 @@
 </div>
 
 <div class="container-fluid no-print" id="filters" style="padding: 0px">
-  <div class="col-sm-3" style="padding-left: 5px">
+  <div class="col-sm-4" style="padding-left: 5px">
     <label>Organisation Units</label>
 
     <div class="tree-input" >
@@ -54,26 +54,8 @@
     </div>
 
   </div>
-  <div class="col-sm-7">
-    <div class="row">
-      <div class="col-sm-4">
-        <label>Period Type</label>
-        <select id="periodType" [(ngModel)]="period_type" class="form-control" style="height: 38px " (change)="changePeriodType()">
-          <option value="">[ Select period type ]</option>
-          <option value="Monthly">Monthly</option>
-          <option value="BiMonthly">Bimonthly</option>
-          <option value="Quarterly">Quarterly</option>
-          <option value="SixMonthly">Six-monthly</option>
-          <option value="SixMonthlyApril">Six-monthly April</option>
-          <option value="Yearly">Yearly</option>
-          <option value="FinancialApril">Financial-April</option>
-          <option value="FinancialJuly">Financial-July</option>
-          <option value="FinancialOct">Financial-Oct</option>
-        </select>
-      </div>
-      <div class="col-sm-4">
+  <div class="col-sm-4">
         <label>Selected Period</label>
-
         <div class="tree-input" >
           <div>
             <div class="show_items" (click)="displayPerTree()">
@@ -85,6 +67,29 @@
               <span *ngIf="period_tree_config.loading">{{ period_tree_config.loading_message }}</span>
             </div>
             <div class="tree-view" [ngClass]="{'hiddenTree':showPerTree}">
+              <div class="col-sm-7" style="padding-left: 0px; margin-bottom: 5px">
+                <label>Period Type</label>
+                <select id="periodType" [(ngModel)]="period_type" class="form-control" style="height: 30px " (change)="changePeriodType()">
+                  <option value="">[ Select period type ]</option>
+                  <option value="Monthly">Monthly</option>
+                  <option value="BiMonthly">Bimonthly</option>
+                  <option value="Quarterly">Quarterly</option>
+                  <option value="SixMonthly">Six-monthly</option>
+                  <option value="SixMonthlyApril">Six-monthly April</option>
+                  <option value="Yearly">Yearly</option>
+                  <option value="FinancialApril">Financial-April</option>
+                  <option value="FinancialJuly">Financial-July</option>
+                  <option value="FinancialOct">Financial-Oct</option>
+                </select>
+              </div>
+              <div class="col-sm-5" style="padding-right: 0px; margin-bottom: 5px">
+                <label>&nbsp;</label>
+                <div class="btn-group" style="width: 100%">
+                  <button type="button" class="btn btn-default pull-right" style="height: 30px; font-size: 11px" (click)="pushPeriodForward()">>> year</button>
+                  <button type="button" class="btn btn-default pull-right" style="height: 30px; font-size: 11px;" (click)="pushPeriodBackward()"><< year</button>
+                </div>
+              </div>
+
               <div class="search-area">
                 <form *ngIf="!period_tree_config.loading && period_tree_config.show_search" style="border-bottom: solid 1px blanchedalmond;">
                   <input #filter (keyup)="filterNodes(filter.value, pertree)" placeholder="{{ period_tree_config.search_text }}" id="search_field"/>
@@ -92,7 +97,7 @@
                 </form>
               </div>
               <div *ngIf="period_tree_config.loading">{{ period_tree_config.loading_message }}</div>
-              <div class="tree-area" *ngIf="!period_tree_config.loading">
+              <div class="tree-area1" *ngIf="!period_tree_config.loading">
                 <Tree
                   #pertree
                   [nodes]="periods"
@@ -112,18 +117,10 @@
             </div>
           </div>
         </div>
-      </div>
-      <div class="col-sm-4">
-        <label>&nbsp;</label>
-        <div class="btn-group" style="width: 100%">
-          <button type="button" class="btn btn-default" style="height: 38px" (click)="pushPeriodForward()">>> year</button>
-          <button type="button" class="btn btn-default" style="height: 38px" (click)="pushPeriodBackward()"><< year</button>
-        </div>
-      </div>
-    </div>
+
 
   </div>
-  <div class="col-sm-2">
+  <div class="col-sm-4">
     <label>&nbsp;&nbsp;</label>
     <div>
       <button type="button" class="btn btn-default pull-right"  style="height: 38px" (click)="loadScoreCard()">Update</button>
@@ -131,8 +128,37 @@
         <span class="glyphicon glyphicon-save-file"></span>  CSV
       </button>
       <button type="button" class="btn btn-default pull-right"  style="height: 38px" (click)="browserPrint()">
-        <span class="glyphicon glyphicon-print"></span>
+        <span class="glyphicon glyphicon-print"></span> Print
       </button>
+      <!--some aditional configurations-->
+      <button *ngIf="!loading" type="button" class="btn btn-default pull-right"  style="height: 38px" (click)="showOptions()">
+        <span class="glyphicon glyphicon-cog"></span> Options
+      </button>
+      <div class="additional-options" [ngClass]="{'hiddenTree':showAdditionalOptions}">
+        <label>Show</label>
+        <ul class="list-group">
+          <li class="list-group-item">
+            <label>
+              <input type="checkbox"> Sum
+            </label>
+          </li>
+          <li class="list-group-item">
+            <label>
+              <input type="checkbox"> Average
+            </label>
+          </li>
+          <li class="list-group-item">
+            <label>
+              <input type="checkbox"> Score
+            </label>
+          </li>
+          <li class="list-group-item">
+            <label>
+              <input type="checkbox"> Ranks
+            </label>
+          </li>
+        </ul>
+      </div>
     </div>
   </div>
 
@@ -282,7 +308,7 @@
                         <tspan>{{ indicator.indicators[0].values[current_orgunit.id] }}</tspan>
                       </text>
                       <!--top arrow-->
-                      <path *ngIf="indicator.indicators[0].showTopArrow[current_inner_orgunit.id]" d="M2,10H12L7,4" style="fill:black;stroke:black;stroke-width:1"/>
+                      <path *ngIf="indicator.indicators[0].showTopArrow[current_inner_orgunit.id]" d="M2,10H12L7,4" style="fill:black;stroke:black;stroke-width:1" />
                       <!--bottom arrow showing decrease-->
                       <path *ngIf="indicator.indicators[0].showBottomArrow[current_inner_orgunit.id]" d="M2,22H12L7,30" style="fill:black;stroke:black;stroke-width:1"/>
 
@@ -315,7 +341,7 @@
 
                 </tr>
                 <tr *ngIf="showChildrenSubScorecard[current_inner_orgunit.id]">
-                  <td [attr.colspan]="getItemsFromGroups().length +1" style="background-color: rgba(0,0,0,0.1)">
+                  <td [attr.colspan]="getItemsFromGroups().length +1" style="background-color: rgba(39,102,150,0.1)">
 
                     <!--Second child scorecard-->
                     <!--Second child scorecard-->
@@ -324,7 +350,7 @@
                       {{ childrenSubScoreCard.loading_message }}
 
                       <div class="progress">
-                        <div class="progress-bar" role="progressbar" [attr.aria-valuenow]="subScoreCard.proccessed_percent" [attr.aria-valuemin]="0" [attr.aria-valuemax]="100" [style.width]="subScoreCard.proccessed_percent+'%'">
+                        <div class="progress-bar" role="progressbar" [attr.aria-valuenow]="childrenSubScoreCard.proccessed_percent" [attr.aria-valuemin]="0" [attr.aria-valuemax]="100" [style.width]="childrenSubScoreCard.proccessed_percent+'%'">
                           {{ childrenSubScoreCard.proccessed_percent | number : '1.2-2' }}%
                         </div>
                       </div>
@@ -443,7 +469,7 @@
           [default_period_type]="period_type"
           [default_orgunit] = "orgunit_for_model"
           (show_details) = "getDetails($event)"
-        >
+        >Loading ....
         </indicator-card>
       </div>
     </div>

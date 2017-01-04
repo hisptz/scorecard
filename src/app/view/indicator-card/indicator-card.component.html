@@ -1,5 +1,5 @@
 <div class="container-fluid" id="filters" style="padding: 0px">
-  <div class="col-sm-3" style="padding-left: 5px">
+  <div class="col-sm-4" style="padding-left: 5px">
     <label>Organisation Units</label>
 
     <div class="tree-input" >
@@ -50,26 +50,8 @@
     </div>
 
   </div>
-  <div class="col-sm-7">
-    <div class="row">
-      <div class="col-sm-4">
-        <label>Period Type</label>
-        <select id="periodType" [(ngModel)]="card_period_type" class="form-control" style="height: 38px " (change)="changePeriodType()">
-          <option value="">[ Select period type ]</option>
-          <option value="Monthly">Monthly</option>
-          <option value="BiMonthly">Bimonthly</option>
-          <option value="Quarterly">Quarterly</option>
-          <option value="SixMonthly">Six-monthly</option>
-          <option value="SixMonthlyApril">Six-monthly April</option>
-          <option value="Yearly">Yearly</option>
-          <option value="FinancialApril">Financial-April</option>
-          <option value="FinancialJuly">Financial-July</option>
-          <option value="FinancialOct">Financial-Oct</option>
-        </select>
-      </div>
-      <div class="col-sm-4">
+  <div class="col-sm-4">
         <label>Selected Period</label>
-
         <div class="tree-input" >
           <div>
             <div class="show_items" (click)="displayPerTree()">
@@ -88,6 +70,30 @@
               <span *ngIf="card_period_tree_config.loading">{{ card_period_tree_config.loading_message }}</span>
             </div>
             <div class="tree-view" [ngClass]="{'hiddenTree':showPerTree}">
+
+              <div class="col-sm-7" style="padding-left: 0px; margin-bottom: 5px">
+                <label>Period Type</label>
+                <select id="periodType" [(ngModel)]="card_period_type" class="form-control" style="height: 30px " (change)="changePeriodType()">
+                  <option value="">[ Select period type ]</option>
+                  <option value="Monthly">Monthly</option>
+                  <option value="BiMonthly">Bimonthly</option>
+                  <option value="Quarterly">Quarterly</option>
+                  <option value="SixMonthly">Six-monthly</option>
+                  <option value="SixMonthlyApril">Six-monthly April</option>
+                  <option value="Yearly">Yearly</option>
+                  <option value="FinancialApril">Financial-April</option>
+                  <option value="FinancialJuly">Financial-July</option>
+                  <option value="FinancialOct">Financial-Oct</option>
+                </select>
+              </div>
+              <div class="col-sm-5" style="padding-right: 0px; margin-bottom: 5px">
+                <label>&nbsp;</label>
+                <div class="btn-group" style="width: 100%">
+                  <button type="button" class="btn btn-default pull-right" style="height: 30px; font-size: 11px" (click)="pushPeriodForward()">>> year</button>
+                  <button type="button" class="btn btn-default pull-right" style="height: 30px; font-size: 11px;" (click)="pushPeriodBackward()"><< year</button>
+                </div>
+              </div>
+
               <div class="search-area">
                 <form *ngIf="!card_period_tree_config.loading && card_period_tree_config.show_search" style="border-bottom: solid 1px blanchedalmond;">
                   <input #filter (keyup)="filterNodes(filter.value, pertree)" placeholder="{{ card_period_tree_config.search_text }}" id="search_field"/>
@@ -95,7 +101,7 @@
                 </form>
               </div>
               <div *ngIf="card_period_tree_config.loading">{{ card_period_tree_config.loading_message }}</div>
-              <div class="tree-area" *ngIf="!card_period_tree_config.loading">
+              <div class="tree-area1" *ngIf="!card_period_tree_config.loading">
                 <Tree
                   #pertree
                   [nodes]="card_periods"
@@ -115,26 +121,13 @@
             </div>
           </div>
         </div>
-      </div>
-      <div class="col-sm-4">
-        <label>&nbsp;</label>
-        <div class="btn-group" style="width: 100%">
-          <button type="button" class="btn btn-default" style="height: 38px" (click)="pushPeriodForward()">>> year</button>
-          <button type="button" class="btn btn-default" style="height: 38px" (click)="pushPeriodBackward()"><< year</button>
-        </div>
-      </div>
-    </div>
-
   </div>
-  <div class="col-sm-2">
+  <div class="col-sm-4">
     <label>&nbsp;&nbsp;</label>
     <div>
       <button type="button" class="btn btn-default pull-right"  style="height: 38px" (click)="updateIndicatorCard(indicator, current_visualisation, card_selected_periods, card_selected_orgunits)">Update</button>
       <button type="button" class="btn btn-default pull-right"  style="height: 38px" (click)="updateIndicatorCard(indicator, 'csv', card_selected_periods, card_selected_orgunits)">
         <span class="glyphicon glyphicon-save-file"></span>  CSV
-      </button>
-      <button type="button" class="btn btn-default pull-right"  style="height: 38px" (click)="browserPrint()">
-        <span class="glyphicon glyphicon-print"></span>
       </button>
     </div>
   </div>
@@ -170,7 +163,7 @@
 <div class="container-fluid footer">
     <p style="margin: 3px">
       <a (click)="updateIndicatorCard(indicator,icon.name, card_selected_periods, card_selected_orgunits)" *ngFor="let icon of icons" title="{{ icon.name }}" class="btn btn-small btn-info" style="background-color: #DDD; border-color: #5BC0DE;border-radius:50%;padding-bottom: 8px; padding-top: 10px;padding-left: 10px;margin-right: 2px;"><img src="assets/img/{{icon.image}}" style="height: 25px;width: 25px"/></a>
-      <a (click)="downloadCSV()" title="Download Excel" class="btn btn-small btn-info" style="background-color: #DDD; border-color: #5BC0DE; border-radius:50%;padding-bottom: 8px; padding-top: 10px;padding-left: 10px;margin-right: 2px;"><img src="assets/img/cvs.jpg" style="height: 25px;width: 25px"/></a>
+      <a (click)="updateIndicatorCard(indicator, 'csv', card_selected_periods, card_selected_orgunits)" title="Download Excel" class="btn btn-small btn-info" style="background-color: #DDD; border-color: #5BC0DE; border-radius:50%;padding-bottom: 8px; padding-top: 10px;padding-left: 10px;margin-right: 2px;"><img src="assets/img/cvs.jpg" style="height: 25px;width: 25px"/></a>
       <a (click)="updateIndicatorCard(indicator,'info')"  title="card details" class="btn btn-small btn-info" style="background-color: #DDD; border-color: #5BC0DE; border-radius:50%;padding-bottom: 8px; padding-top: 10px;padding-left: 10px;margin-right: 2px;"><img src="assets/img/inficon.png" style="height: 25px;width: 25px"/></a>
       <a (click)="switchXandY(indicator)"  title="Switch X and Y axis" class="btn btn-small btn-info" style="background-color: #DDD; border-color: #5BC0DE; border-radius:50%;padding-bottom: 8px; padding-top: 10px;padding-left: 10px;margin-right: 2px;"><span class="glyphicon glyphicon-sort" style="height: 25px;width: 25px"></span></a>
       <button type="button" class="btn btn-default pull-right" (click)="removeModel()">Close</button>
