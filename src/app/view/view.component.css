@@ -235,9 +235,15 @@ span.selected-item {
   }
 
   .orgUnitName{
-    width: 130px;
+    min-width: 130px;
     height: 35px;
+    max-height: 35px;
+    font-size: 9px;
   }
+  .table-bordered td{
+    /*border-top: 0.1em;*/
+  }
+
 }
 
 /*scorecard indicator details*/

@@ -207,24 +207,24 @@
       <th style="vertical-align: bottom">
         <input type="text" class="form-control input-sm no-print" [(ngModel)]="searchQuery" placeholer="Search">
       </th>
-      <th *ngFor="let indicator of getItemsFromGroups()" style="font-size: 10px;width: 70px;cursor: pointer" class="sans-pro"
+      <td *ngFor="let indicator of getItemsFromGroups()" style="font-size: 10px;width:90px;max-width: 90px;overflow-wrap: break-word;cursor: pointer" class="sans-pro"
           title="Click to analyse {{ getIndicatorTitle(indicator) }}" (click)="loadPreview(null,indicator,null)">
         <img src="loader.gif" style="height: 30px" *ngIf="indicator_loading[indicator.indicators[0].id]" title="Loading old data for {{ getIndicatorTitle(indicator) }}">
         <span *ngIf="indicator_done_loading[indicator.indicators[0].id] && old_proccessed_percent != 100" class="glyphicon glyphicon-ok text-success"></span>
         {{ getIndicatorTitle(indicator) }}
 
-      </th>
+      </td>
     </tr>
     <ng-container *ngFor="let current_orgunit of orgunits | filterByName:searchQuery">
-      <tr style="height: 35px">
+      <tr style="height: 35px; max-height: 35px; overflow-y: hidden" class="orunitTr">
         <td style="vertical-align: bottom;font-size: 10px;cursor: pointer" class="orgUnitName" (click)="loadChildrenData(current_orgunit)">
           {{ current_orgunit.name }}
         </td>
         <td *ngFor="let indicator of getItemsFromGroups()"
-            style="font-size: 10px;width: 70px; cursor: pointer; padding: 0px;line-height: 10%;"  class="sans-pro" (click)="loadPreview(null,indicator,current_orgunit.id)">
-          <svg *ngIf="indicator.indicators.length == 2" viewbox="0 0 70 35" width="70" height="35">
-            <polygon points="0 0 70 0 70 0 0 35" [attr.fill]="assignBgColor(indicator.indicators[0],indicator.indicators[0].values[current_orgunit.id])" style="stroke:#CAC0C0;stroke-width:0.4"/>
-            <text fill="#000" x="3" y="20" font-size="11" font-family="Source Sans Pro">
+            style="font-size: 10px;max-width: 90px;overflow-wrap: break-word; cursor: pointer; padding: 0px;line-height: 10%;"  class="sans-pro" (click)="loadPreview(null,indicator,current_orgunit.id)">
+          <svg *ngIf="indicator.indicators.length == 2" viewbox="0 0 90 35" width="90" height="35">
+            <polygon points="0 0 90 0 90 0 0 35" [attr.fill]="assignBgColor(indicator.indicators[0],indicator.indicators[0].values[current_orgunit.id])" style="stroke:#CAC0C0;stroke-width:0.4"/>
+            <text fill="#000" x="3" y="18" font-size="11" font-family="Source Sans Pro">
               <tspan>{{ indicator.indicators[0].values[current_orgunit.id] }}</tspan>
             </text>
             <!--top arrow-->
@@ -233,15 +233,15 @@
             <path *ngIf="indicator.indicators[0].showBottomArrow[current_orgunit.id]" d="M2,22H12L7,30" style="fill:black;stroke:black;stroke-width:1"/>
 
             <!--second triangle-->
-            <polygon points="0 35 70 0 70 35 0 35" [attr.fill]="assignBgColor(indicator.indicators[1],indicator.indicators[1].values[current_orgunit.id])" style="stroke:#CAC0C0;stroke-width:0.4"/>
+            <polygon points="0 35 90 0 90 35 0 35" [attr.fill]="assignBgColor(indicator.indicators[1],indicator.indicators[1].values[current_orgunit.id])" style="stroke:#CAC0C0;stroke-width:0.0"/>
             <!--number for the second triangle-->
-            <text fill="#000" x="48" y="20" font-size="11" font-family="Source Sans Pro">
+            <text fill="#000" x="54" y="22" font-size="11" font-family="Source Sans Pro">
               <tspan>{{ indicator.indicators[1].values[current_orgunit.id] }}</tspan>
             </text>
             <!--top arrow for the right triagle-->
-            <path *ngIf="indicator.indicators[1].showTopArrow[current_orgunit.id]" d="M65,10H55L60,4" style="fill:black;stroke:black;stroke-width:1"/>
+            <path *ngIf="indicator.indicators[1].showTopArrow[current_orgunit.id]" d="M75,10H85L80,4" style="fill:black;stroke:black;stroke-width:1"/>
             <!--below arrow for the triangle-->
-            <path *ngIf="indicator.indicators[1].showBottomArrow[current_orgunit.id]" d="M65,22H55L60,28" style="fill:black;stroke:black;stroke-width:1"/>
+            <path *ngIf="indicator.indicators[1].showBottomArrow[current_orgunit.id]" d="M75,24H85L80,31" style="fill:black;stroke:black;stroke-width:1"/>
           </svg>
           <!--if there is only one indicator to display-->
           <svg *ngIf="indicator.indicators.length == 1" viewbox="0 0 90 35" width="90" height="35">
@@ -301,12 +301,12 @@
                 <th style="vertical-align: bottom">
                   <input type="text" class="form-control input-sm no-print" [(ngModel)]="searchQuery1" placeholer="Search">
                 </th>
-                <th *ngFor="let indicator of getItemsFromGroups()" style="font-size: 10px;width: 70px;cursor: pointer" class="sans-pro"
+                <td *ngFor="let indicator of getItemsFromGroups()" style="font-size: 10px;width:90px;max-width: 90px;overflow-wrap: break-word;cursor: pointer" class="sans-pro"
                     title="Click to analyse {{ getIndicatorTitle(indicator) }}" (click)="loadPreview(null,indicator,current_orgunit.id)">
                   <img src="loader.gif" style="height: 30px" *ngIf="subScoreCard.indicator_loading[indicator.indicators[0].id]" title="Loading old data for {{ getIndicatorTitle(indicator) }}">
                   <span *ngIf="subScoreCard.indicator_done_loading[indicator.indicators[0].id] && subScoreCard.old_proccessed_percent != 100" class="glyphicon glyphicon-ok text-success"></span>
                   {{ getIndicatorTitle(indicator) }}
-                </th>
+                </td>
               </tr>
               <ng-container *ngFor="let current_inner_orgunit of subScoreCard.orgunits | filterByName:searchQuery1">
                 <tr style="height: 35px">
@@ -314,10 +314,10 @@
                     {{ current_inner_orgunit.name }}
                   </td>
                   <td *ngFor="let indicator of getItemsFromGroups()"
-                      style="font-size: 10px;width: 70px; cursor: pointer; padding: 0px;line-height: 10%;"  class="sans-pro" (click)="loadPreview(null,indicator,current_inner_orgunit.id)">
-                    <svg *ngIf="indicator.indicators.length == 2" viewbox="0 0 70 35" width="70" height="35">
-                      <polygon points="0 0 70 0 70 0 0 35" [attr.fill]="assignBgColor(indicator.indicators[0],indicator.indicators[0].values[current_inner_orgunit.id])" style="stroke:#CAC0C0;stroke-width:0.4"/>
-                      <text fill="#000" x="3" y="20" font-size="11" font-family="Source Sans Pro">
+                      style="font-size: 10px;max-width: 90px;overflow-wrap: break-word; cursor: pointer; padding: 0px;line-height: 10%;"  class="sans-pro" (click)="loadPreview(null,indicator,current_inner_orgunit.id)">
+                    <svg *ngIf="indicator.indicators.length == 2" viewbox="0 0 90 35" width="90" height="35">
+                      <polygon points="0 0 90 0 90 0 0 35" [attr.fill]="assignBgColor(indicator.indicators[0],indicator.indicators[0].values[current_inner_orgunit.id])" style="stroke:#CAC0C0;stroke-width:0.0"/>
+                      <text fill="#000" x="3" y="18" font-size="11" font-family="Source Sans Pro">
                         <tspan>{{ indicator.indicators[0].values[current_orgunit.id] }}</tspan>
                       </text>
                       <!--top arrow-->
@@ -326,15 +326,15 @@
                       <path *ngIf="indicator.indicators[0].showBottomArrow[current_inner_orgunit.id]" d="M2,22H12L7,30" style="fill:black;stroke:black;stroke-width:1"/>
 
                       <!--second triangle-->
-                      <polygon points="0 35 70 0 70 35 0 35" [attr.fill]="assignBgColor(indicator.indicators[1],indicator.indicators[1].values[current_inner_orgunit.id])" style="stroke:#CAC0C0;stroke-width:0.4"/>
+                      <polygon points="0 35 90 0 90 35 0 35" [attr.fill]="assignBgColor(indicator.indicators[1],indicator.indicators[1].values[current_inner_orgunit.id])" style="stroke:#CAC0C0;stroke-width:0.0"/>
                       <!--number for the second triangle-->
-                      <text fill="#000" x="48" y="20" font-size="11" font-family="Source Sans Pro">
+                      <text fill="#000" x="54" y="22" font-size="11" font-family="Source Sans Pro">
                         <tspan>{{ indicator.indicators[1].values[current_inner_orgunit.id] }}</tspan>
                       </text>
                       <!--top arrow for the right triagle-->
-                      <path *ngIf="indicator.indicators[1].showTopArrow[current_inner_orgunit.id]" d="M65,10H55L60,4" style="fill:black;stroke:black;stroke-width:1"/>
+                      <path *ngIf="indicator.indicators[1].showTopArrow[current_inner_orgunit.id]" d="M75,10H85L80,4" style="fill:black;stroke:black;stroke-width:1"/>
                       <!--below arrow for the triangle-->
-                      <path *ngIf="indicator.indicators[1].showBottomArrow[current_inner_orgunit.id]" d="M65,22H55L60,28" style="fill:black;stroke:black;stroke-width:1"/>
+                      <path *ngIf="indicator.indicators[1].showBottomArrow[current_inner_orgunit.id]" d="M75,24H85L80,31" style="fill:black;stroke:black;stroke-width:1"/>
                     </svg>
 
                     <!--if there is only one indicator to display-->
@@ -395,13 +395,13 @@
                           <th style="vertical-align: bottom">
                             <input type="text" class="form-control input-sm no-print" [(ngModel)]="searchQuery2" placeholer="Search">
                           </th>
-                          <th *ngFor="let indicator of getItemsFromGroups()" style="font-size: 10px;width: 70px;cursor: pointer" class="sans-pro"
+                          <td *ngFor="let indicator of getItemsFromGroups()" style="font-size: 10px;width:90px;max-width: 90px;overflow-wrap: break-word;cursor: pointer" class="sans-pro"
                               title="Click to analyse {{ getIndicatorTitle(indicator) }}" (click)="loadPreview(null,indicator,current_inner_orgunit.id)">
                             <img src="loader.gif" style="height: 30px" *ngIf="childrenSubScoreCard.indicator_loading[indicator.indicators[0].id]" title="Loading old data for {{ getIndicatorTitle(indicator) }}">
                             <span *ngIf="childrenSubScoreCard.indicator_done_loading[indicator.indicators[0].id] && childrenSubScoreCard.old_proccessed_percent != 100" class="glyphicon glyphicon-ok text-success"></span>
 
                             {{ getIndicatorTitle(indicator) }}
-                          </th>
+                          </td>
                         </tr>
                         <ng-container *ngFor="let children_inner_orgunit of childrenSubScoreCard.orgunits | filterByName:searchQuery2">
                           <tr style="height: 35px">
@@ -409,10 +409,10 @@
                               {{ children_inner_orgunit.name }}
                             </td>
                             <td *ngFor="let indicator of getItemsFromGroups()"
-                                style="font-size: 10px;width: 70px; cursor: pointer; padding: 0px;line-height: 10%;"  class="sans-pro" (click)="loadPreview(null,indicator,children_inner_orgunit.id)">
-                              <svg *ngIf="indicator.indicators.length == 2" viewbox="0 0 70 35" width="70" height="35">
-                                <polygon points="0 0 70 0 70 0 0 35" [attr.fill]="assignBgColor(indicator.indicators[0],indicator.indicators[0].values[current_inner_orgunit.id])" style="stroke:#CAC0C0;stroke-width:0.4"/>
-                                <text fill="#000" x="3" y="20" font-size="11" font-family="Source Sans Pro">
+                                style="font-size: 10px;max-width: 90px;overflow-wrap: break-word; cursor: pointer; padding: 0px;line-height: 10%;"  class="sans-pro" (click)="loadPreview(null,indicator,children_inner_orgunit.id)">
+                              <svg *ngIf="indicator.indicators.length == 2" viewbox="0 0 90 35" width="90" height="35">
+                                <polygon points="0 0 90 0 90 0 0 35" [attr.fill]="assignBgColor(indicator.indicators[0],indicator.indicators[0].values[current_inner_orgunit.id])" style="stroke:#CAC0C0;stroke-width:0.0"/>
+                                <text fill="#000" x="3" y="18" font-size="11" font-family="Source Sans Pro">
                                   <tspan>{{ indicator.indicators[0].values[current_orgunit.id] }}</tspan>
                                 </text>
                                 <!--top arrow-->
@@ -421,15 +421,15 @@
                                 <path *ngIf="indicator.indicators[0].showBottomArrow[children_inner_orgunit.id]" d="M2,22H12L7,30" style="fill:black;stroke:black;stroke-width:1"/>
 
                                 <!--second triangle-->
-                                <polygon points="0 35 70 0 70 35 0 35" [attr.fill]="assignBgColor(indicator.indicators[1],indicator.indicators[1].values[children_inner_orgunit.id])" style="stroke:#CAC0C0;stroke-width:0.4"/>
+                                <polygon points="0 35 90 0 90 35 0 35" [attr.fill]="assignBgColor(indicator.indicators[1],indicator.indicators[1].values[children_inner_orgunit.id])" style="stroke:#CAC0C0;stroke-width:0.0"/>
                                 <!--number for the second triangle-->
-                                <text fill="#000" x="48" y="20" font-size="11" font-family="Source Sans Pro">
+                                <text fill="#000" x="54" y="22" font-size="11" font-family="Source Sans Pro">
                                   <tspan>{{ indicator.indicators[1].values[children_inner_orgunit.id] }}</tspan>
                                 </text>
                                 <!--top arrow for the right triagle-->
-                                <path *ngIf="indicator.indicators[1].showTopArrow[children_inner_orgunit.id]" d="M65,10H55L60,4" style="fill:black;stroke:black;stroke-width:1"/>
+                                <path *ngIf="indicator.indicators[1].showTopArrow[children_inner_orgunit.id]" d="M75,10H85L80,4" style="fill:black;stroke:black;stroke-width:1"/>
                                 <!--below arrow for the triangle-->
-                                <path *ngIf="indicator.indicators[1].showBottomArrow[children_inner_orgunit.id]" d="M65,22H55L60,28" style="fill:black;stroke:black;stroke-width:1"/>
+                                <path *ngIf="indicator.indicators[1].showBottomArrow[children_inner_orgunit.id]" d="M75,24H85L80,31" style="fill:black;stroke:black;stroke-width:1"/>
                               </svg>
 
                               <!--if there is only one indicator to display-->
