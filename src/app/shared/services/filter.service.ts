@@ -53,40 +53,27 @@ export class FilterService {
       periods.push({id:year+'AprilS2',name:'October 2011 - March 2012',selected:true},{id:year+'AprilS1',name:'April - September '+year})
     }else if(type == "FinancialOct"){
       for (var i = 0; i <= 10; i++) {
-        var useYear = parseInt(year) - i;
-        if(i == 1){
-          periods.push({id:useYear+'Oct',name:'October '+useYear+' - September '+useYear,selected:true})
-        }else{
-          periods.push({id:useYear+'Oct',name:'October '+useYear+' - September '+useYear})
-        }
+        let useYear = parseInt(year) - i;
+        let currentYear = useYear + 1;
+        periods.push({id:useYear+'Oct',name:'October '+useYear+' - September '+ currentYear})
       }
     }else if(type == "Yearly"){
       for (var i = 0; i <= 10; i++) {
-        var useYear = parseInt(year) - i;
-        if(i == 1){
-          periods.push({id:useYear,name:useYear,selected:true})
-        }else{
-          periods.push({id:useYear,name:useYear})
-        }
+        let useYear = parseInt(year) - i;
+        periods.push({id:useYear,name:useYear})
 
       }
     }else if(type == "FinancialJuly"){
       for (var i = 0; i <= 10; i++) {
-        var useYear = parseInt(year) - i;
-        if(i == 1){
-          periods.push({id:useYear+'July',name:'July '+useYear+' - June '+useYear,selected:true})
-        }else{
-          periods.push({id:useYear+'July',name:'July '+useYear+' - June '+useYear})
-        }
+        let useYear = parseInt(year) - i;
+        let currentYear = useYear + 1;
+          periods.push({id:useYear+'July',name:'July '+useYear+' - June '+ currentYear})
       }
     }else if(type == "FinancialApril"){
       for (var i = 0; i <= 10; i++) {
-        var useYear = parseInt(year) - i;
-        if(i == 1){
-          periods.push({id:useYear+'April',name:'April '+useYear+' - March '+useYear,selected:true})
-        }else{
-          periods.push({id:useYear+'April',name:'April '+useYear+' - March '+useYear})
-        }
+        let useYear = parseInt(year) - i;
+        let currentYear = useYear + 1;
+        periods.push({ id:useYear+'April',name:'April '+useYear+' - March '+ currentYear })
       }
     }else if(type == "Relative Weeks"){
       periods.push({id:'THIS_WEEK',name:'This Week'},{id:'LAST_WEEK',name:'Last Week'},{id:'LAST_4_WEEK',name:'Last 4 Weeks',selected:true},{id:'LAST_12_WEEK',name:'last 12 Weeks'},{id:'LAST_52_WEEK',name:'Last 52 weeks'});

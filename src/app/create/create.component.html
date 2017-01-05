@@ -200,7 +200,7 @@
             [ngClass]="{'already_selected': indicatorExist(scorecard.data.data_settings.indicator_holders, item)}"
             (click)="load_item(item)"
           >
-            {{ item.name }}
+            <span class="glyphicon glyphicon-ok-circle text-success" *ngIf="indicatorExist(scorecard.data.data_settings.indicator_holders, item)"></span> {{ item.name }}
           </li>
         </ul>
         <pagination-controls  id="list" (pageChange)="r = $event" directionLinks="true" autoHide="true"></pagination-controls>
@@ -306,8 +306,10 @@
 
         </div>
       </div>
-      <span class="help-block" *ngIf="current_indicator_holder.indicators.length != 0">If you want to have two data items in the same column just select the second data item from the list on the left</span>
-      <button class="btn btn-xs btn-default" (click)="enableAddIndicator()" *ngIf="current_indicator_holder.indicators.length != 0">Done</button>
+      <span class="help-block pull-left" *ngIf="current_indicator_holder.indicators.length != 0">If you want to have two data items in the same column just select the second data item from the list on the left</span>
+      <button class="btn btn-sm btn-default pull-right" (click)="enableAddIndicator()" *ngIf="current_indicator_holder.indicators.length != 0">
+        <span class="glyphicon glyphicon-plus"></span>Add Indicator
+      </button>
     </div>
   </div>
 </div>

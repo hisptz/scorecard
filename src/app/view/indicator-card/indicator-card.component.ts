@@ -62,6 +62,8 @@ export class IndicatorCardComponent implements OnInit, AfterViewInit, OnDestroy 
   card_orgUnit: any;
   card_period: any;
   current_visualisation: string = "table";
+  current_analytics_data: any = null;
+  current_parameters: string[] = [];
 
   @ViewChild('orgtree')
   orgtree: TreeComponent;
@@ -78,7 +80,7 @@ export class IndicatorCardComponent implements OnInit, AfterViewInit, OnDestroy 
   visualizer_config = {
     'type': 'table',
     'tableConfiguration': {
-      'title':"My table",
+    'title': 'My chart',
       'rows': ['ou', 'dx'] ,
       'columns': ['pe']
     },
@@ -98,10 +100,10 @@ export class IndicatorCardComponent implements OnInit, AfterViewInit, OnDestroy 
     {name: 'bar', image: 'column.png'},
     {name: 'area', image: 'area.jpg'},
     {name: 'pie', image: 'pie.png'},
-    // {name: 'radar', image: 'radar.png'},
+    {name: 'radar', image: 'radar.png'},
     {name: 'stacked_column', image: 'column-stacked.png'},
     {name: 'stacked_bar', image: 'bar-stacked.png'},
-    // {name: 'gauge', image: 'gauge.jpg'}
+    {name: 'gauge', image: 'gauge.jpg'}
     ];
   constructor(private filterService: FilterService,
               private visulizationService: VisulizerService,
@@ -123,6 +125,10 @@ export class IndicatorCardComponent implements OnInit, AfterViewInit, OnDestroy 
   ngAfterViewInit(){
     this.activateNode( this.default_period.id, this.pertree );
     this.activateNode( this.default_orgunit.id, this.orgtree );
+    // for( let item of this.default_orgunit.children ){
+    //   let nod = this.orgtree.treeModel.getNodeById(item.id);
+    //   // this.card_selected_orgunits.push(nod.data);
+    // }
     this.updateIndicatorCard(this.indicator, "table", [this.default_period], [this.default_orgunit], true);
 
   }
@@ -130,7 +136,8 @@ export class IndicatorCardComponent implements OnInit, AfterViewInit, OnDestroy 
   // a call that will change the view type
   updateIndicatorCard( holders: any[], type: string, periods: any[], orgunits: any[], with_children:boolean = false ){
     this.loading = true;
-    this.current_visualisation = type;
+    this.chartData = {};
+    this.current_visualisation = (type != 'csv')?type:this.current_visualisation;
     //make sure that orgunit and period selections are closed
     this.showOrgTree = true;
     this.showPerTree = true;
@@ -141,16 +148,6 @@ export class IndicatorCardComponent implements OnInit, AfterViewInit, OnDestroy 
     for ( let holder of holders){
       for ( let item of holder.indicators ){
         indicatorsArray.push(item.id);
-      }
-    }
-    for ( let item of periods ){
-      periodArray.push(item.id);
-    }for ( let item of orgunits ){
-      orgUnitsArray.push(item.id);
-      if( with_children ){
-        for ( let child of item.children ){
-          orgUnitsArray.push(child.id)
-        }
       }
     }
 
@@ -169,6 +166,8 @@ export class IndicatorCardComponent implements OnInit, AfterViewInit, OnDestroy 
           'yAxisType': 'ou'
         }
       }
+    }else if (type == "csv") {
+
     }else{
       this.visualizer_config = {
         'type': 'chart',
@@ -185,32 +184,144 @@ export class IndicatorCardComponent implements OnInit, AfterViewInit, OnDestroy 
         }
       };
     }
-
-
-
-    // create an api analytics call
-    let url = this.constant.root_dir+"api/analytics.json?dimension=dx:" + indicatorsArray.join(";") + "&dimension=ou:" + orgUnitsArray.join(";") + "&dimension=pe:" + periodArray.join(";") + "&displayProperty=NAME";
-
-    this.subscription = this.loadAnalytics(url).subscribe(
-      (data) => {
-        this.loading = false;
-        if(type == "csv"){
-          console.log("this is what is working");
-          this.downloadCSV(data);
-        }else{
-          this.chartData = this.visulizationService.drawChart( data, this.visualizer_config.chartConfiguration );
-          this.tableData = this.visulizationService.drawTable( data, this.visualizer_config.tableConfiguration );
-        }
-      },
-      error => {
-        console.log(error)
+    //if there is no change of parameters from last request dont go to server
+    if(this.checkIfParametersChanged(orgunits, periods)){
+      this.loading = false;
+      if(type == "csv"){
+        this.downloadCSV(this.current_analytics_data);
+      }else{
+        this.chartData = this.visulizationService.drawChart( this.current_analytics_data, this.visualizer_config.chartConfiguration );
+        this.tableData = this.visulizationService.drawTable( this.current_analytics_data, this.visualizer_config.tableConfiguration );
       }
-    )
+    }else{
+      this.current_parameters = [];
+      for ( let item of periods ){
+        periodArray.push(item.id);
+        this.current_parameters.push(item.id);
+      }for ( let item of orgunits ){
+        orgUnitsArray.push(item.id);
+        this.current_parameters.push(item.id);
+        if( with_children ){
+          for ( let child of item.children ){
+            orgUnitsArray.push(child.id);
+            this.current_parameters.push(child.id);
+          }
+        }
+      }
+      // create an api analytics call
+      let url = this.constant.root_dir+"api/analytics.json?dimension=dx:" + indicatorsArray.join(";") + "&dimension=ou:" + orgUnitsArray.join(";") + "&dimension=pe:" + periodArray.join(";") + "&displayProperty=NAME";
+
+      this.subscription = this.loadAnalytics(url).subscribe(
+        (data) => {
+          this.current_analytics_data = data;
+          this.loading = false;
+          if(type == "csv"){
+            this.downloadCSV(data);
+          }else{
+            this.chartData = this.visulizationService.drawChart( data, this.visualizer_config.chartConfiguration );
+            this.tableData = this.visulizationService.drawTable( data, this.visualizer_config.tableConfiguration );
+          }
+        },
+        error => {
+          console.log(error)
+        }
+      )
+    }
+
 
   }
 
+  checkIfParametersChanged(orgunits, periods): boolean{
+    let checker = false;
+    let temp_arr = [];
+    for ( let per of periods ){
+      temp_arr.push(per.id);
+    }
+    for( let org of orgunits ){
+      temp_arr.push(org.id);
+    }
+    if(this.current_parameters.length != 0 && temp_arr.length == this.current_parameters.length ){
+      checker = temp_arr.sort().join(",") == this.current_parameters.sort().join(",")
+    }else{
+      checker = false;
+    }
+    return checker
+  }
+
   // a function to reverse the content of X axis and Y axis
-  switchXandY(indicator,visualizer_config){
+  switchXandY(type){
+    if(type == "table"){
+      if(this.visualizer_config.tableConfiguration.rows[0] == "ou"){
+        this.visualizer_config = {
+          'type': 'table',
+          'tableConfiguration': {
+            'title': this.prepareCardTitle(this.indicator),
+            'rows': ['pe'],
+            'columns':['dx','ou']
+          },
+          'chartConfiguration': {
+            'type':type,
+            'title': this.prepareCardTitle(this.indicator),
+            'xAxisType': 'ou',
+            'yAxisType': 'pe'
+          }
+        }
+      }else if(this.visualizer_config.tableConfiguration.rows[0] == "pe"){
+        this.visualizer_config = {
+          'type': 'table',
+          'tableConfiguration': {
+            'title': this.prepareCardTitle(this.indicator),
+            'rows': ['ou'],
+            'columns': ['dx','pe']
+          },
+          'chartConfiguration': {
+            'type':type,
+            'title': this.prepareCardTitle(this.indicator),
+            'xAxisType': 'pe',
+            'yAxisType': 'ou'
+          }
+        }
+      }
+
+    }
+    else if (type == "csv") {
+
+    }
+    else{
+      if(this.visualizer_config.chartConfiguration.xAxisType == "ou"){
+        this.visualizer_config = {
+          'type': 'chart',
+          'tableConfiguration': {
+            'title': this.prepareCardTitle(this.indicator),
+            'rows': ['pe'],
+            'columns':['dx','ou']
+          },
+          'chartConfiguration': {
+            'type':type,
+            'title': this.prepareCardTitle(this.indicator),
+            'xAxisType': 'pe',
+            'yAxisType': 'ou'
+          }
+        }
+      }else if(this.visualizer_config.chartConfiguration.xAxisType == "pe"){
+        this.visualizer_config = {
+          'type': 'chart',
+          'tableConfiguration': {
+            'title': this.prepareCardTitle(this.indicator),
+            'rows': ['ou'],
+            'columns': ['dx','pe']
+          },
+          'chartConfiguration': {
+            'type':type,
+            'title': this.prepareCardTitle(this.indicator),
+            'xAxisType': 'ou',
+            'yAxisType': 'pe'
+          }
+        }
+      }
+    }
+    this.chartData = this.visulizationService.drawChart( this.current_analytics_data, this.visualizer_config.chartConfiguration );
+    this.tableData = this.visulizationService.drawTable( this.current_analytics_data, this.visualizer_config.tableConfiguration );
 
   }
 
