@@ -74,4 +74,23 @@ export class SubtotalComponent implements OnInit {
     }
     return indicators;
   }
+
+  // assign a background color to area depending on the legend set details
+  assignBgColor(object,value): string{
+    var color = "#BBBBBB";
+    for( let data of object.legendset ){
+      if(data.max == "-"){
+
+        if(parseInt(value) >= parseInt(data.min) ){
+          color = data.color;
+        }
+      }else{
+        if(parseInt(value) >= parseInt(data.min) && parseInt(value) <= parseInt(data.max)){
+          color = data.color;
+        }
+      }
+    };
+    return color;
+  }
+
 }

@@ -110,6 +110,11 @@ export class ViewComponent implements OnInit, AfterViewInit, OnDestroy {
   opened_unit: string = null;
   opened_subunit: string = null;
 
+  show_sum_in_row: boolean = false;
+  show_sum_in_column: boolean = false;
+  show_average_in_row: boolean = false;
+  show_average_in_column: boolean = false;
+
   constructor(private scorecardService: ScorecardService,
               private dataService: DataService,
               private activatedRouter: ActivatedRoute,
@@ -844,38 +849,37 @@ export class ViewComponent implements OnInit, AfterViewInit, OnDestroy {
 
   // dealing with showing sum
   showSumInRow(e){
-    if(e.target.checked){
-      console.log("cheked");
-    }else{
-      console.log("Uncheked");
-    }
+    this.show_sum_in_row = e.target.checked;
+    this.showOptions();
   }
 
   // dealing with showing sum
   showSumInColumn(e){
-    if(e.target.checked){
-      console.log("cheked");
-    }else{
-      console.log("Uncheked");
-    }
+    this.show_sum_in_column = e.target.checked;
+    this.showOptions();
   }
 
   // dealing with showing average
   showAverageInRow(e){
-    if(e.target.checked){
-      console.log("avg cheked");
-    }else{
-      console.log("avg Uncheked");
-    }
+    this.show_average_in_row = e.target.checked;
+    this.showOptions();
   }
 
   // dealing with showing average
   showAverageInColumn(e){
-    if(e.target.checked){
-      console.log("avg cheked");
-    }else{
-      console.log("avg Uncheked");
+    this.show_average_in_column = e.target.checked
+    this.showOptions();
+  }
+
+  getCorrectColspan(){
+    let i = 0;
+    if(this.show_sum_in_row){
+      i++;
     }
+    if(this.show_average_in_row){
+      i++;
+    }
+    return i;
   }
 
   // hiding columns
