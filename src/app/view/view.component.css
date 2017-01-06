@@ -315,3 +315,7 @@ table * {
   cursor: pointer;
   line-height: 140%
 }
+
+.list-group-item{
+  padding: 5px 15px
+}

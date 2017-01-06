@@ -43,7 +43,9 @@
             </Tree>
           </div>
           <div class="close-area">
-            <button class="btn btn-xs pull-right" (click)="displayOrgTree()"  style="height: 30px">Close</button>
+            <button class="btn btn-xs pull-right" (click)="displayOrgTree()"  style="height: 30px">
+              <span class="glyphicon glyphicon-remove"></span> Close
+            </button>
             <button type="button" class="btn btn-default pull-right"  style="height: 30px" (click)="updateIndicatorCard(indicator, current_visualisation, card_selected_periods, card_selected_orgunits)">
               <span class="glyphicon glyphicon-refresh"></span> Update
             </button>
@@ -119,7 +121,9 @@
                 </Tree>
               </div>
               <div class="close-area">
-                <button class="btn btn-xs pull-right" (click)="displayPerTree()" style="height: 30px">Close</button>
+                <button class="btn btn-default btn-xs pull-right" (click)="displayPerTree()" style="height: 30px">
+                  <span class="glyphicon glyphicon-remove"></span> Close
+                </button>
                 <button type="button" class="btn btn-default pull-right"  style="height: 30px" (click)="updateIndicatorCard(indicator, current_visualisation, card_selected_periods, card_selected_orgunits)">
                   <span class="glyphicon glyphicon-refresh"></span> Update
                 </button>

@@ -121,8 +121,10 @@ export class ViewComponent implements OnInit, AfterViewInit, OnDestroy {
   sorting_column: any = "none";
   sub_sorting_column: string = 'none';
   grand_sorting_column: string = 'none';
-
+  showLegend:boolean = false;
   hidenColums: any[] = [];
+
+
   constructor(private scorecardService: ScorecardService,
               private dataService: DataService,
               private activatedRouter: ActivatedRoute,
@@ -870,6 +872,12 @@ export class ViewComponent implements OnInit, AfterViewInit, OnDestroy {
       }
     }
     return sum;
+  }
+
+  // dealing with showing sum
+  enableLegend(e){
+    this.showLegend = e.target.checked;
+    let close = (this.keep_options_open)?'':this.showOptions();
   }
 
   // dealing with showing sum

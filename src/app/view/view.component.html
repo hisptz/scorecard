@@ -48,7 +48,9 @@
             </Tree>
           </div>
           <div class="close-area">
-            <button class="btn pull-right" style="height: 30px"  (click)="displayOrgTree()">Close</button>
+            <button class="btn btn-default pull-right" style="height: 30px"  (click)="displayOrgTree()">
+              <span class="glyphicon glyphicon-remove"></span> Close
+            </button>
             <button type="button" class="btn btn-default pull-right"  style="height: 30px" (click)="loadScoreCard()">
               <span class="glyphicon glyphicon-refresh"></span>  Update
             </button>
@@ -116,10 +118,12 @@
                 </Tree>
               </div>
               <div class="close-area">
-                <button class="btn pull-right" (click)="displayPerTree()" style="height: 30px">Close</button>
+                <button class="btn btn-default pull-right" style="height: 30px"  (click)="displayOrgTree()">
+                  <span class="glyphicon glyphicon-remove"></span> Close
+                </button>
                 <button type="button" class="btn btn-default pull-right"  style="height: 30px" (click)="loadScoreCard()">
-                <span class="glyphicon glyphicon-refresh"></span>  Update
-              </button>
+                  <span class="glyphicon glyphicon-refresh"></span>  Update
+                </button>
               </div>
             </div>
           </div>
@@ -149,6 +153,9 @@
           <input type="checkbox" style="height: 10px"  [(ngModel)]="keep_options_open"> Allow me to make more than one selection
         </label>
         <ul class="list-group">
+          <li class="list-group-item pointer">
+            <label><input type="checkbox" (change)="enableLegend($event)"> Show Legend</label>
+          </li>
           <li class="list-group-item pointer">
             <div class="row">
               <div class="col-sm-6">Show Sum for</div>
@@ -185,6 +192,7 @@
               <option value="">Show All</option>
               <option *ngFor="let listItem of getIndicatorsList(scorecard)" value="{{ listItem.id }}">{{ listItem.title }}</option>
             </select>
+            <span class="help-block"><span class="glyphicon glyphicon-question-sign"></span> hold control to select multiple</span>
           </li>
         </ul>
         <button class="btn btn-sm btn-warning pull-right" (click)="showOptions()" style="height: 35px">
@@ -217,6 +225,13 @@
 <!--main scorecard area-->
 <div class="container-fluid" id="scorecard" style="padding-left: 5px;margin-top: 10px">
   <h3>{{ scorecard.data.header.title }} &nbsp;&nbsp;&nbsp; {{ orgUnit.name }} &nbsp;&nbsp;&nbsp; {{ period.name }}</h3>
+  <div class="row" style="margin-bottom: 10px" *ngIf="showLegend">
+    <div class="col-sm-2" *ngFor="let legend of scorecard.data.legendset_definitions">
+      <div class="col-sm-3" style="padding-left: 0px;border: 1px solid #014b5a;height: 25px;border-radius: 3px" [style.background-color]="legend.color">
+      </div>
+      <div class="col-sm-9" style="vertical-align: bottom;font-size: 10px;display: table-cell;">{{ legend.definition}}</div>
+    </div>
+  </div>
   <table class="table table-bordered scorecard_table">
     <tr [ngClass]="{'hide_no_group': scorecard.data.data_settings.indicator_holder_groups.length == 1}" style="line-height: 140%">
       <th class="orgUnitName"></th>
