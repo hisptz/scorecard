@@ -37,7 +37,7 @@ export class SubtotalComponent implements OnInit {
     for ( let orgunit of orgunits ){
       for ( let holder of scorecard.data.data_settings.indicator_holders ){
         for( let indicator of holder.indicators ){
-          if(orgunit.id in indicator.values && indicator.id == indicator_id){
+          if(orgunit.id in indicator.values && indicator.id == indicator_id && indicator.values[orgunit.id] != null){
             sum = sum + parseFloat(indicator.values[orgunit.id])
           }
         }
@@ -55,7 +55,7 @@ export class SubtotalComponent implements OnInit {
     for ( let orgunit of orgunits ){
       for ( let holder of scorecard.data.data_settings.indicator_holders ){
         for( let indicator of holder.indicators ){
-          if(orgunit.id in indicator.values && indicator.id == indicator_id){
+          if(orgunit.id in indicator.values && indicator.id == indicator_id && indicator.values[orgunit.id] != null){
             sum = sum + parseFloat(indicator.values[orgunit.id])
           }
         }

@@ -11,9 +11,9 @@
         "assets",
         "favicon.ico",
         "icon.png",
-        "loading.gif",
-        "progress.gif",
-        "loader.gif",
+        "balls-3.svg",
+        "balls-4.svg",
+        "balls-5.svg",
         "manifest.webapp"
       ],
       "index": "index.html",

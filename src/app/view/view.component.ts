@@ -14,6 +14,7 @@ import {TreeNode, TREE_ACTIONS, IActionMapping, TreeComponent} from 'angular2-tr
 import {Angular2Csv} from "angular2-csv";
 import {forEach} from "@angular/router/src/utils/collection";
 import Key = webdriver.Key;
+import {isUndefined} from "util";
 
 const actionMapping:IActionMapping = {
   mouse: {
@@ -742,12 +743,51 @@ export class ViewComponent implements OnInit, AfterViewInit, OnDestroy {
     let sum = 0;
     for ( let holder of this.scorecard.data.data_settings.indicator_holders ){
       for( let indicator of holder.indicators ){
-        if(orgunit_id in indicator.values){
+        if(orgunit_id in indicator.values && indicator.values[orgunit_id] != null){
           sum = sum + parseFloat(indicator.values[orgunit_id])
         }
       }
     }
     return (sum / this.getIndicatorsList(this.scorecard).length).toFixed(2);
+  }
+  /**
+   * finding the row average
+   * @param orgunit_id
+   */
+  findRowTotalAverage(orgunits){
+    let sum = 0;
+    let n = 0;
+    for ( let holder of this.scorecard.data.data_settings.indicator_holders ){
+      for( let indicator of holder.indicators ){
+        for ( let orgunit of orgunits ){
+          if(orgunit.id in indicator.values && indicator.values[orgunit.id] != null){
+            n++;
+            sum = sum + parseFloat(indicator.values[orgunit.id])
+          }
+        }
+      }
+    }
+    return (sum / n).toFixed(2);
+  }
+
+  /**
+   * finding the row average
+   * @param orgunit_id
+   */
+  findRowTotalSum(orgunits){
+    let sum = 0;
+    let n = 0;
+    for ( let holder of this.scorecard.data.data_settings.indicator_holders ){
+      for( let indicator of holder.indicators ){
+        for ( let orgunit of orgunits ){
+          if(orgunit.id in indicator.values && indicator.values[orgunit.id] != null){
+            n++;
+            sum = sum + parseFloat(indicator.values[orgunit.id])
+          }
+        }
+      }
+    }
+    return sum;
   }
 
   /**
@@ -794,7 +834,7 @@ export class ViewComponent implements OnInit, AfterViewInit, OnDestroy {
     let sum = 0;
     for ( let holder of this.scorecard.data.data_settings.indicator_holders ){
       for( let indicator of holder.indicators ){
-        if(orgunit_id in indicator.values){
+        if(orgunit_id in indicator.values && indicator.values[orgunit_id] != null ){
           sum = sum + parseFloat(indicator.values[orgunit_id])
         }
       }

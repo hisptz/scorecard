@@ -173,7 +173,7 @@
           <option value="Timeliness">Timeliness</option>
         </select>
       </div>
-      <img src="loading.gif" style="height: 70px; padding-top: 20px" *ngIf="!done_loading_groups">
+      <img src="balls-4.svg" style="height: 70px; padding-top: 20px" *ngIf="!done_loading_groups">
       <div class="form-group" *ngIf="done_loading_groups">
         <input type="text" class="form-control input-sm" placeholder="Search by name" style="height: 25px; margin-top: 3px" [(ngModel)]="groupQuery">
       </div>
@@ -196,7 +196,7 @@
   <div class="col-sm-2 no-left-padding1">
     <div class="thumbnail scorecard_details">
       <div *ngIf="listReady">
-        <img src="loading.gif" style="height: 90px; padding-top: 20px" *ngIf="!done_loading_list">
+        <img src="balls-4.svg" style="height: 90px; padding-top: 20px" *ngIf="!done_loading_list">
         <div class="form-group" *ngIf="done_loading_list">
           <input type="text" class="form-control input-sm" placeholder="Search by name" style="height: 25px;" [(ngModel)]="listQuery">
         </div>
@@ -328,6 +328,6 @@
     Create
   </button>
   <button class="btn btn-sm btn-warning pull-right" style="margin-top: 8px" (click)="cancelCreate()" *ngIf="!saving_scorecard">Cancel</button>
-  <h5 class="pull-right" *ngIf="saving_scorecard"><img src="loading.gif" style="height: 50px;"> Saving score card Information, Please wait...</h5>
+  <h5 class="pull-right" *ngIf="saving_scorecard"><img src="balls-4.svg" style="height: 50px;"> Saving score card Information, Please wait...</h5>
   <h5 class="pull-right text-danger" *ngIf="saving_error">Something went wrong, Saving score card Information failed</h5>
 </div>

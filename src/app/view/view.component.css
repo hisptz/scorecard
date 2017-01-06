@@ -286,3 +286,7 @@ span.selected-item {
 .hide_no_group{
   display: none;
 }
+
+table * {
+   line-height: 80%;
+}
