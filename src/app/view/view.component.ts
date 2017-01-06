@@ -110,10 +110,14 @@ export class ViewComponent implements OnInit, AfterViewInit, OnDestroy {
   opened_unit: string = null;
   opened_subunit: string = null;
 
+  keep_options_open:boolean = true;
+
   show_sum_in_row: boolean = false;
   show_sum_in_column: boolean = false;
   show_average_in_row: boolean = false;
   show_average_in_column: boolean = false;
+
+  sortAscending: boolean = true;
 
   constructor(private scorecardService: ScorecardService,
               private dataService: DataService,
@@ -850,25 +854,25 @@ export class ViewComponent implements OnInit, AfterViewInit, OnDestroy {
   // dealing with showing sum
   showSumInRow(e){
     this.show_sum_in_row = e.target.checked;
-    this.showOptions();
+    let close = (this.keep_options_open)?'':this.showOptions();
   }
 
   // dealing with showing sum
   showSumInColumn(e){
     this.show_sum_in_column = e.target.checked;
-    this.showOptions();
+    let close = (this.keep_options_open)?'':this.showOptions();
   }
 
   // dealing with showing average
   showAverageInRow(e){
     this.show_average_in_row = e.target.checked;
-    this.showOptions();
+    let close = (this.keep_options_open)?'':this.showOptions();
   }
 
   // dealing with showing average
   showAverageInColumn(e){
-    this.show_average_in_column = e.target.checked
-    this.showOptions();
+    this.show_average_in_column = e.target.checked;
+    let close = (this.keep_options_open)?'':this.showOptions();
   }
 
   getCorrectColspan(){
@@ -889,8 +893,41 @@ export class ViewComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   sorting_column: any = "none";
-  sortScoreCard(sortingColumn){
-    console.log(sortingColumn);
+  sortScoreCard(sortingColumn, sortAscending){
+    if( sortingColumn == "none" ){
+      this.dataService.sortArrOfObjectsByParam(this.orgunits, "name", sortAscending)
+    }
+    else if( sortingColumn == 'avg' ){
+      for ( let orgunit of this.orgunits ){
+        orgunit['avg'] = parseFloat(this.findRowAverage(orgunit.id));
+      }
+      this.dataService.sortArrOfObjectsByParam(this.orgunits, sortingColumn, sortAscending)
+    }
+    else if( sortingColumn == 'sum' ){
+      for ( let orgunit of this.orgunits ){
+        orgunit['sum'] = this.findRowSum(orgunit.id);
+      }
+      this.dataService.sortArrOfObjectsByParam(this.orgunits, sortingColumn, sortAscending)
+    }
+    else{
+      for ( let orgunit of this.orgunits ){
+        orgunit[sortingColumn] = this.findOrgunitIndicatorValue(orgunit.id, sortingColumn );
+      }
+      this.dataService.sortArrOfObjectsByParam(this.orgunits, sortingColumn, sortAscending)
+    }
+    let close = (this.keep_options_open)?'':this.showOptions();
+  }
+
+  private findOrgunitIndicatorValue(orgunit_id: string, indicator_id:string){
+    let val:number = 0;
+    for ( let holder of this.scorecard.data.data_settings.indicator_holders ){
+      for( let indicator of holder.indicators ){
+        if(orgunit_id in indicator.values && indicator.values[orgunit_id] != null && indicator.id == indicator_id){
+          val = parseFloat(indicator.values[orgunit_id])
+        }
+      }
+    }
+    return val;
   }
 
   ngOnDestroy (){

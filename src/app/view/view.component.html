@@ -1,6 +1,6 @@
 <div class="container-fluid no-print" style="padding-left: 0px">
   <div class="col-sm-2" style="padding-left: 0px; cursor: pointer;" [routerLink]="['']">
-    <img src="icon.png"> <span style="font-size: 15px"> Score Card</span>
+    <img src="scorecard.svg" style="height: 58px; width: 48px"> <span style="font-size: 15px"> Score Card</span>
   </div>
   <div class="col-sm-8">
     <h3 class="text-center" style="margin-top: 0px"><small></small></h3>
@@ -143,9 +143,12 @@
       <button *ngIf="!loading" type="button" class="btn btn-default pull-right"  style="height: 38px" (click)="showOptions()">
         <span class="glyphicon glyphicon-cog"></span> Options
       </button>
-      <div class="additional-options" [ngClass]="{'hiddenTree':showAdditionalOptions}">
+      <div class="additional-options" [ngClass]="{'hiddenTree':showAdditionalOptions}" style="padding-top: 0px">
+        <label class="text-muted" style="font-weight: normal; font-size: 11px;cursor: pointer">
+          <input type="checkbox" style="height: 10px"  [(ngModel)]="keep_options_open"> Allow me to make more than one selection
+        </label>
         <ul class="list-group">
-          <li class="list-group-item">
+          <li class="list-group-item pointer">
             <div class="row">
               <div class="col-sm-6">Show Sum for</div>
               <div class="col-sm-3"><label><input type="checkbox" (change)="showSumInRow($event)"> rows</label></div>
@@ -154,29 +157,39 @@
             <div class="row">
               <div class="col-sm-6">Show Average for</div>
               <div class="col-sm-3"><label><input type="checkbox" (change)="showAverageInRow($event)"> rows</label></div>
-              <div class="col-sm-3"><label><input type="checkbox" (change)="showAverageInColumn($event)"> column</label></div>
+              <div class="col-sm-3"><label><input type="checkbox" (change)="showAverageInColumn($event)" > column</label></div>
             </div>
           </li>
           <li class="list-group-item">
-            <label>Sort By</label>
-            <select class="form-control" [(ngModel)]="sorting_column" (click)="sortScoreCard(sorting_column)">
-              <option value="none">None</option>
-              <option *ngFor="let listItem of getIndicatorsList(scorecard)" value="{{ listItem.id }}">{{ listItem.title }}</option>
-            </select>
+            <div class="row">
+              <div class="col-sm-12">
+                <label>Sort By</label>
+              </div>
+              <div class="col-sm-9">
+                <select class="form-control" [(ngModel)]="sorting_column" (click)="sortScoreCard(sorting_column, sortAscending)">
+                  <option value="none">None</option>
+                  <option value="avg">Average</option>
+                  <option value="sum">Sum</option>
+                  <option *ngFor="let listItem of getIndicatorsList(scorecard)" value="{{ listItem.id }}">{{ listItem.title }}</option>
+                </select>
+              </div>
+              <div class="col-sm-3 pointer">
+                <label style="cursor: pointer"><input type="checkbox" [(ngModel)]="sortAscending"  (change)="sortScoreCard(sorting_column, sortAscending)"> Ascending</label>
+              </div>
+            </div>
           </li>
           <li class="list-group-item">
             <label>Hide Columns</label>
             <select class="form-control" multiple [(ngModel)]="hidenColums" (change)="hideColums(hidenColums)">
-              <option value="none">None</option>
               <option *ngFor="let listItem of getIndicatorsList(scorecard)" value="{{ listItem.id }}">{{ listItem.title }}</option>
             </select>
           </li>
         </ul>
-        <button class="btn btn-xs btn-warning pull-right" (click)="showOptions()">
-          close
+        <button class="btn btn-sm btn-warning pull-right" (click)="showOptions()" style="height: 35px">
+          <span class="glyphicon glyphicon-remove"></span> close
         </button>
-        <button class="btn btn-xs btn-default pull-right" [routerLink]="['../../create','edit',scorecard.id]">
-          Edit Scorecard
+        <button class="btn btn btn-info pull-right" [routerLink]="['../../create','edit',scorecard.id]" style="height: 35px">
+          <span class="glyphicon glyphicon-pencil"></span> Edit Scorecard
         </button>
       </div>
 

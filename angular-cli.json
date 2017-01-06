@@ -14,6 +14,7 @@
         "balls-3.svg",
         "balls-4.svg",
         "balls-5.svg",
+        "scorecard.svg",
         "manifest.webapp"
       ],
       "index": "index.html",
