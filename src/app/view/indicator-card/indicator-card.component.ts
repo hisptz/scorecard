@@ -30,6 +30,7 @@ export class IndicatorCardComponent implements OnInit, AfterViewInit, OnDestroy 
   @Input() default_period:any;
   @Input() default_period_type:any;
   @Input() default_orgunit:any;
+  @Input() hidden_columns:any = [];
   @Output() show_details = new EventEmitter<any>();
   card_orgunit_tree_config: any = {
     show_search : true,
@@ -147,7 +148,9 @@ export class IndicatorCardComponent implements OnInit, AfterViewInit, OnDestroy 
     let periodArray = [];
     for ( let holder of holders){
       for ( let item of holder.indicators ){
-        indicatorsArray.push(item.id);
+        if( this.hidden_columns.indexOf(item.id) == -1){
+          indicatorsArray.push(item.id);
+        }
       }
     }
 
@@ -166,9 +169,11 @@ export class IndicatorCardComponent implements OnInit, AfterViewInit, OnDestroy 
           'yAxisType': 'ou'
         }
       }
-    }else if (type == "csv") {
+    }
+    else if (type == "csv") {
 
-    }else{
+    }
+    else{
       this.visualizer_config = {
         'type': 'chart',
         'tableConfiguration': {
@@ -457,7 +462,9 @@ export class IndicatorCardComponent implements OnInit, AfterViewInit, OnDestroy 
     let indicators_title = [];
     for ( let holder of holders_array ){
       for ( let indicator of holder.indicators ){
-        indicators_title.push(indicator.name);
+        if( this.hidden_columns.indexOf(indicator.id) == -1){
+          indicators_title.push(indicator.name);
+        }
       }
     }
     return indicators_title.join(", ");

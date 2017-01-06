@@ -93,6 +93,15 @@
   right: 0px;
 }
 
+.scorecard_table{
+  margin-bottom: 3px;
+  font-size: 9px;
+  border: 1px solid #ddd;
+  border-spacing: 0;
+  border-collapse: collapse;
+  display: table;
+}
+
 .pointer label{
   cursor: pointer;
 }
@@ -293,4 +302,16 @@ span.selected-item {
 
 table * {
    line-height: 80%;
+}
+
+.subtotal{
+  width:90px;max-width: 90px;
+}
+.indicator_title{
+  font-size: 10px;
+  width:90px;
+  max-width: 90px;
+  overflow-wrap: break-word;
+  cursor: pointer;
+  line-height: 140%
 }

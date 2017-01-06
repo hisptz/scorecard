@@ -10,6 +10,7 @@
   </div>
 </div>
 
+<!--filters-->
 <div class="container-fluid no-print" id="filters" style="padding: 0px">
   <div class="col-sm-4" style="padding-left: 5px">
     <label>Organisation Units</label>
@@ -180,7 +181,8 @@
           </li>
           <li class="list-group-item">
             <label>Hide Columns</label>
-            <select class="form-control" multiple [(ngModel)]="hidenColums" (change)="hideColums(hidenColums)">
+            <select class="form-control" multiple [(ngModel)]="hidenColums" (change)="hideColums()">
+              <option value="">Show All</option>
               <option *ngFor="let listItem of getIndicatorsList(scorecard)" value="{{ listItem.id }}">{{ listItem.title }}</option>
             </select>
           </li>
@@ -200,6 +202,7 @@
 
 </div>
 
+<!--loading message-->
 <div class="container-fluid no-print" *ngIf="loading" style="margin-top: 10px;padding-left: 5px">
   <!--<img src="balls-5.svg" style="height: 70px; padding-top: 20px">-->
   {{ loading_message }}
@@ -211,21 +214,17 @@
   </div>
 </div>
 
+<!--main scorecard area-->
 <div class="container-fluid" id="scorecard" style="padding-left: 5px;margin-top: 10px">
   <h3>{{ scorecard.data.header.title }} &nbsp;&nbsp;&nbsp; {{ orgUnit.name }} &nbsp;&nbsp;&nbsp; {{ period.name }}</h3>
-  <table class="table table-bordered"
-         style="margin-bottom: 3px;font-size: 9px;border: 1px solid #ddd;border-spacing: 0;border-collapse: collapse;display: table;"
-  >
+  <table class="table table-bordered scorecard_table">
     <tr [ngClass]="{'hide_no_group': scorecard.data.data_settings.indicator_holder_groups.length == 1}" style="line-height: 140%">
-      <th class="orgUnitName">
-
-      </th>
+      <th class="orgUnitName"></th>
       <th
         style="font-size: 9px; cursor: pointer"
         *ngFor="let indicator_holder_group of scorecard.data.data_settings.indicator_holder_groups"
-        [attr.colspan]="indicator_holder_group.indicator_holder_ids.length"
-        class="sans-pro"
-
+        [attr.colspan]="getGroupColspan(indicator_holder_group.indicator_holder_ids)"
+        [ngClass]="{'hide_no_group': getGroupColspan(indicator_holder_group.indicator_holder_ids) == 0}"
         (click)="loadPreview(indicator_holder_group,null,null)"
         title="Click to analyse indicators for {{ indicator_holder_group.name }}">
         {{ indicator_holder_group.name }}
@@ -237,15 +236,14 @@
       <th style="vertical-align: bottom">
         <input type="text" class="form-control input-sm no-print" [(ngModel)]="searchQuery" placeholer="Search">
       </th>
-      <td *ngFor="let indicator of getItemsFromGroups()" style="font-size: 10px;width:90px;max-width: 90px;overflow-wrap: break-word;cursor: pointer; line-height: 140%" class="sans-pro"
+      <td *ngFor="let indicator of getItemsFromGroups()" class="indicator_title" style="line-height: 140%"
           title="Click to analyse {{ getIndicatorTitle(indicator) }}" (click)="loadPreview(null,indicator,null)">
         <img src="balls-3.svg" style="height: 30px" *ngIf="indicator_loading[indicator.indicators[0].id]" title="Loading old data for {{ getIndicatorTitle(indicator) }}">
         <span *ngIf="indicator_done_loading[indicator.indicators[0].id] && old_proccessed_percent != 100" class="glyphicon glyphicon-ok text-success"></span>
         {{ getIndicatorTitle(indicator) }}
-
       </td>
-      <th style="width:90px;max-width: 90px;" *ngIf="show_sum_in_row">Sum</th>
-      <th style="width:90px;max-width: 90px;" *ngIf="show_average_in_row">Average</th>
+      <th class="subtotal" *ngIf="show_sum_in_row">Sum</th>
+      <th class="subtotal" *ngIf="show_average_in_row">Average</th>
     </tr>
     <ng-container *ngFor="let current_orgunit of orgunits | filterByName:searchQuery">
       <tr style="height: 35px; max-height: 35px; overflow-y: hidden; line-height: 80%" class="orunitTr">
@@ -257,7 +255,7 @@
             class="sans-pro"
             (click)="loadPreview(null,indicator,current_orgunit.id)"
         >
-          <svg-item [indicator]="indicator" [current_orgunit]="current_orgunit"></svg-item>
+          <svg-item [indicator]="indicator" [current_orgunit]="current_orgunit" [indicator_list]="getVisibleIndicators(indicator)"></svg-item>
         </td>
 
         <td style="font-size: 10px;max-width: 90px;overflow-wrap: break-word;padding: 8px; line-height: 80%;" *ngIf="show_sum_in_row">{{ findRowSum(current_orgunit.id) | number : '1.2-2' }}</td>
@@ -285,9 +283,7 @@
             <button class="btn btn-default btn-sm pull-right" (click)="downloadCSV(current_orgunit.id)">CSV</button>
             <button class="btn btn-warning btn-sm pull-right" (click)="closeSubUnit()">Close</button>
             </h3>
-            <table class="table table-bordered"
-                   style="margin-bottom: 3px;font-size: 9px;border: 1px solid #ddd;border-spacing: 0;border-collapse: collapse;display: table; background-color: rgba(0,0,0,0.05)"
-            >
+            <table class="table table-bordered scorecard_table" style="background-color: rgba(0,0,0,0.05)">
               <tr [ngClass]="{'hide_no_group': scorecard.data.data_settings.indicator_holder_groups.length == 1 }" style="line-height: 140%">
                 <th class="orgUnitName">
 
@@ -308,14 +304,14 @@
                 <th style="vertical-align: bottom">
                   <input type="text" class="form-control input-sm no-print" [(ngModel)]="searchQuery1" placeholer="Search">
                 </th>
-                <td *ngFor="let indicator of getItemsFromGroups()" style="font-size: 10px;width:90px;max-width: 90px;overflow-wrap: break-word;cursor: pointer;line-height: 140%" class="sans-pro"
+                <td *ngFor="let indicator of getItemsFromGroups()" class="indicator_title" style="line-height: 140%"
                     title="Click to analyse {{ getIndicatorTitle(indicator) }}" (click)="loadPreview(null,indicator,current_orgunit.id)">
                   <img src="balls-3.svg" style="height: 30px" *ngIf="subScoreCard.indicator_loading[indicator.indicators[0].id]" title="Loading old data for {{ getIndicatorTitle(indicator) }}">
                   <span *ngIf="subScoreCard.indicator_done_loading[indicator.indicators[0].id] && subScoreCard.old_proccessed_percent != 100" class="glyphicon glyphicon-ok text-success"></span>
                   {{ getIndicatorTitle(indicator) }}
                 </td>
-                <th style="width:90px;max-width: 90px;" *ngIf="show_sum_in_row">Sum</th>
-                <th style="width:90px;max-width: 90px;" *ngIf="show_average_in_column">Average</th>
+                <th class="subtotal" *ngIf="show_sum_in_row">Sum</th>
+                <th class="subtotal" *ngIf="show_average_in_column">Average</th>
               </tr>
               <ng-container *ngFor="let current_inner_orgunit of subScoreCard.orgunits | filterByName:searchQuery1">
                 <tr style="height: 35px">
@@ -327,7 +323,7 @@
                       class="sans-pro"
                       (click)="loadPreview(null,indicator,current_inner_orgunit.id)"
                   >
-                    <svg-item [indicator]="indicator" [current_orgunit]="current_inner_orgunit"></svg-item>
+                    <svg-item [indicator]="indicator" [current_orgunit]="current_inner_orgunit" [indicator_list]="getVisibleIndicators(indicator)"></svg-item>
                   </td>
                   <td  style="line-height: 10%;padding: 8px" *ngIf="show_sum_in_row">{{ findRowSum(current_inner_orgunit.id) | number : '1.2-2'}}</td>
                   <td style="line-height: 10%;padding: 8px" *ngIf="show_average_in_row">{{ findRowAverage(current_inner_orgunit.id) }}</td>
@@ -353,13 +349,9 @@
                         <button class="btn btn-default btn-sm pull-right" (click)="downloadCSV(current_inner_orgunit.id)">CSV</button>
                         <button class="btn btn-warning btn-sm pull-right" (click)="closechildrenSubUnit()">Close</button>
                       </h3>
-                      <table class="table table-bordered"
-                             style="margin-bottom: 3px;font-size: 9px;border: 1px solid #ddd;border-spacing: 0;border-collapse: collapse;display: table; background-color: rgba(0,0,0,0.05)"
-                      >
+                      <table class="table table-bordered scorecard_table" style="background-color: rgba(0,0,0,0.05)">
                         <tr [ngClass]="{'hide_no_group': scorecard.data.data_settings.indicator_holder_groups.length == 1 }" style="line-height: 140%">
-                          <th class="orgUnitName">
-
-                          </th>
+                          <th class="orgUnitName"></th>
                           <th
                             style="font-size: 9px; cursor: pointer"
                             *ngFor="let indicator_holder_group of scorecard.data.data_settings.indicator_holder_groups"
@@ -376,15 +368,15 @@
                           <th style="vertical-align: bottom">
                             <input type="text" class="form-control input-sm no-print" [(ngModel)]="searchQuery2" placeholer="Search">
                           </th>
-                          <td *ngFor="let indicator of getItemsFromGroups()" style="font-size: 10px;width:90px;max-width: 90px;overflow-wrap: break-word;cursor: pointer;line-height: 140%" class="sans-pro"
+                          <td *ngFor="let indicator of getItemsFromGroups()" class="indicator_title" style="line-height: 140%"
                               title="Click to analyse {{ getIndicatorTitle(indicator) }}" (click)="loadPreview(null,indicator,current_inner_orgunit.id)">
                             <img src="balls-3.svg" style="height: 30px" *ngIf="childrenSubScoreCard.indicator_loading[indicator.indicators[0].id]" title="Loading old data for {{ getIndicatorTitle(indicator) }}">
                             <span *ngIf="childrenSubScoreCard.indicator_done_loading[indicator.indicators[0].id] && childrenSubScoreCard.old_proccessed_percent != 100" class="glyphicon glyphicon-ok text-success"></span>
 
                             {{ getIndicatorTitle(indicator) }}
                           </td>
-                          <th style="width:90px;max-width: 90px;" *ngIf="show_sum_in_row">Sum</th>
-                          <th style="width:90px;max-width: 90px;" *ngIf="show_average_in_row">Average</th>
+                          <th class="subtotal" *ngIf="show_sum_in_row">Sum</th>
+                          <th class="subtotal" *ngIf="show_average_in_row">Average</th>
                         </tr>
                         <ng-container *ngFor="let children_inner_orgunit of childrenSubScoreCard.orgunits | filterByName:searchQuery2">
                           <tr style="height: 35px">
@@ -393,7 +385,7 @@
                             </td>
                             <td *ngFor="let indicator of getItemsFromGroups()"
                                 style="font-size: 10px;max-width: 90px;overflow-wrap: break-word; cursor: pointer; padding: 0px;line-height: 10%;"  class="sans-pro" (click)="loadPreview(null,indicator,children_inner_orgunit.id)">
-                              <svg-item [indicator]="indicator" [current_orgunit]="children_inner_orgunit"></svg-item>
+                              <svg-item [indicator]="indicator" [current_orgunit]="children_inner_orgunit" [indicator_list]="getVisibleIndicators(indicator)"></svg-item>
                             </td>
                             <td style="line-height: 80%;padding: 8px" *ngIf="show_sum_in_row">{{ findRowSum(children_inner_orgunit.id) | number : '1.2-2' }}</td>
                             <td  style="line-height: 80%;padding: 8px" *ngIf="show_average_in_row">{{ findRowAverage(children_inner_orgunit.id) }}</td>
@@ -404,7 +396,7 @@
                         <tr *ngIf="show_sum_in_column" style="height: 35px; max-height: 35px; overflow-y: hidden; line-height: 80%">
                           <th>Sum</th>
                           <th *ngFor="let indicator of getItemsFromGroups()" style="width: 90px;max-width: 90px;line-height: 10%;padding: 0px">
-                            <app-subtotal [indicator]="indicator" [orgunits]="childrenSubScoreCard.orgunits" [scorecard]="scorecard" [calculation]="'sum'"></app-subtotal>
+                            <app-subtotal [indicator]="indicator" [orgunits]="childrenSubScoreCard.orgunits" [scorecard]="scorecard" [calculation]="'sum'" [indicator_list]="getVisibleIndicators(indicator)"></app-subtotal>
                           </th>
                           <th *ngIf="show_sum_in_row">{{ findRowTotalSum(childrenSubScoreCard.orgunits)  | number : '1.2-2' }}</th>
                           <th *ngIf="show_average_in_row">{{ findRowTotalAverage(childrenSubScoreCard.orgunits)}}</th>
@@ -413,7 +405,7 @@
                         <tr *ngIf="show_average_in_column" style="height: 35px; max-height: 35px; overflow-y: hidden; line-height: 80%">
                           <th>Average</th>
                           <th *ngFor="let indicator of getItemsFromGroups()" style="width: 90px;max-width: 90px;line-height: 10%;padding: 0px">
-                            <app-subtotal [indicator]="indicator" [orgunits]="childrenSubScoreCard.orgunits" [scorecard]="scorecard" [calculation]="'avg'"></app-subtotal>
+                            <app-subtotal [indicator]="indicator" [orgunits]="childrenSubScoreCard.orgunits" [scorecard]="scorecard" [calculation]="'avg'" [indicator_list]="getVisibleIndicators(indicator)"></app-subtotal>
                           </th>
                           <th *ngIf="show_sum_in_row">{{ findRowTotalSum(childrenSubScoreCard.orgunits) | number : '1.2-2'}}</th>
                           <th *ngIf="show_average_in_row">{{ findRowTotalAverage(childrenSubScoreCard.orgunits)}}</th>
@@ -432,7 +424,7 @@
               <tr *ngIf="show_sum_in_column" style="height: 35px; max-height: 35px; overflow-y: hidden; line-height: 80%">
                 <th style="line-height: 10%">Sum</th>
                 <th *ngFor="let indicator of getItemsFromGroups()" style="width: 90px;max-width: 90px;line-height: 10%;padding: 0px">
-                  <app-subtotal [indicator]="indicator" [orgunits]="subScoreCard.orgunits" [scorecard]="scorecard" [calculation]="'sum'"></app-subtotal>
+                  <app-subtotal [indicator]="indicator" [orgunits]="subScoreCard.orgunits" [scorecard]="scorecard" [calculation]="'sum'" [indicator_list]="getVisibleIndicators(indicator)"></app-subtotal>
                 </th>
                 <th *ngIf="show_sum_in_row">{{ findRowTotalSum(subScoreCard.orgunits) | number : '1.2-2'}}</th>
                 <th *ngIf="show_average_in_row">{{ findRowTotalAverage(subScoreCard.orgunits)}}</th>
@@ -441,7 +433,7 @@
               <tr *ngIf="show_average_in_column" style="height: 35px; max-height: 35px; overflow-y: hidden; line-height: 80%">
                 <th style="line-height: 10%">Average</th>
                 <th *ngFor="let indicator of getItemsFromGroups()" style="width: 90px;max-width: 90px;line-height: 10%;padding: 0px">
-                  <app-subtotal [indicator]="indicator" [orgunits]="subScoreCard.orgunits" [scorecard]="scorecard" [calculation]="'avg'"></app-subtotal>
+                  <app-subtotal [indicator]="indicator" [orgunits]="subScoreCard.orgunits" [scorecard]="scorecard" [calculation]="'avg'" [indicator_list]="getVisibleIndicators(indicator)"></app-subtotal>
                 </th>
                 <th *ngIf="show_sum_in_row">{{ findRowTotalSum(subScoreCard.orgunits) | number : '1.2-2'}}</th>
                 <th *ngIf="show_average_in_row">{{ findRowTotalAverage(subScoreCard.orgunits)}}</th>
@@ -460,7 +452,7 @@
     <tr *ngIf="show_sum_in_column" style="height: 35px; max-height: 35px; overflow-y: hidden; line-height: 80%">
       <th style="line-height: 10%">Sum</th>
       <th *ngFor="let indicator of getItemsFromGroups()" style="width: 90px;max-width: 90px;line-height: 10%;padding: 0px">
-        <app-subtotal [indicator]="indicator" [orgunits]="orgunits" [scorecard]="scorecard" [calculation]="'sum'"></app-subtotal>
+        <app-subtotal [indicator]="indicator" [orgunits]="orgunits" [scorecard]="scorecard" [calculation]="'sum'" [indicator_list]="getVisibleIndicators(indicator)"></app-subtotal>
       </th>
       <th *ngIf="show_sum_in_row">{{ findRowTotalSum(orgunits) | number : '1.2-2'}}</th>
       <th *ngIf="show_average_in_row">{{ findRowTotalAverage(orgunits)}}</th>
@@ -469,7 +461,7 @@
     <tr *ngIf="show_average_in_column" style="height: 35px; max-height: 35px; overflow-y: hidden; line-height: 80%">
       <th>Average</th>
       <th *ngFor="let indicator of getItemsFromGroups()" style="width: 90px;max-width: 90px;line-height: 10%;padding: 0px">
-        <app-subtotal [indicator]="indicator" [orgunits]="orgunits" [scorecard]="scorecard" [calculation]="'avg'"></app-subtotal>
+        <app-subtotal [indicator]="indicator" [orgunits]="orgunits" [scorecard]="scorecard" [calculation]="'avg'" [indicator_list]="getVisibleIndicators(indicator)"></app-subtotal>
       </th>
       <th *ngIf="show_sum_in_row">{{ findRowTotalSum(orgunits)  | number : '1.2-2'}}</th>
       <th *ngIf="show_average_in_row">{{ findRowTotalAverage(orgunits)}}</th>
@@ -491,6 +483,7 @@
           [default_period]="period"
           [default_period_type]="period_type"
           [default_orgunit] = "orgunit_for_model"
+          [hidden_columns] = "hidenColums"
           (show_details) = "getDetails($event)"
         >Loading ....
         </indicator-card>

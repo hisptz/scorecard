@@ -119,6 +119,7 @@ export class ViewComponent implements OnInit, AfterViewInit, OnDestroy {
 
   sortAscending: boolean = true;
 
+  hidenColums: any[] = [];
   constructor(private scorecardService: ScorecardService,
               private dataService: DataService,
               private activatedRouter: ActivatedRoute,
@@ -589,7 +590,14 @@ export class ViewComponent implements OnInit, AfterViewInit, OnDestroy {
       for( let holders_list of data.indicator_holder_ids ){
         for( let holder of this.scorecard.data.data_settings.indicator_holders ){
           if(holder.holder_id == holders_list){
-            indicators_list.push(holder)
+            // check if indicators in a card are hidden so don show them
+            let hide_this: boolean = true;
+            for ( let indicator of holder.indicators ){
+              if( this.hidenColums.indexOf(indicator.id) == -1){
+                hide_this = false;
+              }
+            }
+            if( !hide_this ){ indicators_list.push(holder) }
           }
         }
       }
@@ -601,7 +609,9 @@ export class ViewComponent implements OnInit, AfterViewInit, OnDestroy {
   getIndicatorTitle(holder): string{
     var title = [];
     for( let data of holder.indicators ){
-      title.push(data.title)
+      if( this.hidenColums.indexOf(data.id) == -1 ){
+        title.push(data.title)
+      }
     }
     return title.join(' / ')
   }
@@ -887,9 +897,36 @@ export class ViewComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   // hiding columns
-  hidenColums: any;
-  hideColums(colums_to_hide){
-    console.log(colums_to_hide);
+  hideColums(){
+    console.log(this.hidenColums);
+  }
+
+  //helper function to dynamical provide colspan attribute for a group
+  getGroupColspan(group_holders){
+    let colspan= 0;
+    for (let holder of this.scorecard.data.data_settings.indicator_holders ){
+      if(group_holders.indexOf(holder.holder_id) != -1){
+        let hide_this: boolean = true;
+        for ( let indicator of holder.indicators ){
+          if( this.hidenColums.indexOf(indicator.id) == -1){
+            hide_this = false;
+          }
+        }
+        if( !hide_this ){ colspan++ }
+      }
+    }
+    return colspan;
+  }
+
+  //get number of visible indicators from a holder
+  getVisibleIndicators(holder){
+    let indicators =  [];
+    for ( let indicator of holder.indicators ){
+      if( this.hidenColums.indexOf(indicator.id) == -1){
+        indicators.push(indicator);
+      }
+    }
+    return indicators;
   }
 
   sorting_column: any = "none";

@@ -9,6 +9,7 @@ export class SvgItemComponent implements OnInit {
 
   @Input() current_orgunit: any;
   @Input() indicator: any;
+  @Input() indicator_list: any[] = [];
   constructor() { }
 
   ngOnInit() {

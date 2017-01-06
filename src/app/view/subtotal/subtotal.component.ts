@@ -11,6 +11,7 @@ export class SubtotalComponent implements OnInit {
   @Input() indicator: any;
   @Input() scorecard: any;
   @Input() calculation: any;
+  @Input() indicator_list: any[] = [];
   constructor() {
 
   }
