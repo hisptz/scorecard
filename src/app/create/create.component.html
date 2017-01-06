@@ -327,7 +327,7 @@
           *ngIf="!saving_scorecard">
     Create
   </button>
-  <button class="btn btn-xs btn-warning pull-right" style="margin-top: 8px" (click)="cancelCreate()" *ngIf="!saving_scorecard">Cancel</button>
+  <button class="btn btn-sm btn-warning pull-right" style="margin-top: 8px" (click)="cancelCreate()" *ngIf="!saving_scorecard">Cancel</button>
   <h5 class="pull-right" *ngIf="saving_scorecard"><img src="loading.gif" style="height: 50px;"> Saving score card Information, Please wait...</h5>
   <h5 class="pull-right text-danger" *ngIf="saving_error">Something went wrong, Saving score card Information failed</h5>
 </div>

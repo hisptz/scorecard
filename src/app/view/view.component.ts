@@ -561,6 +561,17 @@ export class ViewComponent implements OnInit, AfterViewInit, OnDestroy {
     return indicators;
   }
 
+  // a function to prepare a list of indicators to pass into a table
+  getIndicatorsList(scorecard): string[]{
+    let indicators = [];
+    for( let holder of scorecard.data.data_settings.indicator_holders ){
+      for( let indicator of holder.indicators ){
+        indicators.push(indicator);
+      }
+    }
+    return indicators;
+  }
+
   // A function used to decouple indicator list and prepare them for a display
   getItemsFromGroups(): any[]{
     let indicators_list = [];
@@ -685,27 +696,6 @@ export class ViewComponent implements OnInit, AfterViewInit, OnDestroy {
     this.showPerTree = !this.showPerTree;
   }
 
-  // action to be called when a tree item is deselected(Remove item in array of selected items
-  deactivateOrg ( $event ) {
-    // this.selected_items.forEach((item,index) => {
-    //   if( $event.node.data.id == item.id ) {
-    //     this.selected_items.splice(index, 1);
-    //   }
-    // });
-    // this.selected.emit(this.selected_items);
-  };
-
-  // action to be called when a tree item is deselected(Remove item in array of selected items
-  deactivatePer ( $event ) {
-    // this.selected_items.forEach((item,index) => {
-    //   if( $event.node.data.id == item.id ) {
-    //     this.selected_items.splice(index, 1);
-    //   }
-    // });
-    // this.selected.emit(this.selected_items);
-  };
-
-
   // add item to array of selected items when item is selected
   activateOrg = ($event) => {
     this.selected_orgunits = [$event.node.data];
@@ -731,10 +721,10 @@ export class ViewComponent implements OnInit, AfterViewInit, OnDestroy {
     tree.treeModel.filterNodes(text, true);
   }
 
+  // help function to help on closing the indicator modal popup
   getDetails($event){
     this.show_details = $event
   }
-
 
   closechildrenSubUnit(){
     this.showChildrenSubScorecard = [];
@@ -742,6 +732,121 @@ export class ViewComponent implements OnInit, AfterViewInit, OnDestroy {
 
   showOptions(){
     this.showAdditionalOptions = !this.showAdditionalOptions;
+  }
+
+  /**
+   * finding the row average
+   * @param orgunit_id
+   */
+  findRowAverage(orgunit_id){
+    let sum = 0;
+    for ( let holder of this.scorecard.data.data_settings.indicator_holders ){
+      for( let indicator of holder.indicators ){
+        if(orgunit_id in indicator.values){
+          sum = sum + parseFloat(indicator.values[orgunit_id])
+        }
+      }
+    }
+    return (sum / this.getIndicatorsList(this.scorecard).length).toFixed(2);
+  }
+
+  /**
+   * Finding avarage for the column
+   * @param orgunits, indicator_id
+   */
+  findColumnAverage(orgunits, indicator_id,scorecard){
+    let sum = 0;
+    for ( let orgunit of orgunits ){
+      for ( let holder of scorecard.data.data_settings.indicator_holders ){
+        for( let indicator of holder.indicators ){
+          if(orgunit.id in indicator.values && indicator.id == indicator_id){
+            sum = sum + parseFloat(indicator.values[orgunit.id])
+          }
+        }
+      }
+    }
+    return (sum/ this.getIndicatorsList(this.scorecard).length).toFixed(2);
+  }
+
+  /**
+   * Finding avarage for the column
+   * @param orgunits, indicator_id
+   */
+  findColumnSum(orgunits, indicator_id, scorecard){
+    let sum = 0;
+    for ( let orgunit of orgunits ){
+      for ( let holder of scorecard.data.data_settings.indicator_holders ){
+        for( let indicator of holder.indicators ){
+          if(orgunit.id in indicator.values && indicator.id == indicator_id){
+            sum = sum + parseFloat(indicator.values[orgunit.id])
+          }
+        }
+      }
+    }
+    return sum;
+  }
+
+  /**
+   * finding the row average
+   * @param orgunit_id
+   */
+  findRowSum(orgunit_id){
+    let sum = 0;
+    for ( let holder of this.scorecard.data.data_settings.indicator_holders ){
+      for( let indicator of holder.indicators ){
+        if(orgunit_id in indicator.values){
+          sum = sum + parseFloat(indicator.values[orgunit_id])
+        }
+      }
+    }
+    return sum;
+  }
+
+  // dealing with showing sum
+  showSumInRow(e){
+    if(e.target.checked){
+      console.log("cheked");
+    }else{
+      console.log("Uncheked");
+    }
+  }
+
+  // dealing with showing sum
+  showSumInColumn(e){
+    if(e.target.checked){
+      console.log("cheked");
+    }else{
+      console.log("Uncheked");
+    }
+  }
+
+  // dealing with showing average
+  showAverageInRow(e){
+    if(e.target.checked){
+      console.log("avg cheked");
+    }else{
+      console.log("avg Uncheked");
+    }
+  }
+
+  // dealing with showing average
+  showAverageInColumn(e){
+    if(e.target.checked){
+      console.log("avg cheked");
+    }else{
+      console.log("avg Uncheked");
+    }
+  }
+
+  // hiding columns
+  hidenColums: any;
+  hideColums(colums_to_hide){
+    console.log(colums_to_hide);
+  }
+
+  sorting_column: any = "none";
+  sortScoreCard(sortingColumn){
+    console.log(sortingColumn);
   }
 
   ngOnDestroy (){

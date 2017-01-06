@@ -60,7 +60,7 @@
         </button>
       </p>
       <p class="icons" *ngIf="confirm_deleting[scorecard.id]" style="padding: 5px; font-size: 12px"> Are you sure you want to delete this score card?
-        <button class="btn btn-xs btn-danger" (click)="deleteScoreCard(scorecard)">Delete</button>
+        <button class="btn btn-sm btn-danger" (click)="deleteScoreCard(scorecard)">Delete</button>
         <button class="btn btn-sm btn-success" (click)="confirm_deleting[scorecard.id] = false">Cancel</button>
       </p>
 

@@ -138,35 +138,52 @@
       <button type="button" class="btn btn-default pull-right"  style="height: 38px" (click)="browserPrint()">
         <span class="glyphicon glyphicon-print"></span> Print
       </button>
+
+
+
       <!--some aditional configurations-->
-      <!--<button *ngIf="!loading" type="button" class="btn btn-default pull-right"  style="height: 38px" (click)="showOptions()">-->
-        <!--<span class="glyphicon glyphicon-cog"></span> Options-->
-      <!--</button>-->
+      <button *ngIf="!loading" type="button" class="btn btn-default pull-right"  style="height: 38px" (click)="showOptions()">
+        <span class="glyphicon glyphicon-cog"></span> Options
+      </button>
       <div class="additional-options" [ngClass]="{'hiddenTree':showAdditionalOptions}">
-        <label>Show</label>
         <ul class="list-group">
           <li class="list-group-item">
-            <label>
-              <input type="checkbox"> Sum
-            </label>
+            <div class="row">
+              <div class="col-sm-6">Show Sum for</div>
+              <div class="col-sm-3"><label><input type="checkbox" (change)="showSumInRow($event)"> rows</label></div>
+              <div class="col-sm-3"><label><input type="checkbox" (change)="showSumInColumn($event)"> column</label></div>
+            </div>
+            <div class="row">
+              <div class="col-sm-6">Show Average for</div>
+              <div class="col-sm-3"><label><input type="checkbox" (change)="showAverageInRow($event)"> rows</label></div>
+              <div class="col-sm-3"><label><input type="checkbox" (change)="showAverageInColumn($event)"> column</label></div>
+            </div>
           </li>
           <li class="list-group-item">
-            <label>
-              <input type="checkbox"> Average
-            </label>
+            <label>Sort By</label>
+            <select class="form-control" [(ngModel)]="sorting_column" (click)="sortScoreCard(sorting_column)">
+              <option value="none">None</option>
+              <option *ngFor="let listItem of getIndicatorsList(scorecard)" value="{{ listItem.id }}">{{ listItem.title }}</option>
+            </select>
           </li>
           <li class="list-group-item">
-            <label>
-              <input type="checkbox"> Score
-            </label>
-          </li>
-          <li class="list-group-item">
-            <label>
-              <input type="checkbox"> Ranks
-            </label>
+            <label>Hide Columns</label>
+            <select class="form-control" multiple [(ngModel)]="hidenColums" (change)="hideColums(hidenColums)">
+              <option value="none">None</option>
+              <option *ngFor="let listItem of getIndicatorsList(scorecard)" value="{{ listItem.id }}">{{ listItem.title }}</option>
+            </select>
           </li>
         </ul>
+        <button class="btn btn-xs btn-warning pull-right" (click)="showOptions()">
+          close
+        </button>
+        <button class="btn btn-xs btn-default pull-right" [routerLink]="['../../create','edit',scorecard.id]">
+          Edit Scorecard
+        </button>
       </div>
+
+      <!--end of additional configuration-->
+
     </div>
   </div>
 
@@ -202,6 +219,8 @@
         title="Click to analyse indicators for {{ indicator_holder_group.name }}">
         {{ indicator_holder_group.name }}
       </th>
+      <th class="sum"></th>
+      <th class="average"></th>
     </tr>
     <tr>
       <th style="vertical-align: bottom">
@@ -214,51 +233,26 @@
         {{ getIndicatorTitle(indicator) }}
 
       </td>
+      <th style="width:90px;max-width: 90px;">Sum</th>
+      <th style="width:90px;max-width: 90px;">Average</th>
     </tr>
     <ng-container *ngFor="let current_orgunit of orgunits | filterByName:searchQuery">
       <tr style="height: 35px; max-height: 35px; overflow-y: hidden" class="orunitTr">
-        <td style="vertical-align: bottom;font-size: 10px;cursor: pointer" class="orgUnitName" (click)="loadChildrenData(current_orgunit)">
+        <td style="vertical-align: bottom;font-size: 10px;cursor: pointer;line-height: 10%" class="orgUnitName" (click)="loadChildrenData(current_orgunit)">
           {{ current_orgunit.name }}
         </td>
         <td *ngFor="let indicator of getItemsFromGroups()"
-            style="font-size: 10px;max-width: 90px;overflow-wrap: break-word; cursor: pointer; padding: 0px;line-height: 10%;"  class="sans-pro" (click)="loadPreview(null,indicator,current_orgunit.id)">
-          <svg *ngIf="indicator.indicators.length == 2" viewbox="0 0 90 35" width="90" height="35">
-            <polygon points="0 0 90 0 90 0 0 35" [attr.fill]="assignBgColor(indicator.indicators[0],indicator.indicators[0].values[current_orgunit.id])" style="stroke:#CAC0C0;stroke-width:0.4"/>
-            <text fill="#000" x="3" y="18" font-size="11" font-family="Source Sans Pro">
-              <tspan>{{ indicator.indicators[0].values[current_orgunit.id] }}</tspan>
-            </text>
-            <!--top arrow-->
-            <path *ngIf="indicator.indicators[0].showTopArrow[current_orgunit.id]" d="M2,10H12L7,4" style="fill:black;stroke:black;stroke-width:1"/>
-            <!--bottom arrow showing decrease-->
-            <path *ngIf="indicator.indicators[0].showBottomArrow[current_orgunit.id]" d="M2,22H12L7,30" style="fill:black;stroke:black;stroke-width:1"/>
-
-            <!--second triangle-->
-            <polygon points="0 35 90 0 90 35 0 35" [attr.fill]="assignBgColor(indicator.indicators[1],indicator.indicators[1].values[current_orgunit.id])" style="stroke:#CAC0C0;stroke-width:0.0"/>
-            <!--number for the second triangle-->
-            <text fill="#000" x="54" y="22" font-size="11" font-family="Source Sans Pro">
-              <tspan>{{ indicator.indicators[1].values[current_orgunit.id] }}</tspan>
-            </text>
-            <!--top arrow for the right triagle-->
-            <path *ngIf="indicator.indicators[1].showTopArrow[current_orgunit.id]" d="M75,10H85L80,4" style="fill:black;stroke:black;stroke-width:1"/>
-            <!--below arrow for the triangle-->
-            <path *ngIf="indicator.indicators[1].showBottomArrow[current_orgunit.id]" d="M75,24H85L80,31" style="fill:black;stroke:black;stroke-width:1"/>
-          </svg>
-          <!--if there is only one indicator to display-->
-          <svg *ngIf="indicator.indicators.length == 1" viewbox="0 0 90 35" width="90" height="35">
-            <!--full box to cover all area-->
-            <polygon points="0 0 90 0 90 35 0 35" [attr.fill]="assignBgColor(indicator.indicators[0],indicator.indicators[0].values[current_orgunit.id])"/>
-            <text fill="#000" x="30" y="20" font-size="11" font-family="Source Sans Pro">
-              <tspan>{{ indicator.indicators[0].values[current_orgunit.id] }}</tspan>
-            </text>
-            <!--top arrow-->
-            <path *ngIf="indicator.indicators[0].showTopArrow[current_orgunit.id]" d="M2,10H12L7,4" style="fill:black;stroke:black;stroke-width:1"/>
-            <!--bottom arrow showing decrease-->
-            <path *ngIf="indicator.indicators[0].showBottomArrow[current_orgunit.id]" d="M2,22H12L7,30" style="fill:black;stroke:black;stroke-width:1"/>
-
-          </svg>
+            style="font-size: 10px;max-width: 90px;overflow-wrap: break-word; cursor: pointer; padding: 0px;line-height: 10%;"
+            class="sans-pro"
+            (click)="loadPreview(null,indicator,current_orgunit.id)"
+        >
+          <svg-item [indicator]="indicator" [current_orgunit]="current_orgunit"></svg-item>
         </td>
 
+        <td style="line-height: 10%">{{ findRowSum(current_orgunit.id) | number : '1.2-2' }}</td>
+        <td style="line-height: 10%">{{ findRowAverage(current_orgunit.id) }}</td>
       </tr>
+
       <tr *ngIf="showSubScorecard[current_orgunit.id]">
         <td [attr.colspan]="getItemsFromGroups().length +1" style="background-color: rgba(0,0,0,0.1)">
 
@@ -296,6 +290,8 @@
                   title="Click to analyse indicators for {{ indicator_holder_group.name }}">
                   {{ indicator_holder_group.name }}
                 </th>
+                <th class="sum"></th>
+                <th class="average"></th>
               </tr>
               <tr>
                 <th style="vertical-align: bottom">
@@ -307,6 +303,8 @@
                   <span *ngIf="subScoreCard.indicator_done_loading[indicator.indicators[0].id] && subScoreCard.old_proccessed_percent != 100" class="glyphicon glyphicon-ok text-success"></span>
                   {{ getIndicatorTitle(indicator) }}
                 </td>
+                <th style="width:90px;max-width: 90px;">Sum</th>
+                <th style="width:90px;max-width: 90px;">Average</th>
               </tr>
               <ng-container *ngFor="let current_inner_orgunit of subScoreCard.orgunits | filterByName:searchQuery1">
                 <tr style="height: 35px">
@@ -314,44 +312,14 @@
                     {{ current_inner_orgunit.name }}
                   </td>
                   <td *ngFor="let indicator of getItemsFromGroups()"
-                      style="font-size: 10px;max-width: 90px;overflow-wrap: break-word; cursor: pointer; padding: 0px;line-height: 10%;"  class="sans-pro" (click)="loadPreview(null,indicator,current_inner_orgunit.id)">
-                    <svg *ngIf="indicator.indicators.length == 2" viewbox="0 0 90 35" width="90" height="35">
-                      <polygon points="0 0 90 0 90 0 0 35" [attr.fill]="assignBgColor(indicator.indicators[0],indicator.indicators[0].values[current_inner_orgunit.id])" style="stroke:#CAC0C0;stroke-width:0.0"/>
-                      <text fill="#000" x="3" y="18" font-size="11" font-family="Source Sans Pro">
-                        <tspan>{{ indicator.indicators[0].values[current_orgunit.id] }}</tspan>
-                      </text>
-                      <!--top arrow-->
-                      <path *ngIf="indicator.indicators[0].showTopArrow[current_inner_orgunit.id]" d="M2,10H12L7,4" style="fill:black;stroke:black;stroke-width:1" />
-                      <!--bottom arrow showing decrease-->
-                      <path *ngIf="indicator.indicators[0].showBottomArrow[current_inner_orgunit.id]" d="M2,22H12L7,30" style="fill:black;stroke:black;stroke-width:1"/>
-
-                      <!--second triangle-->
-                      <polygon points="0 35 90 0 90 35 0 35" [attr.fill]="assignBgColor(indicator.indicators[1],indicator.indicators[1].values[current_inner_orgunit.id])" style="stroke:#CAC0C0;stroke-width:0.0"/>
-                      <!--number for the second triangle-->
-                      <text fill="#000" x="54" y="22" font-size="11" font-family="Source Sans Pro">
-                        <tspan>{{ indicator.indicators[1].values[current_inner_orgunit.id] }}</tspan>
-                      </text>
-                      <!--top arrow for the right triagle-->
-                      <path *ngIf="indicator.indicators[1].showTopArrow[current_inner_orgunit.id]" d="M75,10H85L80,4" style="fill:black;stroke:black;stroke-width:1"/>
-                      <!--below arrow for the triangle-->
-                      <path *ngIf="indicator.indicators[1].showBottomArrow[current_inner_orgunit.id]" d="M75,24H85L80,31" style="fill:black;stroke:black;stroke-width:1"/>
-                    </svg>
-
-                    <!--if there is only one indicator to display-->
-                    <svg *ngIf="indicator.indicators.length == 1" viewbox="0 0 90 35" width="90" height="35">
-                      <!--full box to cover all area-->
-                      <polygon points="0 0 90 0 90 35 0 35" [attr.fill]="assignBgColor(indicator.indicators[0],indicator.indicators[0].values[current_inner_orgunit.id])"/>
-                      <text fill="#000" x="30" y="20" font-size="11" font-family="Source Sans Pro">
-                        <tspan>{{ indicator.indicators[0].values[current_inner_orgunit.id] }}</tspan>
-                      </text>
-                      <!--top arrow-->
-                      <path *ngIf="indicator.indicators[0].showTopArrow[current_inner_orgunit.id]" d="M2,10H12L7,4" style="fill:black;stroke:black;stroke-width:1"/>
-                      <!--bottom arrow showing decrease-->
-                      <path *ngIf="indicator.indicators[0].showBottomArrow[current_inner_orgunit.id]" d="M2,22H12L7,30" style="fill:black;stroke:black;stroke-width:1"/>
-
-                    </svg>
+                      style="font-size: 10px;max-width: 90px;overflow-wrap: break-word; cursor: pointer; padding: 0px;line-height: 10%;"
+                      class="sans-pro"
+                      (click)="loadPreview(null,indicator,current_inner_orgunit.id)"
+                  >
+                    <svg-item [indicator]="indicator" [current_orgunit]="current_inner_orgunit"></svg-item>
                   </td>
-
+                  <td  style="line-height: 10%">{{ findRowSum(current_inner_orgunit.id) | number : '1.2-2'}}</td>
+                  <td style="line-height: 10%">{{ findRowAverage(current_inner_orgunit.id) }}</td>
                 </tr>
                 <tr *ngIf="showChildrenSubScorecard[current_inner_orgunit.id]">
                   <td [attr.colspan]="getItemsFromGroups().length +1" style="background-color: rgba(39,102,150,0.1)">
@@ -390,6 +358,8 @@
                             title="Click to analyse indicators for {{ indicator_holder_group.name }}">
                             {{ indicator_holder_group.name }}
                           </th>
+                          <th class="sum"></th>
+                          <th class="average"></th>
                         </tr>
                         <tr>
                           <th style="vertical-align: bottom">
@@ -402,6 +372,8 @@
 
                             {{ getIndicatorTitle(indicator) }}
                           </td>
+                          <th style="width:90px;max-width: 90px;">Sum</th>
+                          <th style="width:90px;max-width: 90px;">Average</th>
                         </tr>
                         <ng-container *ngFor="let children_inner_orgunit of childrenSubScoreCard.orgunits | filterByName:searchQuery2">
                           <tr style="height: 35px">
@@ -410,45 +382,31 @@
                             </td>
                             <td *ngFor="let indicator of getItemsFromGroups()"
                                 style="font-size: 10px;max-width: 90px;overflow-wrap: break-word; cursor: pointer; padding: 0px;line-height: 10%;"  class="sans-pro" (click)="loadPreview(null,indicator,children_inner_orgunit.id)">
-                              <svg *ngIf="indicator.indicators.length == 2" viewbox="0 0 90 35" width="90" height="35">
-                                <polygon points="0 0 90 0 90 0 0 35" [attr.fill]="assignBgColor(indicator.indicators[0],indicator.indicators[0].values[current_inner_orgunit.id])" style="stroke:#CAC0C0;stroke-width:0.0"/>
-                                <text fill="#000" x="3" y="18" font-size="11" font-family="Source Sans Pro">
-                                  <tspan>{{ indicator.indicators[0].values[current_orgunit.id] }}</tspan>
-                                </text>
-                                <!--top arrow-->
-                                <path *ngIf="indicator.indicators[0].showTopArrow[children_inner_orgunit.id]" d="M2,10H12L7,4" style="fill:black;stroke:black;stroke-width:1"/>
-                                <!--bottom arrow showing decrease-->
-                                <path *ngIf="indicator.indicators[0].showBottomArrow[children_inner_orgunit.id]" d="M2,22H12L7,30" style="fill:black;stroke:black;stroke-width:1"/>
-
-                                <!--second triangle-->
-                                <polygon points="0 35 90 0 90 35 0 35" [attr.fill]="assignBgColor(indicator.indicators[1],indicator.indicators[1].values[children_inner_orgunit.id])" style="stroke:#CAC0C0;stroke-width:0.0"/>
-                                <!--number for the second triangle-->
-                                <text fill="#000" x="54" y="22" font-size="11" font-family="Source Sans Pro">
-                                  <tspan>{{ indicator.indicators[1].values[children_inner_orgunit.id] }}</tspan>
-                                </text>
-                                <!--top arrow for the right triagle-->
-                                <path *ngIf="indicator.indicators[1].showTopArrow[children_inner_orgunit.id]" d="M75,10H85L80,4" style="fill:black;stroke:black;stroke-width:1"/>
-                                <!--below arrow for the triangle-->
-                                <path *ngIf="indicator.indicators[1].showBottomArrow[children_inner_orgunit.id]" d="M75,24H85L80,31" style="fill:black;stroke:black;stroke-width:1"/>
-                              </svg>
-
-                              <!--if there is only one indicator to display-->
-                              <svg *ngIf="indicator.indicators.length == 1" viewbox="0 0 90 35" width="90" height="35">
-                                <!--full box to cover all area-->
-                                <polygon points="0 0 90 0 90 35 0 35" [attr.fill]="assignBgColor(indicator.indicators[0],indicator.indicators[0].values[current_inner_orgunit.id])"/>
-                                <text fill="#000" x="30" y="20" font-size="11" font-family="Source Sans Pro">
-                                  <tspan>{{ indicator.indicators[0].values[children_inner_orgunit.id] }}</tspan>
-                                </text>
-                                <!--top arrow-->
-                                <path *ngIf="indicator.indicators[0].showTopArrow[children_inner_orgunit.id]" d="M2,10H12L7,4" style="fill:black;stroke:black;stroke-width:1"/>
-                                <!--bottom arrow showing decrease-->
-                                <path *ngIf="indicator.indicators[0].showBottomArrow[children_inner_orgunit.id]" d="M2,22H12L7,30" style="fill:black;stroke:black;stroke-width:1"/>
-
-                              </svg>
+                              <svg-item [indicator]="indicator" [current_orgunit]="children_inner_orgunit"></svg-item>
                             </td>
-
+                            <td style="line-height: 80%">{{ findRowSum(children_inner_orgunit.id) | number : '1.2-2' }}</td>
+                            <td  style="line-height: 80%">{{ findRowAverage(children_inner_orgunit.id) }}</td>
                           </tr>
                         </ng-container>
+
+                        <!--sum column-->
+                        <tr>
+                          <th>Sum</th>
+                          <th *ngFor="let indicator of getItemsFromGroups()" style="width: 90px;max-width: 90px;line-height: 10%">
+                            <app-subtotal [indicator]="indicator" [orgunits]="childrenSubScoreCard.orgunits" [scorecard]="scorecard" [calculation]="'sum'"></app-subtotal>
+                          </th>
+                          <th></th>
+                          <th></th>
+                        </tr>
+                        <!--Average column-->
+                        <tr>
+                          <th>Average</th>
+                          <th *ngFor="let indicator of getItemsFromGroups()" style="width: 90px;max-width: 90px;line-height: 10%">
+                            <app-subtotal [indicator]="indicator" [orgunits]="childrenSubScoreCard.orgunits" [scorecard]="scorecard" [calculation]="'avg'"></app-subtotal>
+                          </th>
+                          <th></th>
+                          <th></th>
+                        </tr>
                       </table>
                     </div>
 
@@ -458,6 +416,25 @@
 
                 </tr>
               </ng-container>
+
+              <!--sum column-->
+              <tr>
+                <th style="line-height: 10%">Sum</th>
+                <th *ngFor="let indicator of getItemsFromGroups()" style="width: 90px;max-width: 90px;line-height: 10%">
+                  <app-subtotal [indicator]="indicator" [orgunits]="subScoreCard.orgunits" [scorecard]="scorecard" [calculation]="'sum'"></app-subtotal>
+                </th>
+                <th></th>
+                <th></th>
+              </tr>
+              <!--Average column-->
+              <tr>
+                <th style="line-height: 10%">Average</th>
+                <th *ngFor="let indicator of getItemsFromGroups()" style="width: 90px;max-width: 90px;line-height: 10%">
+                  <app-subtotal [indicator]="indicator" [orgunits]="subScoreCard.orgunits" [scorecard]="scorecard" [calculation]="'avg'"></app-subtotal>
+                </th>
+                <th></th>
+                <th></th>
+              </tr>
             </table>
           </div>
 
@@ -467,6 +444,25 @@
 
       </tr>
     </ng-container>
+
+    <!--sum column-->
+    <tr>
+      <th style="line-height: 10%">Sum</th>
+      <th *ngFor="let indicator of getItemsFromGroups()" style="width: 90px;max-width: 90px;line-height: 10%">
+        <app-subtotal [indicator]="indicator" [orgunits]="orgunits" [scorecard]="scorecard" [calculation]="'sum'"></app-subtotal>
+      </th>
+      <th></th>
+      <th></th>
+    </tr>
+    <!--Average column-->
+    <tr>
+      <th>Average</th>
+      <th *ngFor="let indicator of getItemsFromGroups()" style="width: 90px;max-width: 90px;line-height: 10%">
+        <app-subtotal [indicator]="indicator" [orgunits]="orgunits" [scorecard]="scorecard" [calculation]="'avg'"></app-subtotal>
+      </th>
+      <th></th>
+      <th></th>
+    </tr>
   </table>
 </div>
 

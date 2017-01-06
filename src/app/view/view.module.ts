@@ -7,6 +7,8 @@ import { FilterComponent } from './filter/filter.component';
 import { IndicatorCardComponent } from './indicator-card/indicator-card.component';
 import {Ng2HighchartsModule} from "ng2-highcharts";
 import {ChartModule} from "angular2-highcharts";
+import { SvgItemComponent } from './svg-item/svg-item.component';
+import { SubtotalComponent } from './subtotal/subtotal.component';
 
 @NgModule({
   imports: [
@@ -15,6 +17,6 @@ import {ChartModule} from "angular2-highcharts";
     Ng2HighchartsModule,
     ChartModule
   ],
-  declarations: [ViewComponent, FilterComponent, IndicatorCardComponent]
+  declarations: [ViewComponent, FilterComponent, IndicatorCardComponent, SvgItemComponent, SubtotalComponent]
 })
 export class ViewModule { }
