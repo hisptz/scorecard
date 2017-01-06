@@ -118,6 +118,9 @@ export class ViewComponent implements OnInit, AfterViewInit, OnDestroy {
   show_average_in_column: boolean = false;
 
   sortAscending: boolean = true;
+  sorting_column: any = "none";
+  sub_sorting_column: string = 'none';
+  grand_sorting_column: string = 'none';
 
   hidenColums: any[] = [];
   constructor(private scorecardService: ScorecardService,
@@ -760,14 +763,16 @@ export class ViewComponent implements OnInit, AfterViewInit, OnDestroy {
    */
   findRowAverage(orgunit_id){
     let sum = 0;
+    let counter = 0;
     for ( let holder of this.scorecard.data.data_settings.indicator_holders ){
       for( let indicator of holder.indicators ){
-        if(orgunit_id in indicator.values && indicator.values[orgunit_id] != null){
-          sum = sum + parseFloat(indicator.values[orgunit_id])
+        if( this.hidenColums.indexOf(indicator.id) == -1) {
+          counter++;
+          sum = sum + parseFloat(indicator.values[orgunit_id]);
         }
       }
     }
-    return (sum / this.getIndicatorsList(this.scorecard).length).toFixed(2);
+    return (sum / counter).toFixed(2);
   }
   /**
    * finding the row average
@@ -778,10 +783,12 @@ export class ViewComponent implements OnInit, AfterViewInit, OnDestroy {
     let n = 0;
     for ( let holder of this.scorecard.data.data_settings.indicator_holders ){
       for( let indicator of holder.indicators ){
-        for ( let orgunit of orgunits ){
-          if(orgunit.id in indicator.values && indicator.values[orgunit.id] != null){
-            n++;
-            sum = sum + parseFloat(indicator.values[orgunit.id])
+        if( this.hidenColums.indexOf(indicator.id) == -1 ){
+          for ( let orgunit of orgunits ){
+            if(orgunit.id in indicator.values && indicator.values[orgunit.id] != null){
+              n++;
+              sum = sum + parseFloat(indicator.values[orgunit.id])
+            }
           }
         }
       }
@@ -798,10 +805,12 @@ export class ViewComponent implements OnInit, AfterViewInit, OnDestroy {
     let n = 0;
     for ( let holder of this.scorecard.data.data_settings.indicator_holders ){
       for( let indicator of holder.indicators ){
-        for ( let orgunit of orgunits ){
-          if(orgunit.id in indicator.values && indicator.values[orgunit.id] != null){
-            n++;
-            sum = sum + parseFloat(indicator.values[orgunit.id])
+        if( this.hidenColums.indexOf(indicator.id) == -1 ){
+          for ( let orgunit of orgunits ){
+            if(orgunit.id in indicator.values && indicator.values[orgunit.id] != null){
+              n++;
+              sum = sum + parseFloat(indicator.values[orgunit.id])
+            }
           }
         }
       }
@@ -854,7 +863,9 @@ export class ViewComponent implements OnInit, AfterViewInit, OnDestroy {
     for ( let holder of this.scorecard.data.data_settings.indicator_holders ){
       for( let indicator of holder.indicators ){
         if(orgunit_id in indicator.values && indicator.values[orgunit_id] != null ){
-          sum = sum + parseFloat(indicator.values[orgunit_id])
+          if( this.hidenColums.indexOf(indicator.id) == -1) {
+            sum = sum + parseFloat(indicator.values[orgunit_id])
+          }
         }
       }
     }
@@ -929,7 +940,6 @@ export class ViewComponent implements OnInit, AfterViewInit, OnDestroy {
     return indicators;
   }
 
-  sorting_column: any = "none";
   sortScoreCard(sortingColumn, sortAscending){
     if( sortingColumn == "none" ){
       this.dataService.sortArrOfObjectsByParam(this.orgunits, "name", sortAscending)
@@ -953,6 +963,54 @@ export class ViewComponent implements OnInit, AfterViewInit, OnDestroy {
       this.dataService.sortArrOfObjectsByParam(this.orgunits, sortingColumn, sortAscending)
     }
     let close = (this.keep_options_open)?'':this.showOptions();
+  }
+
+  sortSubScoreCard(sortingColumn, sortAscending){
+    if( sortingColumn == "none" ){
+      this.dataService.sortArrOfObjectsByParam(this.subScoreCard.orgunit, "name", sortAscending)
+    }
+    else if( sortingColumn == 'avg' ){
+      for ( let orgunit of this.subScoreCard.orgunits ){
+        orgunit['avg'] = parseFloat(this.findRowAverage(orgunit.id));
+      }
+      this.dataService.sortArrOfObjectsByParam(this.subScoreCard.orgunits, sortingColumn, sortAscending)
+    }
+    else if( sortingColumn == 'sum' ){
+      for ( let orgunit of this.subScoreCard.orgunits ){
+        orgunit['sum'] = this.findRowSum(orgunit.id);
+      }
+      this.dataService.sortArrOfObjectsByParam(this.subScoreCard.orgunits, sortingColumn, sortAscending)
+    }
+    else{
+      for ( let orgunit of this.subScoreCard.orgunits ){
+        orgunit[sortingColumn] = this.findOrgunitIndicatorValue(orgunit.id, sortingColumn );
+      }
+      this.dataService.sortArrOfObjectsByParam(this.subScoreCard.orgunits, sortingColumn, sortAscending)
+    }
+  }
+
+  sortGrandScoreCard(sortingColumn, sortAscending){
+    if( sortingColumn == "none" ){
+      this.dataService.sortArrOfObjectsByParam(this.childrenSubScoreCard.orgunits, "name", sortAscending)
+    }
+    else if( sortingColumn == 'avg' ){
+      for ( let orgunit of this.childrenSubScoreCard.orgunits ){
+        orgunit['avg'] = parseFloat(this.findRowAverage(orgunit.id));
+      }
+      this.dataService.sortArrOfObjectsByParam(this.childrenSubScoreCard.orgunits, sortingColumn, sortAscending)
+    }
+    else if( sortingColumn == 'sum' ){
+      for ( let orgunit of this.childrenSubScoreCard.orgunits ){
+        orgunit['sum'] = this.findRowSum(orgunit.id);
+      }
+      this.dataService.sortArrOfObjectsByParam(this.childrenSubScoreCard.orgunit, sortingColumn, sortAscending)
+    }
+    else{
+      for ( let orgunit of this.childrenSubScoreCard.orgunits ){
+        orgunit[sortingColumn] = this.findOrgunitIndicatorValue(orgunit.id, sortingColumn );
+      }
+      this.dataService.sortArrOfObjectsByParam(this.childrenSubScoreCard.orgunits, sortingColumn, sortAscending)
+    }
   }
 
   private findOrgunitIndicatorValue(orgunit_id: string, indicator_id:string){

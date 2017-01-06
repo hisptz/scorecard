@@ -279,10 +279,27 @@
           </div>
 
           <div class="container-fluid" id="inner_scorecard" style="padding-left: 5px;margin-top: 10px">
-            <h3>{{ scorecard.data.header.title }} &nbsp;&nbsp;&nbsp; {{ current_orgunit.name }} &nbsp;&nbsp;&nbsp; {{ period.name }}
-            <button class="btn btn-default btn-sm pull-right" (click)="downloadCSV(current_orgunit.id)">CSV</button>
-            <button class="btn btn-warning btn-sm pull-right" (click)="closeSubUnit()">Close</button>
-            </h3>
+            <!--sort by area-->
+            <div class="row" >
+              <div class="col-sm-7"><h4>{{ scorecard.data.header.title }} &nbsp;&nbsp;&nbsp; {{ current_orgunit.name }} &nbsp;&nbsp;&nbsp; {{ period.name }}</h4></div>
+              <div class="col-sm-1 no-print" style="margin-top: 10px; padding: 0px"><label class="pull-right no-print">Sort By:</label> </div>
+              <div class="col-sm-2 no-print" style="padding-left: 5px">
+                <select style="height: 30px;" class="form-control pull-right" [(ngModel)]="sub_sorting_column" (click)="sortSubScoreCard(sub_sorting_column, sortAscending)">
+                  <option value="none">None</option>
+                  <option value="avg">Average</option>
+                  <option value="sum">Sum</option>
+                  <option *ngFor="let listItem of getIndicatorsList(scorecard)" value="{{ listItem.id }}">{{ listItem.title }}</option>
+                </select>
+              </div>
+              <div class="col-sm-2 no-print">
+                <button class="btn btn-default btn-sm pull-right" (click)="closeSubUnit()" style="height: 30px">
+                  <span _ngcontent-hsp-13="" class="glyphicon glyphicon-remove"></span> Close
+                </button>
+                <button class="btn btn-default btn-sm pull-right" (click)="downloadCSV(current_orgunit.id)" style="height: 30px">
+                  <span _ngcontent-hsp-13="" class="glyphicon glyphicon-save-file"></span> CSV
+                </button>
+              </div>
+            </div>
             <table class="table table-bordered scorecard_table" style="background-color: rgba(0,0,0,0.05)">
               <tr [ngClass]="{'hide_no_group': scorecard.data.data_settings.indicator_holder_groups.length == 1 }" style="line-height: 140%">
                 <th class="orgUnitName">
@@ -345,10 +362,28 @@
                     </div>
 
                     <div class="container-fluid" id="child_inner_scorecard" style="padding-left: 5px;margin-top: 10px">
-                      <h3>{{ scorecard.data.header.title }} &nbsp;&nbsp;&nbsp; {{ current_inner_orgunit.name }} &nbsp;&nbsp;&nbsp; {{ period.name }}
-                        <button class="btn btn-default btn-sm pull-right" (click)="downloadCSV(current_inner_orgunit.id)">CSV</button>
-                        <button class="btn btn-warning btn-sm pull-right" (click)="closechildrenSubUnit()">Close</button>
-                      </h3>
+                      <!--sort by area-->
+                      <div class="row" >
+                        <div class="col-sm-7"><h4>{{ scorecard.data.header.title }} &nbsp;&nbsp;&nbsp; {{ current_inner_orgunit.name }} &nbsp;&nbsp;&nbsp; {{ period.name }}</h4></div>
+                        <div class="col-sm-1 no-print" style="margin-top: 10px; padding: 0px"><label class="pull-right no-print">Sort By:</label> </div>
+                        <div class="col-sm-2 no-print" style="padding-left: 5px">
+                          <select style="height: 30px" class="form-control pull-right" [(ngModel)]="grand_sorting_column" (click)="sortGrandScoreCard(grand_sorting_column, sortAscending)">
+                            <option value="none">None</option>
+                            <option value="avg">Average</option>
+                            <option value="sum">Sum</option>
+                            <option *ngFor="let listItem of getIndicatorsList(scorecard)" value="{{ listItem.id }}">{{ listItem.title }}</option>
+                          </select>
+                        </div>
+                        <div class="col-sm-2 no-print">
+                          <button class="btn btn-default btn-sm pull-right" (click)="closechildrenSubUnit()" style="height: 30px">
+                            <span _ngcontent-hsp-13="" class="glyphicon glyphicon-remove"></span> Close
+                          </button>
+                          <button class="btn btn-default btn-sm pull-right" (click)="downloadCSV(current_inner_orgunit.id)" style="height: 30px">
+                            <span _ngcontent-hsp-13="" class="glyphicon glyphicon-save-file"></span> CSV
+                          </button>
+                        </div>
+                      </div>
+
                       <table class="table table-bordered scorecard_table" style="background-color: rgba(0,0,0,0.05)">
                         <tr [ngClass]="{'hide_no_group': scorecard.data.data_settings.indicator_holder_groups.length == 1 }" style="line-height: 140%">
                           <th class="orgUnitName"></th>
