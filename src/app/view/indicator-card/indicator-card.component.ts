@@ -135,6 +135,7 @@ export class IndicatorCardComponent implements OnInit, AfterViewInit, OnDestroy 
   }
 
   // a call that will change the view type
+  details_indicators: string = '';
   updateIndicatorCard( holders: any[], type: string, periods: any[], orgunits: any[], with_children:boolean = false ){
     this.loading = true;
     this.chartData = {};
@@ -172,6 +173,10 @@ export class IndicatorCardComponent implements OnInit, AfterViewInit, OnDestroy 
     }
     else if (type == "csv") {
 
+    }else if (type == "info") {
+      this.details_indicators = indicatorsArray.join(";");
+      this.visualizer_config.type = "info"
+
     }
     else{
       this.visualizer_config = {
@@ -190,48 +195,55 @@ export class IndicatorCardComponent implements OnInit, AfterViewInit, OnDestroy 
       };
     }
     //if there is no change of parameters from last request dont go to server
-    if(this.checkIfParametersChanged(orgunits, periods)){
-      this.loading = false;
-      if(type == "csv"){
-        this.downloadCSV(this.current_analytics_data);
-      }else{
-        this.chartData = this.visulizationService.drawChart( this.current_analytics_data, this.visualizer_config.chartConfiguration );
-        this.tableData = this.visulizationService.drawTable( this.current_analytics_data, this.visualizer_config.tableConfiguration );
-      }
-    }else{
-      this.current_parameters = [];
-      for ( let item of periods ){
-        periodArray.push(item.id);
-        this.current_parameters.push(item.id);
-      }for ( let item of orgunits ){
-        orgUnitsArray.push(item.id);
-        this.current_parameters.push(item.id);
-        if( with_children ){
-          for ( let child of item.children ){
-            orgUnitsArray.push(child.id);
-            this.current_parameters.push(child.id);
-          }
-        }
-      }
-      // create an api analytics call
-      let url = this.constant.root_dir+"api/analytics.json?dimension=dx:" + indicatorsArray.join(";") + "&dimension=ou:" + orgUnitsArray.join(";") + "&dimension=pe:" + periodArray.join(";") + "&displayProperty=NAME";
+    if (type == "info") {
 
-      this.subscription = this.loadAnalytics(url).subscribe(
-        (data) => {
-          this.current_analytics_data = data;
-          this.loading = false;
-          if(type == "csv"){
-            this.downloadCSV(data);
-          }else{
-            this.chartData = this.visulizationService.drawChart( data, this.visualizer_config.chartConfiguration );
-            this.tableData = this.visulizationService.drawTable( data, this.visualizer_config.tableConfiguration );
-          }
-        },
-        error => {
-          console.log(error)
+      this.loading = false;
+    }else{
+      if(this.checkIfParametersChanged(orgunits, periods)){
+        this.loading = false;
+        if(type == "csv"){
+          this.downloadCSV(this.current_analytics_data);
+        }else{
+          this.chartData = this.visulizationService.drawChart( this.current_analytics_data, this.visualizer_config.chartConfiguration );
+          this.tableData = this.visulizationService.drawTable( this.current_analytics_data, this.visualizer_config.tableConfiguration );
         }
-      )
+      }
+      else{
+        this.current_parameters = [];
+        for ( let item of periods ){
+          periodArray.push(item.id);
+          this.current_parameters.push(item.id);
+        }for ( let item of orgunits ){
+          orgUnitsArray.push(item.id);
+          this.current_parameters.push(item.id);
+          if( with_children ){
+            for ( let child of item.children ){
+              orgUnitsArray.push(child.id);
+              this.current_parameters.push(child.id);
+            }
+          }
+        }
+        // create an api analytics call
+        let url = this.constant.root_dir+"api/analytics.json?dimension=dx:" + indicatorsArray.join(";") + "&dimension=ou:" + orgUnitsArray.join(";") + "&dimension=pe:" + periodArray.join(";") + "&displayProperty=NAME";
+
+        this.subscription = this.loadAnalytics(url).subscribe(
+          (data) => {
+            this.current_analytics_data = data;
+            this.loading = false;
+            if(type == "csv"){
+              this.downloadCSV(data);
+            }else{
+              this.chartData = this.visulizationService.drawChart( data, this.visualizer_config.chartConfiguration );
+              this.tableData = this.visulizationService.drawTable( data, this.visualizer_config.tableConfiguration );
+            }
+          },
+          error => {
+            console.log(error)
+          }
+        )
+      }
     }
+
 
 
   }
@@ -291,6 +303,8 @@ export class IndicatorCardComponent implements OnInit, AfterViewInit, OnDestroy 
     }
     else if (type == "csv") {
 
+    }else if (type == "info") {
+      console.log("info clicked");
     }
     else{
       if(this.visualizer_config.chartConfiguration.xAxisType == "ou"){

@@ -1,3 +1,6 @@
 [submodule "src/app/view/ng2-dhis-visualizer"]
 	path = src/app/view/ng2-dhis-visualizer
 	url = git@github.com:hisptz/ng2-dhis-visualizer.git
+[submodule "src/app/view/metadatadictionarycomponent"]
+	path = src/app/view/metadatadictionarycomponent
+	url = git@github.com:hisptz/metadatadictionarycomponent.git
