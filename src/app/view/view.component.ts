@@ -259,6 +259,7 @@ export class ViewComponent implements OnInit, AfterViewInit, OnDestroy {
         for( let holder of this.scorecard.data.data_settings.indicator_holders ){
           for( let indicator of holder.indicators ){
             indicator['values'] = [];
+            indicator['tooltip'] = [];
             indicator['previous_values'] = [];
             indicator['loading'] = true;
             indicator['showTopArrow'] = [];
@@ -277,7 +278,10 @@ export class ViewComponent implements OnInit, AfterViewInit, OnDestroy {
                   for ( let orgunit of data.metaData.ou ){
                     if(!this.checkOrgunitAvailability(orgunit,this.orgunits)){
                       //noinspection TypeScriptUnresolvedVariable
-                      this.orgunits.push({"id":orgunit, "name":data.metaData.names[orgunit]})
+                      this.orgunits.push({"id":orgunit,
+                        "name":data.metaData.names[orgunit],
+                        "is_parent":this.orgUnit.id == orgunit
+                      })
                     }
                     indicator.values[orgunit] = this.dataService.getIndicatorData(orgunit,this.period.id, data);
                   }
@@ -297,6 +301,15 @@ export class ViewComponent implements OnInit, AfterViewInit, OnDestroy {
                               let check1 = parseInt( indicator.values[key] ) < (parseInt( indicator.previous_values[key] ) - effective_gap );
                               indicator.showTopArrow[key] = check;
                               indicator.showBottomArrow[key] = check1;
+                              if(indicator.showTopArrow[key] && indicator.values[key] != null && indicator.previous_values[key] != null){
+                                let  rise = indicator.values[key] - parseInt( indicator.previous_values[key]);
+                                //noinspection TypeScriptUnresolvedVariable
+                                indicator.tooltip[key] = indicator.name +" has raised by "+rise.toFixed(2)+" from last "+this.period_type+ " for "+ data.metaData.names[key];
+                              }if(indicator.showBottomArrow[key] && indicator.values[key] != null && indicator.previous_values[key] != null){
+                                let  rise = parseFloat( indicator.previous_values[key] ) - indicator.values[key];
+                                //noinspection TypeScriptUnresolvedVariable
+                                indicator.tooltip[key] = indicator.name +" has decreased by "+rise.toFixed(2)+" from last "+this.period_type+ " for "+ data.metaData.names[key];
+                              }
                             }
                           }
                         }
@@ -320,7 +333,7 @@ export class ViewComponent implements OnInit, AfterViewInit, OnDestroy {
   showSubScorecard: any[] = [];
   subScoreCard: any = {};
   loadChildrenData(selectedorgunit){
-    if(selectedorgunit.id == this.opened_unit){
+    if( selectedorgunit.is_parent ){
       this.showSubScorecard = [];
       this.opened_unit = null;
     }else{
@@ -360,7 +373,10 @@ export class ViewComponent implements OnInit, AfterViewInit, OnDestroy {
                 for ( let orgunit of data.metaData.ou ){
                   if(!this.checkOrgunitAvailability(orgunit,this.subScoreCard.orgunits)){
                     //noinspection TypeScriptUnresolvedVariable
-                    this.subScoreCard.orgunits.push({"id":orgunit, "name":data.metaData.names[orgunit]})
+                    this.subScoreCard.orgunits.push({"id":orgunit,
+                      "name":data.metaData.names[orgunit],
+                      "is_parent":orgunit_with_children.data.id == orgunit
+                    })
                   }
                   indicator.values[orgunit] = this.dataService.getIndicatorData(orgunit,this.period.id, data);
                 }
@@ -412,7 +428,7 @@ export class ViewComponent implements OnInit, AfterViewInit, OnDestroy {
   showChildrenSubScorecard: any[] = [];
   childrenSubScoreCard: any = {};
   loadGrandChildrenData(selectedorgunit){
-    if( selectedorgunit.id == this.opened_subunit ){
+    if( selectedorgunit.is_parent ){
       this.showChildrenSubScorecard = [];
       this.opened_subunit = null;
     }else{
@@ -452,7 +468,10 @@ export class ViewComponent implements OnInit, AfterViewInit, OnDestroy {
                 for ( let orgunit of data.metaData.ou ){
                   if(!this.checkOrgunitAvailability(orgunit,this.childrenSubScoreCard.orgunits)){
                     //noinspection TypeScriptUnresolvedVariable
-                    this.childrenSubScoreCard.orgunits.push({"id":orgunit, "name":data.metaData.names[orgunit]})
+                    this.childrenSubScoreCard.orgunits.push({"id":orgunit,
+                      "name":data.metaData.names[orgunit],
+                      "is_parent":orgunit_with_children.data.id == orgunit
+                    })
                   }
                   indicator.values[orgunit] = this.dataService.getIndicatorData(orgunit,this.period.id, data);
                 }
@@ -493,6 +512,17 @@ export class ViewComponent implements OnInit, AfterViewInit, OnDestroy {
       }
     }
 
+  }
+
+  // prepare a proper tooltip to display to counter multiple indicators in the same td
+  prepareTooltip(holder,orgunit): string{
+    let tooltip = [];
+    for (let indicator of holder.indicators ){
+      if(indicator.tooltip != null){
+        tooltip.push(indicator.tooltip[orgunit])
+      }
+    }
+    return tooltip.join(", ");
   }
 
   // prepare scorecard data and download them as csv

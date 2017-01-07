@@ -279,6 +279,7 @@
             style="font-size: 10px;max-width: 90px;overflow-wrap: break-word; cursor: pointer; padding: 0px;line-height: 10%;"
             class="sans-pro"
             (click)="loadPreview(null,indicator,current_orgunit.id)"
+            title="{{ prepareTooltip(indicator,current_orgunit.id) }}"
         >
           <svg-item [indicator]="indicator" [current_orgunit]="current_orgunit" [indicator_list]="getVisibleIndicators(indicator)"></svg-item>
         </td>
