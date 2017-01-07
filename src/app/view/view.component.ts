@@ -304,11 +304,11 @@ export class ViewComponent implements OnInit, AfterViewInit, OnDestroy {
                               if(indicator.showTopArrow[key] && indicator.values[key] != null && indicator.previous_values[key] != null){
                                 let  rise = indicator.values[key] - parseInt( indicator.previous_values[key]);
                                 //noinspection TypeScriptUnresolvedVariable
-                                indicator.tooltip[key] = indicator.name +" has raised by "+rise.toFixed(2)+" from last "+this.period_type+ " for "+ data.metaData.names[key];
+                                indicator.tooltip[key] = indicator.name +" has raised by "+rise.toFixed(2)+" from "+this.getPeriodName(this.period.id)+ " for "+ data.metaData.names[key];
                               }if(indicator.showBottomArrow[key] && indicator.values[key] != null && indicator.previous_values[key] != null){
                                 let  rise = parseFloat( indicator.previous_values[key] ) - indicator.values[key];
                                 //noinspection TypeScriptUnresolvedVariable
-                                indicator.tooltip[key] = indicator.name +" has decreased by "+rise.toFixed(2)+" from last "+this.period_type+ " for "+ data.metaData.names[key];
+                                indicator.tooltip[key] = indicator.name +" has decreased by "+rise.toFixed(2)+" from "+this.getPeriodName(this.period.id)+ " for "+ data.metaData.names[key];
                               }
                             }
                           }
@@ -397,6 +397,15 @@ export class ViewComponent implements OnInit, AfterViewInit, OnDestroy {
                             let check1 = parseInt( indicator.values[key] ) < ( parseInt( indicator.previous_values[key] ) - effective_gap );
                             indicator.showTopArrow[key] = check;
                             indicator.showBottomArrow[key] = check1;
+                            if(indicator.showTopArrow[key] && indicator.values[key] != null && indicator.previous_values[key] != null){
+                              let  rise = indicator.values[key] - parseInt( indicator.previous_values[key]);
+                              //noinspection TypeScriptUnresolvedVariable
+                              indicator.tooltip[key] = indicator.name +" has raised by "+rise.toFixed(2)+" from "+this.getPeriodName(this.period.id)+ " for "+ data.metaData.names[key];
+                            }if(indicator.showBottomArrow[key] && indicator.values[key] != null && indicator.previous_values[key] != null){
+                              let  rise = parseFloat( indicator.previous_values[key] ) - indicator.values[key];
+                              //noinspection TypeScriptUnresolvedVariable
+                              indicator.tooltip[key] = indicator.name +" has decreased by "+rise.toFixed(2)+" from "+this.getPeriodName(this.period.id)+ " for "+ data.metaData.names[key];
+                            }
                           }
                         }
                       }
@@ -492,6 +501,15 @@ export class ViewComponent implements OnInit, AfterViewInit, OnDestroy {
                             let check1 = parseInt( indicator.values[key] ) < ( parseInt( indicator.previous_values[key] ) - effective_gap );
                             indicator.showTopArrow[key] = check;
                             indicator.showBottomArrow[key] = check1;
+                            if(indicator.showTopArrow[key] && indicator.values[key] != null && indicator.previous_values[key] != null){
+                              let  rise = indicator.values[key] - parseInt( indicator.previous_values[key]);
+                              //noinspection TypeScriptUnresolvedVariable
+                              indicator.tooltip[key] = indicator.name +" has raised by "+rise.toFixed(2)+" from "+this.getPeriodName(this.period.id)+ " for "+ data.metaData.names[key];
+                            }if(indicator.showBottomArrow[key] && indicator.values[key] != null && indicator.previous_values[key] != null){
+                              let  rise = parseFloat( indicator.previous_values[key] ) - indicator.values[key];
+                              //noinspection TypeScriptUnresolvedVariable
+                              indicator.tooltip[key] = indicator.name +" has decreased by "+rise.toFixed(2)+" from "+this.getPeriodName(this.period.id)+ " for "+ data.metaData.names[key];
+                            }
                           }
                         }
                       }
@@ -512,6 +530,14 @@ export class ViewComponent implements OnInit, AfterViewInit, OnDestroy {
       }
     }
 
+  }
+
+  getPeriodName(id){
+    for ( let period of this.filterService.getPeriodArray(this.period_type, this.filterService.getLastPeriod(id).substr(0,4))){
+      if( this.filterService.getLastPeriod(id) == period.id){
+        return period.name;
+      }
+    }
   }
 
   // prepare a proper tooltip to display to counter multiple indicators in the same td

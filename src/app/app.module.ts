@@ -20,6 +20,7 @@ import { ScoreCardFilterPipe } from './home/score-card-filter.pipe';
 import {FilterService} from "./shared/services/filter.service";
 import {OrgUnitService} from "./shared/services/org-unit.service";
 import {VisulizerService} from "./view/ng2-dhis-visualizer/visulizer.service";
+import {ProgramIndicatorsService} from "./shared/services/program-indicators.service";
 
 @NgModule({
   declarations: [
@@ -44,7 +45,8 @@ import {VisulizerService} from "./view/ng2-dhis-visualizer/visulizer.service";
     DataElementGroupService,
     FilterService,
     OrgUnitService,
-    VisulizerService
+    VisulizerService,
+    ProgramIndicatorsService
   ],
   bootstrap: [AppComponent]
 })

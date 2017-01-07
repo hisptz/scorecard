@@ -170,6 +170,7 @@
           <option value="indicators">Indicators</option>
           <option value="dataElements">Data Elements</option>
           <option value="datasets">Data sets</option>
+          <option value="programs">Program indicators</option>
         </select>
       </div>
       <img src="balls-4.svg" style="height: 70px; padding-top: 20px" *ngIf="!done_loading_groups">
@@ -196,9 +197,11 @@
     <div class="thumbnail scorecard_details">
       <div *ngIf="listReady">
         <img src="balls-4.svg" style="height: 90px; padding-top: 20px" *ngIf="!done_loading_list">
+        <h5 class="text-danger" *ngIf="error_loading_list.occurred">{{ error_loading_list.message }}</h5>
         <div class="form-group" *ngIf="done_loading_list">
           <input type="text" class="form-control input-sm" placeholder="Search by name" style="height: 25px;" [(ngModel)]="listQuery">
         </div>
+        <p *ngIf="done_loading_list && current_listing.length == 0">No items for a selected group</p>
         <ul class="list-group" *ngIf="done_loading_list">
           <li
             class="list-group-item selection_link"

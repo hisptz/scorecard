@@ -6,6 +6,7 @@ import {DataElementGroupService, DataElementGroup} from "../shared/services/data
 import {ScoreCard, ScorecardService} from "../shared/services/scorecard.service";
 import {Router} from "@angular/router";
 import {$} from "protractor";
+import {ProgramIndicatorsService, ProgramIndicatorGroups} from "../shared/services/program-indicators.service";
 
 @Component({
   selector: 'app-create',
@@ -18,6 +19,7 @@ export class CreateComponent implements OnInit, AfterViewInit {
   datasets: Dataset[];
   indicatorGroups: IndicatorGroup[];
   dataElementGroups: DataElementGroup[];
+  programs: ProgramIndicatorGroups[];
   current_groups: any[];
   current_listing: any[];
   activeGroup: string = null;
@@ -59,11 +61,13 @@ export class CreateComponent implements OnInit, AfterViewInit {
               private datasetService: DatasetService,
               private dataElementService: DataElementGroupService,
               private router: Router,
-              private scorecardService: ScorecardService
+              private scorecardService: ScorecardService,
+              private programService: ProgramIndicatorsService
   )
   {
     this.indicatorGroups = [];
     this.dataElementGroups = [];
+    this.programs = [];
     this.datasets = [];
     this.current_groups = [];
     this.current_listing = [];
@@ -115,7 +119,26 @@ export class CreateComponent implements OnInit, AfterViewInit {
           });
         }
       },
-      error => console.log("Something went wrong while trying to pull data Elements groups")
+      error => {
+        this.error_loading_groups.occurred = true;
+        this.error_loading_groups.message = "There was an error when loading Data Element Groups";
+      }
+    );
+    //get Programs
+    this.programService.loadAll().subscribe(
+      programs => {
+        for ( let group of programs.programs ) {
+          this.programs.push({
+            id: group.id,
+            name: group.name,
+            indicators: []
+          });
+        }
+      },
+      error => {
+        this.error_loading_groups.occurred = true;
+        this.error_loading_groups.message = "There was an error when loading Programs";
+      }
     );
     //get datasets
     this.datasetService.loadAll().subscribe(
@@ -129,7 +152,10 @@ export class CreateComponent implements OnInit, AfterViewInit {
           });
         }
       },
-      error => console.log("Something went wrong while trying to pull data Elements groups")
+      error => {
+        this.error_loading_groups.occurred = true;
+        this.error_loading_groups.message = "There was an error when loading Data sets";
+      }
     );
   }
 
@@ -147,13 +173,24 @@ export class CreateComponent implements OnInit, AfterViewInit {
     this.groupQuery = null;
     if(current_type == "indicators"){
       this.current_groups = this.indicatorGroups;
-      this.load_list(this.current_groups[0].id, current_type)
+      if(this.current_groups.length != 0){
+        this.load_list(this.current_groups[0].id, current_type)
+      }
     }else if(current_type == "dataElements"){
       this.current_groups = this.dataElementGroups;
-      this.load_list(this.current_groups[0].id, current_type)
+      if(this.current_groups.length != 0){
+        this.load_list(this.current_groups[0].id, current_type)
+      }
     }else if(current_type == "datasets"){
       this.current_groups = this.dataset_types;
-      this.load_list(this.current_groups[0].id, current_type)
+      if(this.current_groups.length != 0){
+        this.load_list(this.current_groups[0].id, current_type)
+      }
+    }else if(current_type == "programs"){
+      this.current_groups = this.programs;
+      if(this.current_groups.length != 0){
+        this.load_list(this.current_groups[0].id, current_type)
+      }
     }else{
 
     }
@@ -244,6 +281,39 @@ export class CreateComponent implements OnInit, AfterViewInit {
       this.listReady = true;
       this.done_loading_list = true;
       this.listQuery = null;
+    }
+    else if( current_type == "programs" ){
+      let load_new = false;
+      for ( let group  of this.programs ){
+        if ( group.id == group_id ){
+          if (group.indicators.length != 0){
+            this.current_listing = group.indicators;
+            this.done_loading_list = true;
+          }else{
+            load_new = true;
+          }
+        }
+      }
+      if ( load_new ){
+        this.programService.load(group_id).subscribe(
+          indicators => {
+            console.log(indicators.programs[0]);
+            this.current_listing = indicators.programs[0].programIndicators;
+            console.log(this.current_listing)
+            this.done_loading_list = true;
+            for ( let group  of this.programs ){
+              if ( group.id == group_id ){
+                group.indicators = indicators.programs.programIndicators;
+              }
+            }
+          },
+          error => {
+            this.error_loading_list.occurred = true;
+            this.error_loading_list.message = "Something went wrong when trying to load Indicators";
+          }
+        )
+      }
+
     }
     else{
 
