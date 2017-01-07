@@ -73,8 +73,8 @@
               <span *ngIf="period_tree_config.loading">{{ period_tree_config.loading_message }}</span>
             </div>
             <div class="show_tops">
-              <div style="height: 17px;border-bottom: 1px solid black" (click)="setPeriod('up')" ><span class="glyphicon glyphicon-chevron-up"></span> </div>
-              <div style="height: 17px" (click)="setPeriod('down')"> <span class="glyphicon glyphicon-chevron-down"></span></div>
+              <div class="arrows" title="go to next period" style="height: 19px;border-bottom: 1px solid black" (click)="setPeriod('up')" ><span class="glyphicon glyphicon-triangle-top"></span> </div>
+              <div class="arrows" title="go to previous period" style="height: 17px" (click)="setPeriod('down')"> <span class="glyphicon glyphicon-triangle-bottom"></span></div>
             </div>
             <div class="tree-view" [ngClass]="{'hiddenTree':showPerTree}">
               <div class="col-sm-7" style="padding-left: 0px; margin-bottom: 5px">

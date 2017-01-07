@@ -84,6 +84,13 @@
   height: 34px;
 }
 
+.arrows:hover{
+  transform: scale(1.001, 1.001);
+  -webkit-box-shadow: 0 0 10px rgba(0,0,0,0.1);
+  box-shadow: 0 0 10px rgba(0,0,0,0.1);
+  background-color: rgba(0,0,0,0.05);
+}
+
 .tree-view {
   text-align: left;
   background-color: #fff;
@@ -208,6 +215,7 @@ span.selected-item {
   padding: 3px 5px 3px 5px;
   margin-right: 2px;
   cursor: text;
+  font-size: 11px;
 
 }
 

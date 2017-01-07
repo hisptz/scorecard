@@ -106,6 +106,8 @@ export class IndicatorCardComponent implements OnInit, AfterViewInit, OnDestroy 
     {name: 'stacked_bar', image: 'bar-stacked.png'},
     {name: 'gauge', image: 'gauge.jpg'}
     ];
+
+  chart_settings: string = "ou-pe";
   constructor(private filterService: FilterService,
               private visulizationService: VisulizerService,
               private constant: Constants,
@@ -154,6 +156,8 @@ export class IndicatorCardComponent implements OnInit, AfterViewInit, OnDestroy 
         }
       }
     }
+    let config_array = this.chart_settings.split("-");
+    console.log(config_array)
 
     if(type == "table"){
       this.visualizer_config = {
@@ -189,8 +193,8 @@ export class IndicatorCardComponent implements OnInit, AfterViewInit, OnDestroy 
         'chartConfiguration': {
           'type':type,
           'title': this.prepareCardTitle(this.indicator),
-          'xAxisType': 'pe',
-          'yAxisType': 'ou'
+          'xAxisType': config_array[1],
+          'yAxisType': config_array[0]
         }
       };
     }
@@ -304,10 +308,10 @@ export class IndicatorCardComponent implements OnInit, AfterViewInit, OnDestroy 
     else if (type == "csv") {
 
     }else if (type == "info") {
-      console.log("info clicked");
     }
     else{
-      if(this.visualizer_config.chartConfiguration.xAxisType == "ou"){
+      let config_array = this.chart_settings.split("-");
+      if(this.visualizer_config.chartConfiguration.xAxisType == config_array[0]){
         this.visualizer_config = {
           'type': 'chart',
           'tableConfiguration': {
@@ -318,11 +322,12 @@ export class IndicatorCardComponent implements OnInit, AfterViewInit, OnDestroy 
           'chartConfiguration': {
             'type':type,
             'title': this.prepareCardTitle(this.indicator),
-            'xAxisType': 'pe',
-            'yAxisType': 'ou'
+            'xAxisType': config_array[1],
+            'yAxisType': config_array[0]
           }
         }
-      }else if(this.visualizer_config.chartConfiguration.xAxisType == "pe"){
+      }
+      else if(this.visualizer_config.chartConfiguration.xAxisType == config_array[1]){
         this.visualizer_config = {
           'type': 'chart',
           'tableConfiguration': {
@@ -333,8 +338,8 @@ export class IndicatorCardComponent implements OnInit, AfterViewInit, OnDestroy 
           'chartConfiguration': {
             'type':type,
             'title': this.prepareCardTitle(this.indicator),
-            'xAxisType': 'ou',
-            'yAxisType': 'pe'
+            'xAxisType': config_array[0],
+            'yAxisType': config_array[1]
           }
         }
       }
@@ -402,7 +407,6 @@ export class IndicatorCardComponent implements OnInit, AfterViewInit, OnDestroy 
   };
 
   activateNode(nodeId:any, nodes){
-    console.log(nodeId);
     setTimeout(() => {
       let node = nodes.treeModel.getNodeById(nodeId);
       if (node)
@@ -497,6 +501,21 @@ export class IndicatorCardComponent implements OnInit, AfterViewInit, OnDestroy 
     }
     console.error(errMsg);
     return Observable.throw(errMsg);
+  }
+
+  // dynamic dertimine if a chart type is supposed to be shown or not
+  isTobehidden(type:string): boolean{
+    let hideThis =  false
+    if(type == 'area'){
+      hideThis = false;
+    }if(type == 'line'){
+      hideThis = false;
+    }if(type == 'radar'){
+      hideThis = false;
+    }if(type == 'gauge'){
+      hideThis = false;
+    }
+    return hideThis;
   }
 
   ngOnDestroy (){
