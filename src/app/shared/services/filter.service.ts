@@ -50,7 +50,8 @@ export class FilterService {
     }else if(type == "SixMonthly"){
       periods.push({id:year+'S1',name:'January - June '+year,selected:true},{id:year+'S2',name:'July - December '+year})
     }else if(type == "SixMonthlyApril"){
-      periods.push({id:year+'AprilS2',name:'October 2011 - March 2012',selected:true},{id:year+'AprilS1',name:'April - September '+year})
+      let useYear = parseInt(year) + 1;
+      periods.push({id:year+'AprilS2',name:'October '+year+' - March '+useYear,selected:true},{id:year+'AprilS1',name:'April - September '+year})
     }else if(type == "FinancialOct"){
       for (var i = 0; i <= 10; i++) {
         let useYear = parseInt(year) - i;
@@ -93,72 +94,240 @@ export class FilterService {
     return periods;
 }
 
-  getLastPeriod(period: any):any{
-  if(period.length == 4){
-    return parseInt(period)-1;
-  }
-  else if (period.substring(4,5) == 'Q'){
-    let year = period.substring(0,4);
-    let quater = period.substring(4,6);
-    let time = "";
-    if(quater == "Q4"){
-      time = year+"Q3";
-    }else if(quater == "Q3"){
-      time = year+"Q2";
-    }else if(quater == "Q2"){
-      time = year+"Q1";
-    }else if(quater == "Q1"){
-      let yr = parseInt(year)-1;
-      time = yr+"Q4";
+  getLastPeriod(period: any, period_type:string ="Quarterly" ):any{
+    if(period_type == "Weekly"){
+
     }
-    return time;
-  }
-  else if (period.substring(4,5) == 'S'){
-    let year = period.substring(0,4);
-    let six_month = period.substring(4,6);
-    let time = "";
-    if(six_month == "S1"){
-      let yr = parseInt(year)-1;
-      time = yr+"S2";
-    }else if(six_month == "S2"){
-      time = year+"S1"
+    else if(period_type == "Monthly"){
+      let year = period.substring(0,4);
+      let month = period.substring(4,6);
+      let time = "";
+      if(month == "02"){
+        time = year+"01";
+      }else if(month == "03"){
+        time = year+"02";
+      }else if(month == "04"){
+        time = year+"03";
+      }else if(month == "05"){
+        time = year+"04";
+      }else if(month == "06"){
+        time = year+"05";
+      }else if(month == "07"){
+        time = year+"06";
+      }else if(month == "08"){
+        time = year+"07";
+      }else if(month == "09"){
+        time = year+"08";
+      }else if(month == "10"){
+        time = year+"09";
+      }else if(month == "11"){
+        time = year+"10";
+      }else if(month == "12"){
+        time = year+"11";
+      }else if(month == "01"){
+        let yr = parseInt(year)-1;
+        time = yr+"12";
+      }
+      return time;
     }
-    return time;
-  }
-  else{
-    let year = period.substring(0,4);
-    let month = period.substring(4,6);
-    let time = "";
-    if(month == "02"){
-      time = year+"01";
-    }else if(month == "03"){
-      time = year+"02";
-    }else if(month == "04"){
-      time = year+"03";
-    }else if(month == "05"){
-      time = year+"04";
-    }else if(month == "06"){
-      time = year+"05";
-    }else if(month == "07"){
-      time = year+"06";
-    }else if(month == "08"){
-      time = year+"07";
-    }else if(month == "09"){
-      time = year+"08";
-    }else if(month == "10"){
-      time = year+"09";
-    }else if(month == "11"){
-      time = year+"10";
-    }else if(month == "12"){
-      time = year+"11";
-    }else if(month == "01"){
-      let yr = parseInt(year)-1;
-      time = yr+"12";
+    else if(period_type == "BiMonthly"){
+      let year = period.substring(0,4);
+      let month = period.substring(4,6);
+      let time = "";
+      if(month == "02"){
+        time = year+"01B";
+      }else if(month == "03"){
+        time = year+"02B";
+      }else if(month == "04"){
+        time = year+"03B";
+      }else if(month == "05"){
+        time = year+"04B";
+      }else if(month == "06"){
+        time = year+"05B";
+      }else if(month == "01"){
+        let yr = parseInt(year)-1;
+        time = yr+"06B";
+      }
+      return time;
     }
-    return time;
-  }
+    else if(period_type == "Quarterly"){
+      let year = period.substring(0,4);
+      let quater = period.substring(4,6);
+      let time = "";
+      if(quater == "Q4"){
+        time = year+"Q3";
+      }else if(quater == "Q3"){
+        time = year+"Q2";
+      }else if(quater == "Q2"){
+        time = year+"Q1";
+      }else if(quater == "Q1"){
+        let yr = parseInt(year)-1;
+        time = yr+"Q4";
+      }
+      return time;
+    }
+    else if(period_type == "SixMonthly"){
+      let year = period.substring(0,4);
+      let six_month = period.substring(4,6);
+      let time = "";
+      if(six_month == "S1"){
+        let yr = parseInt(year)-1;
+        time = yr+"S2";
+      }else if(six_month == "S2"){
+        time = year+"S1"
+      }
+      return time;
+    }
+    else if(period_type == "SixMonthlyApril"){
+      let year = period.substring(0,4);
+      let six_month = period.substring(4,12);
+      console.log(period.substring(4,12))
+      let time = "";
+      if(six_month == "AprilS2"){
+        time = year+"AprilS1"
+      }else if(six_month == "AprilS1"){
+        let yr = parseInt(year)-1;
+        time = yr+"AprilS2";
+      }
+      return time;
+    }
+    else if(period_type == "FinancialOct"){
+      let year = period.substring(0,4);
+      let last_year = parseInt(year) - 1;
+      return last_year+"Oct"
+    }
+    else if(period_type == "Yearly"){
+      return parseInt(period)-1;
+    }
+    else if(period_type == "FinancialJuly"){
+      let year = period.substring(0,4);
+      let last_year = parseInt(year) - 1;
+      return last_year+"July"
+    }
+    else if(period_type == "FinancialApril"){
+      let year = period.substring(0,4);
+      let last_year = parseInt(year) - 1;
+      return last_year+"April"
+    }
+
 
 }
+
+  getNextPeriod(period: any, period_type:string ="Quarterly"):any{
+    if(period_type == "Weekly"){
+
+    }
+    else if(period_type == "Monthly"){
+      let year = period.substring(0,4);
+      let month = period.substring(4,6);
+      let time = "";
+      if(month == "02"){
+        time = year+"03";
+      }else if(month == "03"){
+        time = year+"04";
+      }else if(month == "04"){
+        time = year+"05";
+      }else if(month == "05"){
+        time = year+"06";
+      }else if(month == "06"){
+        time = year+"07";
+      }else if(month == "07"){
+        time = year+"08";
+      }else if(month == "08"){
+        time = year+"09";
+      }else if(month == "09"){
+        time = year+"10";
+      }else if(month == "10"){
+        time = year+"11";
+      }else if(month == "11"){
+        time = year+"12";
+      }else if(month == "12"){
+        let yr = parseInt(year)+1;
+        time = yr+"01";
+      }else if(month == "01"){
+        time = year+"02";
+      }
+      return time;
+    }
+    else if(period_type == "BiMonthly"){
+      let year = period.substring(0,4);
+      let month = period.substring(4,6);
+      let time = "";
+      if(month == "02"){
+        time = year+"03B";
+      }else if(month == "03"){
+        time = year+"04B";
+      }else if(month == "04"){
+        time = year+"05B";
+      }else if(month == "05"){
+        time = year+"06B";
+      }else if(month == "06"){
+        let yr = parseInt(year)+1;
+        time = yr+"01B";
+      }else if(month == "01"){
+        time = year+"02B";
+      }
+      return time;
+    }
+    else if(period_type == "Quarterly"){
+      let year = period.substring(0,4);
+      let quater = period.substring(4,6);
+      let time = "";
+      if(quater == "Q1"){
+        time = year+"Q2";
+      }else if(quater == "Q3"){
+        time = year+"Q4";
+      }else if(quater == "Q2"){
+        time = year+"Q3";
+      }else if(quater == "Q4"){
+        let yr = parseInt(year)+1;
+        time = yr+"Q1";
+      }
+      return time;
+    }
+    else if(period_type == "SixMonthly"){
+      let year = period.substring(0,4);
+      let six_month = period.substring(4,6);
+      let time = "";
+      if(six_month == "S2"){
+        let yr = parseInt(year)+1;
+        time = yr+"S1";
+      }else if(six_month == "S1"){
+        time = year+"S2"
+      }
+      return time;
+    }
+    else if(period_type == "SixMonthlyApril"){
+      let year = period.substring(0,4);
+      let six_month = period.substring(4,12);
+      let time = "";
+      if(six_month == "AprilS2"){
+        let yr = parseInt(year)+1;
+        time = yr+"AprilS1";
+      }else if(six_month == "AprilS1"){
+        time = year+"AprilS2"
+      }
+      return time;
+    }
+    else if(period_type == "FinancialOct"){
+      let year = period.substring(0,4);
+      let last_year = parseInt(year) + 1;
+      return last_year+"Oct"
+    }
+    else if(period_type == "Yearly"){
+      return parseInt(period)+1;
+    }
+    else if(period_type == "FinancialJuly"){
+      let year = period.substring(0,4);
+      let last_year = parseInt(year) + 1;
+      return last_year+"July"
+    }
+    else if(period_type == "FinancialApril"){
+      let year = period.substring(0,4);
+      let last_year = parseInt(year) + 1;
+      return last_year+"April"
+    }
+  }
 
   // Handling error
   handleError (error: any) {

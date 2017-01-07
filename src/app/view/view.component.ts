@@ -254,7 +254,7 @@ export class ViewComponent implements OnInit, AfterViewInit, OnDestroy {
 
         let proccesed_indicators = 0;
         let old_proccesed_indicators = 0;
-        let use_period = this.period.id+";"+this.filterService.getLastPeriod(this.period.id);
+        let use_period = this.period.id+";"+this.filterService.getLastPeriod(this.period.id,this.period_type);
         let indicator_list = this.getIndicatorList(this.scorecard);
         for( let holder of this.scorecard.data.data_settings.indicator_holders ){
           for( let indicator of holder.indicators ){
@@ -288,11 +288,11 @@ export class ViewComponent implements OnInit, AfterViewInit, OnDestroy {
                   this.indicator_loading[indicator.id] = true;
                   //load previous data
                   let effective_gap = parseInt( indicator.arrow_settings.effective_gap );
-                  this.indicatorCalls.push(this.dataService.getIndicatorsRequest(this.getOrgUnitsForAnalytics(this.orgUnit),this.filterService.getLastPeriod(this.period.id), indicator.id)
+                  this.indicatorCalls.push(this.dataService.getIndicatorsRequest(this.getOrgUnitsForAnalytics(this.orgUnit),this.filterService.getLastPeriod(this.period.id,this.period_type), indicator.id)
                     .subscribe(
                       ( olddata ) => {
                         for( let prev_orgunit of this.orgunits ){
-                          indicator.previous_values[prev_orgunit.id] = this.dataService.getIndicatorData(prev_orgunit.id,this.filterService.getLastPeriod(this.period.id), olddata);
+                          indicator.previous_values[prev_orgunit.id] = this.dataService.getIndicatorData(prev_orgunit.id,this.filterService.getLastPeriod(this.period.id,this.period_type), olddata);
                         }
                         if(indicator.hasOwnProperty("arrow_settings")){
                           for( let key in indicator.values ) {
@@ -384,11 +384,11 @@ export class ViewComponent implements OnInit, AfterViewInit, OnDestroy {
                 //load previous data
                 this.subScoreCard.indicator_loading[indicator.id] = true;
                 let effective_gap = parseInt( indicator.arrow_settings.effective_gap );
-                this.indicatorCalls.push(this.dataService.getIndicatorsRequest(this.getOrgUnitsForAnalytics(orgunit_with_children.data),this.filterService.getLastPeriod(this.period.id), indicator.id)
+                this.indicatorCalls.push(this.dataService.getIndicatorsRequest(this.getOrgUnitsForAnalytics(orgunit_with_children.data),this.filterService.getLastPeriod(this.period.id,this.period_type), indicator.id)
                   .subscribe(
                     ( olddata ) => {
                       for( let prev_orgunit of this.subScoreCard.orgunits ){
-                        indicator.previous_values[prev_orgunit.id] = this.dataService.getIndicatorData(prev_orgunit.id,this.filterService.getLastPeriod(this.period.id), olddata);
+                        indicator.previous_values[prev_orgunit.id] = this.dataService.getIndicatorData(prev_orgunit.id,this.filterService.getLastPeriod(this.period.id,this.period_type), olddata);
                       }
                       if(indicator.hasOwnProperty("arrow_settings")){
                         for( let key in indicator.values ) {
@@ -488,11 +488,11 @@ export class ViewComponent implements OnInit, AfterViewInit, OnDestroy {
                 //load previous data
                 this.childrenSubScoreCard.indicator_loading[indicator.id] = true;
                 let effective_gap = parseInt( indicator.arrow_settings.effective_gap );
-                this.indicatorCalls.push(this.dataService.getIndicatorsRequest(this.getOrgUnitsForAnalytics(orgunit_with_children.data),this.filterService.getLastPeriod(this.period.id), indicator.id)
+                this.indicatorCalls.push(this.dataService.getIndicatorsRequest(this.getOrgUnitsForAnalytics(orgunit_with_children.data),this.filterService.getLastPeriod(this.period.id,this.period_type), indicator.id)
                   .subscribe(
                     ( olddata ) => {
                       for( let prev_orgunit of this.childrenSubScoreCard.orgunits ){
-                        indicator.previous_values[prev_orgunit.id] = this.dataService.getIndicatorData(prev_orgunit.id,this.filterService.getLastPeriod(this.period.id), olddata);
+                        indicator.previous_values[prev_orgunit.id] = this.dataService.getIndicatorData(prev_orgunit.id,this.filterService.getLastPeriod(this.period.id,this.period_type), olddata);
                       }
                       if(indicator.hasOwnProperty("arrow_settings")){
                         for( let key in indicator.values ) {
@@ -533,10 +533,22 @@ export class ViewComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   getPeriodName(id){
-    for ( let period of this.filterService.getPeriodArray(this.period_type, this.filterService.getLastPeriod(id).substr(0,4))){
-      if( this.filterService.getLastPeriod(id) == period.id){
+    for ( let period of this.filterService.getPeriodArray(this.period_type, this.filterService.getLastPeriod(id,this.period_type).substr(0,4))){
+      if( this.filterService.getLastPeriod(id,this.period_type) == period.id){
         return period.name;
       }
+    }
+  }
+
+  //setting the period to next or previous
+  setPeriod(type){
+    if(type == "down"){
+      this.periods = this.filterService.getPeriodArray(this.period_type, this.filterService.getLastPeriod(this.period.id,this.period_type).substr(0,4));
+      this.activateNode(this.filterService.getLastPeriod(this.period.id,this.period_type), this.pertree);
+    }
+    if(type == "up"){
+      this.periods = this.filterService.getPeriodArray(this.period_type, this.filterService.getNextPeriod(this.period.id,this.period_type).substr(0,4));
+      this.activateNode(this.filterService.getNextPeriod(this.period.id,this.period_type), this.pertree);
     }
   }
 

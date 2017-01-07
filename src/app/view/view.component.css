@@ -38,6 +38,7 @@
 }
 .show_items{
   position: relative;
+  float: left;
   display: inline-block;
   text-align: center;
   cursor: pointer;
@@ -55,7 +56,31 @@
   white-space: normal;
   background-color: #fff;
   background-image: linear-gradient(#fff,#f7f7f7);
-  width: 100%;
+  width: 90%;
+  height: 34px;
+}
+
+.show_tops{
+  position: relative;
+  float: left;
+  display: inline-block;
+  text-align: center;
+  cursor: pointer;
+  border: 1px solid #c6c6c6;
+  /*padding: 8px 8px;*/
+  font-size: 14px;
+  min-height: 38px!important;
+  border-radius: 4px;
+  color: #555;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  -o-user-select: none;
+  user-select: none;
+  white-space: normal;
+  background-color: #fff;
+  background-image: linear-gradient(#fff,#f7f7f7);
+  width: 7%;
   height: 34px;
 }
 
