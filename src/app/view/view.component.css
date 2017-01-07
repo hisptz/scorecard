@@ -256,6 +256,10 @@ span.selected-item {
   .table-bordered td{
     /*border-top: 0.1em;*/
   }
+  .legendItem{
+    width: 200px;
+    float: left;
+  }
 
 }
 

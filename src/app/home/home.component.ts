@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import {ScoreCard,ScorecardService} from "../shared/services/scorecard.service";
 import {OrgUnitService} from "../shared/services/org-unit.service";
+import {DataService} from "../shared/data.service";
 
 @Component({
   selector: 'app-home',
@@ -19,7 +20,7 @@ export class HomeComponent implements OnInit {
   deleted: boolean[] = [];
   error_deleting: boolean[] = [];
   confirm_deleting: boolean[] = [];
-  constructor( private scoreCardService: ScorecardService, private orgUnitService: OrgUnitService) {
+  constructor( private scoreCardService: ScorecardService, private orgUnitService: OrgUnitService, private dataService: DataService) {
     this.scorecards = []
     this.scorecards_loading = true;
     this.complete_percent = 0;
@@ -37,8 +38,10 @@ export class HomeComponent implements OnInit {
               this.loading_message = "Loading data for "+scorecard_details.header.title;
               this.scorecards.push({
                 id: scorecard,
+                name: scorecard_details.header.title,
                 data: scorecard_details
               });
+              this.dataService.sortArrOfObjectsByParam(this.scorecards, 'name',true);
               this.deleting[scorecard] = false;
               this.confirm_deleting[scorecard] = false;
               this.deleted[scorecard] = false;

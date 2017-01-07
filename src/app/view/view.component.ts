@@ -248,6 +248,7 @@ export class ViewComponent implements OnInit, AfterViewInit, OnDestroy {
       scorecard_details => {
         this.scorecard = {
           id: this.scorecardId,
+          name: scorecard_details.header.title,
           data: scorecard_details
         };
 
@@ -643,6 +644,7 @@ export class ViewComponent implements OnInit, AfterViewInit, OnDestroy {
   getEmptyScoreCard():ScoreCard{
     return {
       id: this.scorecardId,
+      name:"",
       data: {
         "orgunit_settings": {
           "parent": "USER_ORGUNIT",

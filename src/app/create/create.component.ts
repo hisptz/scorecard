@@ -1,4 +1,4 @@
-import {Component, OnInit, ViewChild, ElementRef} from '@angular/core';
+import {Component, OnInit, ViewChild, ElementRef, AfterViewInit} from '@angular/core';
 import {Http} from "@angular/http";
 import {IndicatorGroupService, IndicatorGroup} from "../shared/services/indicator-group.service";
 import {DatasetService, Dataset} from "../shared/services/dataset.service";
@@ -12,7 +12,7 @@ import {$} from "protractor";
   templateUrl: './create.component.html',
   styleUrls: ['./create.component.css']
 })
-export class CreateComponent implements OnInit {
+export class CreateComponent implements OnInit, AfterViewInit {
 
   // variable initializations
   datasets: Dataset[];
@@ -89,6 +89,7 @@ export class CreateComponent implements OnInit {
         this.current_groups = this.indicatorGroups;
         this.error_loading_groups.occurred = false;
         this.done_loading_groups = true;
+        this.load_list(this.current_groups[0].id, 'indicators')
       },
       error => {
         this.error_loading_groups.occurred = true;
@@ -124,6 +125,10 @@ export class CreateComponent implements OnInit {
     );
   }
 
+  ngAfterViewInit(){
+    this.title_element.nativeElement.focus();
+
+  }
   // cancel scorecard creation process
   cancelCreate(){
     this.router.navigateByUrl('');
@@ -134,8 +139,10 @@ export class CreateComponent implements OnInit {
     this.groupQuery = null;
     if(current_type == "indicators"){
       this.current_groups = this.indicatorGroups;
+      this.load_list(this.current_groups[0].id, current_type)
     }else if(current_type == "dataElements"){
       this.current_groups = this.dataElementGroups;
+      this.load_list(this.current_groups[0].id, current_type)
     }else if(current_type == "Completeness"){
       this.current_groups = [];
       this.current_listing = this.datasets;
@@ -151,6 +158,7 @@ export class CreateComponent implements OnInit {
     }else{
 
     }
+
   }
 
   // load items to be displayed in a list of indicators/ data Elements / Data Sets
@@ -408,6 +416,7 @@ export class CreateComponent implements OnInit {
   getEmptyScoreCard():ScoreCard{
     return {
       id: this.makeid(),
+      name: "",
       data: {
         "orgunit_settings": {
           "parent": "USER_ORGUNIT",

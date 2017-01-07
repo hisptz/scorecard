@@ -15,6 +15,7 @@ import 'rxjs/add/operator/toPromise';
 
 export interface ScoreCard {
   id : string;
+  name: string;
   data: any;
 }
 

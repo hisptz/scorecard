@@ -1,4 +1,4 @@
-<div class="container-fluid no-print" style="padding-left: 0px">
+<div class="container-fluid no-print" style="padding-left: 5px">
   <div class="col-sm-2" style="padding-left: 0px; cursor: pointer;" [routerLink]="['']">
     <img src="scorecard.svg" style="height: 58px; width: 48px"> <span style="font-size: 15px"> Score Card</span>
   </div>
@@ -149,23 +149,22 @@
         <span class="glyphicon glyphicon-cog"></span> Options
       </button>
       <div class="additional-options" [ngClass]="{'hiddenTree':showAdditionalOptions}" style="padding-top: 0px">
-        <label class="text-muted" style="font-weight: normal; font-size: 11px;cursor: pointer">
-          <input type="checkbox" style="height: 10px"  [(ngModel)]="keep_options_open"> Allow me to make more than one selection
-        </label>
+        <!--<label class="text-muted" style="font-weight: normal; font-size: 11px;cursor: pointer">-->
+          <!--<input type="checkbox" style="height: 10px"  [(ngModel)]="keep_options_open"> Allow me to make more than one selection-->
+        <!--</label>-->
         <ul class="list-group">
           <li class="list-group-item pointer">
             <label><input type="checkbox" (change)="enableLegend($event)"> Show Legend</label>
           </li>
           <li class="list-group-item pointer">
+            <!--<div class="row">-->
+              <!--<div class="col-sm-6">Show Sum for</div>-->
+              <!--<div class="col-sm-3"><label><input type="checkbox" (change)="showSumInRow($event)"> rows</label></div>-->
+              <!--<div class="col-sm-3"><label><input type="checkbox" (change)="showSumInColumn($event)"> column</label></div>-->
+            <!--</div>-->
             <div class="row">
-              <div class="col-sm-6">Show Sum for</div>
-              <div class="col-sm-3"><label><input type="checkbox" (change)="showSumInRow($event)"> rows</label></div>
-              <div class="col-sm-3"><label><input type="checkbox" (change)="showSumInColumn($event)"> column</label></div>
-            </div>
-            <div class="row">
-              <div class="col-sm-6">Show Average for</div>
-              <div class="col-sm-3"><label><input type="checkbox" (change)="showAverageInRow($event)"> rows</label></div>
-              <div class="col-sm-3"><label><input type="checkbox" (change)="showAverageInColumn($event)" > column</label></div>
+              <div class="col-sm-6"><label><input type="checkbox" (change)="showAverageInRow($event)">Show Rows Average</label></div>
+              <div class="col-sm-6"><label><input type="checkbox" (change)="showAverageInColumn($event)" >Show Column Average</label></div>
             </div>
           </li>
           <li class="list-group-item">
@@ -173,15 +172,15 @@
               <div class="col-sm-12">
                 <label>Sort By</label>
               </div>
-              <div class="col-sm-9">
+              <div class="col-sm-8">
                 <select class="form-control" [(ngModel)]="sorting_column" (click)="sortScoreCard(sorting_column, sortAscending)">
                   <option value="none">None</option>
                   <option value="avg">Average</option>
-                  <option value="sum">Sum</option>
+                  <!--<option value="sum">Sum</option>-->
                   <option *ngFor="let listItem of getIndicatorsList(scorecard)" value="{{ listItem.id }}">{{ listItem.title }}</option>
                 </select>
               </div>
-              <div class="col-sm-3 pointer">
+              <div class="col-sm-4 pointer">
                 <label style="cursor: pointer"><input type="checkbox" [(ngModel)]="sortAscending"  (change)="sortScoreCard(sorting_column, sortAscending)"> Ascending</label>
               </div>
             </div>
@@ -225,11 +224,22 @@
 <!--main scorecard area-->
 <div class="container-fluid" id="scorecard" style="padding-left: 5px;margin-top: 10px">
   <h3>{{ scorecard.data.header.title }} &nbsp;&nbsp;&nbsp; {{ orgUnit.name }} &nbsp;&nbsp;&nbsp; {{ period.name }}</h3>
-  <div class="row" style="margin-bottom: 10px" *ngIf="showLegend">
-    <div class="col-sm-2" *ngFor="let legend of scorecard.data.legendset_definitions">
-      <div class="col-sm-3" style="padding-left: 0px;border: 1px solid #014b5a;height: 25px;border-radius: 3px" [style.background-color]="legend.color">
-      </div>
-      <div class="col-sm-9" style="vertical-align: bottom;font-size: 10px;display: table-cell;">{{ legend.definition}}</div>
+  <!--legend area-->
+  <div class="row legend" style="margin-bottom: 10px" *ngIf="showLegend">
+    <div class="col-sm-2 legendItem" *ngFor="let legend of scorecard.data.legendset_definitions">
+      <table>
+        <tr>
+          <td style="padding-left: 0px;border: 1px solid #014b5a;height: 25px;width: 50px">
+            <svg viewbox="0 0 50 25" width="50" height="25">
+              <polygon points="0 0 50 0 50 25 0 25" [attr.fill]="legend.color"/>
+            </svg>
+          </td>
+          <td style="font-size: 10px;padding-left: 5px">{{ legend.definition}}</td>
+        </tr>
+      </table>
+      <!--<div class="col-sm-3" style="padding-left: 0px;border: 1px solid #014b5a;height: 25px;border-radius: 3px" [style.background-color]="legend.color">-->
+      <!--</div>-->
+      <!--<div class="col-sm-9" style="vertical-align: bottom;font-size: 10px;display: table-cell;">{{ legend.definition}}</div>-->
     </div>
   </div>
   <table class="table table-bordered scorecard_table">

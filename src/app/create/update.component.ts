@@ -83,6 +83,7 @@ export class UpdateComponent implements OnInit {
           scorecard_details => {
             this.scorecard = {
               id: id,
+              name: scorecard_details.header.title,
               data: scorecard_details
             };
             // this.getItemsFromGroups();
@@ -438,6 +439,7 @@ export class UpdateComponent implements OnInit {
   getEmptyScoreCard():ScoreCard{
     return {
       id: this.makeid(),
+      name:"",
       data: {
         "orgunit_settings": {
           "parent": "USER_ORGUNIT",

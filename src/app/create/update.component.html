@@ -1,4 +1,4 @@
-<div class="container-fluid" style="padding-left: 0px">
+<div class="container-fluid" style="padding-left: 5px">
   <div class="col-sm-2" style="padding-left: 0px" [routerLink]="['']">
     <img src="scorecard.svg" style="height: 58px; width: 48px"> <span style="font-size: 15px"> Score Card</span>
   </div>
@@ -120,28 +120,28 @@
         <div>
           <div class="col-sm-6" style="padding-left: 0px">
             <div class="checkbox">
-              <label>
+              <label title="Show legend definition">
                 <input type="checkbox" [(ngModel)]="scorecard.data.header.show_legend_definition"> Legend
               </label>
             </div>
           </div>
           <div class="col-sm-6">
             <div class="checkbox">
-              <label>
+              <label title="show score for each organisation unit">
                 <input type="checkbox" [(ngModel)]="scorecard.data.show_score"> Score
               </label>
             </div>
           </div>
           <div class="col-sm-6"  style="padding-left: 0px">
             <div class="checkbox">
-              <label>
+              <label title="Show rank of each organisation unit based on score">
                 <input type="checkbox" [(ngModel)]="scorecard.data.show_rank"> rank
               </label>
             </div>
           </div>
           <div class="col-sm-6">
             <div class="checkbox">
-              <label>
+              <label title="show arrows to compare with last period">
                 <input type="checkbox" [(ngModel)]="scorecard.data.header.show_arrows_definition"> arrows
               </label>
             </div>
@@ -149,7 +149,6 @@
         </div>
 
       </div>
-      <p class="help-block">Add arrows to show data comparison with last period</p>
       <!--legend definition-->
       <div class="form-group">
         <label>Legend Definition</label>
@@ -329,7 +328,7 @@
           *ngIf="!saving_scorecard">
     Update
   </button>
-  <button class="btn btn-sm btn-warning pull-right" style="margin-top: 8px" (click)="cancelCreate()" *ngIf="!saving_scorecard">Cancel</button>
+  <button class="btn btn-sm btn-warning pull-right" (click)="cancelCreate()" *ngIf="!saving_scorecard">Cancel</button>
   <h5 class="pull-right" *ngIf="saving_scorecard"><img src="balls-4.svg" style="height: 50px;"> Saving score card Information, Please wait...</h5>
   <h5 class="pull-right text-danger" *ngIf="saving_error">Something went wrong, Saving score card Information failed</h5>
 </div>
