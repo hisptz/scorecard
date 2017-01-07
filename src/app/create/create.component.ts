@@ -46,6 +46,14 @@ export class CreateComponent implements OnInit, AfterViewInit {
   @ViewChild('description')
   discription_element:ElementRef;
 
+  dataset_types = [
+    {id:'', name: "Reporting Rate"},
+    {id:'.REPORTING_RATE_ON_TIME', name: "Reporting Rate on time"},
+    {id:'.ACTUAL_REPORTS', name: "Actual Reports Submitted"},
+    {id:'.ACTUAL_REPORTS_ON_TIME', name: "Reports Submitted on time"},
+    {id:'.EXPECTED_REPORTS', name: "Expected Reports"}
+  ];
+
   constructor(private http: Http,
               private indicatorService: IndicatorGroupService,
               private datasetService: DatasetService,
@@ -143,18 +151,9 @@ export class CreateComponent implements OnInit, AfterViewInit {
     }else if(current_type == "dataElements"){
       this.current_groups = this.dataElementGroups;
       this.load_list(this.current_groups[0].id, current_type)
-    }else if(current_type == "Completeness"){
-      this.current_groups = [];
-      this.current_listing = this.datasets;
-      this.listReady = true;
-      this.done_loading_list = true;
-      this.listQuery = null;
-    }else if(current_type == "Timeliness"){
-      this.current_groups = [];
-      this.current_listing = this.datasets;
-      this.listReady = true;
-      this.done_loading_list = true;
-      this.listQuery = null;
+    }else if(current_type == "datasets"){
+      this.current_groups = this.dataset_types;
+      this.load_list(this.current_groups[0].id, current_type)
     }else{
 
     }
@@ -198,7 +197,8 @@ export class CreateComponent implements OnInit, AfterViewInit {
         )
       }
 
-    }else if( current_type == "dataElements" ){
+    }
+    else if( current_type == "dataElements" ){
       let load_new = false;
       for ( let group  of this.dataElementGroups ){
         if ( group.id == group_id ){
@@ -227,7 +227,25 @@ export class CreateComponent implements OnInit, AfterViewInit {
           }
         )
       }
-    }else{
+    }
+    if( current_type == "datasets" ){
+      this.current_listing = [];
+      let group_name = "";
+      for (let dataset_group of this.dataset_types ){
+        if(dataset_group.id == group_id){
+          group_name = dataset_group.name;
+        }
+      }
+      for( let dataset of this.datasets ){
+        this.current_listing.push(
+          {id:dataset.id+group_id, name: group_name+" "+dataset.name}
+        )
+      }
+      this.listReady = true;
+      this.done_loading_list = true;
+      this.listQuery = null;
+    }
+    else{
 
     }
   }
