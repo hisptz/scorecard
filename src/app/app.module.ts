@@ -21,6 +21,7 @@ import {FilterService} from "./shared/services/filter.service";
 import {OrgUnitService} from "./shared/services/org-unit.service";
 import {VisulizerService} from "./view/ng2-dhis-visualizer/visulizer.service";
 import {ProgramIndicatorsService} from "./shared/services/program-indicators.service";
+import {EventDataService} from "./shared/services/event-data.service";
 
 @NgModule({
   declarations: [
@@ -46,7 +47,8 @@ import {ProgramIndicatorsService} from "./shared/services/program-indicators.ser
     FilterService,
     OrgUnitService,
     VisulizerService,
-    ProgramIndicatorsService
+    ProgramIndicatorsService,
+    EventDataService
   ],
   bootstrap: [AppComponent]
 })

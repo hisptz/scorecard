@@ -7,6 +7,7 @@ import {ScoreCard, ScorecardService} from "../shared/services/scorecard.service"
 import {Router, ActivatedRoute} from "@angular/router";
 import {Subscription} from "rxjs";
 import {ProgramIndicatorGroups, ProgramIndicatorsService} from "../shared/services/program-indicators.service";
+import {EventData, EventDataService} from "../shared/services/event-data.service";
 
 @Component({
   selector: 'app-update',
@@ -20,6 +21,7 @@ export class UpdateComponent implements OnInit {
   indicatorGroups: IndicatorGroup[];
   dataElementGroups: DataElementGroup[];
   programs: ProgramIndicatorGroups[];
+  events: EventData[];
   current_groups: any[];
   current_listing: any[];
   activeGroup: string = null;
@@ -65,12 +67,14 @@ export class UpdateComponent implements OnInit {
               private router: Router,
               private scorecardService: ScorecardService,
               private activatedRouter: ActivatedRoute,
-              private programService: ProgramIndicatorsService
+              private programService: ProgramIndicatorsService,
+              private eventService: EventDataService
   )
   {
     this.indicatorGroups = [];
     this.dataElementGroups = [];
     this.programs = [];
+    this.events = [];
     this.datasets = [];
     this.current_groups = [];
     this.current_listing = [];
@@ -160,6 +164,11 @@ export class UpdateComponent implements OnInit {
             name: group.name,
             indicators: []
           });
+          this.events.push({
+            id: group.id,
+            name: group.name,
+            indicators: []
+          });
         }
       },
       error => {
@@ -211,7 +220,13 @@ export class UpdateComponent implements OnInit {
       if(this.current_groups.length != 0){
         this.load_list(this.current_groups[0].id, current_type)
       }
-    }else{
+    }else if(current_type == "event"){
+      this.current_groups = this.programs;
+      if(this.current_groups.length != 0){
+        this.load_list(this.current_groups[0].id, current_type)
+      }
+    }
+    else{
 
     }
 
@@ -322,6 +337,42 @@ export class UpdateComponent implements OnInit {
             for ( let group  of this.programs ){
               if ( group.id == group_id ){
                 group.indicators = indicators.programs[0].programIndicators;
+              }
+            }
+          },
+          error => {
+            this.error_loading_list.occurred = true;
+            this.error_loading_list.message = "Something went wrong when trying to load Indicators";
+          }
+        )
+      }
+
+    }
+    else if( current_type == "event" ){
+      let load_new = false;
+      for ( let group  of this.events ){
+        if ( group.id == group_id ){
+          if (group.indicators.length != 0){
+            this.current_listing = group.indicators;
+            this.done_loading_list = true;
+          }else{
+            load_new = true;
+          }
+        }
+      }
+      if ( load_new ){
+        this.eventService.load(group_id).subscribe(
+          indicators => {
+            //noinspection TypeScriptUnresolvedVariable
+            for (let event_data of indicators.programDataElements ){
+              if(event_data.valueType == "INTEGER_ZERO_OR_POSITIVE" || event_data.valueType == "BOOLEAN" ){
+                this.current_listing.push(event_data)
+              }
+            }
+            this.done_loading_list = true;
+            for ( let group  of this.events ){
+              if ( group.id == group_id ){
+                group.indicators = this.current_listing;
               }
             }
           },

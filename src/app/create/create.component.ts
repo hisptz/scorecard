@@ -7,6 +7,7 @@ import {ScoreCard, ScorecardService} from "../shared/services/scorecard.service"
 import {Router} from "@angular/router";
 import {$} from "protractor";
 import {ProgramIndicatorsService, ProgramIndicatorGroups} from "../shared/services/program-indicators.service";
+import {EventData, EventDataService} from "../shared/services/event-data.service";
 
 @Component({
   selector: 'app-create',
@@ -20,6 +21,7 @@ export class CreateComponent implements OnInit, AfterViewInit {
   indicatorGroups: IndicatorGroup[];
   dataElementGroups: DataElementGroup[];
   programs: ProgramIndicatorGroups[];
+  events: EventData[];
   current_groups: any[];
   current_listing: any[];
   activeGroup: string = null;
@@ -62,12 +64,14 @@ export class CreateComponent implements OnInit, AfterViewInit {
               private dataElementService: DataElementGroupService,
               private router: Router,
               private scorecardService: ScorecardService,
-              private programService: ProgramIndicatorsService
+              private programService: ProgramIndicatorsService,
+              private eventService: EventDataService
   )
   {
     this.indicatorGroups = [];
     this.dataElementGroups = [];
     this.programs = [];
+    this.events = [];
     this.datasets = [];
     this.current_groups = [];
     this.current_listing = [];
@@ -133,6 +137,11 @@ export class CreateComponent implements OnInit, AfterViewInit {
             name: group.name,
             indicators: []
           });
+          this.events.push({
+            id: group.id,
+            name: group.name,
+            indicators: []
+          });
         }
       },
       error => {
@@ -187,6 +196,11 @@ export class CreateComponent implements OnInit, AfterViewInit {
         this.load_list(this.current_groups[0].id, current_type)
       }
     }else if(current_type == "programs"){
+      this.current_groups = this.programs;
+      if(this.current_groups.length != 0){
+        this.load_list(this.current_groups[0].id, current_type)
+      }
+    }else if(current_type == "event"){
       this.current_groups = this.programs;
       if(this.current_groups.length != 0){
         this.load_list(this.current_groups[0].id, current_type)
@@ -297,13 +311,47 @@ export class CreateComponent implements OnInit, AfterViewInit {
       if ( load_new ){
         this.programService.load(group_id).subscribe(
           indicators => {
-            console.log(indicators.programs[0]);
             this.current_listing = indicators.programs[0].programIndicators;
-            console.log(this.current_listing)
             this.done_loading_list = true;
             for ( let group  of this.programs ){
               if ( group.id == group_id ){
                 group.indicators = indicators.programs.programIndicators;
+              }
+            }
+          },
+          error => {
+            this.error_loading_list.occurred = true;
+            this.error_loading_list.message = "Something went wrong when trying to load Indicators";
+          }
+        )
+      }
+
+    }
+    else if( current_type == "event" ){
+      let load_new = false;
+      for ( let group  of this.events ){
+        if ( group.id == group_id ){
+          if (group.indicators.length != 0){
+            this.current_listing = group.indicators;
+            this.done_loading_list = true;
+          }else{
+            load_new = true;
+          }
+        }
+      }
+      if ( load_new ){
+        this.eventService.load(group_id).subscribe(
+          indicators => {
+            //noinspection TypeScriptUnresolvedVariable
+            for (let event_data of indicators.programDataElements ){
+              if(event_data.valueType == "INTEGER_ZERO_OR_POSITIVE" || event_data.valueType == "BOOLEAN" ){
+                this.current_listing.push(event_data)
+              }
+            }
+            this.done_loading_list = true;
+            for ( let group  of this.events ){
+              if ( group.id == group_id ){
+                group.indicators = this.current_listing;
               }
             }
           },
