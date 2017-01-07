@@ -228,7 +228,7 @@ export class CreateComponent implements OnInit, AfterViewInit {
         )
       }
     }
-    if( current_type == "datasets" ){
+    else if( current_type == "datasets" ){
       this.current_listing = [];
       let group_name = "";
       for (let dataset_group of this.dataset_types ){
