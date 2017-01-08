@@ -158,7 +158,11 @@
         <!--</label>-->
         <ul class="list-group">
           <li class="list-group-item pointer">
-            <label><input type="checkbox" (change)="enableLegend($event)"> Show Legend</label>
+            <div class="row">
+              <div class="col-sm-6"><label><input type="checkbox" (change)="enableLegend($event)"> Show Legend</label></div>
+              <div class="col-sm-6"><label><input type="checkbox" (change)="enableRank($event)" >Show Rank</label></div>
+            </div>
+
           </li>
           <li class="list-group-item pointer">
             <!--<div class="row">-->
@@ -252,6 +256,7 @@
   </div>
   <table class="table table-bordered scorecard_table">
     <tr [ngClass]="{'hide_no_group': scorecard.data.data_settings.indicator_holder_groups.length == 1}" style="line-height: 140%">
+      <th *ngIf="show_rank" style="width: 30px"></th>
       <th class="orgUnitName"></th>
       <th
         style="font-size: 9px; cursor: pointer"
@@ -266,6 +271,7 @@
       <th *ngIf="show_average_in_row"></th>
     </tr>
     <tr>
+      <th *ngIf="show_rank"  style="width: 30px">No#</th>
       <th style="vertical-align: bottom">
         <input type="text" class="form-control input-sm no-print" [(ngModel)]="searchQuery" placeholer="Search">
       </th>
@@ -279,7 +285,8 @@
       <th class="subtotal" *ngIf="show_average_in_row">Average</th>
     </tr>
     <ng-container *ngFor="let current_orgunit of orgunits | filterByName:searchQuery; let i=index">
-      <tr style="height: 35px; max-height: 35px; overflow-y: hidden; line-height: 80%" class="orunitTr" *ngIf="i <= shown_records">
+      <tr style="height: 35px; max-height: 35px; overflow-y: hidden; line-height: 80%" class="orunitTr" *ngIf="i < shown_records">
+        <td style="vertical-align: bottom;font-size: 10px;cursor: pointer;line-height: 80%;padding: 8px" *ngIf="show_rank">{{ i+1 }}</td>
         <td style="vertical-align: bottom;font-size: 10px;cursor: pointer;line-height: 80%;padding: 8px" class="orgUnitName" (click)="loadChildrenData(current_orgunit)">
           {{ current_orgunit.name }}
         </td>
@@ -297,7 +304,7 @@
       </tr>
 
       <tr *ngIf="showSubScorecard[current_orgunit.id]">
-        <td [attr.colspan]="getItemsFromGroups().length +1 + getCorrectColspan() + getCorrectColspan()" style="background-color: rgba(0,0,0,0.1)">
+        <td [attr.colspan]="getItemsFromGroups().length +1 + getCorrectColspan()" style="background-color: rgba(0,0,0,0.1)">
 
           <!--First child scorecard-->
           <!--First child scorecard-->
@@ -536,6 +543,7 @@
 
     <!--sum column-->
     <tr *ngIf="show_sum_in_column" style="height: 35px; max-height: 35px; overflow-y: hidden; line-height: 80%">
+      <th *ngIf="show_rank" style="width: 30px"></th>
       <th style="line-height: 10%">Sum</th>
       <th *ngFor="let indicator of getItemsFromGroups()" style="width: 90px;max-width: 90px;line-height: 10%;padding: 0px">
         <app-subtotal [indicator]="indicator" [orgunits]="orgunits" [scorecard]="scorecard" [calculation]="'sum'" [indicator_list]="getVisibleIndicators(indicator)"></app-subtotal>
@@ -545,6 +553,7 @@
     </tr>
     <!--Average column-->
     <tr *ngIf="show_average_in_column" style="height: 35px; max-height: 35px; overflow-y: hidden; line-height: 80%">
+      <th *ngIf="show_rank" style="width: 30px"></th>
       <th>Average</th>
       <th *ngFor="let indicator of getItemsFromGroups()" style="width: 90px;max-width: 90px;line-height: 10%;padding: 0px">
         <app-subtotal [indicator]="indicator" [orgunits]="orgunits" [scorecard]="scorecard" [calculation]="'avg'" [indicator_list]="getVisibleIndicators(indicator)"></app-subtotal>
@@ -554,6 +563,7 @@
     </tr>
     <!--additinal label-->
     <tr *ngFor="let label of scorecard.data.additional_labels">
+      <th *ngIf="show_rank" style="width: 30px"></th>
       <th>{{ label }}</th>
       <th *ngFor="let indicator of getItemsFromGroups()"
           style="font-size: 10px;max-width: 90px;overflow-wrap: break-word; cursor: pointer; line-height: 80%"

@@ -125,6 +125,7 @@ export class ViewComponent implements OnInit, AfterViewInit, OnDestroy {
   hidenColums: any[] = [];
 
   shown_records:number = 0;
+  show_rank: boolean = false;
 
   constructor(private scorecardService: ScorecardService,
               private dataService: DataService,
@@ -951,6 +952,11 @@ export class ViewComponent implements OnInit, AfterViewInit, OnDestroy {
     this.showLegend = e.target.checked;
     let close = (this.keep_options_open)?'':this.showOptions();
   }
+  // dealing with showing sum
+  enableRank(e){
+    this.show_rank = e.target.checked;
+    let close = (this.keep_options_open)?'':this.showOptions();
+  }
 
   // dealing with showing sum
   showSumInRow(e){
@@ -982,6 +988,8 @@ export class ViewComponent implements OnInit, AfterViewInit, OnDestroy {
       i++;
     }
     if(this.show_average_in_row){
+      i++;
+    }if(this.show_rank){
       i++;
     }
     return i;
