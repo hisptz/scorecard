@@ -384,3 +384,15 @@
     </div>
   </div>
 </div>
+
+<div class="indicator_details" [ngClass]="{'hiddendiv': !show_bottleneck_indicators}">
+  <div class="indicator_dialog">
+    <div class="indicator-content">
+      <span class="glyphicon glyphicon-remove pull-right" style="cursor: pointer" (click)="showBotleneckEditor()"></span>
+      <div style="padding: 15px">
+
+        <button class="btn btn-default pull-right" (click)="showBotleneckEditor()"> <span class="glyphicon glyphicon-ok"></span> Done </button>
+      </div>
+    </div>
+  </div>
+</div>

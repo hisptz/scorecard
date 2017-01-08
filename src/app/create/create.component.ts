@@ -73,6 +73,8 @@ export class CreateComponent implements OnInit, AfterViewInit, OnDestroy {
   editor;
 
   newLabel: string = "";
+
+  show_bottleneck_indicators:boolean = false;
   constructor(private http: Http,
               private indicatorService: IndicatorGroupService,
               private datasetService: DatasetService,
@@ -849,6 +851,9 @@ export class CreateComponent implements OnInit, AfterViewInit, OnDestroy {
 
   }
 
+  showBotleneckEditor(){
+    this.show_bottleneck_indicators = !this.show_bottleneck_indicators;
+  }
   ngOnDestroy() {
     tinymce.remove(this.editor);
   }
