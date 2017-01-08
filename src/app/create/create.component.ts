@@ -75,6 +75,7 @@ export class CreateComponent implements OnInit, AfterViewInit, OnDestroy {
   newLabel: string = "";
 
   show_bottleneck_indicators:boolean = false;
+  bottleneck_card: any = {};
   constructor(private http: Http,
               private indicatorService: IndicatorGroupService,
               private datasetService: DatasetService,
@@ -120,9 +121,14 @@ export class CreateComponent implements OnInit, AfterViewInit, OnDestroy {
           });
         }
         this.current_groups = this.indicatorGroups;
+        this.bottleneck_card.current_groups = this.indicatorGroups;
+        this.bottleneck_card.indicator = {};
+        this.bottleneck_card.indicator_ready = false;
         this.error_loading_groups.occurred = false;
         this.done_loading_groups = true;
+        this.bottleneck_card.done_loading_groups = true;
         this.load_list(this.current_groups[0].id, 'indicators')
+        this.load_bottleneck_card_list(this.bottleneck_card.current_groups[0].id, 'indicators')
       },
       error => {
         this.error_loading_groups.occurred = true;
@@ -681,6 +687,7 @@ export class CreateComponent implements OnInit, AfterViewInit, OnDestroy {
             }
           ],
           "additional_label_values": {},
+          "bottleneck_indicators": [],
           "arrow_settings": {
             "effective_gap": 5,
             "display": true
@@ -851,9 +858,246 @@ export class CreateComponent implements OnInit, AfterViewInit, OnDestroy {
 
   }
 
-  showBotleneckEditor(){
+  /**
+   * Bottleneck indicator issues
+   * @param indicator
+   */
+  showBotleneckEditor(indicator){
+    if(this.show_bottleneck_indicators){
+      for( let holder of this.scorecard.data.data_settings.indicator_holders ){
+        for (let item of holder.indicators ){
+          if(item.id == indicator.id){
+            item.bottleneck_indicators = this.bottleneck_card.indicator.bottleneck_indicators;
+          }
+        }
+      }
+    }else{
+      this.bottleneck_card.indicator = indicator;
+      this.bottleneck_card.indicator_ready = true;
+    }
+
     this.show_bottleneck_indicators = !this.show_bottleneck_indicators;
   }
+
+  // deal with all issues during group type switching between dataelent, indicators and datasets
+  switchBottleneckType(current_type): void{
+    this.bottleneck_card.listReady = false;
+    this.bottleneck_card.groupQuery = null;
+    if(current_type == "indicators"){
+      this.bottleneck_card.current_groups = this.indicatorGroups;
+      if(this.bottleneck_card.current_groups.length != 0){
+        this.load_bottleneck_card_list(this.bottleneck_card.current_groups[0].id, current_type)
+      }
+    }else if(current_type == "dataElements"){
+      this.bottleneck_card.current_groups = this.dataElementGroups;
+      if(this.bottleneck_card.current_groups.length != 0){
+        this.load_bottleneck_card_list(this.bottleneck_card.current_groups[0].id, current_type)
+      }
+    }else if(current_type == "datasets"){
+      this.bottleneck_card.current_groups = this.dataset_types;
+      if(this.bottleneck_card.current_groups.length != 0){
+        this.load_bottleneck_card_list(this.bottleneck_card.current_groups[0].id, current_type)
+      }
+    }else if(current_type == "programs"){
+      this.bottleneck_card.current_groups = this.programs;
+      if(this.bottleneck_card.current_groups.length != 0){
+        this.load_bottleneck_card_list(this.bottleneck_card.current_groups[0].id, current_type)
+      }
+    }else if(current_type == "event"){
+      this.bottleneck_card.current_groups = this.programs;
+      if(this.bottleneck_card.current_groups.length != 0){
+        this.load_bottleneck_card_list(this.bottleneck_card.current_groups[0].id, current_type)
+      }
+    }else{
+
+    }
+
+  }
+
+  // load items to be displayed in a list of indicators/ data Elements / Data Sets
+  load_bottleneck_card_list(group_id,current_type): void{
+    this.bottleneck_card.listQuery = null;
+    this.bottleneck_card.activeGroup = group_id;
+    this.bottleneck_card.listReady = true;
+    this.bottleneck_card.current_listing = [];
+    this.bottleneck_card.done_loading_list = false;
+    this.bottleneck_card.error_loading_list = {};
+    if( current_type == "indicators" ){
+      let load_new = false;
+      for ( let group  of this.indicatorGroups ){
+        if ( group.id == group_id ){
+          if (group.indicators.length != 0){
+            this.bottleneck_card.current_listing = group.indicators;
+            this.bottleneck_card.done_loading_list = true;
+          }else{
+            load_new = true;
+          }
+        }
+      }
+      if ( load_new ){
+        this.indicatorService.load(group_id).subscribe(
+          indicators => {
+            this.bottleneck_card.current_listing = indicators.indicators;
+            this.bottleneck_card.done_loading_list = true;
+            for ( let group  of this.indicatorGroups ){
+              if ( group.id == group_id ){
+                group.indicators = indicators.indicators;
+              }
+            }
+          },
+          error => {
+            this.bottleneck_card.error_loading_list.occurred = true;
+            this.bottleneck_card.error_loading_list.message = "Something went wrong when trying to load Indicators";
+          }
+        )
+      }
+
+    }
+    else if( current_type == "dataElements" ){
+      let load_new = false;
+      for ( let group  of this.dataElementGroups ){
+        if ( group.id == group_id ){
+          if (group.dataElements.length != 0){
+            this.bottleneck_card.current_listing = group.dataElements;
+            this.bottleneck_card.done_loading_list = true;
+          }else{
+            load_new = true;
+          }
+        }
+      }
+      if ( load_new ) {
+        this.dataElementService.load(group_id).subscribe(
+          dataElements => {
+            this.bottleneck_card.current_listing = dataElements.dataElements;
+            this.bottleneck_card.done_loading_list = true;
+            for ( let group  of this.dataElementGroups ){
+              if ( group.id == group_id ){
+                group.dataElements = dataElements.dataElements;
+              }
+            }
+          },
+          error => {
+            this.bottleneck_card.error_loading_list.occurred = true;
+            this.bottleneck_card.error_loading_list.message = "Something went wrong when trying to load Indicators";
+          }
+        )
+      }
+    }
+    else if( current_type == "datasets" ){
+      this.bottleneck_card.current_listing = [];
+      let group_name = "";
+      for (let dataset_group of this.dataset_types ){
+        if(dataset_group.id == group_id){
+          group_name = dataset_group.name;
+        }
+      }
+      for( let dataset of this.datasets ){
+        this.bottleneck_card.current_listing.push(
+          {id:dataset.id+group_id, name: group_name+" "+dataset.name}
+        )
+      }
+      this.bottleneck_card.done_loading_list = true;
+    }
+    else if( current_type == "programs" ){
+      let load_new = false;
+      for ( let group  of this.programs ){
+        if ( group.id == group_id ){
+          if (group.indicators.length != 0){
+            this.bottleneck_card.current_listing = group.indicators;
+            this.bottleneck_card.done_loading_list = true;
+          }else{
+            load_new = true;
+          }
+        }
+      }
+      if ( load_new ){
+        this.programService.load(group_id).subscribe(
+          indicators => {
+            this.bottleneck_card.current_listing = indicators.programs[0].programIndicators;
+            this.bottleneck_card.done_loading_list = true;
+            for ( let group  of this.programs ){
+              if ( group.id == group_id ){
+                group.indicators = indicators.programs.programIndicators;
+              }
+            }
+          },
+          error => {
+            this.bottleneck_card.error_loading_list.occurred = true;
+            this.bottleneck_card.error_loading_list.message = "Something went wrong when trying to load Indicators";
+          }
+        )
+      }
+
+    }
+    else if( current_type == "event" ){
+      let load_new = false;
+      for ( let group  of this.events ){
+        if ( group.id == group_id ){
+          if (group.indicators.length != 0){
+            this.bottleneck_card.current_listing = group.indicators;
+            this.bottleneck_card.done_loading_list = true;
+          }else{
+            load_new = true;
+          }
+        }
+      }
+      if ( load_new ){
+        this.eventService.load(group_id).subscribe(
+          indicators => {
+            //noinspection TypeScriptUnresolvedVariable
+            for (let event_data of indicators.programDataElements ){
+              if(event_data.valueType == "INTEGER_ZERO_OR_POSITIVE" || event_data.valueType == "BOOLEAN" ){
+                this.bottleneck_card.current_listing.push(event_data)
+              }
+            }
+            this.bottleneck_card.done_loading_list = true;
+            for ( let group  of this.events ){
+              if ( group.id == group_id ){
+                group.indicators = this.bottleneck_card.current_listing;
+              }
+            }
+          },
+          error => {
+            this.bottleneck_card.error_loading_list.occurred = true;
+            this.bottleneck_card.error_loading_list.message = "Something went wrong when trying to load Indicators";
+          }
+        )
+      }
+
+    }
+    else{
+
+    }
+  }
+
+  botteneckIndicatorExist(item): boolean {
+    let check  = false;
+    if(this.bottleneck_card.indicator.hasOwnProperty("bottleneck_indicators") ){
+      for( let indicator of this.bottleneck_card.indicator.bottleneck_indicators ){
+        if( indicator.id == item.id){
+          check = true;
+        }
+      }
+    }
+    return check;
+  }
+
+  load_bottleneck_card_item(item){
+    if(this.botteneckIndicatorExist(item)){
+
+    }else{
+      this.bottleneck_card.indicator.bottleneck_indicators.push(item);
+    }
+  }
+
+  removeBottleneckIndicator(item){
+    this.bottleneck_card.indicator.bottleneck_indicators.forEach( (value, index) =>{
+      if( value.id == item.id ){
+        this.bottleneck_card.indicator.bottleneck_indicators.splice(index,1);
+      }
+    })
+  }
+
   ngOnDestroy() {
     tinymce.remove(this.editor);
   }

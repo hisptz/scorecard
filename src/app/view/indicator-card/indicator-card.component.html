@@ -134,7 +134,7 @@
   </div>
   <div class="col-sm-2">
     <label>Show</label>
-    <select class="form-control" [(ngModel)]="chart_settings">
+    <select class="form-control" [(ngModel)]="chart_settings" style="height: 38px">
       <option value="ou-pe">period vs orgunit</option>
       <option value="dx-pe">period vs data</option>
       <option value="dx-ou">data vs orgunit</option>
@@ -151,10 +151,20 @@
       </button>
     </div>
   </div>
-
+  <div class="col-sm-12" style="padding-left: 5px">
+    <label
+      *ngIf="indicator.length == 1 && getIndicatorLength(indicator[0])"
+      style="cursor: pointer">
+      <input
+        type="checkbox"
+        [(ngModel)]="showBottleneck"
+        (change)="updateIndicatorCard(indicator, current_visualisation, card_selected_periods, card_selected_orgunits)">
+      Show with bottleneck indicators
+    </label>
+  </div>
 </div>
 
-<div class="container-fluid card-content" style="height: 400px; padding-left: 5px; margin-top: 15px; overflow-y: auto">
+<div class="container-fluid card-content" style="height: 400px; padding-left: 5px; overflow-y: auto">
   <div *ngIf="loading">
     <p style="text-align: center">
       <img src="balls-4.svg" style="padding-top: 80px; height: 190px;">

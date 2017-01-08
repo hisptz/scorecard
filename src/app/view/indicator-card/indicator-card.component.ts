@@ -108,6 +108,9 @@ export class IndicatorCardComponent implements OnInit, AfterViewInit, OnDestroy 
     ];
 
   chart_settings: string = "ou-pe";
+  showBottleneck:boolean = false;
+  error_occured: boolean = false;
+
   constructor(private filterService: FilterService,
               private visulizationService: VisulizerService,
               private constant: Constants,
@@ -149,17 +152,33 @@ export class IndicatorCardComponent implements OnInit, AfterViewInit, OnDestroy 
     let indicatorsArray = [];
     let orgUnitsArray = [];
     let periodArray = [];
-    for ( let holder of holders){
-      for ( let item of holder.indicators ){
-        if( this.hidden_columns.indexOf(item.id) == -1){
-          indicatorsArray.push(item.id);
+
+    // check first if your supposed to load bottleneck indicators too for analysis
+    if( this.showBottleneck ){
+      for ( let holder of holders ){
+        for ( let item of holder.indicators ){
+          if( this.hidden_columns.indexOf( item.id ) == -1){
+            indicatorsArray.push( item.id );
+            if( item.hasOwnProperty("bottleneck_indicators") ){
+              for( let bottleneck of item.bottleneck_indicators ){
+                indicatorsArray.push( bottleneck.id );
+              }
+            }
+          }
+        }
+      }
+    }else{
+      for ( let holder of holders ){
+        for ( let item of holder.indicators ){
+          if( this.hidden_columns.indexOf( item.id ) == -1){
+            indicatorsArray.push( item.id );
+          }
         }
       }
     }
-    let config_array = this.chart_settings.split("-");
-    console.log(config_array)
+    let config_array = this.chart_settings.split( "-" );
 
-    if(type == "table"){
+    if( type == "table" ){
       this.visualizer_config = {
         'type': 'table',
         'tableConfiguration': {
@@ -169,16 +188,16 @@ export class IndicatorCardComponent implements OnInit, AfterViewInit, OnDestroy 
         },
         'chartConfiguration': {
           'type':type,
-          'title': this.prepareCardTitle(this.indicator),
+          'title': this.prepareCardTitle( this.indicator ),
           'xAxisType': 'pe',
           'yAxisType': 'ou'
         }
       }
     }
-    else if (type == "csv") {
+    else if ( type == "csv" ) {
 
-    }else if (type == "info") {
-      this.details_indicators = indicatorsArray.join(";");
+    }else if ( type == "info" ) {
+      this.details_indicators = indicatorsArray.join( ";" );
       this.visualizer_config.type = "info"
 
     }
@@ -186,13 +205,13 @@ export class IndicatorCardComponent implements OnInit, AfterViewInit, OnDestroy 
       this.visualizer_config = {
         'type': 'chart',
         'tableConfiguration': {
-          'title': this.prepareCardTitle(this.indicator),
+          'title': this.prepareCardTitle( this.indicator ),
           'rows': ['ou'] ,
           'columns': ['pe']
         },
         'chartConfiguration': {
           'type':type,
-          'title': this.prepareCardTitle(this.indicator),
+          'title': this.prepareCardTitle( this.indicator ),
           'xAxisType': config_array[1],
           'yAxisType': config_array[0]
         }
@@ -203,10 +222,11 @@ export class IndicatorCardComponent implements OnInit, AfterViewInit, OnDestroy 
 
       this.loading = false;
     }else{
-      if(this.checkIfParametersChanged(orgunits, periods)){
+      if( this.checkIfParametersChanged( orgunits, periods, indicatorsArray ) ){
+        this.error_occured = false;
         this.loading = false;
         if(type == "csv"){
-          this.downloadCSV(this.current_analytics_data);
+          this.downloadCSV( this.current_analytics_data );
         }else{
           this.chartData = this.visulizationService.drawChart( this.current_analytics_data, this.visualizer_config.chartConfiguration );
           this.tableData = this.visulizationService.drawTable( this.current_analytics_data, this.visualizer_config.tableConfiguration );
@@ -240,8 +260,10 @@ export class IndicatorCardComponent implements OnInit, AfterViewInit, OnDestroy 
               this.chartData = this.visulizationService.drawChart( data, this.visualizer_config.chartConfiguration );
               this.tableData = this.visulizationService.drawTable( data, this.visualizer_config.tableConfiguration );
             }
+            this.error_occured = false;
           },
           error => {
+            this.error_occured = true;
             console.log(error)
           }
         )
@@ -252,7 +274,7 @@ export class IndicatorCardComponent implements OnInit, AfterViewInit, OnDestroy 
 
   }
 
-  checkIfParametersChanged(orgunits, periods): boolean{
+  checkIfParametersChanged(orgunits, periods, indicators): boolean{
     let checker = false;
     let temp_arr = [];
     for ( let per of periods ){
@@ -260,6 +282,9 @@ export class IndicatorCardComponent implements OnInit, AfterViewInit, OnDestroy 
     }
     for( let org of orgunits ){
       temp_arr.push(org.id);
+    }
+    for( let indicator of indicators ){
+      temp_arr.push(indicator);
     }
     if(this.current_parameters.length != 0 && temp_arr.length == this.current_parameters.length ){
       checker = temp_arr.sort().join(",") == this.current_parameters.sort().join(",")
@@ -516,6 +541,26 @@ export class IndicatorCardComponent implements OnInit, AfterViewInit, OnDestroy 
       hideThis = false;
     }
     return hideThis;
+  }
+
+  getIndicatorLength(holder){
+    let counter = 0;
+    let check = false;
+    let indicators = [];
+    for( let indicator of holder.indicators ){
+      if( this.hidden_columns.indexOf(indicator.id) == -1){
+        counter++;
+        indicators.push(indicator);
+      }
+    }
+    if ( counter == 1){
+      if( indicators[0].hasOwnProperty("bottleneck_indicators") ){
+        if(indicators[0].bottleneck_indicators.length != 0){
+          check = true
+        }
+      }
+    }
+    return check;
   }
 
   ngOnDestroy (){

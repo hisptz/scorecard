@@ -192,7 +192,7 @@
     <div class="thumbnail scorecard_details">
       <!--<h4 style="margin-top: 0px;margin-bottom: 1px">Data Type</h4>-->
       <div class="form-group">
-        <select class="form-control input-sm" style="height: 25px"  #t (change)="switchType(t.value)">
+        <select class="form-control input-sm" style="height: 25px"  #f (change)="switchType(f.value)">
           <option value="indicators">Indicators</option>
           <option value="dataElements">Data Elements</option>
           <option value="datasets">Data Sets</option>
@@ -209,7 +209,7 @@
           class="list-group-item selection_link"
           *ngFor="let group of current_groups | filterByName:groupQuery | paginate: { id: 'groups', itemsPerPage: 8, currentPage: p }"
           [ngClass]="{'listSelected': group.id == activeGroup}"
-          (click)="load_list(group.id, t.value)"
+          (click)="load_list(group.id, f.value)"
         >
           {{ group.name }}
         </li>
@@ -341,7 +341,11 @@
           </div>
 
         </div>
-
+        <a (click)="showBotleneckEditor(indicator)"  style="padding: 8px; margin-left: 15px">
+          bottleneck indicators
+          <span class="badge"> {{ indicator.bottleneck_indicators.length }} </span>
+        </a>
+        <!--additinal labels-->
         <div class="col-sm-6" *ngFor="let label of scorecard.data.additional_labels">
           <div style="padding-bottom: 5px">
             <div class="col-sm-3">
@@ -355,7 +359,7 @@
       </div>
       <span class="help-block pull-left" *ngIf="current_indicator_holder.indicators.length != 0">If you want to have two data items in the same column just select the second data item from the list on the left</span>
       <button class="btn btn-sm btn-default pull-right" (click)="enableAddIndicator()" *ngIf="current_indicator_holder.indicators.length != 0">
-        <span class="glyphicon glyphicon-plus"></span> Add
+        <span class="glyphicon glyphicon-plus"></span>Add
       </button>
     </div>
   </div>
@@ -383,6 +387,91 @@
         <button class="btn btn-default pull-right" (click)="showTextEditor()"> <span class="glyphicon glyphicon-ok"></span> Done </button>
       </div>
 
+    </div>
+  </div>
+</div>
+
+<!--model for bottleneck indicator-->
+<div class="indicator_details" [ngClass]="{'hiddendiv': !show_bottleneck_indicators}">
+  <div class="indicator_dialog">
+    <div class="indicator-content">
+      <h4 *ngIf="bottleneck_card.indicator_ready" class="text-center"> Bottleneck Indicators For {{ bottleneck_card.indicator.name }}
+        <span class="glyphicon glyphicon-remove pull-right" style="cursor: pointer" (click)="showBotleneckEditor(bottleneck_card.indicator)"></span>
+      </h4>
+
+      <div style="padding: 15px" class="row">
+
+        <!--indicator groups-->
+        <div class="col-sm-4">
+          <div class="thumbnail bottleneck_scorecard_details">
+            <!--<h4 style="margin-top: 0px;margin-bottom: 1px">Data Type</h4>-->
+            <div class="form-group">
+              <select class="form-control input-sm" style="height: 25px"  #t (change)="switchBottleneckType(t.value)">
+                <option value="indicators">Indicators</option>
+                <option value="dataElements">Data Elements</option>
+                <option value="datasets">Data Sets</option>
+                <option value="programs">Program Indicators</option>
+                <option value="event">Event Data Items </option>
+              </select>
+            </div>
+            <img src="balls-4.svg" style="height: 70px; padding-top: 20px" *ngIf="!bottleneck_card.done_loading_groups">
+            <div class="form-group" *ngIf="bottleneck_card.done_loading_groups">
+              <input type="text" class="form-control input-sm" placeholder="Search by name" style="height: 25px; margin-top: 3px" [(ngModel)]="bottleneck_card.groupQuery">
+            </div>
+            <ul class="list-group" *ngIf="bottleneck_card.done_loading_groups">
+              <li
+                class="list-group-item selection_link"
+                *ngFor="let group of bottleneck_card.current_groups | filterByName:bottleneck_card.groupQuery | paginate: { id: 'groups1', itemsPerPage: 6, currentPage: p }"
+                [ngClass]="{'listSelected': group.id == bottleneck_card.activeGroup}"
+                (click)="load_bottleneck_card_list(group.id, t.value)"
+              >
+                {{ group.name }}
+              </li>
+            </ul>
+            <pagination-controls  id="groups1" (pageChange)="p = $event" directionLinks="true" autoHide="true"></pagination-controls>
+          </div>
+        </div>
+        <!--indicators lists-->
+        <div class="col-sm-4">
+          <div class="thumbnail bottleneck_scorecard_details">
+            <div *ngIf="bottleneck_card.listReady">
+              <img src="balls-4.svg" style="height: 90px; padding-top: 20px" *ngIf="!bottleneck_card.done_loading_list">
+              <h5 class="text-danger" *ngIf="bottleneck_card.error_loading_list.occurred">{{ bottleneck_card.error_loading_list.message }}</h5>
+              <div class="form-group" *ngIf="bottleneck_card.done_loading_list">
+                <input type="text" class="form-control input-sm" placeholder="Search by name" style="height: 25px;" [(ngModel)]="bottleneck_card.listQuery">
+              </div>
+              <p *ngIf="bottleneck_card.done_loading_list && bottleneck_card.current_listing.length == 0">No items for a selected group</p>
+              <ul class="list-group" *ngIf="bottleneck_card.done_loading_list">
+                <li
+                  class="list-group-item selection_link"
+                  *ngFor="let item of bottleneck_card.current_listing | filterByName:bottleneck_card.listQuery | paginate: { id: 'list2', itemsPerPage: 6, currentPage: r }"
+                  [ngClass]="{'already_selected': botteneckIndicatorExist(item)}"
+                  (click)="load_bottleneck_card_item(item)"
+                >
+                  <span class="glyphicon glyphicon-ok-circle text-success" *ngIf="botteneckIndicatorExist(item)"></span> {{ item.name }}
+                </li>
+              </ul>
+              <pagination-controls  id="list2" (pageChange)="r = $event" directionLinks="true" autoHide="true"></pagination-controls>
+            </div>
+          </div>
+        </div>
+        <!--selected items list-->
+        <div class="col-sm-4">
+          <div class="thumbnail bottleneck_scorecard_details">
+            <ul class="list-group" *ngIf="bottleneck_card.indicator_ready">
+              <li
+                class="list-group-item"
+                *ngFor="let item of bottleneck_card.indicator.bottleneck_indicators | paginate: { id: 'list3', itemsPerPage: 6, currentPage: r }"
+              >
+                <a style="border-right: 1px solid cadetblue; padding-right: 8px" (click)="removeBottleneckIndicator(item)" title="Remove from list" class="remove-bottleneck"><span class="glyphicon glyphicon-trash text-danger"></span></a>
+                {{ item.name }}
+              </li>
+            </ul>
+            <pagination-controls  id="list3" (pageChange)="r = $event" directionLinks="true" autoHide="true"></pagination-controls>
+          </div>
+        </div>
+        <button class="btn btn-default pull-right" (click)="showBotleneckEditor(bottleneck_card.indicator)"> <span class="glyphicon glyphicon-ok"></span> Done </button>
+      </div>
     </div>
   </div>
 </div>

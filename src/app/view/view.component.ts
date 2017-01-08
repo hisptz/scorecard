@@ -595,13 +595,13 @@ export class ViewComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   // load a preview function
-  loadPreview(hodlerGroup,indicator, ou){
+  loadPreview(holderGroup,indicator, ou){
     this.selected_indicator = [];
     // prepare indicators
-    if(hodlerGroup == null){
+    if(holderGroup == null){
       this.selected_indicator = [indicator];
     }else{
-      for( let holderid of hodlerGroup.indicator_holder_ids ){
+      for( let holderid of holderGroup.indicator_holder_ids ){
         for ( let holder of this.scorecard.data.data_settings.indicator_holders ){
           if( holder.holder_id == holderid ){
             this.selected_indicator.push(holder);
