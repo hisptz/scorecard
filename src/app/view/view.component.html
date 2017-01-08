@@ -227,6 +227,7 @@
 
 <!--main scorecard area-->
 <div class="container-fluid" id="scorecard" style="padding-left: 5px;margin-top: 10px">
+  <div [innerHTML]="scorecard.data.header.template.content | safeHtml"></div>
   <h3>{{ scorecard.data.header.title }} &nbsp;&nbsp;&nbsp; {{ orgUnit.name }} &nbsp;&nbsp;&nbsp; {{ period.name }}</h3>
   <!--legend area-->
   <div class="row legend" style="margin-bottom: 10px" *ngIf="showLegend">
@@ -241,9 +242,6 @@
           <td style="font-size: 10px;padding-left: 5px">{{ legend.definition}}</td>
         </tr>
       </table>
-      <!--<div class="col-sm-3" style="padding-left: 0px;border: 1px solid #014b5a;height: 25px;border-radius: 3px" [style.background-color]="legend.color">-->
-      <!--</div>-->
-      <!--<div class="col-sm-9" style="vertical-align: bottom;font-size: 10px;display: table-cell;">{{ legend.definition}}</div>-->
     </div>
   </div>
   <table class="table table-bordered scorecard_table">
@@ -503,6 +501,17 @@
                 <th *ngIf="show_sum_in_row">{{ findRowTotalSum(subScoreCard.orgunits) | number : '1.2-2'}}</th>
                 <th *ngIf="show_average_in_row">{{ findRowTotalAverage(subScoreCard.orgunits)}}</th>
               </tr>
+              <!--additinal label-->
+              <tr *ngFor="let label of scorecard.data.additional_labels">
+                <th>{{ label }}</th>
+                <th *ngFor="let indicator of getItemsFromGroups()"
+                    style="font-size: 10px;max-width: 90px;overflow-wrap: break-word; cursor: pointer; line-height: 80%"
+                    class="sans-pro">
+                  {{ getIndicatorLabel( indicator,label ) }}
+                </th>
+                <th *ngIf="show_sum_in_row"></th>
+                <th *ngIf="show_average_in_row"></th>
+              </tr>
             </table>
           </div>
 
@@ -530,6 +539,17 @@
       </th>
       <th *ngIf="show_sum_in_row">{{ findRowTotalSum(orgunits)  | number : '1.2-2'}}</th>
       <th *ngIf="show_average_in_row">{{ findRowTotalAverage(orgunits)}}</th>
+    </tr>
+    <!--additinal label-->
+    <tr *ngFor="let label of scorecard.data.additional_labels">
+      <th>{{ label }}</th>
+      <th *ngFor="let indicator of getItemsFromGroups()"
+          style="font-size: 10px;max-width: 90px;overflow-wrap: break-word; cursor: pointer; line-height: 80%"
+          class="sans-pro">
+        {{ getIndicatorLabel( indicator,label ) }}
+      </th>
+      <th *ngIf="show_sum_in_row"></th>
+      <th *ngIf="show_average_in_row"></th>
     </tr>
   </table>
 </div>

@@ -78,6 +78,8 @@ export class UpdateComponent implements OnInit ,AfterViewInit, OnDestroy{
   show_editor:boolean = false;
   editor;
 
+  newLabel:string = "";
+
   private subscription: Subscription;
   constructor(private http: Http,
               private indicatorService: IndicatorGroupService,
@@ -436,6 +438,10 @@ export class UpdateComponent implements OnInit ,AfterViewInit, OnDestroy{
     }else{
       let indicator = this.getIndicatorStructure(item.name, item.id);
       indicator.value = Math.floor(Math.random() * 60) + 40;
+      // ensure indicator has all additinal labels
+      for (let label of this.scorecard.data.additional_labels ){
+        indicator.additional_label_values[label] = "";
+      }
       // this.current_indicator_holder.holder_id = this.current_group_id;
       if(this.current_indicator_holder.indicators.length < 2){
         this.current_indicator_holder.indicators.push( indicator );
@@ -703,7 +709,7 @@ export class UpdateComponent implements OnInit ,AfterViewInit, OnDestroy{
           "max": "60"
         }
       ],
-      "additional_label_values": [],
+      "additional_label_values": {},
       "arrow_settings": {
         "effective_gap": 5,
         "display": true
@@ -791,6 +797,39 @@ export class UpdateComponent implements OnInit ,AfterViewInit, OnDestroy{
 
   showTextEditor(){
     this.show_editor = !this.show_editor;
+  }
+
+  addAditionalLabel(){
+    if(this.newLabel != ""){
+      this.scorecard.data.additional_labels.push(this.newLabel);
+      for ( let holder of this.scorecard.data.data_settings.indicator_holders ){
+        for (let indicator of holder.indicators ){
+          indicator.additional_label_values[this.newLabel] = "";
+        }
+      }
+      console.log(this.scorecard.data.data_settings);
+      this.newLabel = "";
+    }
+  }
+
+  deleteAdditionalLabel(label){
+    this.scorecard.data.additional_labels.splice(this.scorecard.data.additional_labels.indexOf(label),1);
+    for ( let holder of this.scorecard.data.data_settings.indicator_holders ){
+      for (let indicator of holder.indicators ){
+        indicator.additional_label_values[this.newLabel] = "";
+      }
+    }
+    console.log(this.scorecard.data.data_settings);
+  }
+
+  getIndicatorLabel(indicator, label){
+    let labels = [];
+    for( let data of indicator.indicators ){
+      if(data.additional_label_values[label] != null && data.additional_label_values[label] != ""){
+        labels.push(data.additional_label_values[label])
+      }
+    }
+    return labels.join(' / ')
   }
 
   // saving scorecard details

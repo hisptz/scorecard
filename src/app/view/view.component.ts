@@ -1103,6 +1103,16 @@ export class ViewComponent implements OnInit, AfterViewInit, OnDestroy {
     return val;
   }
 
+  // helper function to set label value( helpful when there is more than one indicator)
+  getIndicatorLabel(indicator, label){
+    let labels = [];
+    for( let data of indicator.indicators ){
+      if(data.additional_label_values[label] != null && data.additional_label_values[label] != "" && this.hidenColums.indexOf(data.id) == -1){
+        labels.push(data.additional_label_values[label])
+      }
+    }
+    return labels.join(' / ')
+  }
   ngOnDestroy (){
     if( this.subscription ){
       this.subscription.unsubscribe();

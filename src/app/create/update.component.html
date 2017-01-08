@@ -37,13 +37,13 @@
       </th>
       <th style="width: 60px">
         <button class="btn btn-xs" *ngIf="need_for_group" (click)="createGroup()">
-            <span class="glyphicon glyphicon-plus"></span> Add
+          <span class="glyphicon-plus"></span> Add
         </button>
       </th>
     </tr>
     <tr>
       <th style="vertical-align: bottom"></th>
-      <td *ngFor="let indicator of getItemsFromGroups()" style="font-size: 10px;width:90px;max-width: 90px; overflow-wrap: break-word;cursor: pointer;" class="sans-pro"
+      <td *ngFor="let indicator of getItemsFromGroups()" style="font-size: 10px;width:90px;max-width: 90px;overflow-wrap: break-word;cursor: pointer;" class="sans-pro"
           title="Click to update {{ getIndicatorTitle(indicator) }}"
           [ngClass]="{'current':is_current_indicator(indicator)}"
           (click)="updateIndicator(indicator)">
@@ -51,28 +51,27 @@
       </td>
       <th style="width: 60px">
         <button class="btn btn-xs" *ngIf="need_for_indicator" (click)="enableAddIndicator()">
-          <span class="glyphicon glyphicon-plus"></span> Add
-        </button>
+          <span class="glyphicon-plus"></span> Add</button>
       </th>
     </tr>
     <tr>
       <td style="vertical-align: bottom; padding: 0px">
         Organisation Unit
       </td>
-      <td *ngFor="let indicator of getItemsFromGroups()"
-          style="font-size: 10px;max-width: 90px; overflow-wrap: break-word; cursor: pointer; padding: 0px;line-height: 10%"
+      <th *ngFor="let indicator of getItemsFromGroups()"
+          style="font-size: 10px;max-width: 90px;overflow-wrap: break-word; cursor: pointer; padding: 0px;line-height: 10%"
           class="sans-pro" [ngClass]="{'current':is_current_indicator(indicator)}"
           title="Click to Update {{ getIndicatorTitle(indicator) }}"
           (click)="updateIndicator(indicator)">
         <svg *ngIf="indicator.indicators.length == 2" viewbox="0 0 90 35" width="90" height="35">
           <polygon points="0 0 90 0 90 0 0 35" [attr.fill]="assignBgColor(indicator.indicators[0],indicator.indicators[0].value)" style="stroke:#CAC0C0;stroke-width:0.4"/>
-          <text fill="#000" x="3" y="18" font-size="10" font-family="Source Sans Pro">
+          <text fill="#000" x="3" y="18" font-size="11" font-family="Source Sans Pro">
             <tspan>{{ indicator.indicators[0].value }}</tspan>
           </text>
           <!--second triangle-->
           <polygon points="0 35 90 0 90 35 0 35" [attr.fill]="assignBgColor(indicator.indicators[1],indicator.indicators[1].value)" style="stroke:#CAC0C0;stroke-width:0.4"/>
           <!--number for the second triangle-->
-          <text fill="#000" x="54" y="22" font-size="10" font-family="Source Sans Pro">
+          <text fill="#000" x="54" y="22" font-size="11" font-family="Source Sans Pro">
             <tspan>{{ indicator.indicators[1].value }}</tspan>
           </text>
         </svg>
@@ -81,14 +80,25 @@
         <svg *ngIf="indicator.indicators.length == 1" viewbox="0 0 90 35" width="90" height="35">
           <!--full box to cover all area-->
           <polygon points="0 0 90 0 90 35 0 35" [attr.fill]="assignBgColor(indicator.indicators[0],indicator.indicators[0].value)"/>
-          <text fill="#000" x="3" y="18" font-size="10" font-family="Source Sans Pro">
+          <text fill="#000" x="3" y="18" font-size="11" font-family="Source Sans Pro">
             <tspan>{{ indicator.indicators[0].value }}</tspan>
           </text>
         </svg>
-      </td>
-      <td style="width: 60px">
+      </th>
+      <th style="width: 60px">
 
-      </td>
+      </th>
+    </tr>
+    <tr *ngFor="let label of scorecard.data.additional_labels">
+      <th>{{ label }}</th>
+      <th *ngFor="let indicator of getItemsFromGroups()"
+          style="font-size: 10px;max-width: 90px;overflow-wrap: break-word; cursor: pointer; line-height: 80%"
+          class="sans-pro" [ngClass]="{'current':is_current_indicator(indicator)}">
+        {{ getIndicatorLabel( indicator,label ) }}
+      </th>
+      <th style="width: 60px">
+
+      </th>
     </tr>
   </table>
 </div>
@@ -159,9 +169,23 @@
           <div class="col-sm-9" style="padding-left: 2px;padding-right: 2px"><input [(ngModel)]="legend.definition" class="form-control color-input input-sm" style="height: 25px"/></div>
         </div>
       </div>
+      <!--additional labels-->
+      <div class="form-group" >
+        <label title="this will be used to add additional information about the scorecard item (eg. source of data)" style="margin-top: 5px">Additional labels</label>
+        <div class="col-sm-10" style="padding-left: 5px"><input class="form-control input-sm" style="height: 25px" [(ngModel)]="newLabel"></div>
+        <div class="col-sm-2"><button title="click to add new label" class="btn btn-xs btn-success pull-right" style="-webkit-border-radius:50%;-moz-border-radius:50%;border-radius: 50%;" (click)="addAditionalLabel()">
+          <span class="glyphicon glyphicon-ok"></span>
+        </button> </div>
+        <div class="container-fluid" style="padding-left: 5px" *ngFor="let label of scorecard.data.additional_labels">
+          <div class="col-sm-10" style="padding: 0px">{{ label }}</div>
+          <div class="col-sm-2"><button title="click to delete {{ label }}" class="btn btn-xs btn-danger pull-right" style="-webkit-border-radius:50%;-moz-border-radius:50%;border-radius: 50%;" (click)="deleteAdditionalLabel(label)">
+            <span class="glyphicon glyphicon-trash"></span>
+          </button> </div>
+        </div>
+      </div>
+    </div>
 
     </div>
-  </div>
 
   <!--Group selection-->
   <div class="col-sm-2 no-left-padding1">
@@ -316,6 +340,17 @@
             </div>
           </div>
 
+        </div>
+
+        <div class="col-sm-6" *ngFor="let label of scorecard.data.additional_labels">
+          <div style="padding-bottom: 5px">
+            <div class="col-sm-3">
+              <label class="sans-pro lebal">{{ label }}:</label>
+            </div>
+            <div class="col-sm-9">
+              <input [(ngModel)]="indicator.additional_label_values[label]" class="form-control input-sm"/>
+            </div>
+          </div>
         </div>
       </div>
       <span class="help-block pull-left" *ngIf="current_indicator_holder.indicators.length != 0">If you want to have two data items in the same column just select the second data item from the list on the left</span>

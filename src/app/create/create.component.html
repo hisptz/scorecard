@@ -89,6 +89,17 @@
 
       </th>
     </tr>
+    <tr *ngFor="let label of scorecard.data.additional_labels">
+      <th>{{ label }}</th>
+      <th *ngFor="let indicator of getItemsFromGroups()"
+          style="font-size: 10px;max-width: 90px;overflow-wrap: break-word; cursor: pointer; line-height: 80%"
+          class="sans-pro" [ngClass]="{'current':is_current_indicator(indicator)}">
+        {{ getIndicatorLabel( indicator,label ) }}
+      </th>
+      <th style="width: 60px">
+
+      </th>
+    </tr>
   </table>
 </div>
 
@@ -159,6 +170,20 @@
         </div>
       </div>
 
+      <!--additional labels-->
+      <div class="form-group" >
+        <label title="this will be used to add additional information about the scorecard item (eg. source of data)" style="margin-top: 5px">Additional labels</label>
+        <div class="col-sm-10" style="padding-left: 5px"><input class="form-control input-sm" style="height: 25px" [(ngModel)]="newLabel"></div>
+        <div class="col-sm-2"><button title="click to add new label" class="btn btn-xs btn-success pull-right" style="-webkit-border-radius:50%;-moz-border-radius:50%;border-radius: 50%;" (click)="addAditionalLabel()">
+          <span class="glyphicon glyphicon-ok"></span>
+        </button> </div>
+        <div class="container-fluid" style="padding-left: 5px" *ngFor="let label of scorecard.data.additional_labels">
+          <div class="col-sm-10" style="padding: 0px">{{ label }}</div>
+          <div class="col-sm-2"><button title="click to delete {{ label }}" class="btn btn-xs btn-danger pull-right" style="-webkit-border-radius:50%;-moz-border-radius:50%;border-radius: 50%;" (click)="deleteAdditionalLabel(label)">
+            <span class="glyphicon glyphicon-trash"></span>
+          </button> </div>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -315,6 +340,18 @@
             </div>
           </div>
 
+        </div>
+
+        <!--additinal labels-->
+        <div class="col-sm-6" *ngFor="let label of scorecard.data.additional_labels">
+          <div style="padding-bottom: 5px">
+            <div class="col-sm-3">
+              <label class="sans-pro lebal">{{ label }}:</label>
+            </div>
+            <div class="col-sm-9">
+              <input [(ngModel)]="indicator.additional_label_values[label]" class="form-control input-sm"/>
+            </div>
+          </div>
         </div>
       </div>
       <span class="help-block pull-left" *ngIf="current_indicator_holder.indicators.length != 0">If you want to have two data items in the same column just select the second data item from the list on the left</span>
