@@ -187,6 +187,12 @@
               <div class="col-sm-4 pointer">
                 <label style="cursor: pointer"><input type="checkbox" [(ngModel)]="sortAscending"  (change)="sortScoreCard(sorting_column, sortAscending)"> Ascending</label>
               </div>
+              <div class="col-sm-12" style="padding-top: 5px">
+                <label><input type="radio" [value]="orgunits.length" [(ngModel)]="shown_records">All</label>
+                <label><input type="radio" value="3" [(ngModel)]="shown_records">Top Three</label>
+                <label><input type="radio" value="5" [(ngModel)]="shown_records">Top Five</label>
+                <label><input type="radio" value="10" [(ngModel)]="shown_records">Top Ten</label>
+              </div>
             </div>
           </li>
           <li class="list-group-item">
@@ -272,8 +278,8 @@
       <th class="subtotal" *ngIf="show_sum_in_row">Sum</th>
       <th class="subtotal" *ngIf="show_average_in_row">Average</th>
     </tr>
-    <ng-container *ngFor="let current_orgunit of orgunits | filterByName:searchQuery">
-      <tr style="height: 35px; max-height: 35px; overflow-y: hidden; line-height: 80%" class="orunitTr">
+    <ng-container *ngFor="let current_orgunit of orgunits | filterByName:searchQuery; let i=index">
+      <tr style="height: 35px; max-height: 35px; overflow-y: hidden; line-height: 80%" class="orunitTr" *ngIf="i <= shown_records">
         <td style="vertical-align: bottom;font-size: 10px;cursor: pointer;line-height: 80%;padding: 8px" class="orgUnitName" (click)="loadChildrenData(current_orgunit)">
           {{ current_orgunit.name }}
         </td>

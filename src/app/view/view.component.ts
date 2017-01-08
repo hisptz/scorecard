@@ -124,6 +124,7 @@ export class ViewComponent implements OnInit, AfterViewInit, OnDestroy {
   showLegend:boolean = false;
   hidenColums: any[] = [];
 
+  shown_records:number = 0;
 
   constructor(private scorecardService: ScorecardService,
               private dataService: DataService,
@@ -285,6 +286,7 @@ export class ViewComponent implements OnInit, AfterViewInit, OnDestroy {
                     }
                     indicator.values[orgunit] = this.dataService.getIndicatorData(orgunit,this.period.id, data);
                   }
+                  this.shown_records = this.orgunits.length;
                   this.indicator_loading[indicator.id] = true;
                   //load previous data
                   let effective_gap = parseInt( indicator.arrow_settings.effective_gap );
