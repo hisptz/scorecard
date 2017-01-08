@@ -1,4 +1,4 @@
-import {Component, OnInit, ViewChild, ElementRef, AfterViewInit} from '@angular/core';
+import {Component, OnInit, OnDestroy, ViewChild, ElementRef, AfterViewInit,style, animate, transition, trigger} from '@angular/core';
 import {Http} from "@angular/http";
 import {IndicatorGroupService, IndicatorGroup} from "../shared/services/indicator-group.service";
 import {DatasetService, Dataset} from "../shared/services/dataset.service";
@@ -8,13 +8,25 @@ import {Router} from "@angular/router";
 import {$} from "protractor";
 import {ProgramIndicatorsService, ProgramIndicatorGroups} from "../shared/services/program-indicators.service";
 import {EventData, EventDataService} from "../shared/services/event-data.service";
+import {throttleTime} from "rxjs/operator/throttleTime";
 
 @Component({
   selector: 'app-create',
   templateUrl: './create.component.html',
-  styleUrls: ['./create.component.css']
+  styleUrls: ['./create.component.css'],
+  animations: [
+    trigger('fadeInOut', [
+      transition(':enter', [   // :enter is alias to 'void => *'
+        style({opacity:0}),
+        animate(600, style({opacity:1}))
+      ]),
+      transition(':leave', [   // :leave is alias to '* => void'
+        animate(500, style({opacity:0}))
+      ])
+    ])
+  ]
 })
-export class CreateComponent implements OnInit, AfterViewInit {
+export class CreateComponent implements OnInit, AfterViewInit, OnDestroy {
 
   // variable initializations
   datasets: Dataset[];
@@ -57,7 +69,8 @@ export class CreateComponent implements OnInit, AfterViewInit {
     {id:'.ACTUAL_REPORTS_ON_TIME', name: "Reports Submitted on time"},
     {id:'.EXPECTED_REPORTS', name: "Expected Reports"}
   ];
-
+  show_editor:boolean = false;
+  editor;
   constructor(private http: Http,
               private indicatorService: IndicatorGroupService,
               private datasetService: DatasetService,
@@ -170,7 +183,23 @@ export class CreateComponent implements OnInit, AfterViewInit {
 
   ngAfterViewInit(){
     this.title_element.nativeElement.focus();
-
+    tinymce.init({
+      selector: '#my-editor-id',
+      height: 200,
+      plugins: ['link', 'paste', 'table','image', 'code'],
+      skin_url: 'assets/skins/lightgray',
+      setup: editor => {
+        this.editor = editor;
+        editor.on('keyup', () => {
+          // const content = editor.getContent();
+          // this.keyupHandlerFunction(content);
+        });
+        editor.on('change', () => {
+          const content = editor.getContent();
+          this.scorecard.data.header.template.content = content;
+        });
+      },
+    });
   }
   // cancel scorecard creation process
   cancelCreate(){
@@ -370,6 +399,7 @@ export class CreateComponent implements OnInit, AfterViewInit {
 
   // load a single item for use in a score card
   load_item(item): void{
+
     if( this.indicatorExist( this.scorecard.data.data_settings.indicator_holders, item )){
       // TODO: Implement a popup to tell a user that this has already been added
     }else{
@@ -728,6 +758,9 @@ export class CreateComponent implements OnInit, AfterViewInit {
     return check;
   }
 
+  showTextEditor(){
+    this.show_editor = !this.show_editor;
+  }
   // saving scorecard details
   saveScoreCard(action: string = "save"): void {
     // display error if some fields are missing
@@ -776,5 +809,9 @@ export class CreateComponent implements OnInit, AfterViewInit {
     }
 
 
+  }
+
+  ngOnDestroy() {
+    tinymce.remove(this.editor);
   }
 }

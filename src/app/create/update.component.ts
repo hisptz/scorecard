@@ -1,4 +1,7 @@
-import {Component, OnInit, ViewChild, ElementRef} from '@angular/core';
+import {
+  Component, OnInit, ViewChild, ElementRef, style, state, animate, transition, trigger,
+  AfterViewInit, OnDestroy,
+} from '@angular/core';
 import {Http} from "@angular/http";
 import {IndicatorGroupService, IndicatorGroup} from "../shared/services/indicator-group.service";
 import {DatasetService, Dataset} from "../shared/services/dataset.service";
@@ -12,9 +15,20 @@ import {EventData, EventDataService} from "../shared/services/event-data.service
 @Component({
   selector: 'app-update',
   templateUrl: './update.component.html',
-  styleUrls: ['./create.component.css']
+  styleUrls: ['./create.component.css'],
+  animations: [
+    trigger('fadeInOut', [
+      transition(':enter', [   // :enter is alias to 'void => *'
+        style({opacity:0}),
+        animate(600, style({opacity:1}))
+      ]),
+      transition(':leave', [   // :leave is alias to '* => void'
+        animate(500, style({opacity:0}))
+      ])
+    ])
+  ]
 })
-export class UpdateComponent implements OnInit {
+export class UpdateComponent implements OnInit ,AfterViewInit, OnDestroy{
 
   // variable initializations
   datasets: Dataset[];
@@ -51,6 +65,9 @@ export class UpdateComponent implements OnInit {
   @ViewChild('description')
   discription_element:ElementRef;
 
+  @ViewChild('texteditor')
+  texteditor:ElementRef;
+
   dataset_types = [
     {id:'', name: "Reporting Rate"},
     {id:'.REPORTING_RATE_ON_TIME', name: "Reporting Rate on time"},
@@ -58,6 +75,8 @@ export class UpdateComponent implements OnInit {
     {id:'.ACTUAL_REPORTS_ON_TIME', name: "Reports Submitted on time"},
     {id:'.EXPECTED_REPORTS', name: "Expected Reports"}
   ];
+  show_editor:boolean = false;
+  editor;
 
   private subscription: Subscription;
   constructor(private http: Http,
@@ -102,6 +121,7 @@ export class UpdateComponent implements OnInit {
               name: scorecard_details.header.title,
               data: scorecard_details
             };
+
             // this.getItemsFromGroups();
             let i = 0;
             for( let item of this.scorecard.data.data_settings.indicator_holder_groups ){
@@ -192,6 +212,26 @@ export class UpdateComponent implements OnInit {
     );
   }
 
+  ngAfterViewInit(){
+    this.title_element.nativeElement.focus();
+    tinymce.init({
+      selector: '#my-editor-id',
+      height: 200,
+      plugins: ['link', 'paste', 'table','image', 'code'],
+      skin_url: 'assets/skins/lightgray',
+      setup: editor => {
+        this.editor = editor;
+        editor.on('keyup', () => {
+          // const content = editor.getContent();
+          // this.keyupHandlerFunction(content);
+        });
+        editor.on('change', () => {
+          const content = editor.getContent();
+          this.scorecard.data.header.template.content = content;
+        });
+      },
+    });
+  }
   // cancel scorecard creation process
   cancelCreate(){
     this.router.navigateByUrl('');
@@ -749,6 +789,10 @@ export class UpdateComponent implements OnInit {
     return check;
   }
 
+  showTextEditor(){
+    this.show_editor = !this.show_editor;
+  }
+
   // saving scorecard details
   saveScoreCard(action: string = "save"): void {
     // delete all empty indicators if any
@@ -796,7 +840,9 @@ export class UpdateComponent implements OnInit {
         );
       }
     }
+  }
 
-
+  ngOnDestroy() {
+    tinymce.remove(this.editor);
   }
 }

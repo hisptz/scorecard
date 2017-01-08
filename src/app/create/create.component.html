@@ -12,6 +12,7 @@
 <!--smple score card-->
 <div class="container-fluid no-left-padding" style="border-top: 1px solid blanchedalmond; padding-top: 8px">
   <!--sample score card-->
+  <div [innerHTML]="scorecard.data.header.template.content | safeHtml"></div>
   <table class="table table-bordered" style="margin-bottom: 3px">
     <tr>
       <th></th>
@@ -109,7 +110,7 @@
         <label for="title" style="padding-top: 3px">Title <span class="text-danger">*</span></label>
         <input type="text" class="form-control input-sm" #title id="title" placeholder="Title" style="height: 25px; margin-top: 5px" [(ngModel)]="scorecard.data.header.title">
       </div>
-      <p class="help-block">Scorecard title.</p>
+      <p class="help-block">Scorecard title. <a class="btn btn-xs btn-default" (click)="showTextEditor()">custom header</a></p>
       <div class="form-group">
         <label for="description">Description  <span class="text-danger">*</span></label>
         <textarea class="form-control input-sm" #description id="description" placeholder="Scorecard description" [(ngModel)]="scorecard.data.header.description"></textarea>
@@ -333,4 +334,16 @@
   <button class="btn btn-sm btn-warning pull-right" (click)="cancelCreate()" *ngIf="!saving_scorecard">Cancel</button>
   <h5 class="pull-right" *ngIf="saving_scorecard"><img src="balls-4.svg" style="height: 50px;"> Saving score card Information, Please wait...</h5>
   <h5 class="pull-right text-danger" *ngIf="saving_error">Something went wrong, Saving score card Information failed</h5>
+</div>
+
+<div class="indicator_details" [ngClass]="{'hiddendiv': !show_editor}">
+  <div class="indicator_dialog">
+    <div class="indicator-content">
+      <span class="glyphicon glyphicon-remove pull-right" style="cursor: pointer" (click)="showTextEditor()"></span>
+      <div style="padding: 15px">
+        <textarea id="my-editor-id"></textarea>
+        <button class="btn btn-default pull-right" (click)="showTextEditor()"> <span class="glyphicon glyphicon-ok"></span> Done </button>
+      </div>
+    </div>
+  </div>
 </div>
