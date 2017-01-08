@@ -309,7 +309,7 @@
           <div class="container-fluid" id="inner_scorecard" style="padding-left: 5px;margin-top: 10px">
             <!--sort by area-->
             <div class="row" >
-              <div class="col-sm-7"><h4>{{ scorecard.data.header.title }} &nbsp;&nbsp;&nbsp; {{ current_orgunit.name }} &nbsp;&nbsp;&nbsp; {{ period.name }}</h4></div>
+              <div class="col-sm-7"><h4>{{ orgunit.name }} &nbsp;&nbsp;&nbsp; {{ period.name }}</h4></div>
               <div class="col-sm-1 no-print" style="margin-top: 10px; padding: 0px"><label class="pull-right no-print">Sort By:</label> </div>
               <div class="col-sm-2 no-print" style="padding-left: 5px">
                 <select style="height: 30px;" class="form-control pull-right" [(ngModel)]="sub_sorting_column" (click)="sortSubScoreCard(sub_sorting_column, sortAscending)">
@@ -392,7 +392,7 @@
                     <div class="container-fluid" id="child_inner_scorecard" style="padding-left: 5px;margin-top: 10px">
                       <!--sort by area-->
                       <div class="row" >
-                        <div class="col-sm-7"><h4>{{ scorecard.data.header.title }} &nbsp;&nbsp;&nbsp; {{ current_inner_orgunit.name }} &nbsp;&nbsp;&nbsp; {{ period.name }}</h4></div>
+                        <div class="col-sm-7"><h4>{{ current_inner_orgunit.name }} &nbsp;&nbsp;&nbsp; {{ period.name }}</h4></div>
                         <div class="col-sm-1 no-print" style="margin-top: 10px; padding: 0px"><label class="pull-right no-print">Sort By:</label> </div>
                         <div class="col-sm-2 no-print" style="padding-left: 5px">
                           <select style="height: 30px" class="form-control pull-right" [(ngModel)]="grand_sorting_column" (click)="sortGrandScoreCard(grand_sorting_column, sortAscending)">
@@ -404,10 +404,10 @@
                         </div>
                         <div class="col-sm-2 no-print">
                           <button class="btn btn-default btn-sm pull-right" (click)="closechildrenSubUnit()" style="height: 30px">
-                            <span _ngcontent-hsp-13="" class="glyphicon glyphicon-remove"></span> Close
+                            <span class="glyphicon glyphicon-remove"></span> Close
                           </button>
                           <button class="btn btn-default btn-sm pull-right" (click)="downloadCSV(current_inner_orgunit.id)" style="height: 30px">
-                            <span _ngcontent-hsp-13="" class="glyphicon glyphicon-save-file"></span> CSV
+                            <span class="glyphicon glyphicon-save-file"></span> CSV
                           </button>
                         </div>
                       </div>
@@ -474,6 +474,9 @@
                           <th *ngIf="show_average_in_row">{{ findRowTotalAverage(childrenSubScoreCard.orgunits)}}</th>
                         </tr>
                       </table>
+                      <div class="text-center" *ngIf="childrenSubScoreCard.orgunits.length == 0">
+                        <img src="balls-4.svg" style="height: 200px; width: 200px"><br>
+                      </div>
                     </div>
 
                     <!--end of First child scorecard-->
@@ -513,6 +516,9 @@
                 <th *ngIf="show_average_in_row"></th>
               </tr>
             </table>
+            <div class="text-center" *ngIf="subScoreCard.orgunits.length == 0">
+              <img src="balls-4.svg" style="height: 200px; width: 200px"><br>
+            </div>
           </div>
 
           <!--end of First child scorecard-->
@@ -552,6 +558,10 @@
       <th *ngIf="show_average_in_row"></th>
     </tr>
   </table>
+  <div class="text-center" *ngIf="orgunits.length == 0">
+    <img src="balls-4.svg" style="height: 200px; width: 200px"><br>
+    <h3>Getting the scorecard ready</h3>
+  </div>
 </div>
 
 <!--scorecard indicator details-->
