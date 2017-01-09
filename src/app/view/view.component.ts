@@ -186,6 +186,7 @@ export class ViewComponent implements OnInit, AfterViewInit, OnDestroy {
                       this.organisationunits = orgUnits.organisationUnits;
                       this.orgunitService.nodes = orgUnits.organisationUnits;
                       this.orgunitService.sortOrgUnits( data.pager.total );
+                      this.activateNode(this.orgUnit.id, this.orgtree);
                       this.orgunit_tree_config.loading = false;
                     },
                     error => {
@@ -211,6 +212,7 @@ export class ViewComponent implements OnInit, AfterViewInit, OnDestroy {
       };
 
       this.organisationunits = this.orgunitService.nodes;
+      this.activateNode(this.orgUnit.id, this.orgtree);
       // TODO: make a sort level information dynamic
       this.orgunitService.sortOrgUnits( 4 );
       this.loadScoreCard();
@@ -220,7 +222,7 @@ export class ViewComponent implements OnInit, AfterViewInit, OnDestroy {
 
   ngAfterViewInit(){
     this.activateNode(this.period.id, this.pertree);
-    // this.activateNode(this.orgUnit.id, this.orgtree);
+
 
   }
 
@@ -336,7 +338,7 @@ export class ViewComponent implements OnInit, AfterViewInit, OnDestroy {
   showSubScorecard: any[] = [];
   subScoreCard: any = {};
   loadChildrenData(selectedorgunit){
-    if( selectedorgunit.is_parent ){
+    if( selectedorgunit.is_parent || this.showSubScorecard[selectedorgunit.id]){
       this.showSubScorecard = [];
       this.opened_unit = null;
     }else{
@@ -440,7 +442,7 @@ export class ViewComponent implements OnInit, AfterViewInit, OnDestroy {
   showChildrenSubScorecard: any[] = [];
   childrenSubScoreCard: any = {};
   loadGrandChildrenData(selectedorgunit){
-    if( selectedorgunit.is_parent ){
+    if( selectedorgunit.is_parent || this.showChildrenSubScorecard[selectedorgunit.id] ){
       this.showChildrenSubScorecard = [];
       this.opened_subunit = null;
     }else{
@@ -548,11 +550,20 @@ export class ViewComponent implements OnInit, AfterViewInit, OnDestroy {
     if(type == "down"){
       this.periods = this.filterService.getPeriodArray(this.period_type, this.filterService.getLastPeriod(this.period.id,this.period_type).substr(0,4));
       this.activateNode(this.filterService.getLastPeriod(this.period.id,this.period_type), this.pertree);
+      this.period = {
+        id:this.filterService.getLastPeriod(this.period.id,this.period_type),
+        name:this.getPeriodName(this.filterService.getLastPeriod(this.period.id,this.period_type))
+      };
     }
     if(type == "up"){
       this.periods = this.filterService.getPeriodArray(this.period_type, this.filterService.getNextPeriod(this.period.id,this.period_type).substr(0,4));
       this.activateNode(this.filterService.getNextPeriod(this.period.id,this.period_type), this.pertree);
+      this.period = {
+        id:this.filterService.getNextPeriod(this.period.id,this.period_type),
+        name:this.getPeriodName(this.filterService.getNextPeriod(this.period.id,this.period_type))
+      };
     }
+    this.loadScoreCard();
   }
 
   // prepare a proper tooltip to display to counter multiple indicators in the same td

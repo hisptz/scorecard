@@ -33,7 +33,7 @@
             </form>
           </div>
           <div *ngIf="orgunit_tree_config.loading">{{ orgunit_tree_config.loading_message }}</div>
-          <div class="tree-area" *ngIf="!orgunit_tree_config.loading">
+          <div class="tree-area">
             <Tree
               #orgtree
               [nodes]="organisationunits"
@@ -322,7 +322,7 @@
           <div class="container-fluid" id="inner_scorecard" style="padding-left: 5px;margin-top: 10px">
             <!--sort by area-->
             <div class="row" >
-              <div class="col-sm-7"><h4>{{ orgunit.name }} &nbsp;&nbsp;&nbsp; {{ period.name }}</h4></div>
+              <div class="col-sm-7"><h4>{{ current_orgunit.name }} &nbsp;&nbsp;&nbsp; {{ period.name }}</h4></div>
               <div class="col-sm-1 no-print" style="margin-top: 10px; padding: 0px"><label class="pull-right no-print">Sort By:</label> </div>
               <div class="col-sm-2 no-print" style="padding-left: 5px">
                 <select style="height: 30px;" class="form-control pull-right" [(ngModel)]="sub_sorting_column" (click)="sortSubScoreCard(sub_sorting_column, sortAscending)">

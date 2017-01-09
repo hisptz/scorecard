@@ -45,8 +45,8 @@
   <div class="col-sm-4" *ngFor="let scorecard of scorecards | scoreCardFilter:queryterm | paginate: { itemsPerPage: 3, currentPage: p } " style="padding-left: 0px">
     <div class="thumbnail scorecard_details">
 
-      <div style="height:210px; padding-top: 50px" [routerLink]="['view',scorecard.id]">
-        <h1 class="text-center text-muted"><span class="glyphicon glyphicon-list"></span> </h1>
+      <div style="height:270px; padding-top: 50px" [routerLink]="['view',scorecard.id]">
+        <h1 class="text-center text-muted"><img src="assets/img/scorecardplaceholder.jpg" style="height: 120px"> </h1>
         <h3 class="text-center" [routerLink]="['view',scorecard.id]">{{ scorecard.data.header.title }}</h3>
         <h5 class="text-center" [routerLink]="['view',scorecard.id]">{{ scorecard.data.header.description }}</h5>
       </div>
@@ -61,17 +61,6 @@
           <span class="glyphicon glyphicon-trash text-danger"></span>
         </button>
       </h1>
-      <!--<p class="icons" *ngIf="!confirm_deleting[scorecard.id] && !deleting[scorecard.id] && !error_deleting[scorecard.id]">-->
-        <!--<a [routerLink]="['view',scorecard.id]" class="btn btn-primary sans-pro" role="button" title="Open {{ scorecard.data.header.title }}">-->
-          <!--View-->
-        <!--</a>-->
-        <!--<a title="edit {{ scorecard.data.header.title }}" [routerLink]="['create','edit',scorecard.id]" class="btn btn-default sans-pro" role="button">-->
-          <!--<span class="glyphicon glyphicon-pencil text-primary"></span>-->
-        <!--</a>-->
-        <!--<button title="delete {{ scorecard.data.header.title }}" (click)="confirm_deleting[scorecard.id] = true" class="btn btn-default sans-pro" role="button">-->
-          <!--<span class="glyphicon glyphicon-trash text-danger"></span>-->
-        <!--</button>-->
-      <!--</p>-->
       <p class="icons" *ngIf="confirm_deleting[scorecard.id]" style="padding: 5px; font-size: 12px"> Are you sure you want to delete this score card?
         <button class="btn btn-sm btn-danger" (click)="deleteScoreCard(scorecard)">Delete</button>
         <button class="btn btn-sm btn-success" (click)="confirm_deleting[scorecard.id] = false">Cancel</button>
