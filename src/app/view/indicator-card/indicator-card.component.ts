@@ -239,7 +239,7 @@ export class IndicatorCardComponent implements OnInit, AfterViewInit, OnDestroy 
     if (type == "info") {
 
       this.loading = false;
-    }else if(type='map'){
+    }else if(type=='map'){
       this.loading=false;
     } else{
       if( this.checkIfParametersChanged( orgunits, periods, indicatorsArray ) ){
