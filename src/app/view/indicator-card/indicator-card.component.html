@@ -173,6 +173,9 @@
   <div *ngIf="visualizer_config.type == 'info' && !loading">
     <app-metadata-dictionary [metadataidentifiers]="details_indicators"></app-metadata-dictionary>
   </div>
+  <div *ngIf="visualizer_config.type == 'map' && !loading">
+    <map-component [analytics]="current_analytics_data"></map-component>
+  </div>
   <div *ngIf="visualizer_config.type == 'chart' && !loading" [ng2-highcharts]="chartData" class="graph"></div>
   <table class="table table-bordered" *ngIf="visualizer_config.type == 'table' && !loading">
     <thead>

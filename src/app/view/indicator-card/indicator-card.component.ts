@@ -104,7 +104,8 @@ export class IndicatorCardComponent implements OnInit, AfterViewInit, OnDestroy 
     {name: 'radar', image: 'radar.png'},
     {name: 'stacked_column', image: 'column-stacked.png'},
     {name: 'stacked_bar', image: 'bar-stacked.png'},
-    {name: 'gauge', image: 'gauge.jpg'}
+    {name: 'gauge', image: 'gauge.jpg'},
+    {name: 'map', image: 'map.jpg'}
     ];
 
   chart_settings: string = "ou-pe";
@@ -196,10 +197,27 @@ export class IndicatorCardComponent implements OnInit, AfterViewInit, OnDestroy 
     }
     else if ( type == "csv" ) {
 
-    }else if ( type == "info" ) {
+    }
+    else if ( type == "info" ) {
       this.details_indicators = indicatorsArray.join( ";" );
       this.visualizer_config.type = "info"
 
+    }
+    else if( type == "map" ){
+      this.visualizer_config = {
+        'type': 'map',
+        'tableConfiguration': {
+          'title': this.prepareCardTitle(this.indicator),
+          'rows': ['ou'],
+          'columns': ['dx','pe']
+        },
+        'chartConfiguration': {
+          'type':type,
+          'title': this.prepareCardTitle( this.indicator ),
+          'xAxisType': 'pe',
+          'yAxisType': 'ou'
+        }
+      }
     }
     else{
       this.visualizer_config = {
@@ -221,7 +239,9 @@ export class IndicatorCardComponent implements OnInit, AfterViewInit, OnDestroy 
     if (type == "info") {
 
       this.loading = false;
-    }else{
+    }else if(type='map'){
+      this.loading=false;
+    } else{
       if( this.checkIfParametersChanged( orgunits, periods, indicatorsArray ) ){
         this.error_occured = false;
         this.loading = false;

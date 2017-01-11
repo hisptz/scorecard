@@ -1128,8 +1128,10 @@ export class ViewComponent implements OnInit, AfterViewInit, OnDestroy {
   getIndicatorLabel(indicator, label){
     let labels = [];
     for( let data of indicator.indicators ){
-      if(data.additional_label_values[label] != null && data.additional_label_values[label] != "" && this.hidenColums.indexOf(data.id) == -1){
-        labels.push(data.additional_label_values[label])
+      if (data.hasOwnProperty('additional_label_values')){
+        if(data.additional_label_values[label] != null && data.additional_label_values[label] != "" && this.hidenColums.indexOf(data.id) == -1){
+          labels.push(data.additional_label_values[label])
+        }
       }
     }
     return labels.join(' / ')

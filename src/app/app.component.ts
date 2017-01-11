@@ -6,6 +6,7 @@ import {Constants} from "./shared/costants";
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css']
 })
+
 export class AppComponent {
   application_url: string;
 
