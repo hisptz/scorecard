@@ -309,11 +309,11 @@ export class ViewComponent implements OnInit, AfterViewInit, OnDestroy {
                               if(indicator.showTopArrow[key] && indicator.values[key] != null && indicator.previous_values[key] != null){
                                 let  rise = indicator.values[key] - parseInt( indicator.previous_values[key]);
                                 //noinspection TypeScriptUnresolvedVariable
-                                indicator.tooltip[key] = indicator.name +" has raised by "+rise.toFixed(2)+" from "+this.getPeriodName(this.period.id)+ " for "+ data.metaData.names[key];
+                                indicator.tooltip[key] = indicator.title +" has raised by "+rise.toFixed(2)+" from "+this.getPeriodName(this.period.id)+ " for "+ data.metaData.names[key];
                               }if(indicator.showBottomArrow[key] && indicator.values[key] != null && indicator.previous_values[key] != null){
                                 let  rise = parseFloat( indicator.previous_values[key] ) - indicator.values[key];
                                 //noinspection TypeScriptUnresolvedVariable
-                                indicator.tooltip[key] = indicator.name +" has decreased by "+rise.toFixed(2)+" from "+this.getPeriodName(this.period.id)+ " for "+ data.metaData.names[key];
+                                indicator.tooltip[key] = indicator.title +" has decreased by "+rise.toFixed(2)+" from "+this.getPeriodName(this.period.id)+ " for "+ data.metaData.names[key];
                               }
                             }
                           }
@@ -405,11 +405,11 @@ export class ViewComponent implements OnInit, AfterViewInit, OnDestroy {
                             if(indicator.showTopArrow[key] && indicator.values[key] != null && indicator.previous_values[key] != null){
                               let  rise = indicator.values[key] - parseInt( indicator.previous_values[key]);
                               //noinspection TypeScriptUnresolvedVariable
-                              indicator.tooltip[key] = indicator.name +" has raised by "+rise.toFixed(2)+" from "+this.getPeriodName(this.period.id)+ " for "+ data.metaData.names[key];
+                              indicator.tooltip[key] = indicator.title +" has raised by "+rise.toFixed(2)+" from "+this.getPeriodName(this.period.id)+ " for "+ data.metaData.names[key];
                             }if(indicator.showBottomArrow[key] && indicator.values[key] != null && indicator.previous_values[key] != null){
                               let  rise = parseFloat( indicator.previous_values[key] ) - indicator.values[key];
                               //noinspection TypeScriptUnresolvedVariable
-                              indicator.tooltip[key] = indicator.name +" has decreased by "+rise.toFixed(2)+" from "+this.getPeriodName(this.period.id)+ " for "+ data.metaData.names[key];
+                              indicator.tooltip[key] = indicator.title +" has decreased by "+rise.toFixed(2)+" from "+this.getPeriodName(this.period.id)+ " for "+ data.metaData.names[key];
                             }
                           }
                         }
@@ -509,11 +509,11 @@ export class ViewComponent implements OnInit, AfterViewInit, OnDestroy {
                             if(indicator.showTopArrow[key] && indicator.values[key] != null && indicator.previous_values[key] != null){
                               let  rise = indicator.values[key] - parseInt( indicator.previous_values[key]);
                               //noinspection TypeScriptUnresolvedVariable
-                              indicator.tooltip[key] = indicator.name +" has raised by "+rise.toFixed(2)+" from "+this.getPeriodName(this.period.id)+ " for "+ data.metaData.names[key];
+                              indicator.tooltip[key] = indicator.title +" has raised by "+rise.toFixed(2)+" from "+this.getPeriodName(this.period.id)+ " for "+ data.metaData.names[key];
                             }if(indicator.showBottomArrow[key] && indicator.values[key] != null && indicator.previous_values[key] != null){
                               let  rise = parseFloat( indicator.previous_values[key] ) - indicator.values[key];
                               //noinspection TypeScriptUnresolvedVariable
-                              indicator.tooltip[key] = indicator.name +" has decreased by "+rise.toFixed(2)+" from "+this.getPeriodName(this.period.id)+ " for "+ data.metaData.names[key];
+                              indicator.tooltip[key] = indicator.title +" has decreased by "+rise.toFixed(2)+" from "+this.getPeriodName(this.period.id)+ " for "+ data.metaData.names[key];
                             }
                           }
                         }
