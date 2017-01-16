@@ -195,10 +195,10 @@
 
 <div class="container-fluid footer">
     <p style="margin: 3px">
-      <a (click)="updateIndicatorCard(indicator,icon.name, card_selected_periods, card_selected_orgunits)" *ngFor="let icon of icons" title="{{ icon.name }}" class="btn btn-small btn-info" style="background-color: #DDD; border-color: #5BC0DE;border-radius:50%;padding-bottom: 8px; padding-top: 10px;padding-left: 10px;margin-right: 2px;" [ngClass]="{'hidebutton':isTobehidden(icon.name)}"><img src="assets/img/{{icon.image}}" style="height: 25px;width: 25px"/></a>
-      <a (click)="updateIndicatorCard(indicator, 'csv', card_selected_periods, card_selected_orgunits)" title="Download Excel" class="btn btn-small btn-info" style="background-color: #DDD; border-color: #5BC0DE; border-radius:50%;padding-bottom: 8px; padding-top: 10px;padding-left: 10px;margin-right: 2px;"><img src="assets/img/cvs.jpg" style="height: 25px;width: 25px"/></a>
-      <a (click)="updateIndicatorCard(indicator,'info', card_selected_periods, card_selected_orgunits)"  title="card details" class="btn btn-small btn-info" style="background-color: #DDD; border-color: #5BC0DE; border-radius:50%;padding-bottom: 8px; padding-top: 10px;padding-left: 10px;margin-right: 2px;"><img src="assets/img/inficon.png" style="height: 25px;width: 25px"/></a>
-      <a (click)="switchXandY(current_visualisation)"  title="Switch X and Y axis" class="btn btn-small btn-info" style="background-color: #DDD; border-color: #5BC0DE; border-radius:50%;padding-bottom: 8px; padding-top: 10px;padding-left: 10px;margin-right: 2px;"><span class="glyphicon glyphicon-retweet" style="height: 25px;width: 25px"></span></a>
+      <a (click)="updateIndicatorCard(indicator,icon.name, card_selected_periods, card_selected_orgunits)" *ngFor="let icon of icons" title="{{ icon.name }}" class="btn btn-small btn-info visual-btn" [ngClass]="{'activebutton':icon.name == current_visualisation}"><img src="assets/img/{{icon.image}}" style="height: 25px;width: 25px"/></a>
+      <a (click)="updateIndicatorCard(indicator, 'csv', card_selected_periods, card_selected_orgunits)" title="Download Excel" class="btn btn-small btn-info visual-btn" ><img src="assets/img/cvs.jpg" style="height: 25px;width: 25px"/></a>
+      <a (click)="updateIndicatorCard(indicator,'info', card_selected_periods, card_selected_orgunits)"  title="card details" class="btn btn-small btn-info visual-btn" [ngClass]="{'activebutton':'info' == current_visualisation}"><span class="glyphicon-info-sign" style="font-size: 24px"></span></a>
+      <a (click)="switchXandY(current_visualisation)"  title="Switch X and Y axis" class="btn btn-small btn-info visual-btn"><span class="glyphicon glyphicon-retweet" style="font-size: 24px"></span></a>
       <button type="button" class="btn btn-default pull-right" (click)="removeModel()">Close</button>
     </p>
 </div>

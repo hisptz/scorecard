@@ -224,16 +224,23 @@
 </div>
 
 <!--loading message-->
-<div class="container-fluid no-print" *ngIf="loading" style="margin-top: 10px;padding-left: 5px">
-  <!--<img src="balls-5.svg" style="height: 70px; padding-top: 20px">-->
-  {{ loading_message }}
+  <div class="container-fluid no-print"  *ngIf="loading" style="margin-top: 10px;padding-left: 0px">
+    <div class="col-md-10 col-sm-10 col-xs-9">
+      <span>
+        {{ loading_message }}
+      </span>
+    </div>
+    <div class="col-md-2 col-sm-2 col-xs-3"><span class="pull-right">{{proccesed_indicators}}/{{ getIndicatorList(scorecard).length }} ( {{proccessed_percent | number : '1.2-2'}}% ) </span></div>
+  </div>
+  <div class="container-fluid no-print" *ngIf="loading" style="margin-top: 10px;padding-left: 0px">
+    <div class="col-md-12">
+      <div class="progress" style="height: 10px;">
+        <div class="progress-bar progress-bar-success  progress-bar-striped" role="progressbar" [attr.aria-valuenow]="proccessed_percent" [attr.aria-valuemin]="0" [attr.aria-valuemax]="100" [style.width]="proccessed_percent+'%'">
 
-  <div class="progress">
-    <div class="progress-bar" role="progressbar" [attr.aria-valuenow]="proccessed_percent" [attr.aria-valuemin]="0" [attr.aria-valuemax]="100" [style.width]="proccessed_percent+'%'">
-      {{ proccessed_percent | number : '1.2-2' }}%
+        </div>
+      </div>
     </div>
   </div>
-</div>
 
 <!--main scorecard area-->
 <div class="container-fluid" id="scorecard" style="padding-left: 5px;margin-top: 10px">
@@ -308,13 +315,21 @@
 
           <!--First child scorecard-->
           <!--First child scorecard-->
-          <div class="container-fluid no-print" *ngIf="subScoreCard.loading" style="margin-top: 10px;padding-left: 5px">
-            <!--<img src="loading.gif" style="height: 70px; padding-top: 20px">-->
-            {{ subScoreCard.loading_message }}
+          <!--loading message-->
+          <div class="container-fluid no-print"  *ngIf="subScoreCard.loading" style="margin-top: 10px;padding-left: 0px">
+            <div class="col-md-10 col-sm-10 col-xs-9">
+              <span>
+                {{ subScoreCard.loading_message }}
+              </span>
+            </div>
+            <div class="col-md-2 col-sm-2 col-xs-3"><span class="pull-right">{{children_proccesed_indicators}}/{{ getIndicatorList(scorecard).length }} ( {{ subScoreCard.proccessed_percent | number : '1.2-2' }}% ) </span></div>
+          </div>
+          <div class="container-fluid no-print"*ngIf="subScoreCard.loading" style="margin-top: 10px;padding-left: 0px">
+            <div class="col-md-12">
+              <div class="progress" style="height: 10px;">
+                <div class="progress-bar progress-bar-success  progress-bar-striped" [attr.aria-valuenow]="subScoreCard.proccessed_percent" [attr.aria-valuemin]="0" [attr.aria-valuemax]="100" [style.width]="subScoreCard.proccessed_percent+'%'">
 
-            <div class="progress">
-              <div class="progress-bar" role="progressbar" [attr.aria-valuenow]="subScoreCard.proccessed_percent" [attr.aria-valuemin]="0" [attr.aria-valuemax]="100" [style.width]="subScoreCard.proccessed_percent+'%'">
-                {{ subScoreCard.proccessed_percent | number : '1.2-2' }}%
+                </div>
               </div>
             </div>
           </div>
@@ -380,6 +395,7 @@
                       style="font-size: 10px;max-width: 90px;overflow-wrap: break-word; cursor: pointer; padding: 0px;line-height: 10%;"
                       class="sans-pro"
                       (click)="loadPreview(null,indicator,current_inner_orgunit.id)"
+                      title="{{ prepareTooltip(indicator,current_inner_orgunit.id) }}"
                   >
                     <svg-item [indicator]="indicator" [current_orgunit]="current_inner_orgunit" [indicator_list]="getVisibleIndicators(indicator)"></svg-item>
                   </td>
@@ -391,13 +407,21 @@
 
                     <!--Second child scorecard-->
                     <!--Second child scorecard-->
-                    <div class="container-fluid no-print" *ngIf="childrenSubScoreCard.loading" style="margin-top: 10px;padding-left: 5px">
-                      <!--<img src="loading.gif" style="height: 70px; padding-top: 20px">-->
-                      {{ childrenSubScoreCard.loading_message }}
+                    <!--loading message-->
+                    <div class="container-fluid no-print"  *ngIf="childrenSubScoreCard.loading" style="margin-top: 10px;padding-left: 0px">
+                      <div class="col-md-10 col-sm-10 col-xs-9">
+                        <span>
+                          {{ childrenSubScoreCard.loading_message }}
+                        </span>
+                      </div>
+                      <div class="col-md-2 col-sm-2 col-xs-3"><span class="pull-right">{{grand_proccesed_indicators}}/{{ getIndicatorList(scorecard).length }} ( {{ childrenSubScoreCard.proccessed_percent | number : '1.2-2' }}% ) </span></div>
+                    </div>
+                    <div class="container-fluid no-print" *ngIf="childrenSubScoreCard.loading" style="margin-top: 10px;padding-left: 0px">
+                      <div class="col-md-12">
+                        <div class="progress" style="height: 10px;">
+                          <div class="progress-bar progress-bar-success  progress-bar-striped" role="progressbar" [attr.aria-valuenow]="childrenSubScoreCard.proccessed_percent" [attr.aria-valuemin]="0" [attr.aria-valuemax]="100" [style.width]="childrenSubScoreCard.proccessed_percent+'%'">
 
-                      <div class="progress">
-                        <div class="progress-bar" role="progressbar" [attr.aria-valuenow]="childrenSubScoreCard.proccessed_percent" [attr.aria-valuemin]="0" [attr.aria-valuemax]="100" [style.width]="childrenSubScoreCard.proccessed_percent+'%'">
-                          {{ childrenSubScoreCard.proccessed_percent | number : '1.2-2' }}%
+                          </div>
                         </div>
                       </div>
                     </div>
@@ -460,7 +484,10 @@
                               {{ children_inner_orgunit.name }}
                             </td>
                             <td *ngFor="let indicator of getItemsFromGroups()"
-                                style="font-size: 10px;max-width: 90px;overflow-wrap: break-word; cursor: pointer; padding: 0px;line-height: 10%;"  class="sans-pro" (click)="loadPreview(null,indicator,children_inner_orgunit.id)">
+                                style="font-size: 10px;max-width: 90px;overflow-wrap: break-word; cursor: pointer; padding: 0px;line-height: 10%;"  class="sans-pro"
+                                (click)="loadPreview(null,indicator,children_inner_orgunit.id)"
+                                title="{{ prepareTooltip(indicator,children_inner_orgunit.id) }}"
+                            >
                               <svg-item [indicator]="indicator" [current_orgunit]="children_inner_orgunit" [indicator_list]="getVisibleIndicators(indicator)"></svg-item>
                             </td>
                             <td style="line-height: 80%;padding: 8px" *ngIf="show_sum_in_row">{{ findRowSum(children_inner_orgunit.id) | number : '1.2-2' }}</td>

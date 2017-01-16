@@ -240,6 +240,7 @@ export class ViewComponent implements OnInit, AfterViewInit, OnDestroy {
   indicator_loading: boolean[] = [];
   indicator_done_loading: boolean[] = [];
   old_proccessed_percent = 0;
+  proccesed_indicators = 0;
   loadScoreCard( orgunit: any = null ){
     this.indicator_done_loading = [];
     this.proccessed_percent = 0;
@@ -256,12 +257,18 @@ export class ViewComponent implements OnInit, AfterViewInit, OnDestroy {
           data: scorecard_details
         };
 
-        let proccesed_indicators = 0;
+        this.proccesed_indicators = 0;
         let old_proccesed_indicators = 0;
         let use_period = this.period.id+";"+this.filterService.getLastPeriod(this.period.id,this.period_type);
         let indicator_list = this.getIndicatorList(this.scorecard);
         for( let holder of this.scorecard.data.data_settings.indicator_holders ){
           for( let indicator of holder.indicators ){
+            if( typeof indicator.custom_function == "function"){
+              console.log("Ni function")
+            }else{
+              console.log("sio function")
+            }
+            console.log(indicator.custom_function)
             indicator['values'] = [];
             indicator['tooltip'] = [];
             indicator['previous_values'] = [];
@@ -273,9 +280,9 @@ export class ViewComponent implements OnInit, AfterViewInit, OnDestroy {
                 (data) => {
                   indicator.loading = false;
                   this.loading_message = " Done Fetching data for "+indicator.title;
-                  proccesed_indicators++;
-                  this.proccessed_percent = (proccesed_indicators / indicator_list.length) * 100;
-                  if(proccesed_indicators == indicator_list.length ){
+                  this.proccesed_indicators++;
+                  this.proccessed_percent = (this.proccesed_indicators / indicator_list.length) * 100;
+                  if(this.proccesed_indicators == indicator_list.length ){
                     this.loading = false;
                   }
                   //noinspection TypeScriptUnresolvedVariable
@@ -306,11 +313,13 @@ export class ViewComponent implements OnInit, AfterViewInit, OnDestroy {
                               let check1 = parseInt( indicator.values[key] ) < (parseInt( indicator.previous_values[key] ) - effective_gap );
                               indicator.showTopArrow[key] = check;
                               indicator.showBottomArrow[key] = check1;
-                              if(indicator.showTopArrow[key] && indicator.values[key] != null && indicator.previous_values[key] != null){
+                              //noinspection TypeScriptUnresolvedVariable
+                              if(indicator.showTopArrow[key] && indicator.values[key] != null && indicator.previous_values[key] != null && olddata.metaData.names.hasOwnProperty(key)){
                                 let  rise = indicator.values[key] - parseInt( indicator.previous_values[key]);
                                 //noinspection TypeScriptUnresolvedVariable
                                 indicator.tooltip[key] = indicator.title +" has raised by "+rise.toFixed(2)+" from "+this.getPeriodName(this.period.id)+ " for "+ data.metaData.names[key];
-                              }if(indicator.showBottomArrow[key] && indicator.values[key] != null && indicator.previous_values[key] != null){
+                              }//noinspection TypeScriptUnresolvedVariable
+                              if(indicator.showBottomArrow[key] && indicator.values[key] != null && indicator.previous_values[key] != null && olddata.metaData.names.hasOwnProperty(key)){
                                 let  rise = parseFloat( indicator.previous_values[key] ) - indicator.values[key];
                                 //noinspection TypeScriptUnresolvedVariable
                                 indicator.tooltip[key] = indicator.title +" has decreased by "+rise.toFixed(2)+" from "+this.getPeriodName(this.period.id)+ " for "+ data.metaData.names[key];
@@ -337,6 +346,7 @@ export class ViewComponent implements OnInit, AfterViewInit, OnDestroy {
   // loading sub orgunit details
   showSubScorecard: any[] = [];
   subScoreCard: any = {};
+  children_proccesed_indicators = 0;
   loadChildrenData(selectedorgunit){
     if( selectedorgunit.is_parent || this.showSubScorecard[selectedorgunit.id]){
       this.showSubScorecard = [];
@@ -354,7 +364,7 @@ export class ViewComponent implements OnInit, AfterViewInit, OnDestroy {
       this.showPerTree = true;
       this.subScoreCard.loading_message = " Getting scorecard details ";
       this.showSubScorecard[selectedorgunit.id] = true;
-      let proccesed_indicators = 0;
+      this.children_proccesed_indicators = 0;
       let old_proccesed_indicators = 0;
       let orgunit_with_children = this.orgtree.treeModel.getNodeById(selectedorgunit.id);
       let indicator_list = this.getIndicatorList(this.scorecard);
@@ -369,9 +379,9 @@ export class ViewComponent implements OnInit, AfterViewInit, OnDestroy {
               (data) => {
                 indicator.loading = false;
                 this.subScoreCard.loading_message = " Done Fetching data for "+indicator.title;
-                proccesed_indicators++;
-                this.subScoreCard.proccessed_percent = (proccesed_indicators / indicator_list.length) * 100;
-                if(proccesed_indicators == indicator_list.length ){
+                this.children_proccesed_indicators++;
+                this.subScoreCard.proccessed_percent = (this.children_proccesed_indicators / indicator_list.length) * 100;
+                if(this.children_proccesed_indicators == indicator_list.length ){
                   this.subScoreCard.loading = false;
                 }
                 //noinspection TypeScriptUnresolvedVariable
@@ -402,11 +412,13 @@ export class ViewComponent implements OnInit, AfterViewInit, OnDestroy {
                             let check1 = parseInt( indicator.values[key] ) < ( parseInt( indicator.previous_values[key] ) - effective_gap );
                             indicator.showTopArrow[key] = check;
                             indicator.showBottomArrow[key] = check1;
-                            if(indicator.showTopArrow[key] && indicator.values[key] != null && indicator.previous_values[key] != null){
+                            //noinspection TypeScriptUnresolvedVariable
+                            if(indicator.showTopArrow[key] && indicator.values[key] != null && indicator.previous_values[key] != null && olddata.metaData.names.hasOwnProperty(key)){
                               let  rise = indicator.values[key] - parseInt( indicator.previous_values[key]);
                               //noinspection TypeScriptUnresolvedVariable
                               indicator.tooltip[key] = indicator.title +" has raised by "+rise.toFixed(2)+" from "+this.getPeriodName(this.period.id)+ " for "+ data.metaData.names[key];
-                            }if(indicator.showBottomArrow[key] && indicator.values[key] != null && indicator.previous_values[key] != null){
+                            }//noinspection TypeScriptUnresolvedVariable
+                            if(indicator.showBottomArrow[key] && indicator.values[key] != null && indicator.previous_values[key] != null && olddata.metaData.names.hasOwnProperty(key)){
                               let  rise = parseFloat( indicator.previous_values[key] ) - indicator.values[key];
                               //noinspection TypeScriptUnresolvedVariable
                               indicator.tooltip[key] = indicator.title +" has decreased by "+rise.toFixed(2)+" from "+this.getPeriodName(this.period.id)+ " for "+ data.metaData.names[key];
@@ -441,6 +453,7 @@ export class ViewComponent implements OnInit, AfterViewInit, OnDestroy {
   // loading sub orgunit details
   showChildrenSubScorecard: any[] = [];
   childrenSubScoreCard: any = {};
+  grand_proccesed_indicators = 0;
   loadGrandChildrenData(selectedorgunit){
     if( selectedorgunit.is_parent || this.showChildrenSubScorecard[selectedorgunit.id] ){
       this.showChildrenSubScorecard = [];
@@ -458,7 +471,7 @@ export class ViewComponent implements OnInit, AfterViewInit, OnDestroy {
       this.showPerTree = true;
       this.childrenSubScoreCard.loading_message = " Getting scorecard details ";
       this.showChildrenSubScorecard[selectedorgunit.id] = true;
-      let proccesed_indicators = 0;
+      this.grand_proccesed_indicators = 0;
       let old_proccesed_indicators = 0;
       let orgunit_with_children = this.orgtree.treeModel.getNodeById(selectedorgunit.id);
       let indicator_list = this.getIndicatorList(this.scorecard);
@@ -473,9 +486,9 @@ export class ViewComponent implements OnInit, AfterViewInit, OnDestroy {
               (data) => {
                 indicator.loading = false;
                 this.childrenSubScoreCard.loading_message = " Done Fetching data for "+indicator.title;
-                proccesed_indicators++;
-                this.childrenSubScoreCard.proccessed_percent = (proccesed_indicators / indicator_list.length) * 100;
-                if(proccesed_indicators == indicator_list.length ){
+                this.grand_proccesed_indicators++;
+                this.childrenSubScoreCard.proccessed_percent = (this.grand_proccesed_indicators / indicator_list.length) * 100;
+                if(this.grand_proccesed_indicators == indicator_list.length ){
                   this.childrenSubScoreCard.loading = false;
                 }
                 //noinspection TypeScriptUnresolvedVariable
@@ -506,11 +519,13 @@ export class ViewComponent implements OnInit, AfterViewInit, OnDestroy {
                             let check1 = parseInt( indicator.values[key] ) < ( parseInt( indicator.previous_values[key] ) - effective_gap );
                             indicator.showTopArrow[key] = check;
                             indicator.showBottomArrow[key] = check1;
-                            if(indicator.showTopArrow[key] && indicator.values[key] != null && indicator.previous_values[key] != null){
+                            //noinspection TypeScriptUnresolvedVariable
+                            if(indicator.showTopArrow[key] && indicator.values[key] != null && indicator.previous_values[key] != null && olddata.metaData.names.hasOwnProperty(key)){
                               let  rise = indicator.values[key] - parseInt( indicator.previous_values[key]);
                               //noinspection TypeScriptUnresolvedVariable
                               indicator.tooltip[key] = indicator.title +" has raised by "+rise.toFixed(2)+" from "+this.getPeriodName(this.period.id)+ " for "+ data.metaData.names[key];
-                            }if(indicator.showBottomArrow[key] && indicator.values[key] != null && indicator.previous_values[key] != null){
+                            }//noinspection TypeScriptUnresolvedVariable
+                            if(indicator.showBottomArrow[key] && indicator.values[key] != null && indicator.previous_values[key] != null && olddata.metaData.names.hasOwnProperty(key)){
                               let  rise = parseFloat( indicator.previous_values[key] ) - indicator.values[key];
                               //noinspection TypeScriptUnresolvedVariable
                               indicator.tooltip[key] = indicator.title +" has decreased by "+rise.toFixed(2)+" from "+this.getPeriodName(this.period.id)+ " for "+ data.metaData.names[key];
@@ -804,6 +819,24 @@ export class ViewComponent implements OnInit, AfterViewInit, OnDestroy {
   displayPerTree(){
     this.showPerTree = !this.showPerTree;
   }
+
+  // action to be called when a tree item is deselected(Remove item in array of selected items
+  deactivateOrg ( $event ) {
+    // this.card_selected_orgunits.forEach((item,index) => {
+    //   if( $event.node.data.id == item.id ) {
+    //     this.card_selected_orgunits.splice(index, 1);
+    //   }
+    // });
+  };
+
+  // action to be called when a tree item is deselected(Remove item in array of selected items
+  deactivatePer ( $event ) {
+    // this.card_selected_periods.forEach((item,index) => {
+    //   if( $event.node.data.id == item.id ) {
+    //     this.card_selected_periods.splice(index, 1);
+    //   }
+    // });
+  };
 
   // add item to array of selected items when item is selected
   activateOrg = ($event) => {

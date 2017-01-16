@@ -530,17 +530,7 @@ export class IndicatorCardComponent implements OnInit, AfterViewInit, OnDestroy 
 
   // dynamic dertimine if a chart type is supposed to be shown or not
   isTobehidden(type:string): boolean{
-    let hideThis =  false
-    if(type == 'area'){
-      hideThis = false;
-    }if(type == 'line'){
-      hideThis = false;
-    }if(type == 'radar'){
-      hideThis = false;
-    }if(type == 'gauge'){
-      hideThis = false;
-    }
-    return hideThis;
+    return type == this.current_visualisation
   }
 
   getIndicatorLength(holder){

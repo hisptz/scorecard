@@ -35,6 +35,18 @@
   overflow: auto;
   padding: 10px 5px;
 }
+.visual-btn{
+  background-color: #DDD;
+  border-color: #5BC0DE;
+  border-radius:50%;
+  padding-bottom: 8px;
+  padding-top: 10px;
+  padding-left: 10px;
+  margin-right: 2px;
+}
+.activeButton{
+  background-color: #5BC0DE;
+}
 
 .tree-area{
   max-height: 270px;

@@ -141,6 +141,8 @@ export class UpdateComponent implements OnInit ,AfterViewInit, OnDestroy{
               for( let indicator of item.indicators ){
                 if(!indicator.hasOwnProperty("bottleneck_indicators")){
                   indicator.bottleneck_indicators = [];
+                }if(!indicator.hasOwnProperty("custom_function")){
+                  indicator.custom_function = "function () {console.log('running') }";
                 }
               }
               j++;
