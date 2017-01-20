@@ -2,6 +2,14 @@
 
 This project was generated with [angular-cli](https://github.com/angular/angular-cli) version 1.0.0-beta.21.
 
+## Dependencies
+
+This app uses two github module as submodules to make it work after fetching the codes
+apply the following
+```
+git submodule init
+git submodule update
+```
 ## Development server
 Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The app will automatically reload if you change any of the source files.
 

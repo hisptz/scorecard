@@ -70,25 +70,27 @@ export class DataService {
   //sorting an array of object
   sortArrOfObjectsByParam (arrToSort: Array<any>, strObjParamToSortBy: string, sortAscending: boolean = true) {
     if( sortAscending == undefined ) sortAscending = true;  // default to true
+    if( arrToSort ){
+      if( sortAscending ) {
+        arrToSort.sort( function ( a, b ) {
+          if( a[strObjParamToSortBy] > b[strObjParamToSortBy] ){
+            return 1;
+          }else{
+            return -1;
+          }
+        });
+      }
+      else {
+        arrToSort.sort(function (a, b) {
+          if( a[strObjParamToSortBy] < b[strObjParamToSortBy] ){
+            return 1;
+          }else {
+            return -1
+          }
+        });
+      }
+    }
 
-    if( sortAscending ) {
-      arrToSort.sort( function ( a, b ) {
-        if( a[strObjParamToSortBy] > b[strObjParamToSortBy] ){
-          return 1;
-        }else{
-          return -1;
-        }
-      });
-    }
-    else {
-      arrToSort.sort(function (a, b) {
-        if( a[strObjParamToSortBy] < b[strObjParamToSortBy] ){
-          return 1;
-        }else {
-          return -1
-        }
-      });
-    }
   }
   // Get system wide settings
   getOrgunitDetails (orgunit) {
