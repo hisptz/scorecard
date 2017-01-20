@@ -12,21 +12,14 @@ export class DataService {
 
   nodes: any = null;
   /////////OrgUnit Tree items/////////////////
-  generateUrlBasedOnLevels (level: number){
-    var fields: string;
-    if ( level == 1 ) {
-      fields = 'id,name';
-    }else if ( level == 2 ) {
-      fields = 'id,name,children[id,name]';
-    }else if ( level == 3 ) {
-      fields = 'id,name,children[id,name,children[id,name]]';
-    }else if ( level == 4 ) {
-      fields = 'id,name,children[id,name,children[id,name,children[id,name]]]';
-    }else if ( level == 5 ) {
-      fields = 'id,name,children[id,name,children[id,name,children[id,name,children[id,name]]]]';
+  generateUrlBasedOnLevels (level: number): string{
+    let childrenLevels = "[]";
+    for (let i = 1; i < level+1; i++) {
+      childrenLevels = childrenLevels.replace("[]", "[id,level,name,children[]]")
     }
-
-    return fields;
+    let new_string = childrenLevels.substring(1);
+    new_string = new_string.replace(",children[]","");
+    return new_string;
   }
 
   // Get system wide settings
@@ -65,12 +58,28 @@ export class DataService {
   }
 
   //////////////////end of orgunit tree items////////////
-
+  prepareOrganisationUnitTree(organisationUnit) {
+    if (organisationUnit.children) {
+      organisationUnit.children.sort((a, b) => {
+        if (a.name > b.name) {
+          return 1;
+        }
+        if (a.name < b.name) {
+          return -1;
+        }
+        // a must be equal to b
+        return 0;
+      })
+      organisationUnit.children.forEach((child) => {
+        this.prepareOrganisationUnitTree(child)
+      })
+    }
+  }
 
   //sorting an array of object
   sortArrOfObjectsByParam (arrToSort: Array<any>, strObjParamToSortBy: string, sortAscending: boolean = true) {
     if( sortAscending == undefined ) sortAscending = true;  // default to true
-    if( arrToSort ){
+    // if( arrToSort ){
       if( sortAscending ) {
         arrToSort.sort( function ( a, b ) {
           if( a[strObjParamToSortBy] > b[strObjParamToSortBy] ){
@@ -89,7 +98,7 @@ export class DataService {
           }
         });
       }
-    }
+    // }
 
   }
   // Get system wide settings

@@ -179,13 +179,15 @@ export class ViewComponent implements OnInit, AfterViewInit, OnDestroy {
                 };
                 this.loadScoreCard();
                 this.organisationunits = initial_data.organisationUnits;
+                this.prepareOrganisationUnitTree(this.organisationunits);
                 let fields = this.orgunitService.generateUrlBasedOnLevels( data.pager.total);
+                console.log(fields);
                 this.orgunitService.getAllOrgunitsForTree( fields )
                   .subscribe(
                     (orgUnits: any) => {
                       this.organisationunits = orgUnits.organisationUnits;
                       this.orgunitService.nodes = orgUnits.organisationUnits;
-                      this.orgunitService.sortOrgUnits( data.pager.total );
+                      this.prepareOrganisationUnitTree(this.organisationunits);
                       this.activateNode(this.orgUnit.id, this.orgtree);
                       this.orgunit_tree_config.loading = false;
                     },
@@ -213,8 +215,8 @@ export class ViewComponent implements OnInit, AfterViewInit, OnDestroy {
 
       this.organisationunits = this.orgunitService.nodes;
       this.activateNode(this.orgUnit.id, this.orgtree);
+      this.prepareOrganisationUnitTree(this.organisationunits);
       // TODO: make a sort level information dynamic
-      this.orgunitService.sortOrgUnits( 4 );
       this.loadScoreCard();
     }
 
@@ -222,6 +224,46 @@ export class ViewComponent implements OnInit, AfterViewInit, OnDestroy {
 
   ngAfterViewInit(){
     this.activateNode(this.period.id, this.pertree);
+
+
+  }
+
+  prepareOrganisationUnitTree(organisationUnit,type:string='top') {
+    if (type == "top"){
+      if (organisationUnit.children) {
+        organisationUnit.children.sort((a, b) => {
+          if (a.name > b.name) {
+            return 1;
+          }
+          if (a.name < b.name) {
+            return -1;
+          }
+          // a must be equal to b
+          return 0;
+        });
+        organisationUnit.children.forEach((child) => {
+          this.prepareOrganisationUnitTree(child,'top');
+        })
+      }
+    }else{
+      organisationUnit.forEach((orgunit) => {
+        if (orgunit.children) {
+          organisationUnit.children.sort((a, b) => {
+            if (a.name > b.name) {
+              return 1;
+            }
+            if (a.name < b.name) {
+              return -1;
+            }
+            // a must be equal to b
+            return 0;
+          });
+          organisationUnit.children.forEach((child) => {
+            this.prepareOrganisationUnitTree(child,'top');
+          })
+        }
+      });
+    }
 
 
   }
@@ -263,12 +305,6 @@ export class ViewComponent implements OnInit, AfterViewInit, OnDestroy {
         let indicator_list = this.getIndicatorList(this.scorecard);
         for( let holder of this.scorecard.data.data_settings.indicator_holders ){
           for( let indicator of holder.indicators ){
-            if( typeof indicator.custom_function == "function"){
-              console.log("Ni function")
-            }else{
-              console.log("sio function")
-            }
-            console.log(indicator.custom_function)
             indicator['values'] = [];
             indicator['tooltip'] = [];
             indicator['previous_values'] = [];

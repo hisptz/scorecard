@@ -35,43 +35,47 @@ export class OrgUnitService {
   }
 
   // sort organisation units up to a certain level
-  sortOrgUnits ( level ) {
+  sortOrgUnits ( nodes ) {
     let main = [];
-    this.sortArrOfObjectsByParam( this.nodes, 'name' );
-    for ( let data of this.nodes ){
-      if( level > 1) {
-        this.sortArrOfObjectsByParam( data.children, 'name' );
-        if( level > 2 ){
-          for ( let subdata of data.children ) {
-            this.sortArrOfObjectsByParam( subdata.children, 'name' );
-            if( level > 3 ){
-              for ( let subdata1 of subdata.children ) {
-                this.sortArrOfObjectsByParam( subdata1.children, 'name' );
-              }
-            }
-          }
+    this.sortArrOfObjectsByParam(nodes, 'name');
+    console.log(nodes)
+    nodes.forEach((item) => {
+      item.children.forEach((child) => {
+        if(child.hasOwnProperty("children")){
+          this.sortOrgUnits(child)
         }
+      });
+    });
 
-      }
-    }
+    return nodes;
+    // this.sortArrOfObjectsByParam( this.nodes, 'name' );
+    // for ( let data of this.nodes ){
+    //   if( level > 1) {
+    //     this.sortArrOfObjectsByParam( data.children, 'name' );
+    //     if( level > 2 ){
+    //       for ( let subdata of data.children ) {
+    //         this.sortArrOfObjectsByParam( subdata.children, 'name' );
+    //         if( level > 3 ){
+    //           for ( let subdata1 of subdata.children ) {
+    //             this.sortArrOfObjectsByParam( subdata1.children, 'name' );
+    //           }
+    //         }
+    //       }
+    //     }
+    //
+    //   }
+    // }
   }
 
   // Generate Organisation unit url based on the level needed
-  generateUrlBasedOnLevels (level: number){
-    var fields: string;
-    if ( level == 1 ) {
-      fields = 'id,name';
-    }else if ( level == 2 ) {
-      fields = 'id,name,children[id,name]';
-    }else if ( level == 3 ) {
-      fields = 'id,name,children[id,name,children[id,name]]';
-    }else if ( level == 4 ) {
-      fields = 'id,name,children[id,name,children[id,name,children[id,name]]]';
-    }else if ( level == 5 ) {
-      fields = 'id,name,children[id,name,children[id,name,children[id,name,children[id,name]]]]';
+  generateUrlBasedOnLevels (level){
+    let childrenLevels = "[]";
+    for (let i = 1; i < level+1; i++) {
+      childrenLevels = childrenLevels.replace("[]", "[id,level,name,children[]]")
     }
-
-    return fields;
+    let new_string = childrenLevels.substring(1);
+    new_string = new_string.replace(",children[]]","");
+    return new_string;
   }
 
   // Get system wide settings
