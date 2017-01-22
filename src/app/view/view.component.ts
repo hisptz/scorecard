@@ -15,6 +15,7 @@ import {Angular2Csv} from "angular2-csv";
 import {forEach} from "@angular/router/src/utils/collection";
 import Key = webdriver.Key;
 import {isUndefined} from "util";
+import {initDomAdapter} from "@angular/platform-browser/src/browser";
 
 const actionMapping:IActionMapping = {
   mouse: {
@@ -181,7 +182,6 @@ export class ViewComponent implements OnInit, AfterViewInit, OnDestroy {
                 this.organisationunits = initial_data.organisationUnits;
                 this.prepareOrganisationUnitTree(this.organisationunits);
                 let fields = this.orgunitService.generateUrlBasedOnLevels( data.pager.total);
-                console.log(fields);
                 this.orgunitService.getAllOrgunitsForTree( fields )
                   .subscribe(
                     (orgUnits: any) => {
@@ -224,8 +224,6 @@ export class ViewComponent implements OnInit, AfterViewInit, OnDestroy {
 
   ngAfterViewInit(){
     this.activateNode(this.period.id, this.pertree);
-
-
   }
 
   prepareOrganisationUnitTree(organisationUnit,type:string='top') {
@@ -353,12 +351,12 @@ export class ViewComponent implements OnInit, AfterViewInit, OnDestroy {
                               if(indicator.showTopArrow[key] && indicator.values[key] != null && indicator.previous_values[key] != null && olddata.metaData.names.hasOwnProperty(key)){
                                 let  rise = indicator.values[key] - parseInt( indicator.previous_values[key]);
                                 //noinspection TypeScriptUnresolvedVariable
-                                indicator.tooltip[key] = indicator.title +" has raised by "+rise.toFixed(2)+" from "+this.getPeriodName(this.period.id)+ " for "+ data.metaData.names[key];
+                                indicator.tooltip[key] = indicator.title +" has raised by "+rise.toFixed(2)+" from "+this.getPeriodName(this.period.id)+ " for "+ data.metaData.names[key]+" (Minimum gap "+indicator.arrow_settings.effective_gap+")";
                               }//noinspection TypeScriptUnresolvedVariable
                               if(indicator.showBottomArrow[key] && indicator.values[key] != null && indicator.previous_values[key] != null && olddata.metaData.names.hasOwnProperty(key)){
                                 let  rise = parseFloat( indicator.previous_values[key] ) - indicator.values[key];
                                 //noinspection TypeScriptUnresolvedVariable
-                                indicator.tooltip[key] = indicator.title +" has decreased by "+rise.toFixed(2)+" from "+this.getPeriodName(this.period.id)+ " for "+ data.metaData.names[key];
+                                indicator.tooltip[key] = indicator.title +" has decreased by "+rise.toFixed(2)+" from "+this.getPeriodName(this.period.id)+ " for "+ data.metaData.names[key]+" (Minimum gap "+indicator.arrow_settings.effective_gap+")";
                               }
                             }
                           }
@@ -452,12 +450,12 @@ export class ViewComponent implements OnInit, AfterViewInit, OnDestroy {
                             if(indicator.showTopArrow[key] && indicator.values[key] != null && indicator.previous_values[key] != null && olddata.metaData.names.hasOwnProperty(key)){
                               let  rise = indicator.values[key] - parseInt( indicator.previous_values[key]);
                               //noinspection TypeScriptUnresolvedVariable
-                              indicator.tooltip[key] = indicator.title +" has raised by "+rise.toFixed(2)+" from "+this.getPeriodName(this.period.id)+ " for "+ data.metaData.names[key];
+                              indicator.tooltip[key] = indicator.title +" has raised by "+rise.toFixed(2)+" from "+this.getPeriodName(this.period.id)+ " for "+ data.metaData.names[key]+" (Minimum gap "+indicator.arrow_settings.effective_gap+")";
                             }//noinspection TypeScriptUnresolvedVariable
                             if(indicator.showBottomArrow[key] && indicator.values[key] != null && indicator.previous_values[key] != null && olddata.metaData.names.hasOwnProperty(key)){
                               let  rise = parseFloat( indicator.previous_values[key] ) - indicator.values[key];
                               //noinspection TypeScriptUnresolvedVariable
-                              indicator.tooltip[key] = indicator.title +" has decreased by "+rise.toFixed(2)+" from "+this.getPeriodName(this.period.id)+ " for "+ data.metaData.names[key];
+                              indicator.tooltip[key] = indicator.title +" has decreased by "+rise.toFixed(2)+" from "+this.getPeriodName(this.period.id)+ " for "+ data.metaData.names[key]+" (Minimum gap "+indicator.arrow_settings.effective_gap+")";
                             }
                           }
                         }
@@ -559,12 +557,12 @@ export class ViewComponent implements OnInit, AfterViewInit, OnDestroy {
                             if(indicator.showTopArrow[key] && indicator.values[key] != null && indicator.previous_values[key] != null && olddata.metaData.names.hasOwnProperty(key)){
                               let  rise = indicator.values[key] - parseInt( indicator.previous_values[key]);
                               //noinspection TypeScriptUnresolvedVariable
-                              indicator.tooltip[key] = indicator.title +" has raised by "+rise.toFixed(2)+" from "+this.getPeriodName(this.period.id)+ " for "+ data.metaData.names[key];
+                              indicator.tooltip[key] = indicator.title +" has raised by "+rise.toFixed(2)+" from "+this.getPeriodName(this.period.id)+ " for "+ data.metaData.names[key]+" (Minimum gap "+indicator.arrow_settings.effective_gap+")";
                             }//noinspection TypeScriptUnresolvedVariable
                             if(indicator.showBottomArrow[key] && indicator.values[key] != null && indicator.previous_values[key] != null && olddata.metaData.names.hasOwnProperty(key)){
                               let  rise = parseFloat( indicator.previous_values[key] ) - indicator.values[key];
                               //noinspection TypeScriptUnresolvedVariable
-                              indicator.tooltip[key] = indicator.title +" has decreased by "+rise.toFixed(2)+" from "+this.getPeriodName(this.period.id)+ " for "+ data.metaData.names[key];
+                              indicator.tooltip[key] = indicator.title +" has decreased by "+rise.toFixed(2)+" from "+this.getPeriodName(this.period.id)+ " for "+ data.metaData.names[key]+" (Minimum gap "+indicator.arrow_settings.effective_gap+")";
                             }
                           }
                         }
@@ -1202,6 +1200,14 @@ export class ViewComponent implements OnInit, AfterViewInit, OnDestroy {
       }
     }
     return labels.join(' / ')
+  }
+
+  getCursorStyle(orgunit){
+    if(orgunit.is_parent){
+      return "default"
+    }else{
+      return "pointer"
+    }
   }
   ngOnDestroy (){
     if( this.subscription ){

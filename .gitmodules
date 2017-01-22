@@ -3,4 +3,4 @@
 	url = git@github.com:hisptz/ng2-dhis-visualizer.git
 [submodule "src/app/view/metadatadictionarycomponent"]
 	path = src/app/view/metadatadictionarycomponent
-	url = git@github.com:hisptz/metadatadictionarycomponent.git
+	url = https://github.com/hisptz/ng2-metadata-dictionary.git

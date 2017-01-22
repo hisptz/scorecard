@@ -121,7 +121,9 @@
         <label for="title" style="padding-top: 3px">Title</label>
         <input type="text" class="form-control input-sm" #title id="title" placeholder="Title" style="height: 25px; margin-top: 5px" [(ngModel)]="scorecard.data.header.title">
       </div>
-      <p class="help-block">Scorecard title. <a class="btn btn-xs btn-default" (click)="showTextEditor()">custom header</a></p>
+      <p class="help-block"> <a class="btn btn-xs btn-default" (click)="showTextEditor()">
+        <i class="glyphicon glyphicon-pencil"></i> custom header
+      </a></p>
       <div class="form-group">
         <label for="description">Description</label>
         <textarea class="form-control input-sm" #description id="description" placeholder="Scorecard description" [(ngModel)]="scorecard.data.header.description"></textarea>
@@ -173,8 +175,8 @@
       <div class="form-group" >
         <label title="this will be used to add additional information about the scorecard item (eg. source of data)" style="margin-top: 5px">Additional labels</label>
         <div class="col-sm-10" style="padding-left: 5px"><input class="form-control input-sm" style="height: 25px" [(ngModel)]="newLabel"></div>
-        <div class="col-sm-2"><button title="click to add new label" class="btn btn-xs btn-success pull-right" style="-webkit-border-radius:50%;-moz-border-radius:50%;border-radius: 50%;" (click)="addAditionalLabel()">
-          <span class="glyphicon glyphicon-ok"></span>
+        <div class="col-sm-2"><button title="click to add new label eg source of data for indicator" class="btn btn-xs btn-success pull-right" style="-webkit-border-radius:50%;-moz-border-radius:50%;border-radius: 50%;" (click)="addAditionalLabel()">
+          <span class="glyphicon glyphicon-plus"></span>
         </button> </div>
         <div class="container-fluid" style="padding-left: 5px" *ngFor="let label of scorecard.data.additional_labels">
           <div class="col-sm-10" style="padding: 0px">{{ label }}</div>
@@ -280,10 +282,10 @@
           </div>
           <div  style="padding-bottom: 5px">
             <div class="col-sm-3">
-              <label class="sans-pro lebal">Effective Gap:</label>
+              <label class="sans-pro lebal" title="activate up/down arrow if difference between previous and present value exceeds {{indicator.arrow_settings.effective_gap}}">Effective Gap:</label>
             </div>
             <div class="col-sm-3">
-              <input type="number" min="0" [(ngModel)]="indicator.arrow_settings.effective_gap" class="form-control input-sm" [disabled]="!indicator.arrow_settings.display"/>
+              <input type="number" min="0" [(ngModel)]="indicator.arrow_settings.effective_gap" class="form-control input-sm" [disabled]="!indicator.arrow_settings.display" title="activate up/down arrow if difference between previous and present value exceeds {{indicator.arrow_settings.effective_gap}}"/>
             </div>
             <div class="col-sm-4">
               <label class="sans-pro lebal">Display arrows:</label>

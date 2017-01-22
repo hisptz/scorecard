@@ -41,8 +41,13 @@
   </div>
 </div>
 
+<div class="row">
+  <div class="col-sm-1"></div>
+  <div class="col-sm-10"></div>
+  <div class="col-sm-1"></div>
+</div>
 <div class="container-fluid" style="padding-left: 0px; border-top: 1px solid blanchedalmond; margin-top: 20px; padding-top: 23px" *ngIf="scorecards.length != 0 && !scorecards_loading" >
-  <div class="col-sm-4" *ngFor="let scorecard of scorecards | scoreCardFilter:queryterm | paginate: { itemsPerPage: 3, currentPage: p } " style="padding-left: 0px">
+  <div [@visibilityChanged] class="col-sm-4" *ngFor="let scorecard of scorecards | scoreCardFilter:queryterm | paginate: config " style="padding-left: 0px">
     <div class="thumbnail scorecard_details">
 
       <div style="height:270px; padding-top: 50px" [routerLink]="['view',scorecard.id]">
@@ -77,6 +82,28 @@
 </div>
 
 
-<div class="row">
-  <pagination-controls (pageChange)="p = $event" autoHide="true" maxSize="5"></pagination-controls>
+<div class="row text-center" style="margin-right: 25px">
+  <pagination-template #nm="paginationApi" [id]="config.id" (pageChange)="config.currentPage = $event">
+  <nav aria-label="">
+    <ul class="custom-pagination pagination pull-right">
+      <li class="pagination-previous" [class.disabled]="nm.isFirstPage()">
+        <a (click)="nm.previous()"> <span class="glyphicon glyphicon-chevron-left"></span> </a>
+      </li>
+
+      <li *ngFor="let page of nm.pages" [class.active]="nm.getCurrent() === page.value">
+        <a (click)="nm.setCurrent(page.value)" *ngIf="nm.getCurrent() !== page.value">
+          <span>{{ page.label }}</span>
+        </a>
+        <a *ngIf="nm.getCurrent() === page.value">
+          <span>{{ page.label }}</span>
+        </a>
+      </li>
+
+      <li class="pagination-next" [class.disabled]="nm.isLastPage()">
+        <a (click)="nm.next()"> <span class="glyphicon glyphicon-chevron-right"></span> </a>
+      </li>
+    </ul>
+  </nav>
+</pagination-template>
 </div>
+

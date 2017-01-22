@@ -1,12 +1,23 @@
-import { Component, OnInit } from '@angular/core';
+import {
+  Component, OnInit,  style, state, animate, transition, trigger
+} from '@angular/core';
 import {ScoreCard,ScorecardService} from "../shared/services/scorecard.service";
 import {OrgUnitService} from "../shared/services/org-unit.service";
 import {DataService} from "../shared/data.service";
+import {PaginationInstance} from "ng2-pagination";
 
 @Component({
   selector: 'app-home',
   templateUrl: './home.component.html',
-  styleUrls: ['./home.component.css']
+  styleUrls: ['./home.component.css'],
+  animations: [
+    trigger('visibilityChanged', [
+state('shown' , style({ opacity: 1 })),
+  state('hidden', style({ opacity: 0 })),
+  transition('shown => hidden', animate('600ms')),
+  transition('hidden => shown', animate('300ms')),
+])
+]
 })
 export class HomeComponent implements OnInit {
 
@@ -26,6 +37,12 @@ export class HomeComponent implements OnInit {
     this.complete_percent = 0;
     this.loading_message = "Loading First Score card";
   }
+
+  public config: PaginationInstance = {
+    id: 'custom',
+    itemsPerPage: 3,
+    currentPage: 1
+  };
 
   ngOnInit() {
     this.scoreCardService.loadAll().subscribe(

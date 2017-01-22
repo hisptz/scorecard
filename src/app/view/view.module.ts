@@ -16,7 +16,7 @@ import {MetadataDictionaryComponent} from "./metadatadictionarycomponent/metadat
     SharedModule,
     view_routing,
     Ng2HighchartsModule,
-    ChartModule
+    ChartModule,
   ],
   declarations: [ViewComponent, FilterComponent, IndicatorCardComponent, SvgItemComponent, SubtotalComponent, MetadataDictionaryComponent]
 })

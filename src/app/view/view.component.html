@@ -135,6 +135,7 @@
 
 
   </div>
+  <!--options-->
   <div class="col-sm-4">
     <label>&nbsp;&nbsp;</label>
     <div>
@@ -171,8 +172,8 @@
               <!--<div class="col-sm-3"><label><input type="checkbox" (change)="showSumInColumn($event)"> column</label></div>-->
             <!--</div>-->
             <div class="row">
-              <div class="col-sm-6"><label><input type="checkbox" (change)="showAverageInRow($event)">Show Rows Average</label></div>
-              <div class="col-sm-6"><label><input type="checkbox" (change)="showAverageInColumn($event)" >Show Column Average</label></div>
+              <div class="col-sm-6"><label><input type="checkbox" (change)="showAverageInRow($event)">Show Average Row</label></div>
+              <div class="col-sm-6"><label><input type="checkbox" (change)="showAverageInColumn($event)" >Show Average Column</label></div>
             </div>
           </li>
           <li class="list-group-item">
@@ -294,7 +295,7 @@
     <ng-container *ngFor="let current_orgunit of orgunits | filterByName:searchQuery; let i=index">
       <tr style="height: 35px; max-height: 35px; overflow-y: hidden; line-height: 80%" class="orunitTr" *ngIf="i < shown_records">
         <td style="vertical-align: bottom;font-size: 10px;cursor: pointer;line-height: 80%;padding: 8px" *ngIf="show_rank">{{ i+1 }}</td>
-        <td style="vertical-align: bottom;font-size: 10px;cursor: pointer;line-height: 80%;padding: 8px" class="orgUnitName" (click)="loadChildrenData(current_orgunit)">
+        <td style="vertical-align: bottom;font-size: 10px;cursor: pointer;line-height: 80%;padding: 8px" class="orgUnitName" (click)="loadChildrenData(current_orgunit)" [style.cursor]="getCursorStyle(current_orgunit)">
           {{ current_orgunit.name }}
         </td>
         <td *ngFor="let indicator of getItemsFromGroups()"
@@ -388,7 +389,7 @@
               </tr>
               <ng-container *ngFor="let current_inner_orgunit of subScoreCard.orgunits | filterByName:searchQuery1">
                 <tr style="height: 35px">
-                  <td style="vertical-align: bottom;font-size: 10px; cursor: pointer;padding: 8px" class="orgUnitName" (click)="loadGrandChildrenData(current_inner_orgunit)">
+                  <td style="vertical-align: bottom;font-size: 10px;padding: 8px" class="orgUnitName" (click)="loadGrandChildrenData(current_inner_orgunit)" [style.cursor]="getCursorStyle(current_inner_orgunit)">
                     {{ current_inner_orgunit.name }}
                   </td>
                   <td *ngFor="let indicator of getItemsFromGroups()"

@@ -553,6 +553,14 @@ export class IndicatorCardComponent implements OnInit, AfterViewInit, OnDestroy 
     return check;
   }
 
+  getBackgroundStyle(visualization_type:string):string{
+    if( visualization_type == this.current_visualisation ){
+      return "#5BC0DE";
+    }else{
+      return "#DDD";
+    }
+  }
+
   ngOnDestroy (){
     if( this.subscription ){
       this.subscription.unsubscribe();
