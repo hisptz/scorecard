@@ -528,10 +528,6 @@ export class IndicatorCardComponent implements OnInit, AfterViewInit, OnDestroy 
     return Observable.throw(errMsg);
   }
 
-  // dynamic dertimine if a chart type is supposed to be shown or not
-  isTobehidden(type:string): boolean{
-    return type == this.current_visualisation
-  }
 
   getIndicatorLength(holder){
     let counter = 0;
