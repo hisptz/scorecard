@@ -35,36 +35,25 @@ export class OrgUnitService {
   }
 
   // sort organisation units up to a certain level
-  sortOrgUnits ( nodes ) {
-    let main = [];
-    this.sortArrOfObjectsByParam(nodes, 'name');
-    console.log(nodes)
-    nodes.forEach((item) => {
-      item.children.forEach((child) => {
-        if(child.hasOwnProperty("children")){
-          this.sortOrgUnits(child)
-        }
-      });
-    });
+  sortOrgUnits ( nodes, level ) {
 
-    return nodes;
-    // this.sortArrOfObjectsByParam( this.nodes, 'name' );
-    // for ( let data of this.nodes ){
-    //   if( level > 1) {
-    //     this.sortArrOfObjectsByParam( data.children, 'name' );
-    //     if( level > 2 ){
-    //       for ( let subdata of data.children ) {
-    //         this.sortArrOfObjectsByParam( subdata.children, 'name' );
-    //         if( level > 3 ){
-    //           for ( let subdata1 of subdata.children ) {
-    //             this.sortArrOfObjectsByParam( subdata1.children, 'name' );
-    //           }
-    //         }
-    //       }
-    //     }
-    //
-    //   }
-    // }
+    this.sortArrOfObjectsByParam( nodes, 'name' );
+    for ( let data of nodes ){
+      if( level > 1) {
+        this.sortArrOfObjectsByParam( data.children, 'name' );
+        if( level > 2 ){
+          for ( let subdata of data.children ) {
+            this.sortArrOfObjectsByParam( subdata.children, 'name' );
+            if( level > 3 ){
+              for ( let subdata1 of subdata.children ) {
+                this.sortArrOfObjectsByParam( subdata1.children, 'name' );
+              }
+            }
+          }
+        }
+
+      }
+    }
   }
 
   // Generate Organisation unit url based on the level needed

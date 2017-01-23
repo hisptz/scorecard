@@ -180,14 +180,13 @@ export class ViewComponent implements OnInit, AfterViewInit, OnDestroy {
                 };
                 this.loadScoreCard();
                 this.organisationunits = initial_data.organisationUnits;
-                this.prepareOrganisationUnitTree(this.organisationunits);
                 let fields = this.orgunitService.generateUrlBasedOnLevels( data.pager.total);
                 this.orgunitService.getAllOrgunitsForTree( fields )
                   .subscribe(
                     (orgUnits: any) => {
                       this.organisationunits = orgUnits.organisationUnits;
                       this.orgunitService.nodes = orgUnits.organisationUnits;
-                      this.prepareOrganisationUnitTree(this.organisationunits);
+                      this.prepareOrganisationUnitTree(this.organisationunits,'parent');
                       this.activateNode(this.orgUnit.id, this.orgtree);
                       this.orgunit_tree_config.loading = false;
                     },
@@ -215,7 +214,7 @@ export class ViewComponent implements OnInit, AfterViewInit, OnDestroy {
 
       this.organisationunits = this.orgunitService.nodes;
       this.activateNode(this.orgUnit.id, this.orgtree);
-      this.prepareOrganisationUnitTree(this.organisationunits);
+      this.prepareOrganisationUnitTree(this.organisationunits,'parent');
       // TODO: make a sort level information dynamic
       this.loadScoreCard();
     }
@@ -244,9 +243,11 @@ export class ViewComponent implements OnInit, AfterViewInit, OnDestroy {
         })
       }
     }else{
+      console.log("Org Units",organisationUnit)
       organisationUnit.forEach((orgunit) => {
+        console.log(orgunit);
         if (orgunit.children) {
-          organisationUnit.children.sort((a, b) => {
+          orgunit.children.sort((a, b) => {
             if (a.name > b.name) {
               return 1;
             }
@@ -256,7 +257,7 @@ export class ViewComponent implements OnInit, AfterViewInit, OnDestroy {
             // a must be equal to b
             return 0;
           });
-          organisationUnit.children.forEach((child) => {
+          orgunit.children.forEach((child) => {
             this.prepareOrganisationUnitTree(child,'top');
           })
         }
