@@ -1134,6 +1134,35 @@ export class ViewComponent implements OnInit, AfterViewInit, OnDestroy {
     let close = (this.keep_options_open)?'':this.showOptions();
   }
 
+  current_sorting = true;
+  sortScoreCardFromColumn(sortingColumn, sortAscending){
+    this.current_sorting = !this.current_sorting;
+    this.sorting_column = sortingColumn;
+    sortAscending = this.current_sorting;
+    if( sortingColumn == "none" ){
+      this.dataService.sortArrOfObjectsByParam(this.orgunits, "name", sortAscending)
+    }
+    else if( sortingColumn == 'avg' ){
+      for ( let orgunit of this.orgunits ){
+        orgunit['avg'] = parseFloat(this.findRowAverage(orgunit.id));
+      }
+      this.dataService.sortArrOfObjectsByParam(this.orgunits, sortingColumn, sortAscending)
+    }
+    else if( sortingColumn == 'sum' ){
+      for ( let orgunit of this.orgunits ){
+        orgunit['sum'] = this.findRowSum(orgunit.id);
+      }
+      this.dataService.sortArrOfObjectsByParam(this.orgunits, sortingColumn, sortAscending)
+    }
+    else{
+      for ( let orgunit of this.orgunits ){
+        orgunit[sortingColumn] = this.findOrgunitIndicatorValue(orgunit.id, sortingColumn );
+      }
+      this.dataService.sortArrOfObjectsByParam(this.orgunits, sortingColumn, sortAscending)
+    }
+    let close = (this.keep_options_open)?'':this.showOptions();
+  }
+
   sortSubScoreCard(sortingColumn, sortAscending){
     if( sortingColumn == "none" ){
       this.dataService.sortArrOfObjectsByParam(this.subScoreCard.orgunit, "name", sortAscending)

@@ -284,10 +284,13 @@
         <input type="text" class="form-control input-sm no-print" [(ngModel)]="searchQuery" placeholder="Search for orgunits here">
       </th>
       <td *ngFor="let indicator of getItemsFromGroups()" class="indicator_title" style="line-height: 140%"
-          title="Click to analyse {{ getIndicatorTitle(indicator) }}" (click)="loadPreview(null,indicator,null)">
+          title="Click to Sort By {{ getIndicatorTitle(indicator) }}" (click)="sortScoreCardFromColumn(indicator.indicators[0].id, sortAscending)">
         <img src="balls-3.svg" style="height: 30px" *ngIf="indicator_loading[indicator.indicators[0].id]" title="Loading old data for {{ getIndicatorTitle(indicator) }}">
         <span *ngIf="indicator_done_loading[indicator.indicators[0].id] && old_proccessed_percent != 100" class="glyphicon glyphicon-ok text-success"></span>
         {{ getIndicatorTitle(indicator) }}
+        <!--sorting icons-->
+        <span class="glyphicon glyphicon-chevron-up pull-right text-muted" *ngIf="!current_sorting && sorting_column == indicator.indicators[0].id"></span>
+        <span class="glyphicon glyphicon-chevron-down pull-right text-muted" *ngIf="current_sorting && sorting_column == indicator.indicators[0].id"></span>
       </td>
       <th class="subtotal" *ngIf="show_sum_in_row">Sum</th>
       <th class="subtotal" *ngIf="show_average_in_row">Average</th>
@@ -350,10 +353,10 @@
               </div>
               <div class="col-sm-2 no-print">
                 <button class="btn btn-default btn-sm pull-right" (click)="closeSubUnit()" style="height: 30px">
-                  <span _ngcontent-hsp-13="" class="glyphicon glyphicon-remove"></span> Close
+                  <span class="glyphicon glyphicon-remove"></span> Close
                 </button>
                 <button class="btn btn-default btn-sm pull-right" (click)="downloadCSV(current_orgunit.id)" style="height: 30px">
-                  <span _ngcontent-hsp-13="" class="glyphicon glyphicon-save-file"></span> CSV
+                  <span class="glyphicon glyphicon-save-file"></span> CSV
                 </button>
               </div>
             </div>
