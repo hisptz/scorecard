@@ -1135,32 +1135,33 @@ export class ViewComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   current_sorting = true;
-  sortScoreCardFromColumn(sortingColumn, sortAscending){
+  sortScoreCardFromColumn(sortingColumn, sortAscending, orguUnits, lower_level:boolean = true){
     this.current_sorting = !this.current_sorting;
     this.sorting_column = sortingColumn;
     sortAscending = this.current_sorting;
     if( sortingColumn == "none" ){
-      this.dataService.sortArrOfObjectsByParam(this.orgunits, "name", sortAscending)
+      this.dataService.sortArrOfObjectsByParam(orguUnits, "name", sortAscending)
     }
     else if( sortingColumn == 'avg' ){
-      for ( let orgunit of this.orgunits ){
+      for ( let orgunit of orguUnits ){
         orgunit['avg'] = parseFloat(this.findRowAverage(orgunit.id));
       }
-      this.dataService.sortArrOfObjectsByParam(this.orgunits, sortingColumn, sortAscending)
+      this.dataService.sortArrOfObjectsByParam(orguUnits, sortingColumn, sortAscending)
     }
     else if( sortingColumn == 'sum' ){
-      for ( let orgunit of this.orgunits ){
+      for ( let orgunit of orguUnits ){
         orgunit['sum'] = this.findRowSum(orgunit.id);
       }
-      this.dataService.sortArrOfObjectsByParam(this.orgunits, sortingColumn, sortAscending)
+      this.dataService.sortArrOfObjectsByParam(orguUnits, sortingColumn, sortAscending)
     }
     else{
-      for ( let orgunit of this.orgunits ){
+      for ( let orgunit of orguUnits ){
         orgunit[sortingColumn] = this.findOrgunitIndicatorValue(orgunit.id, sortingColumn );
       }
-      this.dataService.sortArrOfObjectsByParam(this.orgunits, sortingColumn, sortAscending)
+      this.dataService.sortArrOfObjectsByParam(orguUnits, sortingColumn, sortAscending)
     }
     let close = (this.keep_options_open)?'':this.showOptions();
+    this.sorting_column = (lower_level)?'none':sortingColumn;
   }
 
   sortSubScoreCard(sortingColumn, sortAscending){
