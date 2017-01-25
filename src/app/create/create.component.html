@@ -61,7 +61,7 @@
         {{ getIndicatorTitle(indicator) }}
       </td>
       <th style="width: 60px">
-        <button class="btn btn-xs" *ngIf="need_for_indicator" (click)="enableAddIndicator()">
+        <button title="Add new Indicator next to the current active indicator" class="btn btn-xs" *ngIf="need_for_indicator" (click)="enableAddIndicator(current_indicator_holder.holder_id)">
           <span class="glyphicon-plus"></span> Add</button>
       </th>
     </tr>
@@ -145,7 +145,7 @@
         <input type="text" class="form-control input-sm" #title id="title" placeholder="Title" style="height: 25px; margin-top: 5px" [(ngModel)]="scorecard.data.header.title">
       </div>
       <p class="help-block"><a class="btn btn-xs btn-default" (click)="showTextEditor()">
-        <i class="glyphicon glyphicon-pencil"></i> custom header</a></p>
+        <span class="glyphicon glyphicon-pencil"></span> custom header</a></p>
       <div class="form-group">
         <label for="description">Description  <span class="text-danger">*</span></label>
         <textarea class="form-control input-sm" #description id="description" placeholder="Scorecard description" [(ngModel)]="scorecard.data.header.description"></textarea>
@@ -192,18 +192,18 @@
         <div *ngFor="let legend of scorecard.data.legendset_definitions; let i = index" class="">
           <div class="col-sm-3" style="padding-right: 2px;padding-left: 2px"><input  style="height: 25px" [(colorPicker)]="legend.color" [style.background]="legend.color" [(ngModel)]="legend.color" class="form-control color-input input-sm"/></div>
           <div class="col-sm-9" style="padding-left: 2px;padding-right: 2px">
-            <div class="col-sm-12" style="padding: 0px"><input [(ngModel)]="legend.definition" class="form-control color-input input-sm" style="height: 25px;"/></div>
-            <!--<div class="col-sm-1" style="padding: 6px" *ngIf="!legend.default"><span class="glyphicon glyphicon-trash text-danger" style="cursor: pointer" title="click to delete" (click)="deleteLegand(i)"></span></div>-->
+            <div class="col-sm-11" style="padding: 0px"><input [(ngModel)]="legend.definition" class="form-control color-input input-sm" style="height: 25px;"/></div>
+            <div class="col-sm-1" style="padding: 6px" *ngIf="!legend.default"><span class="glyphicon glyphicon-trash text-danger" style="cursor: pointer" title="click to delete" (click)="deleteLegand(i)"></span></div>
           </div>
         </div>
-        <!--adding new Label-->
-        <!--<div>-->
-          <!--<div class="col-sm-3" style="padding-right: 2px;padding-left: 2px"><input title="Choose a color for new Legend"  style="height: 25px" [(colorPicker)]="new_color" [style.background]="new_color" [(ngModel)]="new_color" class="form-control color-input input-sm"/></div>-->
-          <!--<div class="col-sm-9" style="padding-left: 2px;padding-right: 2px">-->
-            <!--<div class="col-sm-11" style="padding: 0px"><input [(ngModel)]="new_definition" class="form-control color-input input-sm" style="height: 25px;" placeholder="New definition here"/></div>-->
-            <!--<div class="col-sm-1" style="padding: 6px"><span class="glyphicon glyphicon-plus text-primary" style="cursor: pointer" click="Add Legend Set" (click)="addLegend()"></span></div>-->
-          <!--</div>-->
-        <!--</div>-->
+        adding new Label
+        <div>
+          <div class="col-sm-3" style="padding-right: 2px;padding-left: 2px"><input title="Choose a color for new Legend"  style="height: 25px" [(colorPicker)]="new_color" [style.background]="new_color" [(ngModel)]="new_color" class="form-control color-input input-sm"/></div>
+          <div class="col-sm-9" style="padding-left: 2px;padding-right: 2px">
+            <div class="col-sm-11" style="padding: 0px"><input [(ngModel)]="new_definition" class="form-control color-input input-sm" style="height: 25px;" placeholder="New definition here"/></div>
+            <div class="col-sm-1" style="padding: 6px"><span class="glyphicon glyphicon-plus text-primary" style="cursor: pointer" click="Add Legend Set" (click)="addLegend()"></span></div>
+          </div>
+        </div>
       </div>
 
       <!--additional labels-->
@@ -378,7 +378,7 @@
 
         </div>
         <a (click)="showBotleneckEditor(indicator)"  style="padding: 6px; margin-left: 15px" class="btn btn-xs btn-default">
-          bottleneck indicators
+          <span class="glyphicon glyphicon-pencil"></span> bottleneck indicators
           <span class="badge"> {{ indicator.bottleneck_indicators.length }} </span>
         </a>
         <!--additinal labels-->
@@ -498,8 +498,9 @@
                 class="list-group-item"
                 *ngFor="let item of bottleneck_card.indicator.bottleneck_indicators | paginate: { id: 'list3', itemsPerPage: 6, currentPage: r }"
               >
-                <a style="border-right: 1px solid cadetblue; padding-right: 8px" (click)="removeBottleneckIndicator(item)" title="Remove from list" class="remove-bottleneck"><span class="glyphicon glyphicon-trash text-danger"></span></a>
                 {{ item.name }}
+
+                <a style="padding-right: 5px" (click)="removeBottleneckIndicator(item)" title="Remove from list" class="remove-bottleneck pull-right"><span class="glyphicon glyphicon-trash text-danger"></span></a>
               </li>
             </ul>
             <pagination-controls  id="list3" (pageChange)="r = $event" directionLinks="true" autoHide="true"></pagination-controls>

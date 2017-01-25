@@ -463,7 +463,8 @@ export class CreateComponent implements OnInit, AfterViewInit, OnDestroy {
   load_item(item): void{
 
     if( this.indicatorExist( this.scorecard.data.data_settings.indicator_holders, item )){
-      // TODO: Implement a popup to tell a user that this has already been added
+      console.log(item);
+      this.deleteIndicator(item);
     }else{
       let indicator = this.getIndicatorStructure(item.name, item.id);
       indicator.value = Math.floor(Math.random() * 60) + 40;
@@ -510,13 +511,15 @@ export class CreateComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   // add a group of holders to a scorecard
-  addHolderGroups(holder_group,holder): void{
+  addHolderGroups( holder_group,holder,current_id: any = null ): void{
     this.need_for_group = true;
     let add_new = true;
     for( let group of this.scorecard.data.data_settings.indicator_holder_groups ){
       if (group.id == holder_group.id){
         if( group.indicator_holder_ids.indexOf(holder.holder_id) == -1 ){
-          group.indicator_holder_ids.push(holder.holder_id);
+          let index = this.findSelectedIndicatorIndex( current_id, group );
+          group.indicator_holder_ids.splice(index,0,holder.holder_id);
+          // group.indicator_holder_ids.push(holder.holder_id);
         }
         add_new = false;
       }
@@ -526,6 +529,18 @@ export class CreateComponent implements OnInit, AfterViewInit, OnDestroy {
       if( holder_group.indicator_holder_ids.indexOf(holder.holder_id) == -1 ) holder_group.indicator_holder_ids.push(holder.holder_id);
       this.scorecard.data.data_settings.indicator_holder_groups.push(holder_group);
     }
+  }
+
+  // find the position of the selected Indicator
+  findSelectedIndicatorIndex(current_id, group){
+    let i = 0; let index = group.indicator_holder_ids.length;
+    for ( let item of group.indicator_holder_ids ){
+      i++;
+      if( item == current_id ){
+        index = i;
+      }
+    }
+    return index;
   }
 
   // enabling creating of group
@@ -542,7 +557,7 @@ export class CreateComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   // enable adding of new Indicator
-  enableAddIndicator(): void{
+  enableAddIndicator( current_id: any = null ): void{
     this.current_group_id = this.getStartingIndicatorId() + 1;
     this.current_indicator_holder = {
       "holder_id": this.current_group_id,
@@ -553,7 +568,7 @@ export class CreateComponent implements OnInit, AfterViewInit, OnDestroy {
 
     this.addIndicatorHolder(this.current_indicator_holder);
     this.current_holder_group.id = this.current_holder_group_id;
-    this.addHolderGroups(this.current_holder_group, this.current_indicator_holder);
+    this.addHolderGroups(this.current_holder_group, this.current_indicator_holder, current_id);
   }
 
   //try to deduce last number needed to start adding indicator
@@ -629,11 +644,13 @@ export class CreateComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   //deleting indicator from score card
-  deleteIndicator(indicator): void{
-    this.current_indicator_holder.indicators.forEach((item, index) => {
-      if (item.id == indicator.id){
-        this.current_indicator_holder.indicators.splice(index,1);
-      }
+  deleteIndicator(indicator_to_delete): void{
+    this.scorecard.data.data_settings.indicator_holders.forEach((holder, holder_index) => {
+      holder.indicators.forEach((indicator, indicator_index) => {
+        if( indicator.id == indicator_to_delete.id){
+          holder.indicators.splice(indicator_index,1);
+        }
+      });
     });
     this.cleanUpEmptyColumns();
   }
@@ -1143,7 +1160,7 @@ export class CreateComponent implements OnInit, AfterViewInit, OnDestroy {
   // a function that displays a card to add bottleneck indicators
   load_bottleneck_card_item(item){
     if(this.botteneckIndicatorExist(item)){
-
+      this.removeBottleneckIndicator(item)
     }else{
       this.bottleneck_card.indicator.bottleneck_indicators.push(item);
     }
