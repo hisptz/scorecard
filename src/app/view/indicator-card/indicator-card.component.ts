@@ -87,11 +87,13 @@ export class IndicatorCardComponent implements OnInit, AfterViewInit, OnDestroy 
     },
     'chartConfiguration': {
       'type':'line',
+      'show_labels':false,
       'title': 'My chart',
       'xAxisType': 'pe',
       'yAxisType': 'dx'
     }
   };
+  show_labels:boolean = false;
 
   icons: any[] = [
     {name: 'table', image: 'table.jpg'},
@@ -141,7 +143,8 @@ export class IndicatorCardComponent implements OnInit, AfterViewInit, OnDestroy 
 
   // a call that will change the view type
   details_indicators: string = '';
-  updateIndicatorCard( holders: any[], type: string, periods: any[], orgunits: any[], with_children:boolean = false ){
+  updateIndicatorCard( holders: any[], type: string, periods: any[], orgunits: any[], with_children:boolean = false, show_labels:boolean = false ){
+    console.log("Orgunits:", orgunits);
     this.loading = true;
     this.chartData = {};
     this.current_visualisation = (type != 'csv')?type:this.current_visualisation;
@@ -188,6 +191,7 @@ export class IndicatorCardComponent implements OnInit, AfterViewInit, OnDestroy 
         },
         'chartConfiguration': {
           'type':type,
+          'show_labels':show_labels,
           'title': this.prepareCardTitle( this.indicator ),
           'xAxisType': 'pe',
           'yAxisType': 'ou'
@@ -211,6 +215,7 @@ export class IndicatorCardComponent implements OnInit, AfterViewInit, OnDestroy 
         },
         'chartConfiguration': {
           'type':type,
+          'show_labels':show_labels,
           'title': this.prepareCardTitle( this.indicator ),
           'xAxisType': config_array[1],
           'yAxisType': config_array[0]
@@ -223,6 +228,7 @@ export class IndicatorCardComponent implements OnInit, AfterViewInit, OnDestroy 
       this.loading = false;
     }else{
       if( this.checkIfParametersChanged( orgunits, periods, indicatorsArray ) ){
+        console.log("no changes");
         this.error_occured = false;
         this.loading = false;
         if(type == "csv"){
@@ -233,6 +239,7 @@ export class IndicatorCardComponent implements OnInit, AfterViewInit, OnDestroy 
         }
       }
       else{
+        console.log("there are changes");
         this.current_parameters = [];
         for ( let item of periods ){
           periodArray.push(item.id);
@@ -295,7 +302,7 @@ export class IndicatorCardComponent implements OnInit, AfterViewInit, OnDestroy 
   }
 
   // a function to reverse the content of X axis and Y axis
-  switchXandY(type){
+  switchXandY(type, show_labels:boolean=false){
     if(type == "table"){
       if(this.visualizer_config.tableConfiguration.rows[0] == "ou"){
         this.visualizer_config = {
@@ -307,6 +314,7 @@ export class IndicatorCardComponent implements OnInit, AfterViewInit, OnDestroy 
           },
           'chartConfiguration': {
             'type':type,
+            'show_labels':show_labels,
             'title': this.prepareCardTitle(this.indicator),
             'xAxisType': 'ou',
             'yAxisType': 'pe'
@@ -322,6 +330,7 @@ export class IndicatorCardComponent implements OnInit, AfterViewInit, OnDestroy 
           },
           'chartConfiguration': {
             'type':type,
+            'show_labels':show_labels,
             'title': this.prepareCardTitle(this.indicator),
             'xAxisType': 'pe',
             'yAxisType': 'ou'
@@ -346,6 +355,7 @@ export class IndicatorCardComponent implements OnInit, AfterViewInit, OnDestroy 
           },
           'chartConfiguration': {
             'type':type,
+            'show_labels':show_labels,
             'title': this.prepareCardTitle(this.indicator),
             'xAxisType': config_array[1],
             'yAxisType': config_array[0]
@@ -362,6 +372,7 @@ export class IndicatorCardComponent implements OnInit, AfterViewInit, OnDestroy 
           },
           'chartConfiguration': {
             'type':type,
+            'show_labels':show_labels,
             'title': this.prepareCardTitle(this.indicator),
             'xAxisType': config_array[0],
             'yAxisType': config_array[1]
