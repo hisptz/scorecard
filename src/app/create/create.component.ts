@@ -83,6 +83,7 @@ export class CreateComponent implements OnInit, AfterViewInit, OnDestroy {
   new_color: string = "#fff";
   new_definition: string = "";
 
+  current_action:string = "new";
   constructor(private http: Http,
               private indicatorService: IndicatorGroupService,
               private datasetService: DatasetService,
@@ -108,8 +109,9 @@ export class CreateComponent implements OnInit, AfterViewInit, OnDestroy {
         let id = params['scorecardid'];
         let type = params['type'];
         if(type == 'new'){
-
+          this.current_action = 'new';
         }else{
+          this.current_action = 'update';
           this.need_for_group = true;
           this.need_for_indicator = true;
           this.scorecardService.load(id).subscribe(

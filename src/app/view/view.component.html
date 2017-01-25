@@ -160,8 +160,8 @@
         <ul class="list-group">
           <li class="list-group-item pointer">
             <div class="row">
-              <div class="col-sm-6"><label><input type="checkbox" (change)="enableLegend($event)"> Show Legend</label></div>
-              <div class="col-sm-6"><label><input type="checkbox" (change)="enableRank($event)" >Show Rank</label></div>
+              <div class="col-sm-6"><label><input type="checkbox" [(ngModel)]="scorecard.data.header.show_legend_definition"> Show Legend</label></div>
+              <div class="col-sm-6"><label><input type="checkbox" [(ngModel)]="scorecard.data.show_rank" >Show Rank</label></div>
             </div>
 
           </li>
@@ -264,7 +264,7 @@
   </div>
   <table class="table table-bordered scorecard_table">
     <tr [ngClass]="{'hide_no_group': scorecard.data.data_settings.indicator_holder_groups.length == 1}" style="line-height: 140%">
-      <th *ngIf="show_rank" style="width: 30px"></th>
+      <th *ngIf="scorecard.data.show_rank" style="width: 30px"></th>
       <th class="orgUnitName"></th>
       <th
         style="font-size: 9px; cursor: pointer"
@@ -279,7 +279,7 @@
       <th *ngIf="show_average_in_row"></th>
     </tr>
     <tr>
-      <th *ngIf="show_rank"  style="width: 30px">No#</th>
+      <th *ngIf="scorecard.data.show_rank"  style="width: 30px">No#</th>
       <th style="vertical-align: bottom">
         <input type="text" class="form-control input-sm no-print" [(ngModel)]="searchQuery" placeholder="Search for orgunits here">
       </th>
@@ -297,7 +297,7 @@
     </tr>
     <ng-container *ngFor="let current_orgunit of orgunits | filterByName:searchQuery; let i=index">
       <tr style="height: 35px; max-height: 35px; overflow-y: hidden; line-height: 80%" class="orunitTr" *ngIf="i < shown_records">
-        <td style="vertical-align: bottom;font-size: 10px;cursor: pointer;line-height: 80%;padding: 8px" *ngIf="show_rank">{{ i+1 }}</td>
+        <td style="vertical-align: bottom;font-size: 10px;cursor: pointer;line-height: 80%;padding: 8px" *ngIf="scorecard.data.show_rank">{{ i+1 }}</td>
         <td style="vertical-align: bottom;font-size: 10px;cursor: pointer;line-height: 80%;padding: 8px" class="orgUnitName" (click)="loadChildrenData(current_orgunit)" [style.cursor]="getCursorStyle(current_orgunit)">
           {{ current_orgunit.name }}
         </td>
@@ -307,7 +307,7 @@
             (click)="loadPreview(null,indicator,current_orgunit.id)"
             title="{{ prepareTooltip(indicator,current_orgunit.id) }}"
         >
-          <svg-item [indicator]="indicator" [current_orgunit]="current_orgunit" [indicator_list]="getVisibleIndicators(indicator)"></svg-item>
+          <svg-item [indicator]="indicator" [current_orgunit]="current_orgunit" [indicator_list]="getVisibleIndicators(indicator)" [scorecard]="scorecard"></svg-item>
         </td>
 
         <td style="font-size: 10px;max-width: 90px;overflow-wrap: break-word;padding: 8px; line-height: 80%;" *ngIf="show_sum_in_row">{{ findRowSum(current_orgunit.id) | number : '1.2-2' }}</td>
@@ -401,7 +401,7 @@
                       (click)="loadPreview(null,indicator,current_inner_orgunit.id)"
                       title="{{ prepareTooltip(indicator,current_inner_orgunit.id) }}"
                   >
-                    <svg-item [indicator]="indicator" [current_orgunit]="current_inner_orgunit" [indicator_list]="getVisibleIndicators(indicator)"></svg-item>
+                    <svg-item [indicator]="indicator" [current_orgunit]="current_inner_orgunit" [indicator_list]="getVisibleIndicators(indicator)"  [scorecard]="scorecard"></svg-item>
                   </td>
                   <td  style="line-height: 10%;padding: 8px" *ngIf="show_sum_in_row">{{ findRowSum(current_inner_orgunit.id) | number : '1.2-2'}}</td>
                   <td style="line-height: 10%;padding: 8px" *ngIf="show_average_in_row">{{ findRowAverage(current_inner_orgunit.id) }}</td>
@@ -492,7 +492,7 @@
                                 (click)="loadPreview(null,indicator,children_inner_orgunit.id)"
                                 title="{{ prepareTooltip(indicator,children_inner_orgunit.id) }}"
                             >
-                              <svg-item [indicator]="indicator" [current_orgunit]="children_inner_orgunit" [indicator_list]="getVisibleIndicators(indicator)"></svg-item>
+                              <svg-item [indicator]="indicator" [current_orgunit]="children_inner_orgunit" [indicator_list]="getVisibleIndicators(indicator)" [scorecard]="scorecard"></svg-item>
                             </td>
                             <td style="line-height: 80%;padding: 8px" *ngIf="show_sum_in_row">{{ findRowSum(children_inner_orgunit.id) | number : '1.2-2' }}</td>
                             <td  style="line-height: 80%;padding: 8px" *ngIf="show_average_in_row">{{ findRowAverage(children_inner_orgunit.id) }}</td>
@@ -567,13 +567,12 @@
           <!--end of First child scorecard-->
           <!--end of First child scorecard-->
 
-
       </tr>
     </ng-container>
 
     <!--sum column-->
     <tr *ngIf="show_sum_in_column" style="height: 35px; max-height: 35px; overflow-y: hidden; line-height: 80%">
-      <th *ngIf="show_rank" style="width: 30px"></th>
+      <th *ngIf="scorecard.data.show_rank" style="width: 30px"></th>
       <th style="line-height: 10%">Sum</th>
       <th *ngFor="let indicator of getItemsFromGroups()" style="width: 90px;max-width: 90px;line-height: 10%;padding: 0px">
         <app-subtotal [indicator]="indicator" [orgunits]="orgunits" [scorecard]="scorecard" [calculation]="'sum'" [indicator_list]="getVisibleIndicators(indicator)"></app-subtotal>
@@ -583,7 +582,7 @@
     </tr>
     <!--Average column-->
     <tr *ngIf="show_average_in_column" style="height: 35px; max-height: 35px; overflow-y: hidden; line-height: 80%">
-      <th *ngIf="show_rank" style="width: 30px"></th>
+      <th *ngIf="scorecard.data.show_rank" style="width: 30px"></th>
       <th>Average</th>
       <th *ngFor="let indicator of getItemsFromGroups()" style="width: 90px;max-width: 90px;line-height: 10%;padding: 0px">
         <app-subtotal [indicator]="indicator" [orgunits]="orgunits" [scorecard]="scorecard" [calculation]="'avg'" [indicator_list]="getVisibleIndicators(indicator)"></app-subtotal>
@@ -593,7 +592,7 @@
     </tr>
     <!--additinal label-->
     <tr *ngFor="let label of scorecard.data.additional_labels">
-      <th *ngIf="show_rank" style="width: 30px"></th>
+      <th *ngIf="scorecard.data.show_rank" style="width: 30px"></th>
       <th>{{ label }}</th>
       <th *ngFor="let indicator of getItemsFromGroups()"
           style="font-size: 10px;max-width: 90px;overflow-wrap: break-word; cursor: pointer; line-height: 80%"

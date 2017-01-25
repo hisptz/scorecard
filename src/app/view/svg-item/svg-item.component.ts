@@ -1,4 +1,5 @@
 import {Component, OnInit, Input} from '@angular/core';
+import {ScoreCard} from "../../shared/services/scorecard.service";
 
 @Component({
   selector: 'svg-item',
@@ -9,6 +10,7 @@ export class SvgItemComponent implements OnInit {
 
   @Input() current_orgunit: any;
   @Input() indicator: any;
+  @Input() scorecard: ScoreCard;
   @Input() indicator_list: any[] = [];
   constructor() { }
 
