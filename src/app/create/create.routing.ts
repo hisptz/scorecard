@@ -7,5 +7,6 @@ import { CreateComponent } from "./create.component";
 
 export const create_routing: ModuleWithProviders = RouterModule.forChild([
   { path: '', component: CreateComponent},
-  { path: ':type/:scorecardid', component: CreateComponent}
+  { path: ':type/:scorecardid', component: CreateComponent},
+  { path: '**',redirectTo: 'CreateComponent' }
 ]);

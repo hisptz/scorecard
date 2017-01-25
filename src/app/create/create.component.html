@@ -9,7 +9,7 @@
     <button class="btn btn-default btn-sm pull-right" [routerLink]="['']"><span class="glyphicon glyphicon-home"></span> home</button>
   </div>
 </div>
-<!--smple score card-->
+<!--sample score card-->
 <div class="container-fluid no-left-padding" style="border-top: 1px solid blanchedalmond; padding-top: 8px">
   <!--sample score card-->
   <div [innerHTML]="scorecard.data.header.template.content | safeHtml"></div>
@@ -113,7 +113,6 @@
 </div>
 
 <div class="container-fluid" style="padding-left: 0px; font-size: 11px">
-
   <!--basic details of the scorecard-->
   <div class="col-sm-3 no-left-padding1">
     <div class="thumbnail scorecard_details">
@@ -162,12 +161,15 @@
         </div>
 
       </div>
+
       <!--legend definition-->
       <div class="form-group">
         <label>Legend Definition</label>
         <div *ngFor="let legend of scorecard.data.legendset_definitions" class="">
           <div class="col-sm-3" style="padding-right: 2px;padding-left: 2px"><input  style="height: 25px" [(colorPicker)]="legend.color" [style.background]="legend.color" [(ngModel)]="legend.color" class="form-control color-input input-sm"/></div>
-          <div class="col-sm-9" style="padding-left: 2px;padding-right: 2px"><input [(ngModel)]="legend.definition" class="form-control color-input input-sm" style="height: 25px"/></div>
+          <div class="col-sm-9" style="padding-left: 2px;padding-right: 2px">
+            <input [(ngModel)]="legend.definition" class="form-control color-input input-sm" style="height: 25px; width: 90%"/>
+          </div>
         </div>
       </div>
 
