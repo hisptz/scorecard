@@ -6,7 +6,7 @@
     <input type="search" class="form-control input-sm" placeholder="Search score card by name" [(ngModel)]="queryterm">
   </div>
   <div class="col-sm-2" style="margin-top: 14px">
-    <button class="btn btn-default btn-sm pull-right" [routerLink]="['create']"> Create</button>
+    <button class="btn btn-default btn-sm pull-right" [routerLink]="['create','new','0']"> Create</button>
   </div>
 </div>
 <!--if there is no scorecard created-->
@@ -29,7 +29,7 @@
       <li style="padding:2px;">Select the second indicator to add indicator in the same group</li>
       <li style="padding:2px;">Click "Add another" in Group row to add next group</li>
     </ol>
-    <p><a class="btn btn-primary btn-lg" href="#" role="button" [routerLink]="['create']">New Scorecard</a></p>
+    <p><a class="btn btn-primary btn-lg" href="#" role="button" [routerLink]="['create','new','0']">New Scorecard</a></p>
   </div>
 </div>
 

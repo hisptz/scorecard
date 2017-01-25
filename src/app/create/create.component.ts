@@ -4,11 +4,12 @@ import {IndicatorGroupService, IndicatorGroup} from "../shared/services/indicato
 import {DatasetService, Dataset} from "../shared/services/dataset.service";
 import {DataElementGroupService, DataElementGroup} from "../shared/services/data-element-group.service";
 import {ScoreCard, ScorecardService} from "../shared/services/scorecard.service";
-import {Router} from "@angular/router";
+import {Router, ActivatedRoute} from "@angular/router";
 import {$} from "protractor";
 import {ProgramIndicatorsService, ProgramIndicatorGroups} from "../shared/services/program-indicators.service";
 import {EventData, EventDataService} from "../shared/services/event-data.service";
 import {throttleTime} from "rxjs/operator/throttleTime";
+import {Subscription} from "rxjs";
 
 @Component({
   selector: 'app-create',
@@ -74,6 +75,8 @@ export class CreateComponent implements OnInit, AfterViewInit, OnDestroy {
 
   newLabel: string = "";
 
+  private subscription: Subscription;
+
   show_bottleneck_indicators:boolean = false;
   bottleneck_card: any = {};
   constructor(private http: Http,
@@ -82,6 +85,7 @@ export class CreateComponent implements OnInit, AfterViewInit, OnDestroy {
               private dataElementService: DataElementGroupService,
               private router: Router,
               private scorecardService: ScorecardService,
+              private activatedRouter: ActivatedRoute,
               private programService: ProgramIndicatorsService,
               private eventService: EventDataService
   )
@@ -95,6 +99,48 @@ export class CreateComponent implements OnInit, AfterViewInit, OnDestroy {
     this.current_listing = [];
     // initialize the scorecard with a uid
     this.scorecard = this.getEmptyScoreCard();
+    this.subscription = activatedRouter.params.subscribe(
+      (params: any) => {
+        let id = params['scorecardid'];
+        let type = params['type'];
+        if(type == 'new'){
+
+        }else{
+          this.need_for_group = true;
+          this.need_for_indicator = true;
+          this.scorecardService.load(id).subscribe(
+            scorecard_details => {
+              this.scorecard = {
+                id: id,
+                name: scorecard_details.header.title,
+                data: scorecard_details
+              };
+
+              // this.getItemsFromGroups();
+              let i = 0;
+              for( let item of this.scorecard.data.data_settings.indicator_holder_groups ){
+                i++;
+                if(i == 1){
+                  this.current_holder_group = item;
+                }else{ continue; }
+
+              }
+              let j = 0;
+              for( let item of this.scorecard.data.data_settings.indicator_holders){
+                for( let indicator of item.indicators ){
+                  if(!indicator.hasOwnProperty("bottleneck_indicators")){
+                    indicator.bottleneck_indicators = [];
+                  }
+                }
+                j++;
+                if(j == 1){
+                  this.current_indicator_holder = item;
+                }else{ continue; }
+              }
+            })
+        }
+      }
+    );
     // this.getItemsFromGroups();
     this.current_indicator_holder = {
       "holder_id": this.getStartingIndicatorId(),
