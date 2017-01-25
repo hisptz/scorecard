@@ -1030,7 +1030,7 @@ export class ViewComponent implements OnInit, AfterViewInit, OnDestroy {
 
   // dealing with showing sum
   enableLegend(e){
-    this.showLegend = e.target.checked;
+    this.scorecard.data.header.show_legend_definition = e.target.checked;
     let close = (this.keep_options_open)?'':this.showOptions();
   }
   // dealing with showing sum

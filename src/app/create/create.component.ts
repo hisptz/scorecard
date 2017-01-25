@@ -79,6 +79,10 @@ export class CreateComponent implements OnInit, AfterViewInit, OnDestroy {
 
   show_bottleneck_indicators:boolean = false;
   bottleneck_card: any = {};
+
+  new_color: string = "#fff";
+  new_definition: string = "";
+
   constructor(private http: Http,
               private indicatorService: IndicatorGroupService,
               private datasetService: DatasetService,
@@ -461,6 +465,9 @@ export class CreateComponent implements OnInit, AfterViewInit, OnDestroy {
     }else{
       let indicator = this.getIndicatorStructure(item.name, item.id);
       indicator.value = Math.floor(Math.random() * 60) + 40;
+      let random = Math.floor(Math.random() * 6) + 1;
+      if( random % 2 == 0){ indicator.showTopArrow = true}
+      else{ indicator.showBottomArrow = true}
       // ensure indicator has all additinal labels
       for (let label of this.scorecard.data.additional_labels ){
         indicator.additional_label_values[label] = "";
@@ -677,11 +684,13 @@ export class CreateComponent implements OnInit, AfterViewInit, OnDestroy {
           },
           {
             "color": "#D3D3D3",
-            "definition": "N/A"
+            "definition": "N/A",
+            "default": true
           },
           {
             "color": "#FFFFFF",
-            "definition": "No data"
+            "definition": "No data",
+            "default": true
           }
         ],
         "highlighted_indicators": {
@@ -1116,6 +1125,7 @@ export class CreateComponent implements OnInit, AfterViewInit, OnDestroy {
     }
   }
 
+  // a function to check if bottleneck indicator exists
   botteneckIndicatorExist(item): boolean {
     let check  = false;
     if(this.bottleneck_card.indicator.hasOwnProperty("bottleneck_indicators") ){
@@ -1128,6 +1138,7 @@ export class CreateComponent implements OnInit, AfterViewInit, OnDestroy {
     return check;
   }
 
+  // a function that displays a card to add bottleneck indicators
   load_bottleneck_card_item(item){
     if(this.botteneckIndicatorExist(item)){
 
@@ -1136,12 +1147,52 @@ export class CreateComponent implements OnInit, AfterViewInit, OnDestroy {
     }
   }
 
+  // a function to remove bottleneck indicator
   removeBottleneckIndicator(item){
     this.bottleneck_card.indicator.bottleneck_indicators.forEach( (value, index) =>{
       if( value.id == item.id ){
         this.bottleneck_card.indicator.bottleneck_indicators.splice(index,1);
       }
     })
+  }
+
+  // remove a set of legend
+  deleteLegand(index){
+    this.scorecard.data.legendset_definitions.splice(index,1);
+  }
+
+  // add a legend set
+  addLegend(){
+    let index = this.findFirstDefaultLegend();
+    let new_legend = {
+      color: this.new_color,
+      definition: this.new_definition
+    };
+    this.scorecard.data.legendset_definitions.splice(index,0,new_legend);
+    this.new_color = "#fff";
+    this.new_definition = "";
+  }
+
+  findFirstDefaultLegend(){
+    let i = 0; let index = 0;
+    for ( let item of this.scorecard.data.legendset_definitions ){
+      if( item.hasOwnProperty("default") ){
+        index = i-1;
+      }
+      i++;
+    }
+    return index;
+  }
+
+  // check if legend color exist
+  checkLegendColorExist(color){
+    let checker = false;
+    for ( let item of this.scorecard.data.legendset_definitions ){
+      if (item.color == color){
+        checker = true;
+      }
+    }
+    return checker;
   }
 
   ngOnDestroy() {

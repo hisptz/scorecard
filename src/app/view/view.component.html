@@ -248,7 +248,7 @@
   <div [innerHTML]="scorecard.data.header.template.content | safeHtml"></div>
   <h3>{{ scorecard.data.header.title }} &nbsp;&nbsp;&nbsp; {{ orgUnit.name }} &nbsp;&nbsp;&nbsp; {{ period.name }}</h3>
   <!--legend area-->
-  <div class="row legend" style="margin-bottom: 10px" *ngIf="showLegend">
+  <div class="row legend" style="margin-bottom: 10px" *ngIf="scorecard.data.header.show_legend_definition">
     <div class="col-sm-2 legendItem" *ngFor="let legend of scorecard.data.legendset_definitions">
       <table>
         <tr>
