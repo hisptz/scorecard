@@ -61,7 +61,9 @@ export class ViewComponent implements OnInit, AfterViewInit, OnDestroy {
   orgunits: any[] = [];
   proccessed_percent = 0;
   loading: boolean = true;
-  searchQuery: string = null;
+  searchQuery: string = "";
+  searchQuery1: string = "";
+  searchQuery2: string = "";
   tree_orgunits: any[] = [];
   orgunit_levels: any = 1;
   base_url: string;
@@ -620,7 +622,7 @@ export class ViewComponent implements OnInit, AfterViewInit, OnDestroy {
   prepareTooltip(holder,orgunit): string{
     let tooltip = [];
     for (let indicator of holder.indicators ){
-      if(indicator.tooltip != null){
+      if(indicator.tooltip[orgunit]){
         tooltip.push(indicator.tooltip[orgunit])
       }
     }

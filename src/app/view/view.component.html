@@ -281,7 +281,7 @@
     <tr>
       <th *ngIf="show_rank"  style="width: 30px">No#</th>
       <th style="vertical-align: bottom">
-        <input type="text" class="form-control input-sm no-print" [(ngModel)]="searchQuery" placeholer="Search">
+        <input type="text" class="form-control input-sm no-print" [(ngModel)]="searchQuery" placeholder="Search for orgunits here">
       </th>
       <td *ngFor="let indicator of getItemsFromGroups()" class="indicator_title" style="line-height: 140%"
           title="Click to analyse {{ getIndicatorTitle(indicator) }}" (click)="loadPreview(null,indicator,null)">
@@ -376,7 +376,7 @@
               </tr>
               <tr>
                 <th style="vertical-align: bottom">
-                  <input type="text" class="form-control input-sm no-print" [(ngModel)]="searchQuery1" placeholer="Search">
+                  <input type="text" class="form-control input-sm no-print" [(ngModel)]="searchQuery1" placeholder="Search for orgunits here">
                 </th>
                 <td *ngFor="let indicator of getItemsFromGroups()" class="indicator_title" style="line-height: 140%"
                     title="Click to analyse {{ getIndicatorTitle(indicator) }}" (click)="loadPreview(null,indicator,current_orgunit.id)">
@@ -467,7 +467,7 @@
                         </tr>
                         <tr>
                           <th style="vertical-align: bottom">
-                            <input type="text" class="form-control input-sm no-print" [(ngModel)]="searchQuery2" placeholer="Search">
+                            <input type="text" class="form-control input-sm no-print" [(ngModel)]="searchQuery2" placeholder="Search for orgunits here">
                           </th>
                           <td *ngFor="let indicator of getItemsFromGroups()" class="indicator_title" style="line-height: 140%"
                               title="Click to analyse {{ getIndicatorTitle(indicator) }}" (click)="loadPreview(null,indicator,current_inner_orgunit.id)">
@@ -522,7 +522,6 @@
 
                     <!--end of First child scorecard-->
                     <!--end of First child scorecard-->
-
 
                 </tr>
               </ng-container>
