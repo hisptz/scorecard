@@ -10,6 +10,7 @@ import {ChartModule} from "angular2-highcharts";
 import { SvgItemComponent } from './svg-item/svg-item.component';
 import { SubtotalComponent } from './subtotal/subtotal.component';
 import {MetadataDictionaryComponent} from "./metadatadictionarycomponent/metadata-dictionary.component";
+import { ScorecardComponent } from './scorecard/scorecard.component';
 
 @NgModule({
   imports: [
@@ -18,6 +19,6 @@ import {MetadataDictionaryComponent} from "./metadatadictionarycomponent/metadat
     Ng2HighchartsModule,
     ChartModule,
   ],
-  declarations: [ViewComponent, FilterComponent, IndicatorCardComponent, SvgItemComponent, SubtotalComponent, MetadataDictionaryComponent]
+  declarations: [ViewComponent, FilterComponent, IndicatorCardComponent, SvgItemComponent, SubtotalComponent, MetadataDictionaryComponent, ScorecardComponent]
 })
 export class ViewModule { }
