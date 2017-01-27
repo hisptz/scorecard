@@ -139,18 +139,18 @@
   <div class="col-sm-4">
     <label>&nbsp;&nbsp;</label>
     <div>
-      <button type="button" class="btn btn-default pull-right"  style="height: 38px" (click)="loadScoreCard()">
+      <button type="button" class="btn btn-default pull-right"  style="height: 38px" (click)="loadScoreCard()" title="Update Scorecard">
         <span class="glyphicon glyphicon-refresh"></span>  Update
       </button>
-      <button type="button" class="btn btn-default pull-right"  style="height: 38px" (click)="downloadCSV(orgUnit.id)">
+      <button type="button" class="btn btn-default pull-right"  style="height: 38px" (click)="downloadCSV(orgUnit.id)" title="download CSV version of scorecard">
         <span class="glyphicon glyphicon-save-file"></span>  CSV
       </button>
-      <button type="button" class="btn btn-default pull-right"  style="height: 38px" (click)="browserPrint()">
+      <button type="button" class="btn btn-default pull-right"  style="height: 38px" (click)="browserPrint()" title="Print scorecard">
         <span class="glyphicon glyphicon-print"></span> Print
       </button>
 
       <!--some aditional configurations-->
-      <button  type="button" class="btn btn-default pull-right"  style="height: 38px" (click)="showOptions()">
+      <button  type="button" class="btn btn-default pull-right"  style="height: 38px" title="Customize scorecard" (click)="showOptions()">
         <span class="glyphicon glyphicon-cog"></span> Options
       </button>
       <div class="additional-options" [ngClass]="{'hiddenTree':showAdditionalOptions}" style="padding-top: 0px">
@@ -185,7 +185,7 @@
                 <label style="cursor: pointer"><input type="checkbox" [(ngModel)]="sortAscending"  (change)="sortScoreCard(sorting_column, sortAscending)"> Ascending</label>
               </div>
               <div class="col-sm-12" style="padding-top: 5px">
-                <label><input type="radio" [value]="orgunits.length" [(ngModel)]="shown_records">All</label>
+                <label><input type="radio" [value]="orgUnitlength" [(ngModel)]="shown_records">All</label>
                 <label><input type="radio" value="3" [(ngModel)]="shown_records">Top Three</label>
                 <label><input type="radio" value="5" [(ngModel)]="shown_records">Top Five</label>
                 <label><input type="radio" value="10" [(ngModel)]="shown_records">Top Ten</label>
@@ -204,12 +204,12 @@
         <button class="btn btn-sm btn-warning pull-right" (click)="showOptions()" style="height: 35px">
           <span class="glyphicon glyphicon-remove"></span> close
         </button>
-        <button class="btn btn btn-info pull-right" [routerLink]="['../../create','edit',scorecard.id]" style="height: 35px">
-          <span class="glyphicon glyphicon-pencil"></span> Edit Scorecard
-        </button>
+
       </div>
       <!--end of additional configuration-->
-
+      <button *ngIf="have_authorities" class="btn btn btn-default pull-right" [routerLink]="['../../create','edit',scorecard.id]" style="height: 38px" title="Update score card">
+        <span class="glyphicon glyphicon-pencil"></span>
+      </button>
     </div>
   </div>
 

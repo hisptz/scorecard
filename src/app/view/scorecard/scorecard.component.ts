@@ -88,7 +88,6 @@ export class ScorecardComponent implements OnInit, AfterViewInit, OnDestroy {
 
     this.proccesed_indicators = 0;
     let old_proccesed_indicators = 0;
-    console.log(this.scorecard.data);
     let indicator_list = this.getIndicatorList(this.scorecard);
     for( let holder of this.scorecard.data.data_settings.indicator_holders ){
           for( let indicator of holder.indicators ){
@@ -103,9 +102,6 @@ export class ScorecardComponent implements OnInit, AfterViewInit, OnDestroy {
             this.indicatorCalls.push(this.dataService.getIndicatorsRequest(this.getOrgUnitsForAnalytics(this.orgUnit),this.period.id, indicator.id)
               .subscribe(
                 (data) => {
-
-                  console.log("kwa service",this.period)
-                  console.log(data);
                   indicator.loading = false;
                   this.loading_message = " Done Fetching data for "+indicator.title;
                   this.proccesed_indicators++;
@@ -124,7 +120,6 @@ export class ScorecardComponent implements OnInit, AfterViewInit, OnDestroy {
                     }
 
                     indicator.values[orgunit] = this.dataService.getIndicatorData(orgunit,this.period.id, data);
-                    // console.log("am running",data)
                   }
                   this.shown_records = this.orgunits.length;
                   this.indicator_loading[indicator.id] = true;

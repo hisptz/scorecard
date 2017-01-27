@@ -29,7 +29,7 @@
       <li style="padding:2px;">Select the second indicator to add indicator in the same group</li>
       <li style="padding:2px;">Click "Add another" in Group row to add next group</li>
     </ol>
-    <p><a class="btn btn-primary btn-lg" href="#" role="button" [routerLink]="['create','new','0']">New Scorecard</a></p>
+    <p><a class="btn btn-primary btn-lg" href="#" role="button" [routerLink]="['create','new','0']" *ngIf="have_authorities">New Scorecard</a></p>
   </div>
 </div>
 
@@ -54,10 +54,10 @@
         <a [routerLink]="['view',scorecard.id]" class="btn btn-primary sans-pro" role="button" title="Open {{ scorecard.data.header.title }}">
           View
         </a>
-        <a title="edit {{ scorecard.data.header.title }}" [routerLink]="['create','edit',scorecard.id]" class="btn btn-default sans-pro" role="button">
+        <a  *ngIf="have_authorities" title="edit {{ scorecard.data.header.title }}" [routerLink]="['create','edit',scorecard.id]" class="btn btn-default sans-pro" role="button">
           <span class="glyphicon glyphicon-pencil text-primary"></span>
         </a>
-        <button title="delete {{ scorecard.data.header.title }}" (click)="confirm_deleting[scorecard.id] = true" class="btn btn-default sans-pro" role="button">
+        <button *ngIf="have_authorities" title="delete {{ scorecard.data.header.title }}" (click)="confirm_deleting[scorecard.id] = true" class="btn btn-default sans-pro" role="button">
           <span class="glyphicon glyphicon-trash text-danger"></span>
         </button>
       </h1>

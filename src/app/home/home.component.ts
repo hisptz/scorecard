@@ -31,11 +31,25 @@ export class HomeComponent implements OnInit {
   deleted: boolean[] = [];
   error_deleting: boolean[] = [];
   confirm_deleting: boolean[] = [];
+  have_authorities:boolean = false;
   constructor( private scoreCardService: ScorecardService, private orgUnitService: OrgUnitService, private dataService: DataService) {
     this.scorecards = []
     this.scorecards_loading = true;
     this.complete_percent = 0;
     this.loading_message = "Loading First Score card";
+    this.dataService.getUserInformation().subscribe(
+      userInfo => {
+        //noinspection TypeScriptUnresolvedVariable
+        userInfo.userCredentials.userRoles.forEach( (role) => {
+          role.authorities.forEach( (ath) => {
+            if( ath == "ALL"){
+              this.have_authorities = true;
+            }
+          } );
+
+        })
+      }
+    )
   }
 
   public config: PaginationInstance = {

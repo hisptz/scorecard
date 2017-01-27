@@ -1,7 +1,6 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { DhisOrgUnitTreeComponent } from "./dhis-org-unit-tree.component";
 import { TreeModule } from 'angular2-tree-component';
 import {Ng2PaginationModule} from 'ng2-pagination';
 import {ColorPickerModule} from "angular2-color-picker";
@@ -17,9 +16,8 @@ import { SafeHtmlPipe } from './safe-html.pipe';
     ColorPickerModule
 
   ],
-  declarations: [ DhisOrgUnitTreeComponent, FilterByNamePipe, TinymceEditorDirective, SafeHtmlPipe ],
+  declarations: [ FilterByNamePipe, TinymceEditorDirective, SafeHtmlPipe ],
   exports: [
-    DhisOrgUnitTreeComponent,
     TreeModule,
     FormsModule,
     CommonModule,

@@ -10,6 +10,7 @@ import {ProgramIndicatorsService, ProgramIndicatorGroups} from "../shared/servic
 import {EventData, EventDataService} from "../shared/services/event-data.service";
 import {throttleTime} from "rxjs/operator/throttleTime";
 import {Subscription} from "rxjs";
+import {DataService} from "../shared/data.service";
 
 @Component({
   selector: 'app-create',
@@ -84,6 +85,7 @@ export class CreateComponent implements OnInit, AfterViewInit, OnDestroy {
   new_definition: string = "";
 
   current_action:string = "new";
+  have_authorities:boolean = false;
   constructor(private http: Http,
               private indicatorService: IndicatorGroupService,
               private datasetService: DatasetService,
@@ -92,7 +94,8 @@ export class CreateComponent implements OnInit, AfterViewInit, OnDestroy {
               private scorecardService: ScorecardService,
               private activatedRouter: ActivatedRoute,
               private programService: ProgramIndicatorsService,
-              private eventService: EventDataService
+              private eventService: EventDataService,
+              private dataService: DataService
   )
   {
     this.indicatorGroups = [];
@@ -104,6 +107,19 @@ export class CreateComponent implements OnInit, AfterViewInit, OnDestroy {
     this.current_listing = [];
     // initialize the scorecard with a uid
     this.scorecard = this.getEmptyScoreCard();
+    this.dataService.getUserInformation().subscribe(
+      userInfo => {
+        //noinspection TypeScriptUnresolvedVariable
+        userInfo.userCredentials.userRoles.forEach( (role) => {
+          role.authorities.forEach( (ath) => {
+            if( ath == "ALL"){
+              this.have_authorities = true;
+            }
+          } );
+
+        })
+      }
+    )
     this.subscription = activatedRouter.params.subscribe(
       (params: any) => {
         let id = params['scorecardid'];

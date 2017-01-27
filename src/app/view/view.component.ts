@@ -128,6 +128,8 @@ export class ViewComponent implements OnInit, AfterViewInit, OnDestroy {
   shown_records:number = 0;
   show_rank: boolean = false;
   metadata_ready = false;
+  have_authorities:boolean = false;
+  orgUnitlength:number = 0;
   constructor(private scorecardService: ScorecardService,
               private dataService: DataService,
               private activatedRouter: ActivatedRoute,
@@ -146,6 +148,19 @@ export class ViewComponent implements OnInit, AfterViewInit, OnDestroy {
       id:this.filterService.getPeriodArray( this.period_type, this.year )[0].id,
       name:this.filterService.getPeriodArray( this.period_type, this.year )[0].name
     };
+    this.dataService.getUserInformation().subscribe(
+      userInfo => {
+        //noinspection TypeScriptUnresolvedVariable
+        userInfo.userCredentials.userRoles.forEach( (role) => {
+          role.authorities.forEach( (ath) => {
+            if( ath == "ALL"){
+              this.have_authorities = true;
+            }
+          } );
+
+        })
+      }
+    )
 
   }
 
@@ -194,6 +209,7 @@ export class ViewComponent implements OnInit, AfterViewInit, OnDestroy {
                           name: initial_data.organisationUnits[0].name,
                           children: initial_data.organisationUnits[0].children
                         };
+                        this.orgUnitlength = this.orgUnit.children.length+1;
                         this.metadata_ready = true;
                         //noinspection TypeScriptUnresolvedVariable
                         this.organisationunits = initial_data.organisationUnits;
@@ -228,13 +244,14 @@ export class ViewComponent implements OnInit, AfterViewInit, OnDestroy {
         }
         else {
           this.orgunit_tree_config.loading = false;
+          console.log(this.orgunitService.nodes)
           this.default_orgUnit = [this.orgunitService.nodes[0].id];
           this.orgUnit = {
             id: this.orgunitService.nodes[0].id,
             name: this.orgunitService.nodes[0].name,
             children: this.orgunitService.nodes[0].children
           };
-
+          this.orgUnitlength = this.orgUnit.children.length+1;
           this.organisationunits = this.orgunitService.nodes;
           this.activateNode(this.orgUnit.id, this.orgtree);
           this.prepareOrganisationUnitTree(this.organisationunits, 'parent');
@@ -294,6 +311,7 @@ export class ViewComponent implements OnInit, AfterViewInit, OnDestroy {
   loadScoreCard( orgunit: any = null ){
     this.showOrgTree = true;
     this.showPerTree = true;
+    this.orgUnitlength = this.orgUnit.children.length+1;
     this.childScoreCard.loadScoreCard();
   }
 
