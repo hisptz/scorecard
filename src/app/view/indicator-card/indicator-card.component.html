@@ -132,7 +132,7 @@
           </div>
         </div>
   </div>
-  <div class="col-sm-2">
+  <div class="col-sm-2" *ngIf="!showBottleneck">
     <label>Show</label>
     <select class="form-control" [(ngModel)]="chart_settings" style="height: 38px">
       <option value="ou-pe">period vs orgunit</option>
@@ -164,7 +164,7 @@
 
 
     <label *ngIf="visualizer_config.type == 'chart'">
-      <input type="checkbox" [(ngModel)]="show_labels" (change)="updateIndicatorCard(indicator,current_visualisation, card_selected_periods, card_selected_orgunits, false, show_labels)">
+      &nbsp;&nbsp;&nbsp;&nbsp;<input type="checkbox" [(ngModel)]="show_labels" (change)="updateIndicatorCard(indicator,current_visualisation, card_selected_periods, card_selected_orgunits, false, show_labels)">
       Chart Labels
     </label>
   </div>

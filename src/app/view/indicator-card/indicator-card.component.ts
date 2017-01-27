@@ -157,11 +157,12 @@ export class IndicatorCardComponent implements OnInit, AfterViewInit, OnDestroy 
     let periodArray = [];
 
     // check first if your supposed to load bottleneck indicators too for analysis
+    let config_array = this.chart_settings.split( "-" );
     if( this.showBottleneck ){
       for ( let holder of holders ){
         for ( let item of holder.indicators ){
           if( this.hidden_columns.indexOf( item.id ) == -1){
-            indicatorsArray.push( item.id );
+            // indicatorsArray.push( item.id );
             if( item.hasOwnProperty("bottleneck_indicators") ){
               for( let bottleneck of item.bottleneck_indicators ){
                 indicatorsArray.push( bottleneck.id );
@@ -170,6 +171,10 @@ export class IndicatorCardComponent implements OnInit, AfterViewInit, OnDestroy 
           }
         }
       }
+      config_array[1] = 'dx';
+      config_array[0] = 'ou';
+      type = "column";
+      this.visualizer_config.type = 'chart';
     }else{
       for ( let holder of holders ){
         for ( let item of holder.indicators ){
@@ -179,7 +184,7 @@ export class IndicatorCardComponent implements OnInit, AfterViewInit, OnDestroy 
         }
       }
     }
-    let config_array = this.chart_settings.split( "-" );
+
 
     if( type == "table" ){
       this.visualizer_config = {
@@ -521,7 +526,8 @@ export class IndicatorCardComponent implements OnInit, AfterViewInit, OnDestroy 
         }
       }
     }
-    return indicators_title.join(", ");
+    return (this.showBottleneck)?indicators_title.join(", ")+" Bottleneck Indicators ":indicators_title.join(", ");
+
   }
 
   // handle errors from requests
