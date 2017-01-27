@@ -6,6 +6,8 @@ import {ActivatedRoute} from "@angular/router";
 import {FilterService} from "../../shared/services/filter.service";
 import {OrgUnitService} from "../../shared/services/org-unit.service";
 import {Constants} from "../../shared/costants";
+import {TreeComponent} from "angular2-tree-component/dist/lib/components/tree.component";
+import {subscribeOn} from "rxjs/operator/subscribeOn";
 
 @Component({
   selector: 'app-scorecard',
@@ -28,6 +30,8 @@ export class ScorecardComponent implements OnInit, AfterViewInit, OnDestroy {
   @Input() hidenColums: any[] = [];
   @Input() show_rank: boolean = false;
   @Input() sorting_column: any = "none";
+  @Input() orgtree: TreeComponent;
+  @Input() level: string = "top";
 
   @Output() show_details = new EventEmitter<any>();
 
@@ -75,7 +79,7 @@ export class ScorecardComponent implements OnInit, AfterViewInit, OnDestroy {
   old_proccessed_percent = 0;
   proccesed_indicators = 0;
   loadScoreCard( orgunit: any = null ){
-
+    this.showSubScorecard = []
     this.indicator_done_loading = [];
     this.proccessed_percent = 0;
     this.loading = true;
@@ -84,18 +88,24 @@ export class ScorecardComponent implements OnInit, AfterViewInit, OnDestroy {
 
     this.proccesed_indicators = 0;
     let old_proccesed_indicators = 0;
+    console.log(this.scorecard.data);
     let indicator_list = this.getIndicatorList(this.scorecard);
     for( let holder of this.scorecard.data.data_settings.indicator_holders ){
           for( let indicator of holder.indicators ){
-            indicator['values'] = [];
-            indicator['tooltip'] = [];
-            indicator['previous_values'] = [];
+            if(this.level == 'top'){
+              indicator['values'] = [];
+              indicator['tooltip'] = [];
+              indicator['previous_values'] = [];
+              indicator['showTopArrow'] = [];
+              indicator['showBottomArrow'] = [];
+            }
             indicator['loading'] = true;
-            indicator['showTopArrow'] = [];
-            indicator['showBottomArrow'] = [];
             this.indicatorCalls.push(this.dataService.getIndicatorsRequest(this.getOrgUnitsForAnalytics(this.orgUnit),this.period.id, indicator.id)
               .subscribe(
                 (data) => {
+
+                  console.log("kwa service",this.period)
+                  console.log(data);
                   indicator.loading = false;
                   this.loading_message = " Done Fetching data for "+indicator.title;
                   this.proccesed_indicators++;
@@ -112,7 +122,9 @@ export class ScorecardComponent implements OnInit, AfterViewInit, OnDestroy {
                         "is_parent":this.orgUnit.id == orgunit
                       })
                     }
+
                     indicator.values[orgunit] = this.dataService.getIndicatorData(orgunit,this.period.id, data);
+                    // console.log("am running",data)
                   }
                   this.shown_records = this.orgunits.length;
                   this.indicator_loading[indicator.id] = true;
@@ -158,6 +170,25 @@ export class ScorecardComponent implements OnInit, AfterViewInit, OnDestroy {
               ))
           }
         }
+  }
+
+  // loading sub orgunit details
+  sub_unit;
+  children_available:boolean[] = [];
+  loadChildrenData(selectedorgunit){
+    if( selectedorgunit.is_parent || this.showSubScorecard[selectedorgunit.id]){
+      this.showSubScorecard = [];
+    }
+    else{
+      let orgunit_with_children = this.orgtree.treeModel.getNodeById(selectedorgunit.id);
+      this.sub_unit = orgunit_with_children.data;
+      if( this.sub_unit.hasOwnProperty('children')){
+        this.children_available[selectedorgunit.id] = true;
+      }
+      this.showSubScorecard[selectedorgunit.id] = true;
+
+    }
+
   }
 
   //get number of visible indicators from a holder
@@ -396,7 +427,7 @@ export class ScorecardComponent implements OnInit, AfterViewInit, OnDestroy {
     }
     if(this.show_average_in_row){
       i++;
-    }if(this.show_rank){
+    }if(this.scorecard.data.show_rank){
       i++;
     }
     return i;
@@ -472,6 +503,16 @@ export class ScorecardComponent implements OnInit, AfterViewInit, OnDestroy {
       holderGroup:holderGroup,
       indicator: indicator,
       ou: ou
+    });
+  }
+
+  // load a preview function when event
+  loadPreviewFromChild($event){
+    // emit the array with these items;
+    this.show_details.emit({
+      holderGroup:$event.holderGroup,
+      indicator: $event.indicator,
+      ou: $event.ou
     });
   }
 

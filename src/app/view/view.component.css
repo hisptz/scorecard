@@ -141,14 +141,25 @@
 
 .tree-area{
   max-height: 270px;
-  overflow: auto;
+  overflow: hidden;
   width: 100%;
+}
+.tree-area{
+  max-height: 270px;
+  overflow: hidden;
+  width: 100%;
+}
+.tree-area{
+  overflow: auto;
 }
 
 .tree-area1{
   max-height: 210px;
-  overflow: auto;
+  overflow: hidden;
   width: 100%;
+}
+.tree-area1:hover{
+  overflow: auto;
 }
 .hiddenTree{
   display: none;

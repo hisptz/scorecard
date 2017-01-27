@@ -7,7 +7,7 @@ import {Constants} from "./costants";
 @Injectable()
 export class DataService {
 
-
+  user: any = null;
   constructor(private http: Http, private constant: Constants) { }
 
   nodes: any = null;
@@ -116,6 +116,7 @@ export class DataService {
 
 
   getIndicatorData ( orgunitId ,period, indicatorsObject) {
+    // console.log(indicatorsObject)
     let return_object: 0;
     for ( let row of indicatorsObject.rows ) {
       if( row[1] == orgunitId && row[2] == period ){
@@ -125,17 +126,6 @@ export class DataService {
     return return_object
   }
 
-  getDataValue( dataElementId, dataValuesObject ) {
-    let return_object: any = {};
-    return_object['available'] = false;
-    for ( let dataValue of dataValuesObject.dataValues ) {
-      if( dataValue.dataElement == dataElementId ){
-        return_object['available'] = true;
-        return_object['data'] =  dataValue.value;
-      }
-    }
-    return return_object
-  }
   // Handling error
   handleError (error: any) {
     return Observable.throw( error );

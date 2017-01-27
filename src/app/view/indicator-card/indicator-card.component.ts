@@ -247,7 +247,7 @@ export class IndicatorCardComponent implements OnInit, AfterViewInit, OnDestroy 
         }for ( let item of orgunits ){
           orgUnitsArray.push(item.id);
           this.current_parameters.push(item.id);
-          if( with_children ){
+          if( with_children && item.hasOwnProperty('children') ){
             for ( let child of item.children ){
               orgUnitsArray.push(child.id);
               this.current_parameters.push(child.id);

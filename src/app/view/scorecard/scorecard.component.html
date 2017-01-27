@@ -94,7 +94,26 @@
 
       <tr *ngIf="showSubScorecard[current_orgunit.id]">
         <td [attr.colspan]="getItemsFromGroups().length +1 + getCorrectColspan()" style="background-color: rgba(0,0,0,0.1)">
-          Second score card
+          <!--Internal score card-->
+          <h3 class="text-center text-muted" *ngIf="!children_available[current_orgunit.id]">This Organisation Unit has no Children</h3>
+          <app-scorecard
+            *ngIf="children_available[current_orgunit.id]"
+            [scorecard]="scorecard"
+            [orgUnit]="sub_unit"
+            [period]="period"
+            [period_type]="period_type"
+            [show_average_in_column]="show_average_in_column"
+            [show_average_in_row]="show_average_in_row"
+            [show_sum_in_column]="show_sum_in_column"
+            [show_sum_in_row]="show_sum_in_row"
+            [shown_records]="shown_records"
+            [hidenColums]="hidenColums"
+            [show_rank]="show_rank"
+            [sorting_column]="sorting_column"
+            [orgtree]="orgtree"
+            [level]="'non_top'"
+            (show_details) = "loadPreviewFromChild($event)"
+          ></app-scorecard>
         </td>
       </tr>
     </ng-container>

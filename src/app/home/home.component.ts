@@ -86,7 +86,7 @@ export class HomeComponent implements OnInit {
         this.scorecards_loading = false;
       }
     );
-    this.orgUnitService.populateOrgunit();
+    this.orgUnitService.prepareOrgunits();
   }
 
   deleteScoreCard( scorecard ){

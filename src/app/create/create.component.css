@@ -23,7 +23,7 @@
   height: 450px;
   position: relative;
   padding-top: 10px;
-  overflow-y: auto;
+  overflow: hidden;
   margin-bottom: 5px;
   /*padding-left: 20px;*/
   cursor: pointer;
@@ -64,6 +64,7 @@
   -webkit-box-shadow: 0 0 10px rgba(0,0,0,0.1);
   box-shadow: 0 0 10px rgba(0,0,0,0.1);
   background-color: rgba(0,0,0,0.03);
+  overflow: auto;
 }
 
 /*bottleneck Indicator selection arrea*/
@@ -72,7 +73,7 @@
   height: 350px;
   position: relative;
   padding-top: 10px;
-  overflow-y: auto;
+  overflow: hidden;
   margin-bottom: 5px;
   /*padding-left: 20px;*/
   cursor: pointer;
@@ -113,6 +114,7 @@
   -webkit-box-shadow: 0 0 10px rgba(0,0,0,0.1);
   box-shadow: 0 0 10px rgba(0,0,0,0.1);
   background-color: rgba(0,0,0,0.03);
+  overflow: auto;
 }
 .listSelected{
   -webkit-box-shadow: 0 0 10px rgba(0,0,0,0.1);
