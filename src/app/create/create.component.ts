@@ -863,6 +863,7 @@ export class CreateComponent implements OnInit, AfterViewInit, OnDestroy {
     return check;
   }
 
+  //enable text editor popup
   showTextEditor(){
     this.show_editor = !this.show_editor;
   }
@@ -1178,6 +1179,9 @@ export class CreateComponent implements OnInit, AfterViewInit, OnDestroy {
     if(this.botteneckIndicatorExist(item)){
       this.removeBottleneckIndicator(item)
     }else{
+      item.bottleneck_title= item.name;
+      item.baseline = null;
+      item.target = null;
       this.bottleneck_card.indicator.bottleneck_indicators.push(item);
     }
   }

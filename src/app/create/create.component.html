@@ -498,15 +498,33 @@
                 class="list-group-item"
                 *ngFor="let item of bottleneck_card.indicator.bottleneck_indicators | paginate: { id: 'list3', itemsPerPage: 6, currentPage: r }"
               >
-                {{ item.name }}
+                <p>{{ item.name }}
+                  <a style="padding-right: 5px" (click)="removeBottleneckIndicator(item)" title="Remove from list" class="remove-bottleneck pull-right">
+                    <span class="glyphicon glyphicon-trash text-danger"></span>
+                  </a>
+                </p>
+                <label>Display Name</label>
+                <input class="form-control input-sm" [value]="item.name" [(ngModel)]="item.bottleneck_title">
+                <div class="container-fluid" style="padding: 0px">
+                  <div class="col-sm-6" style="padding-left: 0px">
+                    <label>Baseline</label>
+                    <input class="form-control input-sm" [(ngModel)]="item.baseline" placeholder="Baseline">
+                  </div>
+                  <div class="col-sm-6" style="padding-right: 0px">
+                    <label>Target</label>
+                    <input class="form-control input-sm" [(ngModel)]="item.target" placeholder="Target">
+                  </div>
+                </div>
 
-                <a style="padding-right: 5px" (click)="removeBottleneckIndicator(item)" title="Remove from list" class="remove-bottleneck pull-right"><span class="glyphicon glyphicon-trash text-danger"></span></a>
               </li>
             </ul>
             <pagination-controls  id="list3" (pageChange)="r = $event" directionLinks="true" autoHide="true"></pagination-controls>
           </div>
         </div>
-        <button class="btn btn-default pull-right" (click)="showBotleneckEditor(bottleneck_card.indicator)"> <span class="glyphicon glyphicon-ok"></span> Done </button>
+        <div style="margin-right: 15px">
+          <button class="btn btn-default pull-right" (click)="showBotleneckEditor(bottleneck_card.indicator)"> <span class="glyphicon glyphicon-ok"></span> Done </button>
+        </div>
+        <span *ngIf="bottleneck_card.indicator_ready">{{bottleneck_card.indicator.bottleneck_indicators}}</span>
       </div>
     </div>
   </div>
