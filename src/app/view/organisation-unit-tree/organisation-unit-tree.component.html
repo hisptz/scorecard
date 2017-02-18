@@ -1,0 +1,74 @@
+<div class="tree-input" >
+  <div>
+    <div class="show_items" (click)="displayOrgTree()">
+        <span *ngIf="orgunit_model.selected_orgunits.length > 4">
+            <span class="selected-item">
+              {{ orgunit_model.selected_orgunits.length }} selected
+            </span>
+          </span>
+      <span *ngIf="orgunit_model.selected_orgunits.length <= 4">
+             <span *ngFor="let item of orgunit_model.selected_orgunits" class="selected-item ng-binding ng-scope">
+              {{ item.name }}
+            </span>
+          </span>
+      <span class="no-selection"*ngIf="orgunit_model.selected_orgunits.length == 0 && !orgunit_tree_config.loading">{{ orgunit_tree_config.placeholder }}</span>
+      <span class="glyphicon glyphicon-triangle-bottom pull-right" *ngIf="!orgunit_tree_config.loading"></span>
+      <span *ngIf="orgunit_tree_config.loading">{{ orgunit_tree_config.loading_message }}</span>
+    </div>
+    <div class="tree-view" [ngClass]="{'hiddenTree':showOrgTree}" id="tree_view">
+      <div class="col-sm-6" style="padding-left: 0px; margin-bottom: 5px">
+        <label>Selection Mode</label>
+        <select id="selectionMode" [(ngModel)]="orgunit_model.selection_mode" class="form-control" style="height: 30px ">
+          <option value="Usr_orgUnit">User orgUnit</option>
+          <option value="orgUnit">Select Organisation Unit</option>
+          <option value="Level">Select Level</option>
+          <option value="Group">Select Group</option>
+        </select>
+      </div>
+      <!--org_unit_groups-->
+      <div class="col-sm-6" style="padding-right: 0px; margin-bottom: 5px" *ngIf="orgunit_model.selection_mode == 'Group'">
+        <label>Available Groups</label>
+        <select id="groupSelection" [(ngModel)]="orgunit_model.selected_group" class="form-control" style="height: 30px ">
+          <option value="">Select Group</option>
+          <option *ngFor="let group of orgunit_model.orgunit_groups"  value="OU_GROUP-{{ group.id }}">{{ group.name }}</option>
+        </select>
+      </div>
+      <!--org_unit_levels-->
+      <div class="col-sm-6" style="padding-right: 0px; margin-bottom: 5px" *ngIf="orgunit_model.selection_mode == 'Level'">
+        <label>Available Levels</label>
+        <select id="levelSelection" [(ngModel)]="orgunit_model.selected_level" class="form-control" style="height: 30px ">
+          <option value="">Select Level</option>
+          <option *ngFor="let single_level of orgunit_model.orgunit_levels"  value="LEVEL-{{single_level.level}}">{{ single_level.name }}</option>
+        </select>
+      </div>
+      <div class="search-area">
+        <form *ngIf="!orgunit_tree_config.loading && orgunit_tree_config.show_search && orgunit_model.selection_mode != 'Usr_orgUnit'" style="border-bottom: solid 1px blanchedalmond;">
+          <input #filter (keyup)="filterNodes(filter.value, orgtree)" placeholder="{{ orgunit_tree_config.search_text }}" class="search_field"/>
+        </form>
+      </div>
+      <div *ngIf="orgunit_tree_config.loading">{{ orgunit_tree_config.loading_message }}</div>
+      <div class="tree-area" [ngClass]="{'hiddenTree': orgunit_model.selection_mode == 'Usr_orgUnit'}">
+        <Tree
+          #orgtree
+          [nodes]="organisationunits"
+          [focused]="true"
+          [options]="customTemplateStringOrgunitOptions"
+          (onActivate)="activateOrg($event)"
+          (onDeactivate)="deactivateOrg($event)"
+        >
+          <template #treeNodeTemplate let-node>
+            <span>{{ node.data.name }}</span>
+          </template>
+        </Tree>
+      </div>
+      <div class="close-area">
+        <button class="btn btn-default pull-right" style="height: 30px"  (click)="displayOrgTree()">
+          <span class="glyphicon glyphicon-remove"></span> Close
+        </button>
+        <button type="button" class="btn btn-default pull-right"  style="height: 30px" (click)="loadScoreCard()">
+          <span class="glyphicon glyphicon-refresh"></span>  Update
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

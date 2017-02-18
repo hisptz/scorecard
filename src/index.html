@@ -1,14 +1,28 @@
 <!doctype html>
-<html>
+<html manifest="scorecard.appcache">
 <head>
   <meta charset="utf-8">
-  <title>Sampleproject</title>
-  <base href="/">
+  <title>Scorecard</title>
+  <base href="">
 
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link rel="icon" type="image/x-icon" href="favicon.ico">
+  <link rel="icon" type="image/x-icon" href="src/favicon.ico">
+  <script src="../../../dhis-web-commons/javascripts/jQuery/jquery.min.js"></script>
+  <link rel="stylesheet" type="text/css" href="../../../dhis-web-commons/css/menu.css">
+
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="icon" type="image/x-icon" href="src/favicon.ico">
 </head>
 <body>
-  <app-root>Loading...</app-root>
+<div style="margin-top:50px;margin-left: 10px; margin-right: 10px; height: 100%">
+  <app-root>
+    <div class="text-center">
+      <img src="balls-5.svg" style="margin-top: 3%; height: 300px; width: 200px"><br>
+      <img src="scorecard.svg" style="height: 60px; width: 48px">
+      <h3>Getting ready for the scorecard awesomeness</h3>
+    </div>
+  </app-root>
+
+</div>
 </body>
 </html>

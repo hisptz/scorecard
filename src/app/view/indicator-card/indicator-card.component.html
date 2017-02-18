@@ -1,0 +1,210 @@
+<div class="container-fluid" id="filters" style="padding: 0px">
+  <div class="col-sm-4" style="padding-left: 5px">
+    <label>Organisation Units</label>
+
+    <div class="tree-input" >
+      <div>
+        <div class="show_items" (click)="displayOrgTree()">
+          <span *ngIf="card_selected_orgunits.length > 5">
+            <span class="selected-item">
+              {{ card_selected_orgunits.length }} selected
+            </span>
+          </span>
+          <span *ngIf="card_selected_orgunits.length <= 5">
+             <span *ngFor="let item of card_selected_orgunits" class="selected-item ng-binding ng-scope">
+              {{ item.name }}
+            </span>
+          </span>
+
+          <span class="no-selection"*ngIf="card_selected_orgunits.length == 0 && !card_orgunit_tree_config.loading">{{ card_orgunit_tree_config.placeholder }}</span>
+          <span class="glyphicon glyphicon-triangle-bottom pull-right" *ngIf="!card_orgunit_tree_config.loading"></span>
+          <span *ngIf="card_orgunit_tree_config.loading">{{ card_orgunit_tree_config.loading_message }}</span>
+        </div>
+        <div class="tree-view" [ngClass]="{'hiddenTree':showOrgTree}" id="tree_view">
+          <div class="search-area">
+            <form *ngIf="!card_orgunit_tree_config.loading && card_orgunit_tree_config.show_search" style="border-bottom: solid 1px blanchedalmond;">
+              <input #filter (keyup)="filterNodes(filter.value, orgtree, 'orgunit')" placeholder="{{ card_orgunit_tree_config.search_text }}" class="search_field"/>
+
+            </form>
+          </div>
+          <div *ngIf="card_orgunit_tree_config.loading">{{ card_orgunit_tree_config.loading_message }}</div>
+          <div class="tree-area" *ngIf="!card_orgunit_tree_config.loading">
+            <Tree
+              #orgtree
+              [nodes]="card_organisationunits"
+              [focused]="true"
+              [options]="customTemplateStringOptions"
+              (onActivate)="activateOrg($event)"
+              (onDeactivate)="deactivateOrg($event)"
+            >
+              <template #treeNodeTemplate let-node>
+                <span>{{ node.data.name }}</span>
+              </template>
+            </Tree>
+          </div>
+          <div class="close-area">
+            <button class="btn btn-xs pull-right" (click)="displayOrgTree()"  style="height: 30px">
+              <span class="glyphicon glyphicon-remove"></span> Close
+            </button>
+            <button type="button" class="btn btn-default pull-right"  style="height: 30px" (click)="updateIndicatorCard(indicator, current_visualisation, card_selected_periods, card_selected_orgunits)">
+              <span class="glyphicon glyphicon-refresh"></span> Update
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+  <div class="col-sm-3">
+        <label>Selected Period</label>
+        <div class="tree-input" >
+          <div>
+            <div class="show_items" (click)="displayPerTree()">
+              <span *ngIf="card_selected_periods.length > 4">
+            <span class="selected-item">
+              {{ card_selected_periods.length }} selected
+            </span>
+          </span>
+              <span *ngIf="card_selected_periods.length <= 4">
+                <span *ngFor="let item of card_selected_periods" class="selected-item ng-binding ng-scope">
+                  {{ item.name }}
+                </span>
+              </span>
+              <span class="no-selection"*ngIf="card_selected_periods.length == 0 && !card_period_tree_config.loading">{{ card_period_tree_config.placeholder }}</span>
+              <span class="glyphicon glyphicon-triangle-bottom pull-right" *ngIf="!card_period_tree_config.loading"></span>
+              <span *ngIf="card_period_tree_config.loading">{{ card_period_tree_config.loading_message }}</span>
+            </div>
+            <div class="tree-view" [ngClass]="{'hiddenTree':showPerTree}">
+
+              <div class="col-sm-7" style="padding-left: 0px; margin-bottom: 5px">
+                <label>Period Type</label>
+                <select id="periodType" [(ngModel)]="card_period_type" class="form-control" style="height: 30px " (change)="changePeriodType()">
+                  <option value="">[ Select period type ]</option>
+                  <option value="Monthly">Monthly</option>
+                  <option value="BiMonthly">Bimonthly</option>
+                  <option value="Quarterly">Quarterly</option>
+                  <option value="SixMonthly">Six-monthly</option>
+                  <option value="SixMonthlyApril">Six-monthly April</option>
+                  <option value="Yearly">Yearly</option>
+                  <option value="FinancialApril">Financial-April</option>
+                  <option value="FinancialJuly">Financial-July</option>
+                  <option value="FinancialOct">Financial-Oct</option>
+                </select>
+              </div>
+              <div class="col-sm-5" style="padding-right: 0px; margin-bottom: 5px">
+                <label>&nbsp;</label>
+                <div class="btn-group" style="width: 100%">
+                  <button type="button" class="btn btn-default pull-right" style="height: 30px; font-size: 11px" (click)="pushPeriodForward()">>> year</button>
+                  <button type="button" class="btn btn-default pull-right" style="height: 30px; font-size: 11px;" (click)="pushPeriodBackward()"><< year</button>
+                </div>
+              </div>
+
+              <div class="search-area">
+                <form *ngIf="!card_period_tree_config.loading && card_period_tree_config.show_search" style="border-bottom: solid 1px blanchedalmond;">
+                  <input #filter (keyup)="filterNodes(filter.value, pertree)" placeholder="{{ card_period_tree_config.search_text }}" id="search_field"/>
+
+                </form>
+              </div>
+              <div *ngIf="card_period_tree_config.loading">{{ card_period_tree_config.loading_message }}</div>
+              <div class="tree-area1" *ngIf="!card_period_tree_config.loading">
+                <Tree
+                  #pertree
+                  [nodes]="card_periods"
+                  [focused]="true"
+                  [options]="customTemplateStringOptions"
+                  (onActivate)="activatePer($event)"
+                  (onDeactivate)="deactivatePer($event)"
+                >
+                  <template #treeNodeTemplate let-node>
+                    <span>{{ node.data.name }}</span>
+                  </template>
+                </Tree>
+              </div>
+              <div class="close-area">
+                <button class="btn btn-default btn-xs pull-right" (click)="displayPerTree()" style="height: 30px">
+                  <span class="glyphicon glyphicon-remove"></span> Close
+                </button>
+                <button type="button" class="btn btn-default pull-right"  style="height: 30px" (click)="updateIndicatorCard(indicator, current_visualisation, card_selected_periods, card_selected_orgunits)">
+                  <span class="glyphicon glyphicon-refresh"></span> Update
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+  </div>
+  <div class="col-sm-2" *ngIf="!showBottleneck">
+    <label>Show</label>
+    <select class="form-control" [(ngModel)]="chart_settings" style="height: 38px">
+      <option value="ou-pe">period vs orgunit</option>
+      <option value="dx-pe">period vs data</option>
+      <option value="dx-ou">data vs orgunit</option>
+    </select>
+  </div>
+  <div class="col-sm-3">
+    <label>&nbsp;&nbsp;</label>
+    <div>
+      <button type="button" class="btn btn-default pull-right"  style="height: 38px" (click)="updateIndicatorCard(indicator, current_visualisation, card_selected_periods, card_selected_orgunits)">
+        <span class="glyphicon glyphicon-refresh"></span> Update
+      </button>
+      <button type="button" class="btn btn-default pull-right"  style="height: 38px" (click)="updateIndicatorCard(indicator, 'csv', card_selected_periods, card_selected_orgunits)">
+        <span class="glyphicon glyphicon-save-file"></span>  CSV
+      </button>
+    </div>
+  </div>
+  <div class="col-sm-12" style="padding-left: 5px">
+    <label
+      *ngIf="indicator.length == 1 && getIndicatorLength(indicator[0])"
+      style="cursor: pointer">
+      <input
+        type="checkbox"
+        [(ngModel)]="showBottleneck"
+        (change)="updateIndicatorCard(indicator, current_visualisation, card_selected_periods, card_selected_orgunits)">
+      Bottleneck Analysis
+    </label>
+
+
+    <label *ngIf="visualizer_config.type == 'chart'">
+      &nbsp;&nbsp;&nbsp;&nbsp;<input type="checkbox" [(ngModel)]="show_labels" (change)="updateIndicatorCard(indicator,current_visualisation, card_selected_periods, card_selected_orgunits, false, show_labels)">
+      Chart Labels
+    </label>
+  </div>
+</div>
+
+<div class="container-fluid card-content" style="height: 400px; padding-left: 5px; overflow-y: auto">
+  <div *ngIf="loading">
+    <p style="text-align: center">
+      <img src="balls-4.svg" style="padding-top: 80px; height: 190px;">
+    </p>
+  </div>
+  <div *ngIf="visualizer_config.type == 'info' && !loading">
+    <app-metadata-dictionary [metadataidentifiers]="details_indicators"></app-metadata-dictionary>
+  </div>
+  <div *ngIf="visualizer_config.type == 'chart' && !loading" [ng2-highcharts]="chartData" class="graph"></div>
+  <table class="table table-bordered" *ngIf="visualizer_config.type == 'table' && !loading">
+    <thead>
+    <tr *ngFor="let header of tableData.headers">
+      <th *ngFor="let table_column of tableData.columns"></th>
+      <th *ngFor="let header_column of header.items" [colSpan]="header_column.span" style="text-align: center">
+        {{ header_column.name }}
+      </th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr *ngFor="let row of tableData.rows">
+      <td *ngFor="let header_column of row.items" style="text-align: center;vertical-align: middle" [attr.rowspan]="header_column.row_span">
+        {{ header_column.val }}
+      </td>
+    </tr>
+    </tbody>
+  </table>
+</div>
+
+<div class="container-fluid footer">
+    <p style="margin: 3px">
+      <a (click)="updateIndicatorCard(indicator,icon.name, card_selected_periods, card_selected_orgunits, false, show_labels)" *ngFor="let icon of icons" title="{{ icon.name }}" class="btn btn-small btn-info visual-btn" [style.background-color]="getBackgroundStyle(icon.name)"><img src="assets/img/{{icon.image}}" style="height: 25px;width: 25px"/></a>
+      <a (click)="updateIndicatorCard(indicator, 'csv', card_selected_periods, card_selected_orgunits, false,show_labels)" title="Download Excel" class="btn btn-small btn-info visual-btn" ><img src="assets/img/cvs.jpg" style="height: 25px;width: 25px"/></a>
+      <a (click)="updateIndicatorCard(indicator,'info', card_selected_periods, card_selected_orgunits, false, show_labels)"  title="card details" class="btn btn-small btn-info visual-btn" [style.background-color]="getBackgroundStyle('info')"><span class="glyphicon glyphicon-info-sign" style="font-size: 24px"></span></a>
+      <a (click)="switchXandY(current_visualisation, show_labels)"  title="Switch X and Y axis" class="btn btn-small btn-info visual-btn"><span class="glyphicon glyphicon-retweet" style="font-size: 24px"></span></a>
+      <button type="button" class="btn btn-default pull-right" (click)="removeModel()">Close</button>
+    </p>
+</div>

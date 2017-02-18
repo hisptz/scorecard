@@ -1,0 +1,23 @@
+<svg *ngIf="indicator_list.length == 2" viewbox="0 0 90 35" width="90" height="35">
+  <polygon points="0 0 90 0 90 0 0 35" fill="white" style="stroke:#CAC0C0;stroke-width:0.4" *ngIf="calculation == 'sum'"/>
+  <polygon *ngIf="calculation == 'avg'" points="0 0 90 0 90 0 0 35" [attr.fill]="assignBgColor(indicator_list[0],findValue(calculation,orgunits,indicator_list[0].id,scorecard))" style="stroke:#CAC0C0;stroke-width:0.4"/>
+  <text fill="#000" x="3" y="18" font-size="11" font-family="Source Sans Pro">
+    <tspan>{{ findValue(calculation,orgunits,indicator_list[0].id,scorecard) }}</tspan>
+  </text>
+  <!--second triangle-->
+  <polygon points="0 35 90 0 90 35 0 35" fill="white" style="stroke:#CAC0C0;stroke-width:0.0" *ngIf="calculation == 'sum'"/>
+  <polygon *ngIf="calculation == 'avg'" points="0 35 90 0 90 35 0 35" [attr.fill]="assignBgColor(indicator_list[1],findValue(calculation,orgunits,indicator_list[1].id,scorecard))" style="stroke:#CAC0C0;stroke-width:0.0"/>
+  <!--number for the second triangle-->
+  <text fill="#000" x="54" y="22" font-size="11" font-family="Source Sans Pro">
+    <tspan>{{ findValue(calculation,orgunits,indicator_list[1].id,scorecard) }}</tspan>
+  </text>
+</svg>
+<!--if there is only one indicator to display-->
+<svg *ngIf="indicator_list.length == 1" viewbox="0 0 90 35" width="90" height="35">
+  <!--full box to cover all area-->
+  <polygon points="0 0 90 0 90 35 0 35" fill="white" *ngIf="calculation == 'sum'"/>
+  <polygon *ngIf="calculation == 'avg'" points="0 0 90 0 90 35 0 35" [attr.fill]="assignBgColor(indicator_list[0],findValue(calculation,orgunits,indicator_list[0].id,scorecard))"/>
+  <text fill="#000" x="30" y="20" font-size="11" font-family="Source Sans Pro">
+    <tspan>{{ findValue(calculation,orgunits,indicator_list[0].id,scorecard) }}</tspan>
+  </text>
+</svg>
