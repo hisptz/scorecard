@@ -1,7 +1,7 @@
 import {Component, OnInit, Input, ViewChild, AfterViewInit, OnDestroy, Output, EventEmitter} from '@angular/core';
 import {FilterService} from "../../shared/services/filter.service";
 import {TreeNode, TREE_ACTIONS, IActionMapping, TreeComponent} from 'angular2-tree-component';
-import {VisulizerService} from "../ng2-dhis-visualizer/visulizer.service";
+import {VisulizerService} from "../dhis-visualizer/visulizer.service";
 import {Constants} from "../../shared/costants";
 import { Http, Response } from '@angular/http';
 import 'rxjs/Rx';
@@ -133,10 +133,6 @@ export class IndicatorCardComponent implements OnInit, AfterViewInit, OnDestroy 
   ngAfterViewInit(){
     this.activateNode( this.default_period.id, this.pertree );
     this.activateNode( this.default_orgunit.id, this.orgtree );
-    // for( let item of this.default_orgunit.children ){
-    //   let nod = this.orgtree.treeModel.getNodeById(item.id);
-    //   // this.card_selected_orgunits.push(nod.data);
-    // }
     this.updateIndicatorCard(this.indicator, "table", [this.default_period], [this.default_orgunit], true);
 
   }
@@ -145,6 +141,10 @@ export class IndicatorCardComponent implements OnInit, AfterViewInit, OnDestroy 
   details_indicators: string = '';
   updateIndicatorCard( holders: any[], type: string, periods: any[], orgunits: any[], with_children:boolean = false, show_labels:boolean = false ){
     console.log("Orgunits:", orgunits);
+    // cancel the current call if still in progress when switching between charts
+    if( this.subscription ){
+      this.subscription.unsubscribe();
+    }
     this.loading = true;
     this.chartData = {};
     this.current_visualisation = (type != 'csv')?type:this.current_visualisation;
