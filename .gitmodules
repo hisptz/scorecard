@@ -1,0 +1,3 @@
+[submodule "src/app/view/ng2-dhis-visualizer"]
+	path = src/app/view/ng2-dhis-visualizer
+	url = git@github.com:hisptz/ng2-dhis-visualizer.git
