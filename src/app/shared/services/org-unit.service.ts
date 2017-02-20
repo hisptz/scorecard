@@ -11,30 +11,6 @@ export class OrgUnitService {
   orgunit_levels:any[] = [];
   constructor(private http: Http, private constant: Constants) { }
 
-  //sorting an array of object
-  sortArrOfObjectsByParam (arrToSort: Array<any>, strObjParamToSortBy: string, sortAscending: boolean = true) {
-    if( sortAscending == undefined ) sortAscending = true;  // default to true
-
-    if( sortAscending ) {
-      arrToSort.sort( function ( a, b ) {
-        if( a[strObjParamToSortBy] > b[strObjParamToSortBy] ){
-          return 1;
-        }else{
-          return -1;
-        }
-      });
-    }
-    else {
-      arrToSort.sort(function (a, b) {
-        if( a[strObjParamToSortBy] < b[strObjParamToSortBy] ){
-          return 1;
-        }else {
-          return -1
-        }
-      });
-    }
-  }
-
   // Get current user information
   getUserInformation () {
     return this.http.get(this.constant.root_dir + 'api/me.json?fields=dataViewOrganisationUnits[id,level],organisationUnits[id,level]')
@@ -61,6 +37,11 @@ export class OrgUnitService {
     return orgunits;
   }
 
+  /**
+   * get the highest level among organisation units that user belongs to
+   * @param userOrgunits
+   * @returns {any}
+   */
   getUserHighestOrgUnitlevel(userOrgunits){
     let level: any;
     let orgunits = [];
@@ -80,6 +61,25 @@ export class OrgUnitService {
       })
     }
     return level;
+  }
+
+  /**
+   * get the list of user orgunits as an array
+   * @param userOrgunits
+   * @returns {any}
+   */
+  getUserOrgUnits(userOrgunits){
+    let orgunits = [];
+    if(userOrgunits.dataViewOrganisationUnits.length == 0){
+      userOrgunits.organisationUnits.forEach((orgunit) => {
+        orgunits.push(orgunit.id);
+      })
+    }else{
+      userOrgunits.dataViewOrganisationUnits.forEach((orgunit) => {
+        orgunits.push(orgunit.id);
+      })
+    }
+    return orgunits;
   }
 
   prepareOrgunits(){
@@ -152,27 +152,6 @@ export class OrgUnitService {
       .map((response: Response) => response.json())
       .catch( this.handleError );
   }
-
-  // populateOrgunit ()  {
-  //   this.getOrgunitLevelsInformation()
-  //     .subscribe(
-  //       (data: any) => {
-  //         let fields = this.generateUrlBasedOnLevels( data.pager.total );
-  //         this.getAllOrgunitsForTree( fields )
-  //           .subscribe(
-  //             ( orgUnits: any ) => {
-  //               this.nodes = orgUnits.organisationUnits;
-  //             },
-  //             error => {
-  //               console.log('something went wrong while fetching Organisation units')
-  //             }
-  //           );
-  //       },
-  //       error => {
-  //         console.log('something went wrong while fetching Organisation units ')
-  //       }
-  //     );
-  // }
 
   // Handling error
   handleError (error: any) {

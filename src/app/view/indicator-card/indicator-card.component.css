@@ -49,7 +49,7 @@
 }
 
 .tree-area{
-  max-height: 270px;
+  max-height: 210px;
   overflow: auto;
   width: 100%;
 }

@@ -205,45 +205,31 @@
         <ul class="list-group">
           <li class="list-group-item pointer">
             <div class="row">
-              <div class="col-sm-4"><label><input type="checkbox" [(ngModel)]="scorecard.data.header.show_legend_definition"> Show Legend</label></div>
-              <div class="col-sm-4"><label><input type="checkbox" [(ngModel)]="scorecard.data.show_rank" >Show Rank</label></div>
-              <div class="col-sm-4"><label><input type="checkbox" (change)="hideEmptyRows($event)">Hide Empty Rows</label></div>
+              <div class="col-sm-4"><label title="tick to show legend"><input type="checkbox" [(ngModel)]="scorecard.data.header.show_legend_definition"> Legend</label></div>
+              <div class="col-sm-4"><label title="tick to show ranking"><input type="checkbox" [(ngModel)]="scorecard.data.show_rank"> Rank</label></div>
+              <div class="col-sm-4"><label title="tick to show empty rows"><input type="checkbox" [(ngModel)]="scorecard.data.empty_rows"> Empty Rows</label></div>
             </div>
           </li>
           <li class="list-group-item pointer">
             <div class="row">
-              <div class="col-sm-6"><label><input type="checkbox" (change)="showAverageInColumn($event)">Show Average Row</label></div>
-              <div class="col-sm-6"><label><input type="checkbox" (change)="showAverageInRow($event)" >Show Average Column</label></div>
+              <div class="col-sm-6"><label title="tick to show average row"><input type="checkbox" (change)="showAverageInColumn($event)" > Average Row</label></div>
+              <div class="col-sm-6"><label title="tick to show average column"><input type="checkbox" (change)="showAverageInRow($event)"> Average Column</label></div>
             </div>
           </li>
           <li class="list-group-item pointer">
             <div class="row">
-              <div class="col-sm-4"><label><input type="radio" value="all" [(ngModel)]="average_selection">All</label></div>
-              <div class="col-sm-4"><label><input type="radio" value="below" [(ngModel)]="average_selection" >Below Average</label></div>
-              <div class="col-sm-4"><label><input type="radio" value="above" [(ngModel)]="average_selection" >Above Average</label></div>
+              <div class="col-sm-2"><label title="show both above and bellow average"><input type="radio" value="all" [(ngModel)]="average_selection"> All</label></div>
+              <div class="col-sm-5"><label title="Show organisation units below average"><input type="radio" value="below" [(ngModel)]="average_selection" > Below Average</label></div>
+              <div class="col-sm-5"><label title="Show organisation units above average"><input type="radio" value="above" [(ngModel)]="average_selection" > Above Average</label></div>
             </div>
           </li>
           <li class="list-group-item">
             <div class="row">
-              <div class="col-sm-12">
-                <label>Sort By</label>
-              </div>
-              <div class="col-sm-8">
-                <select class="form-control" [(ngModel)]="sorting_column" (click)="sortScoreCard(sorting_column, sortAscending)">
-                  <option value="none">None</option>
-                  <option value="avg">Average</option>
-                  <!--<option value="sum">Sum</option>-->
-                  <option *ngFor="let listItem of getIndicatorsList(scorecard)" value="{{ listItem.id }}">{{ listItem.title }}</option>
-                </select>
-              </div>
-              <div class="col-sm-4 pointer">
-                <label style="cursor: pointer"><input type="checkbox" [(ngModel)]="sortAscending"  (change)="sortScoreCard(sorting_column, sortAscending)"> Ascending</label>
-              </div>
               <div class="col-sm-12" style="padding-top: 5px">
-                <label><input type="radio" [value]="orgUnitlength" [(ngModel)]="shown_records">All</label>
-                <label><input type="radio" value="3" [(ngModel)]="shown_records">Top Three</label>
-                <label><input type="radio" value="5" [(ngModel)]="shown_records">Top Five</label>
-                <label><input type="radio" value="10" [(ngModel)]="shown_records">Top Ten</label>
+                <label title="show all items"><input type="radio" [value]="orgUnitlength" [(ngModel)]="shown_records"> All</label>
+                <label title="show top three based on current selections"><input type="radio" value="3" [(ngModel)]="shown_records"> Top Three</label>
+                <label title="show top five based on current selections"><input type="radio" value="5" [(ngModel)]="shown_records"> Top Five</label>
+                <label title="show top ten based on current selections"><input type="radio" value="10" [(ngModel)]="shown_records"> Top Ten</label>
               </div>
             </div>
           </li>
@@ -282,8 +268,6 @@
   [show_average_in_row]="show_average_in_row"
   [show_sum_in_column]="show_sum_in_column"
   [show_sum_in_row]="show_sum_in_row"
-  [hide_empty_column] = "hide_empty_column"
-  [hide_empty_rows] = "hide_empty_rows"
   [shown_records]="shown_records"
   [average_selection]="average_selection"
   [hidenColums]="hidenColums"
@@ -311,6 +295,7 @@
           [default_period_type]="period_type"
           [default_orgunit] = "orgunit_for_model"
           [hidden_columns] = "hidenColums"
+          [default_orgunit_model] = "orgunit_model"
           (show_details) = "getDetails($event)"
         >Loading ....
         </indicator-card>

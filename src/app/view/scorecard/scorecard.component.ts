@@ -26,8 +26,6 @@ export class ScorecardComponent implements OnInit, AfterViewInit, OnDestroy {
   @Input() show_sum_in_column: boolean = false;
   @Input() show_average_in_row: boolean = false;
   @Input() show_average_in_column: boolean = false;
-  @Input() hide_empty_column: boolean = false;
-  @Input() hide_empty_rows: boolean = false;
   @Input() shown_records:number = 0;
   @Input() average_selection:string = "all";
   @Input() hidenColums: any[] = [];
@@ -83,7 +81,17 @@ export class ScorecardComponent implements OnInit, AfterViewInit, OnDestroy {
     let organisation_unit_analytics_string = "";
     // if the selected orgunit is user org unit
     if(orgunit_model.selection_mode == "Usr_orgUnit"){
-      organisation_unit_analytics_string += orgunit_model.selected_user_orgunit
+      if(orgunit_model.user_orgunits.length == 1){
+        let user_orgunit = this.orgtree.treeModel.getNodeById(orgunit_model.user_orgunits[0]);
+        orgUnits.push(user_orgunit.id);
+        if(user_orgunit.hasOwnProperty('children')){
+          for( let orgunit of user_orgunit.children ){
+            orgUnits.push(orgunit.id);
+          }
+        }
+      }else{
+        organisation_unit_analytics_string += orgunit_model.selected_user_orgunit
+      }
     }
 
     else{
@@ -385,7 +393,7 @@ export class ScorecardComponent implements OnInit, AfterViewInit, OnDestroy {
         }
       }
     }
-    if (counter == sum && this.hide_empty_rows){
+    if (counter == sum && !this.scorecard.data.empty_rows){
       checker = true;
     }
     return checker;

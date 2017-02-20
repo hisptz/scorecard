@@ -136,7 +136,6 @@ export class ViewComponent implements OnInit, AfterViewInit, OnDestroy {
   have_authorities:boolean = false;
   orgUnitlength:number = 0;
 
-
   orgunit_model: any = {
     selection_mode: "orgUnit",
     selected_level: "",
@@ -200,6 +199,9 @@ export class ViewComponent implements OnInit, AfterViewInit, OnDestroy {
           name: scorecard_details.header.title,
           data: scorecard_details
         };
+        if(!this.scorecard.data.hasOwnProperty("empty_rows")){
+          this.scorecard.data.empty_rows = true;
+        }
         if(this.scorecard.data.hasOwnProperty("periodType")){
           this.period_type = this.scorecard.data.periodType
         }
@@ -221,9 +223,10 @@ export class ViewComponent implements OnInit, AfterViewInit, OnDestroy {
 
                 this.orgunitService.getUserInformation().subscribe(
                   userOrgunit => {
-                    let level = this.orgunitService.getUserHighestOrgUnitlevel(userOrgunit);
+                    let level = this.orgunitService.getUserHighestOrgUnitlevel( userOrgunit );
+                    this.orgunit_model.user_orgunits = this.orgunitService.getUserOrgUnits( userOrgunit );
                     let all_levels = data.pager.total;
-                    let orgunits = this.orgunitService.getuserOrganisationUnitsWithHighestlevel(level,userOrgunit);
+                    let orgunits = this.orgunitService.getuserOrganisationUnitsWithHighestlevel( level, userOrgunit );
                     let use_level = parseInt(all_levels) - (parseInt(level) - 1);
                     this.orgunit_model.user_orgunits = orgunits;
 
@@ -241,7 +244,6 @@ export class ViewComponent implements OnInit, AfterViewInit, OnDestroy {
                         this.metadata_ready = true;
                         //noinspection TypeScriptUnresolvedVariable
                         this.organisationunits = initial_data.organisationUnits;
-                        this.activateNode(this.orgUnit.id, this.orgtree);
                         this.orgunit_tree_config.loading = false;
                         // after done loading initial organisation units now load all organisation units
                         let fields = this.orgunitService.generateUrlBasedOnLevels(use_level);
@@ -251,6 +253,7 @@ export class ViewComponent implements OnInit, AfterViewInit, OnDestroy {
                             this.organisationunits = items.organisationUnits;
                             //noinspection TypeScriptUnresolvedVariable
                             this.orgunitService.nodes = items.organisationUnits;
+                            this.activateNode(this.orgUnit.id, this.orgtree);
                             this.prepareOrganisationUnitTree(this.organisationunits, 'parent');
                           },
                           error => {
@@ -494,6 +497,7 @@ export class ViewComponent implements OnInit, AfterViewInit, OnDestroy {
         "periodType": "Quarterly",
         "show_score": false,
         "show_rank": false,
+        "empty_rows":true,
         "rank_position_last": true,
         "header": {
           "title": "",
@@ -572,6 +576,7 @@ export class ViewComponent implements OnInit, AfterViewInit, OnDestroy {
 
   // action to be called when a tree item is deselected(Remove item in array of selected items
   deactivateOrg ( $event ) {
+    console.log($event.node.data);
     this.orgunit_model.selected_orgunits.forEach((item,index) => {
       if( $event.node.data.id == item.id ) {
         this.orgunit_model.selected_orgunits.splice(index, 1);
@@ -764,24 +769,6 @@ export class ViewComponent implements OnInit, AfterViewInit, OnDestroy {
     this.show_average_in_column = e.target.checked;
     let close = (this.keep_options_open)?'':this.showOptions();
   }
-
-  // dealing with showing average
-  hideEmptyRows(e){
-    this.hide_empty_rows = e.target.checked;
-    let close = (this.keep_options_open)?'':this.showOptions();
-  }
-
-  // // dealing with showing average
-  // showAboveAvg(e){
-  //   this.show_above_average = e.target.checked;
-  //   let close = (this.keep_options_open)?'':this.showOptions();
-  // }
-  //
-  // // dealing with showing average
-  // showBelowAvg(e){
-  //   this.show_below_average = e.target.checked;
-  //   let close = (this.keep_options_open)?'':this.showOptions();
-  // }
 
   // dealing with showing average
   hideEmptyColumn(e){

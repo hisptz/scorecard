@@ -1,39 +1,79 @@
 <div class="container-fluid" id="filters" style="padding: 0px">
   <div class="col-sm-4" style="padding-left: 5px">
     <label>Organisation Units</label>
-
     <div class="tree-input" >
       <div>
         <div class="show_items" (click)="displayOrgTree()">
-          <span *ngIf="card_selected_orgunits.length > 5">
+          <span>
+              {{ getProperPreOrgunitName() }}
+          </span>
+          <span *ngIf="orgunit_model.selected_orgunits.length > 4 && orgunit_model.selection_mode != 'Usr_orgUnit'">
             <span class="selected-item">
-              {{ card_selected_orgunits.length }} selected
+              {{ orgunit_model.selected_orgunits[0].name }}
+            </span>
+            <span class="selected-item">
+              {{ orgunit_model.selected_orgunits[1].name }}
+            </span>
+            <span >
+              &nbsp; and {{ orgunit_model.selected_orgunits.length - 2 }} more
             </span>
           </span>
-          <span *ngIf="card_selected_orgunits.length <= 5">
-             <span *ngFor="let item of card_selected_orgunits" class="selected-item ng-binding ng-scope">
+          <span *ngIf="orgunit_model.selected_orgunits.length <= 4 && orgunit_model.selection_mode != 'Usr_orgUnit'">
+             <span *ngFor="let item of orgunit_model.selected_orgunits" class="selected-item ng-binding ng-scope">
               {{ item.name }}
             </span>
           </span>
-
-          <span class="no-selection"*ngIf="card_selected_orgunits.length == 0 && !card_orgunit_tree_config.loading">{{ card_orgunit_tree_config.placeholder }}</span>
+          <span class="no-selection"*ngIf="orgunit_model.selected_orgunits.length == 0 && !card_orgunit_tree_config.loading">{{ card_orgunit_tree_config.placeholder }}</span>
           <span class="glyphicon glyphicon-triangle-bottom pull-right" *ngIf="!card_orgunit_tree_config.loading"></span>
           <span *ngIf="card_orgunit_tree_config.loading">{{ card_orgunit_tree_config.loading_message }}</span>
         </div>
         <div class="tree-view" [ngClass]="{'hiddenTree':showOrgTree}" id="tree_view">
+          <div class="col-sm-6" style="padding-left: 0px; margin-bottom: 5px">
+            <label>Selection Mode</label>
+            <select id="selectionMode" [(ngModel)]="orgunit_model.selection_mode" class="form-control" style="height: 30px ">
+              <option value="Usr_orgUnit">User orgUnit</option>
+              <option value="orgUnit">Select Organisation Unit</option>
+              <option value="Level">Select Level</option>
+              <option value="Group">Select Group</option>
+            </select>
+          </div>
+          <!--org_unit_groups-->
+          <div class="col-sm-6" style="padding-right: 0px; margin-bottom: 5px" *ngIf="orgunit_model.selection_mode == 'Group'">
+            <label>Available Groups</label>
+            <select id="groupSelection" [(ngModel)]="orgunit_model.selected_group" class="form-control" style="height: 30px ">
+              <option value="">Select Group</option>
+              <option *ngFor="let group of orgunit_model.orgunit_groups"  value="OU_GROUP-{{ group.id }}">{{ group.name }}</option>
+            </select>
+          </div>
+          <!--org_unit_groups-->
+          <div class="col-sm-6" style="padding-right: 0px; margin-bottom: 5px" *ngIf="orgunit_model.selection_mode == 'Usr_orgUnit'">
+            <label>Available Groups</label>
+            <select id="userOrgSelection" [(ngModel)]="orgunit_model.selected_user_orgunit" class="form-control" style="height: 30px ">
+              <option value="USER_ORGUNIT">User org unit</option>
+              <option value="USER_ORGUNIT_CHILDREN">User sub-units</option>
+              <option value="USER_ORGUNIT_GRANDCHILDREN">User sub-x2-units</option>
+            </select>
+          </div>
+          <!--org_unit_levels-->
+          <div class="col-sm-6" style="padding-right: 0px; margin-bottom: 5px" *ngIf="orgunit_model.selection_mode == 'Level'">
+            <label>Available Levels</label>
+            <select id="levelSelection" [(ngModel)]="orgunit_model.selected_level" class="form-control" style="height: 30px ">
+              <option value="">Select Level</option>
+              <option *ngFor="let single_level of orgunit_model.orgunit_levels"  value="LEVEL-{{single_level.level}}">{{ single_level.name }}</option>
+            </select>
+          </div>
           <div class="search-area">
-            <form *ngIf="!card_orgunit_tree_config.loading && card_orgunit_tree_config.show_search" style="border-bottom: solid 1px blanchedalmond;">
-              <input #filter (keyup)="filterNodes(filter.value, orgtree, 'orgunit')" placeholder="{{ card_orgunit_tree_config.search_text }}" class="search_field"/>
-
+            <form *ngIf="!card_orgunit_tree_config.loading && card_orgunit_tree_config.show_search && orgunit_model.selection_mode != 'Usr_orgUnit'" style="border-bottom: solid 1px blanchedalmond;">
+              <input #filter (keyup)="filterNodes(filter.value, orgtree)" placeholder="{{ card_orgunit_tree_config.search_text }}" class="search_field"/>
             </form>
           </div>
           <div *ngIf="card_orgunit_tree_config.loading">{{ card_orgunit_tree_config.loading_message }}</div>
-          <div class="tree-area" *ngIf="!card_orgunit_tree_config.loading">
+          <div class="tree-area" [ngClass]="{'hiddenTree': orgunit_model.selection_mode == 'Usr_orgUnit'}">
             <Tree
               #orgtree
               [nodes]="card_organisationunits"
               [focused]="true"
-              [options]="customTemplateStringOptions"
+              [options]="customTemplateStringOrgunitOptions"
               (onActivate)="activateOrg($event)"
               (onDeactivate)="deactivateOrg($event)"
             >
@@ -43,11 +83,11 @@
             </Tree>
           </div>
           <div class="close-area">
-            <button class="btn btn-xs pull-right" (click)="displayOrgTree()"  style="height: 30px">
+            <button class="btn btn-default pull-right" style="height: 30px"  (click)="displayOrgTree()">
               <span class="glyphicon glyphicon-remove"></span> Close
             </button>
-            <button type="button" class="btn btn-default pull-right"  style="height: 30px" (click)="updateIndicatorCard(indicator, current_visualisation, card_selected_periods, card_selected_orgunits)">
-              <span class="glyphicon glyphicon-refresh"></span> Update
+            <button type="button" class="btn btn-default pull-right"  style="height: 30px" (click)="updateIndicatorCard(indicator, current_visualisation, card_selected_periods, orgunit_model)">
+              <span class="glyphicon glyphicon-refresh"></span>  Update
             </button>
           </div>
         </div>
@@ -124,7 +164,7 @@
                 <button class="btn btn-default btn-xs pull-right" (click)="displayPerTree()" style="height: 30px">
                   <span class="glyphicon glyphicon-remove"></span> Close
                 </button>
-                <button type="button" class="btn btn-default pull-right"  style="height: 30px" (click)="updateIndicatorCard(indicator, current_visualisation, card_selected_periods, card_selected_orgunits)">
+                <button type="button" class="btn btn-default pull-right"  style="height: 30px" (click)="updateIndicatorCard(indicator, current_visualisation, card_selected_periods, orgunit_model)">
                   <span class="glyphicon glyphicon-refresh"></span> Update
                 </button>
               </div>
@@ -132,7 +172,7 @@
           </div>
         </div>
   </div>
-  <div class="col-sm-2" *ngIf="!showBottleneck">
+  <div class="col-sm-2">
     <label>Show</label>
     <select class="form-control" [(ngModel)]="chart_settings" style="height: 38px">
       <option value="ou-pe">period vs orgunit</option>
@@ -143,10 +183,10 @@
   <div class="col-sm-3">
     <label>&nbsp;&nbsp;</label>
     <div>
-      <button type="button" class="btn btn-default pull-right"  style="height: 38px" (click)="updateIndicatorCard(indicator, current_visualisation, card_selected_periods, card_selected_orgunits)">
+      <button type="button" class="btn btn-default pull-right"  style="height: 38px" (click)="updateIndicatorCard(indicator, current_visualisation, card_selected_periods, orgunit_model)">
         <span class="glyphicon glyphicon-refresh"></span> Update
       </button>
-      <button type="button" class="btn btn-default pull-right"  style="height: 38px" (click)="updateIndicatorCard(indicator, 'csv', card_selected_periods, card_selected_orgunits)">
+      <button type="button" class="btn btn-default pull-right"  style="height: 38px" (click)="updateIndicatorCard(indicator, 'csv', card_selected_periods, orgunit_model)">
         <span class="glyphicon glyphicon-save-file"></span>  CSV
       </button>
     </div>
@@ -158,13 +198,13 @@
       <input
         type="checkbox"
         [(ngModel)]="showBottleneck"
-        (change)="updateIndicatorCard(indicator, current_visualisation, card_selected_periods, card_selected_orgunits)">
+        (change)="switchBottleneck(indicator)">
       Bottleneck Analysis
     </label>
 
 
     <label *ngIf="visualizer_config.type == 'chart'">
-      &nbsp;&nbsp;&nbsp;&nbsp;<input type="checkbox" [(ngModel)]="show_labels" (change)="updateIndicatorCard(indicator,current_visualisation, card_selected_periods, card_selected_orgunits, false, show_labels)">
+      &nbsp;&nbsp;&nbsp;&nbsp;<input type="checkbox" [(ngModel)]="show_labels" (change)="updateIndicatorCard(indicator,current_visualisation, card_selected_periods, orgunit_model, false, show_labels)">
       Chart Labels
     </label>
   </div>
@@ -201,9 +241,9 @@
 
 <div class="container-fluid footer">
     <p style="margin: 3px">
-      <a (click)="updateIndicatorCard(indicator,icon.name, card_selected_periods, card_selected_orgunits, false, show_labels)" *ngFor="let icon of icons" title="{{ icon.name }}" class="btn btn-small btn-info visual-btn" [style.background-color]="getBackgroundStyle(icon.name)"><img src="assets/img/{{icon.image}}" style="height: 25px;width: 25px"/></a>
-      <a (click)="updateIndicatorCard(indicator, 'csv', card_selected_periods, card_selected_orgunits, false,show_labels)" title="Download Excel" class="btn btn-small btn-info visual-btn" ><img src="assets/img/cvs.jpg" style="height: 25px;width: 25px"/></a>
-      <a (click)="updateIndicatorCard(indicator,'info', card_selected_periods, card_selected_orgunits, false, show_labels)"  title="card details" class="btn btn-small btn-info visual-btn" [style.background-color]="getBackgroundStyle('info')"><span class="glyphicon glyphicon-info-sign" style="font-size: 24px"></span></a>
+      <a (click)="updateIndicatorCard(indicator,icon.name, card_selected_periods, orgunit_model, false, show_labels)" *ngFor="let icon of icons" title="{{ icon.name }}" class="btn btn-small btn-info visual-btn" [style.background-color]="getBackgroundStyle(icon.name)"><img src="assets/img/{{icon.image}}" style="height: 25px;width: 25px"/></a>
+      <a (click)="updateIndicatorCard(indicator, 'csv', card_selected_periods, orgunit_model, false,show_labels)" title="Download Excel" class="btn btn-small btn-info visual-btn" ><img src="assets/img/cvs.jpg" style="height: 25px;width: 25px"/></a>
+      <a (click)="updateIndicatorCard(indicator,'info', card_selected_periods, orgunit_model, false, show_labels)"  title="card details" class="btn btn-small btn-info visual-btn" [style.background-color]="getBackgroundStyle('info')"><span class="glyphicon glyphicon-info-sign" style="font-size: 24px"></span></a>
       <a (click)="switchXandY(current_visualisation, show_labels)"  title="Switch X and Y axis" class="btn btn-small btn-info visual-btn"><span class="glyphicon glyphicon-retweet" style="font-size: 24px"></span></a>
       <button type="button" class="btn btn-default pull-right" (click)="removeModel()">Close</button>
     </p>

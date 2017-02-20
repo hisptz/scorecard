@@ -9,6 +9,16 @@ import {Observable} from 'rxjs';
 import { Subscription } from 'rxjs/Rx';
 import {Angular2Csv} from "angular2-csv";
 
+const actionMapping1:IActionMapping = {
+  mouse: {
+    click: (node, tree, $event) => {
+      $event.ctrlKey
+        ? TREE_ACTIONS.TOGGLE_SELECTED_MULTI(node, tree, $event)
+        : TREE_ACTIONS.TOGGLE_SELECTED(node, tree, $event)
+    }
+  }
+};
+
 const actionMapping:IActionMapping = {
   mouse: {
     dblClick: TREE_ACTIONS.TOGGLE_EXPANDED,
@@ -31,6 +41,7 @@ export class IndicatorCardComponent implements OnInit, AfterViewInit, OnDestroy 
   @Input() default_period_type:any;
   @Input() default_orgunit:any;
   @Input() hidden_columns:any = [];
+  @Input() default_orgunit_model:any = {};
   @Output() show_details = new EventEmitter<any>();
   card_orgunit_tree_config: any = {
     show_search : true,
@@ -113,6 +124,19 @@ export class IndicatorCardComponent implements OnInit, AfterViewInit, OnDestroy 
   showBottleneck:boolean = false;
   error_occured: boolean = false;
 
+  orgunit_model: any = {
+    selection_mode: "orgUnit",
+    selected_level: "",
+    selected_group: "",
+    orgunit_levels: [],
+    orgunit_groups: [],
+    selected_orgunits: [],
+    user_orgunits: [],
+    selected_user_orgunit: "USER_ORGUNIT"
+  }
+
+  bottleneck_first_time:boolean = false;
+
   constructor(private filterService: FilterService,
               private visulizationService: VisulizerService,
               private constant: Constants,
@@ -125,22 +149,33 @@ export class IndicatorCardComponent implements OnInit, AfterViewInit, OnDestroy 
     this.card_organisationunits = this.orgunit_nodes;
     this.card_period_type = this.current_period_type;
     this.card_year = this.current_year;
+    this.orgunit_model.orgunit_groups = this.default_orgunit_model.orgunit_groups;
+    this.orgunit_model.orgunit_levels = this.default_orgunit_model.orgunit_levels;
+    this.orgunit_model.user_orgunits = this.default_orgunit_model.user_orgunits;
     this.card_periods = this.filterService.getPeriodArray( this.default_period_type, this.card_year );
-
-
+    this.orgunit_model.selected_orgunits = [this.default_orgunit];
   }
 
   ngAfterViewInit(){
+    console.log(this.default_orgunit);
+    this.updateIndicatorCard(this.indicator, "table", [this.default_period], this.orgunit_model, true);
     this.activateNode( this.default_period.id, this.pertree );
     this.activateNode( this.default_orgunit.id, this.orgtree );
-    this.updateIndicatorCard(this.indicator, "table", [this.default_period], [this.default_orgunit], true);
 
+  }
+
+  switchBottleneck(indicator){
+    if(this.showBottleneck){
+      this.bottleneck_first_time = true;
+      this.updateIndicatorCard(indicator, this.current_visualisation, this.card_selected_periods, this.orgunit_model)
+    }else{
+      this.updateIndicatorCard(indicator, this.current_visualisation, this.card_selected_periods, this.orgunit_model)
+    }
   }
 
   // a call that will change the view type
   details_indicators: string = '';
-  updateIndicatorCard( holders: any[], type: string, periods: any[], orgunits: any[], with_children:boolean = false, show_labels:boolean = false ){
-    console.log("Orgunits:", orgunits);
+  updateIndicatorCard( holders: any[], type: string, periods: any[], orgunits: {}, with_children:boolean = false, show_labels:boolean = false ){
     // cancel the current call if still in progress when switching between charts
     if( this.subscription ){
       this.subscription.unsubscribe();
@@ -157,7 +192,7 @@ export class IndicatorCardComponent implements OnInit, AfterViewInit, OnDestroy 
     let periodArray = [];
 
     // check first if your supposed to load bottleneck indicators too for analysis
-    let config_array = this.chart_settings.split( "-" );
+
     if( this.showBottleneck ){
       for ( let holder of holders ){
         for ( let item of holder.indicators ){
@@ -171,10 +206,13 @@ export class IndicatorCardComponent implements OnInit, AfterViewInit, OnDestroy 
           }
         }
       }
-      config_array[1] = 'dx';
-      config_array[0] = 'ou';
-      type = "column";
-      this.visualizer_config.type = 'chart';
+      if(this.bottleneck_first_time){
+        type = "column";
+        this.current_visualisation = "column";
+        this.chart_settings="ou-dx";
+        this.visualizer_config.type = 'chart';
+        this.bottleneck_first_time = false;
+      }
     }else{
       for ( let holder of holders ){
         for ( let item of holder.indicators ){
@@ -185,7 +223,7 @@ export class IndicatorCardComponent implements OnInit, AfterViewInit, OnDestroy 
       }
     }
 
-
+    let config_array = this.chart_settings.split( "-" );
     if( type == "table" ){
       this.visualizer_config = {
         'type': 'table',
@@ -247,18 +285,9 @@ export class IndicatorCardComponent implements OnInit, AfterViewInit, OnDestroy 
         for ( let item of periods ){
           periodArray.push(item.id);
           this.current_parameters.push(item.id);
-        }for ( let item of orgunits ){
-          orgUnitsArray.push(item.id);
-          this.current_parameters.push(item.id);
-          if( with_children && item.hasOwnProperty('children') ){
-            for ( let child of item.children ){
-              orgUnitsArray.push(child.id);
-              this.current_parameters.push(child.id);
-            }
-          }
         }
         // create an api analytics call
-        let url = this.constant.root_dir+"api/analytics.json?dimension=dx:" + indicatorsArray.join(";") + "&dimension=ou:" + orgUnitsArray.join(";") + "&dimension=pe:" + periodArray.join(";") + "&displayProperty=NAME";
+        let url = this.constant.root_dir+"api/analytics.json?dimension=dx:" + indicatorsArray.join(";") + "&dimension=ou:" + this.getOrgUnitsForAnalytics(orgunits,with_children) + "&dimension=pe:" + periodArray.join(";") + "&displayProperty=NAME";
 
         this.subscription = this.loadAnalytics(url).subscribe(
           (data) => {
@@ -415,14 +444,116 @@ export class IndicatorCardComponent implements OnInit, AfterViewInit, OnDestroy 
     this.showPerTree = !this.showPerTree;
   }
 
-  // action to be called when a tree item is deselected(Remove item in array of selected items
+  // prepare a proper name for updating the organisation unit display area.
+  getProperPreOrgunitName() : string{
+    let name = "";
+    if( this.orgunit_model.selection_mode == "Group" ){
+      let use_value = this.orgunit_model.selected_group.split("-");
+      for( let single_group of this.orgunit_model.orgunit_groups ){
+        if ( single_group.id == use_value[1] ){
+          name = single_group.name + " in";
+        }
+      }
+    }else if( this.orgunit_model.selection_mode == "Usr_orgUnit" ){
+      if( this.orgunit_model.selected_user_orgunit == "USER_ORGUNIT") name = "User org unit";
+      if( this.orgunit_model.selected_user_orgunit == "USER_ORGUNIT_CHILDREN") name = "User sub-units";
+      if( this.orgunit_model.selected_user_orgunit == "USER_ORGUNIT_GRANDCHILDREN") name = "User sub-x2-units";
+    }else if( this.orgunit_model.selection_mode == "Level" ){
+      let use_level = this.orgunit_model.selected_level.split("-");
+      for( let single_level of this.orgunit_model.orgunit_levels ){
+        if ( single_level.level == use_level[1] ){
+          name = single_level.name + " in";
+        }
+      }
+    }else{
+      name = "";
+    }
+    return name
+  }
+
+  // a function to prepare a list of organisation units for analytics
+  getOrgUnitsForAnalytics(orgunit_model:any, with_children:boolean): string{
+    let orgUnits = [];
+    let organisation_unit_analytics_string = "";
+    // if the selected orgunit is user org unit
+    if(orgunit_model.selection_mode == "Usr_orgUnit"){
+      if(orgunit_model.user_orgunits.length == 1){
+        let user_orgunit = this.orgtree.treeModel.getNodeById(orgunit_model.user_orgunits[0]);
+        orgUnits.push(user_orgunit.id);
+        if(user_orgunit.hasOwnProperty('children') && with_children){
+          for( let orgunit of user_orgunit.children ){
+            orgUnits.push(orgunit.id);
+          }
+        }
+      }else{
+        organisation_unit_analytics_string += orgunit_model.selected_user_orgunit
+      }
+    }
+
+    else{
+      // if there is only one organisation unit selected
+      if ( orgunit_model.selected_orgunits.length == 1 ){
+        let detailed_orgunit = this.orgtree.treeModel.getNodeById(orgunit_model.selected_orgunits[0].id);
+        orgUnits.push(detailed_orgunit.id);
+        if(detailed_orgunit.hasOwnProperty('children') && with_children){
+          for( let orgunit of detailed_orgunit.children ){
+            orgUnits.push(orgunit.id);
+          }
+        }
+
+      }
+      // If there is more than one organisation unit selected
+      else{
+        orgunit_model.selected_orgunits.forEach((orgunit) => {
+          orgUnits.push(orgunit.id);
+        })
+      }
+      if(orgunit_model.selection_mode == "orgUnit"){
+
+      }if(orgunit_model.selection_mode == "Level"){
+        organisation_unit_analytics_string += orgunit_model.selected_level+";";
+      }if(orgunit_model.selection_mode == "Group"){
+        organisation_unit_analytics_string += orgunit_model.selected_group+";";
+      }
+    }
+
+
+    return organisation_unit_analytics_string+orgUnits.join(";");
+  }
+
+
+// action to be called when a tree item is deselected(Remove item in array of selected items
   deactivateOrg ( $event ) {
-    this.card_selected_orgunits.forEach((item,index) => {
+    this.orgunit_model.selected_orgunits.forEach((item,index) => {
       if( $event.node.data.id == item.id ) {
-        this.card_selected_orgunits.splice(index, 1);
+        this.orgunit_model.selected_orgunits.splice(index, 1);
       }
     });
   };
+
+  // add item to array of selected items when item is selected
+  activateOrg = ($event) => {
+    if(!this.checkOrgunitAvailabilty($event.node.data, this.orgunit_model.selected_orgunits)){
+      this.orgunit_model.selected_orgunits.push($event.node.data);
+    }
+  };
+
+  // add item to array of selected items when item is selected
+  removeOrg = (id) => {
+    this.deActivateNode( id, this.orgtree );
+  };
+
+  // check if orgunit already exist in the orgunit display list
+  checkOrgunitAvailabilty(orgunit, array): boolean{
+    let checker = false;
+    array.forEach((value) => {
+      if( value.id == orgunit.id ){
+        checker = true;
+      }
+    });
+    return checker;
+  }
+
 
   // action to be called when a tree item is deselected(Remove item in array of selected items
   deactivatePer ( $event ) {
@@ -431,12 +562,6 @@ export class IndicatorCardComponent implements OnInit, AfterViewInit, OnDestroy 
         this.card_selected_periods.splice(index, 1);
       }
     });
-  };
-
-  // add item to array of selected items when organisation unit is selected
-  activateOrg = ($event) => {
-    this.card_selected_orgunits.push($event.node.data);
-    this.card_orgUnit = $event.node.data;
   };
 
   // add item to array of selected items when period is selected
@@ -451,6 +576,15 @@ export class IndicatorCardComponent implements OnInit, AfterViewInit, OnDestroy 
       if (node)
         // node.toggleActivated();
         node.setIsActive(true);
+    }, 0);
+  }
+
+  deActivateNode(nodeId:any, nodes){
+    setTimeout(() => {
+      let node = nodes.treeModel.getNodeById(nodeId);
+      if (node)
+        // node.toggleActivated();
+        node.setIsActive(false);
     }, 0);
   }
 
@@ -472,6 +606,13 @@ export class IndicatorCardComponent implements OnInit, AfterViewInit, OnDestroy 
     isExpandedField: 'expanded',
     actionMapping
   };
+
+  // custom settings for tree
+  customTemplateStringOrgunitOptions: any = {
+    isExpandedField: 'expanded',
+    actionMapping
+  };
+
 
   // a function to simplify loading of analytics data
   loadAnalytics(url) {
