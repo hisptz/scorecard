@@ -139,7 +139,7 @@ export class ScorecardComponent implements OnInit, AfterViewInit, OnDestroy {
   old_proccessed_percent = 0;
   proccesed_indicators = 0;
   loadScoreCard( orgunit: any = null ){
-    this.showSubScorecard = []
+    this.showSubScorecard = [];
     this.indicator_done_loading = [];
     this.proccessed_percent = 0;
     this.loading = true;
@@ -150,81 +150,81 @@ export class ScorecardComponent implements OnInit, AfterViewInit, OnDestroy {
     let old_proccesed_indicators = 0;
     let indicator_list = this.getIndicatorList(this.scorecard);
     for( let holder of this.scorecard.data.data_settings.indicator_holders ){
-          for( let indicator of holder.indicators ){
-            if(this.level == 'top'){
-              indicator['values'] = [];
-              indicator['tooltip'] = [];
-              indicator['previous_values'] = [];
-              indicator['showTopArrow'] = [];
-              indicator['showBottomArrow'] = [];
-            }
-            indicator['loading'] = true;
-            this.indicatorCalls.push(this.dataService.getIndicatorsRequest(this.getOrgUnitsForAnalytics(this.orgunit_model),this.period.id, indicator.id)
-              .subscribe(
-                (data) => {
-                  indicator.loading = false;
-                  this.loading_message = " Done Fetching data for "+indicator.title;
-                  this.proccesed_indicators++;
-                  this.proccessed_percent = (this.proccesed_indicators / indicator_list.length) * 100;
-                  if(this.proccesed_indicators == indicator_list.length ){
-                    this.loading = false;
+        for( let indicator of holder.indicators ){
+          if(this.level == 'top'){
+            indicator['values'] = [];
+            indicator['tooltip'] = [];
+            indicator['previous_values'] = [];
+            indicator['showTopArrow'] = [];
+            indicator['showBottomArrow'] = [];
+          }
+          indicator['loading'] = true;
+          this.indicatorCalls.push(this.dataService.getIndicatorsRequest(this.getOrgUnitsForAnalytics(this.orgunit_model),this.period.id, indicator.id)
+            .subscribe(
+              (data) => {
+                indicator.loading = false;
+                this.loading_message = " Done Fetching data for "+indicator.title;
+                this.proccesed_indicators++;
+                this.proccessed_percent = (this.proccesed_indicators / indicator_list.length) * 100;
+                if(this.proccesed_indicators == indicator_list.length ){
+                  this.loading = false;
+                }
+                //noinspection TypeScriptUnresolvedVariable
+                for ( let orgunit of data.metaData.ou ){
+                  if(!this.checkOrgunitAvailability(orgunit,this.orgunits)){
+                    //noinspection TypeScriptUnresolvedVariable
+                    this.orgunits.push({"id":orgunit,
+                      "name":data.metaData.names[orgunit],
+                      "is_parent":this.orgUnit.id == orgunit
+                    })
                   }
-                  //noinspection TypeScriptUnresolvedVariable
-                  for ( let orgunit of data.metaData.ou ){
-                    if(!this.checkOrgunitAvailability(orgunit,this.orgunits)){
-                      //noinspection TypeScriptUnresolvedVariable
-                      this.orgunits.push({"id":orgunit,
-                        "name":data.metaData.names[orgunit],
-                        "is_parent":this.orgUnit.id == orgunit
-                      })
-                    }
 
-                    indicator.values[orgunit] = this.dataService.getIndicatorData(orgunit,this.period.id, data);
-                  }
-                  this.shown_records = this.orgunits.length;
-                  this.indicator_loading[indicator.id] = true;
-                  //load previous data
-                  let effective_gap = parseInt( indicator.arrow_settings.effective_gap );
-                  this.indicatorCalls.push(this.dataService.getIndicatorsRequest(this.getOrgUnitsForAnalytics(this.orgunit_model),this.filterService.getLastPeriod(this.period.id,this.period_type), indicator.id)
-                    .subscribe(
-                      ( olddata ) => {
-                        for( let prev_orgunit of this.orgunits ){
-                          indicator.previous_values[prev_orgunit.id] = this.dataService.getIndicatorData(prev_orgunit.id,this.filterService.getLastPeriod(this.period.id,this.period_type), olddata);
-                        }
-                        if(indicator.hasOwnProperty("arrow_settings")){
-                          for( let key in indicator.values ) {
-                            if(parseInt(indicator.previous_values[key]) != 0){
-                              let check = parseInt( indicator.values[key] ) > (parseInt( indicator.previous_values[key] ) + effective_gap );
-                              let check1 = parseInt( indicator.values[key] ) < (parseInt( indicator.previous_values[key] ) - effective_gap );
-                              indicator.showTopArrow[key] = check;
-                              indicator.showBottomArrow[key] = check1;
+                  indicator.values[orgunit] = this.dataService.getIndicatorData(orgunit,this.period.id, data);
+                }
+                this.shown_records = this.orgunits.length;
+                this.indicator_loading[indicator.id] = true;
+                //load previous data
+                let effective_gap = parseInt( indicator.arrow_settings.effective_gap );
+                this.indicatorCalls.push(this.dataService.getIndicatorsRequest(this.getOrgUnitsForAnalytics(this.orgunit_model),this.filterService.getLastPeriod(this.period.id,this.period_type), indicator.id)
+                  .subscribe(
+                    ( olddata ) => {
+                      for( let prev_orgunit of this.orgunits ){
+                        indicator.previous_values[prev_orgunit.id] = this.dataService.getIndicatorData(prev_orgunit.id,this.filterService.getLastPeriod(this.period.id,this.period_type), olddata);
+                      }
+                      if(indicator.hasOwnProperty("arrow_settings")){
+                        for( let key in indicator.values ) {
+                          if(parseInt(indicator.previous_values[key]) != 0){
+                            let check = parseInt( indicator.values[key] ) > (parseInt( indicator.previous_values[key] ) + effective_gap );
+                            let check1 = parseInt( indicator.values[key] ) < (parseInt( indicator.previous_values[key] ) - effective_gap );
+                            indicator.showTopArrow[key] = check;
+                            indicator.showBottomArrow[key] = check1;
+                            //noinspection TypeScriptUnresolvedVariable
+                            if(indicator.showTopArrow[key] && indicator.values[key] != null && indicator.previous_values[key] != null && olddata.metaData.names.hasOwnProperty(key)){
+                              let  rise = indicator.values[key] - parseInt( indicator.previous_values[key]);
                               //noinspection TypeScriptUnresolvedVariable
-                              if(indicator.showTopArrow[key] && indicator.values[key] != null && indicator.previous_values[key] != null && olddata.metaData.names.hasOwnProperty(key)){
-                                let  rise = indicator.values[key] - parseInt( indicator.previous_values[key]);
-                                //noinspection TypeScriptUnresolvedVariable
-                                indicator.tooltip[key] = indicator.title +" has raised by "+rise.toFixed(2)+" from "+this.getPeriodName(this.period.id)+ " for "+ data.metaData.names[key]+" (Minimum gap "+indicator.arrow_settings.effective_gap+")";
-                              }//noinspection TypeScriptUnresolvedVariable
-                              if(indicator.showBottomArrow[key] && indicator.values[key] != null && indicator.previous_values[key] != null && olddata.metaData.names.hasOwnProperty(key)){
-                                let  rise = parseFloat( indicator.previous_values[key] ) - indicator.values[key];
-                                //noinspection TypeScriptUnresolvedVariable
-                                indicator.tooltip[key] = indicator.title +" has decreased by "+rise.toFixed(2)+" from "+this.getPeriodName(this.period.id)+ " for "+ data.metaData.names[key]+" (Minimum gap "+indicator.arrow_settings.effective_gap+")";
-                              }
+                              indicator.tooltip[key] = indicator.title +" has raised by "+rise.toFixed(2)+" from "+this.getPeriodName(this.period.id)+ " for "+ data.metaData.names[key]+" (Minimum gap "+indicator.arrow_settings.effective_gap+")";
+                            }//noinspection TypeScriptUnresolvedVariable
+                            if(indicator.showBottomArrow[key] && indicator.values[key] != null && indicator.previous_values[key] != null && olddata.metaData.names.hasOwnProperty(key)){
+                              let  rise = parseFloat( indicator.previous_values[key] ) - indicator.values[key];
+                              //noinspection TypeScriptUnresolvedVariable
+                              indicator.tooltip[key] = indicator.title +" has decreased by "+rise.toFixed(2)+" from "+this.getPeriodName(this.period.id)+ " for "+ data.metaData.names[key]+" (Minimum gap "+indicator.arrow_settings.effective_gap+")";
                             }
                           }
                         }
-                        this.indicator_loading[indicator.id] = false;
-                        this.indicator_done_loading[indicator.id] = true;
-                        old_proccesed_indicators++;
-                        this.old_proccessed_percent = (old_proccesed_indicators / indicator_list.length) * 100;
+                      }
+                      this.indicator_loading[indicator.id] = false;
+                      this.indicator_done_loading[indicator.id] = true;
+                      old_proccesed_indicators++;
+                      this.old_proccessed_percent = (old_proccesed_indicators / indicator_list.length) * 100;
 
-                      })
-                  )},
-                error => {
+                    })
+                )},
+              error => {
 
-                }
-              ))
-          }
+              }
+            ))
         }
+      }
   }
 
   // loading sub orgunit details
@@ -391,17 +391,17 @@ export class ScorecardComponent implements OnInit, AfterViewInit, OnDestroy {
     return checker;
   }
 
-  averageHiden(orgunit_id:string): boolean {
+  averageHidden(orgunit_id:string): boolean {
     let checker = false;
     let avg = this.findRowTotalAverage(this.orgunits);
     if( this.average_selection == "all"){
       checker = false;
     }else if( this.average_selection == "below"){
-      if( this.findRowAverage(orgunit_id) <= avg ){
+      if( this.findRowAverage(orgunit_id) >= avg ){
         checker = true
       }
     }else if( this.average_selection == "above"){
-      if( this.findRowAverage(orgunit_id) >= avg ){
+      if( this.findRowAverage(orgunit_id) <= avg ){
         checker = true
       }
     }
