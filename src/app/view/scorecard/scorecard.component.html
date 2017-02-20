@@ -84,7 +84,7 @@
     </tr>
     <!--data-->
     <ng-container *ngFor="let current_orgunit of orgunits | filterByName:searchQuery; let i=index">
-      <tr style="height: 35px; max-height: 35px; overflow-y: hidden; line-height: 80%" class="orunitTr" *ngIf="i < shown_records">
+      <tr style="height: 35px; max-height: 35px; overflow-y: hidden; line-height: 80%" class="orunitTr" *ngIf="i < shown_records"  [ngClass]="{'hide_no_group': isRowEmpty(current_orgunit.id)}" [ngClass]="{'hide_no_group': averageHiden(current_orgunit.id)}">
         <td style="vertical-align: bottom;font-size: 10px;cursor: pointer;line-height: 80%;padding: 8px" *ngIf="scorecard.data.show_rank">{{ i+1 }}</td>
         <td style="vertical-align: bottom;font-size: 10px;cursor: pointer;line-height: 80%;padding: 8px" class="orgUnitName" (click)="loadChildrenData(current_orgunit)" [style.cursor]="getCursorStyle(current_orgunit)">
           {{ current_orgunit.name }}
@@ -108,21 +108,24 @@
           <h3 class="text-center text-muted" *ngIf="!children_available[current_orgunit.id]">This Organisation Unit has no Children</h3>
           <app-scorecard
             *ngIf="children_available[current_orgunit.id]"
-            [scorecard]="scorecard"
-            [orgUnit]="sub_unit"
-            [period]="period"
-            [period_type]="period_type"
-            [show_average_in_column]="show_average_in_column"
-            [show_average_in_row]="show_average_in_row"
-            [show_sum_in_column]="show_sum_in_column"
-            [show_sum_in_row]="show_sum_in_row"
-            [shown_records]="shown_records"
-            [hidenColums]="hidenColums"
-            [show_rank]="show_rank"
-            [sorting_column]="sorting_column"
-            [orgtree]="orgtree"
-            [level]="'non_top'"
-            [orgunit_model]="sub_model"
+            [scorecard] = "scorecard"
+            [orgUnit] = "sub_unit"
+            [period] = "period"
+            [period_type] = "period_type"
+            [show_average_in_column] = "show_average_in_column"
+            [show_average_in_row] = "show_average_in_row"
+            [show_sum_in_column] = "show_sum_in_column"
+            [show_sum_in_row] = "show_sum_in_row"
+            [hide_empty_column] = "hide_empty_column"
+            [hide_empty_rows] = "hide_empty_rows"
+            [shown_records] = "shown_records"
+            [average_selection] = "average_selection"
+            [hidenColums] = "hidenColums"
+            [show_rank] ="show_rank"
+            [sorting_column] ="sorting_column"
+            [orgtree] ="orgtree"
+            [level] ="'non_top'"
+            [orgunit_model] ="sub_model"
             (show_details) = "loadPreviewFromChild($event)"
           ></app-scorecard>
         </td>

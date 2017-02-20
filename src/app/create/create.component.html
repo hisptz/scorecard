@@ -405,8 +405,11 @@
           </div>
 
         </div>
-        <a (click)="showBotleneckEditor(indicator)"  style="padding: 6px; margin-left: 30px" class="btn btn-xs btn-default">
-          <span class="glyphicon glyphicon-pencil"></span> related/bottleneck indicators
+        <a (click)="showBotleneckEditor(indicator)"
+           style="padding: 6px; margin-left: 30px"
+           class="btn btn-xs btn-default"
+           title="Click to manage indicators related to {{ indicator.title }}">
+          <span class="glyphicon glyphicon-pencil"></span> Related/Bottleneck indicators
           <span class="badge"> {{ indicator.bottleneck_indicators.length }} </span>
         </a>
         <!--additinal labels-->

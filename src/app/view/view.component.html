@@ -22,7 +22,13 @@
           </span>
           <span *ngIf="orgunit_model.selected_orgunits.length > 4 && orgunit_model.selection_mode != 'Usr_orgUnit'">
             <span class="selected-item">
-              {{ orgunit_model.selected_orgunits.length }} selected
+              {{ orgunit_model.selected_orgunits[0].name }}
+            </span>
+            <span class="selected-item">
+              {{ orgunit_model.selected_orgunits[1].name }}
+            </span>
+            <span >
+              &nbsp; and {{ orgunit_model.selected_orgunits.length - 2 }} more
             </span>
           </span>
           <span *ngIf="orgunit_model.selected_orgunits.length <= 4 && orgunit_model.selection_mode != 'Usr_orgUnit'">
@@ -199,15 +205,22 @@
         <ul class="list-group">
           <li class="list-group-item pointer">
             <div class="row">
-              <div class="col-sm-6"><label><input type="checkbox" [(ngModel)]="scorecard.data.header.show_legend_definition"> Show Legend</label></div>
-              <div class="col-sm-6"><label><input type="checkbox" [(ngModel)]="scorecard.data.show_rank" >Show Rank</label></div>
+              <div class="col-sm-4"><label><input type="checkbox" [(ngModel)]="scorecard.data.header.show_legend_definition"> Show Legend</label></div>
+              <div class="col-sm-4"><label><input type="checkbox" [(ngModel)]="scorecard.data.show_rank" >Show Rank</label></div>
+              <div class="col-sm-4"><label><input type="checkbox" (change)="hideEmptyRows($event)">Hide Empty Rows</label></div>
             </div>
-
           </li>
           <li class="list-group-item pointer">
             <div class="row">
               <div class="col-sm-6"><label><input type="checkbox" (change)="showAverageInColumn($event)">Show Average Row</label></div>
               <div class="col-sm-6"><label><input type="checkbox" (change)="showAverageInRow($event)" >Show Average Column</label></div>
+            </div>
+          </li>
+          <li class="list-group-item pointer">
+            <div class="row">
+              <div class="col-sm-4"><label><input type="radio" value="all" [(ngModel)]="average_selection" >All</label></div>
+              <div class="col-sm-4"><label><input type="radio" value="below" [(ngModel)]="average_selection" >Below Average</label></div>
+              <div class="col-sm-4"><label><input type="radio" value="above" [(ngModel)]="average_selection" >Above Average</label></div>
             </div>
           </li>
           <li class="list-group-item">
@@ -269,7 +282,10 @@
   [show_average_in_row]="show_average_in_row"
   [show_sum_in_column]="show_sum_in_column"
   [show_sum_in_row]="show_sum_in_row"
+  [hide_empty_column] = "hide_empty_column"
+  [hide_empty_rows] = "hide_empty_rows"
   [shown_records]="shown_records"
+  [average_selection]="average_selection"
   [hidenColums]="hidenColums"
   [show_rank]="show_rank"
   [sorting_column]="sorting_column"

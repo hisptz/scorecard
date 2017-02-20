@@ -122,12 +122,15 @@ export class ViewComponent implements OnInit, AfterViewInit, OnDestroy {
   show_sum_in_column: boolean = false;
   show_average_in_row: boolean = false;
   show_average_in_column: boolean = false;
+  hide_empty_column: boolean = false;
+  hide_empty_rows: boolean = false;
 
   sortAscending: boolean = true;
   sorting_column: any = "none";
   hidenColums: any[] = [];
 
   shown_records:number = 0;
+  average_selection:string = "all";
   show_rank: boolean = false;
   metadata_ready = false;
   have_authorities:boolean = false;
@@ -186,6 +189,7 @@ export class ViewComponent implements OnInit, AfterViewInit, OnDestroy {
   changePeriodType(){
     this.periods = this.filterService.getPeriodArray(this.period_type,this.year);
   }
+
   ngOnInit() {
     //loading organisation units
     this.orgunit_tree_config.loading = true;
@@ -343,7 +347,7 @@ export class ViewComponent implements OnInit, AfterViewInit, OnDestroy {
       let use_value = this.orgunit_model.selected_group.split("-");
       for( let single_group of this.orgunit_model.orgunit_groups ){
         if ( single_group.id == use_value[1] ){
-          name = single_group.name;
+          name = single_group.name + " in";
         }
       }
     }else if( this.orgunit_model.selection_mode == "Usr_orgUnit" ){
@@ -354,7 +358,7 @@ export class ViewComponent implements OnInit, AfterViewInit, OnDestroy {
       let use_level = this.orgunit_model.selected_level.split("-");
       for( let single_level of this.orgunit_model.orgunit_levels ){
         if ( single_level.level == use_level[1] ){
-          name = single_level.name ;
+          name = single_level.name + " in";
         }
       }
     }else{
@@ -367,10 +371,9 @@ export class ViewComponent implements OnInit, AfterViewInit, OnDestroy {
   loadScoreCard( orgunit: any = null ){
     this.showOrgTree = true;
     this.showPerTree = true;
-    this.orgUnitlength = this.orgUnit.children.length+1;
+    this.orgUnitlength = (this.orgUnit.children)?this.orgUnit.children.length+1:1;
     this.childScoreCard.loadScoreCard();
   }
-
 
   //setting the period to next or previous
   setPeriod(type){
@@ -759,6 +762,30 @@ export class ViewComponent implements OnInit, AfterViewInit, OnDestroy {
   // dealing with showing average
   showAverageInColumn(e){
     this.show_average_in_column = e.target.checked;
+    let close = (this.keep_options_open)?'':this.showOptions();
+  }
+
+  // dealing with showing average
+  hideEmptyRows(e){
+    this.hide_empty_rows = e.target.checked;
+    let close = (this.keep_options_open)?'':this.showOptions();
+  }
+
+  // // dealing with showing average
+  // showAboveAvg(e){
+  //   this.show_above_average = e.target.checked;
+  //   let close = (this.keep_options_open)?'':this.showOptions();
+  // }
+  //
+  // // dealing with showing average
+  // showBelowAvg(e){
+  //   this.show_below_average = e.target.checked;
+  //   let close = (this.keep_options_open)?'':this.showOptions();
+  // }
+
+  // dealing with showing average
+  hideEmptyColumn(e){
+    this.hide_empty_column = e.target.checked;
     let close = (this.keep_options_open)?'':this.showOptions();
   }
 

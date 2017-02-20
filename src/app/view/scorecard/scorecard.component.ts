@@ -26,7 +26,10 @@ export class ScorecardComponent implements OnInit, AfterViewInit, OnDestroy {
   @Input() show_sum_in_column: boolean = false;
   @Input() show_average_in_row: boolean = false;
   @Input() show_average_in_column: boolean = false;
+  @Input() hide_empty_column: boolean = false;
+  @Input() hide_empty_rows: boolean = false;
   @Input() shown_records:number = 0;
+  @Input() average_selection:string = "all";
   @Input() hidenColums: any[] = [];
   @Input() show_rank: boolean = false;
   @Input() sorting_column: any = "none";
@@ -85,12 +88,15 @@ export class ScorecardComponent implements OnInit, AfterViewInit, OnDestroy {
 
     else{
       // if there is only one organisation unit selected
-      if ( orgunit_model.selected_orgunits.length == 1){
+      if ( orgunit_model.selected_orgunits.length == 1 ){
         let detailed_orgunit = this.orgtree.treeModel.getNodeById(orgunit_model.selected_orgunits[0].id);
         orgUnits.push(detailed_orgunit.id);
-        for( let orgunit of detailed_orgunit.children ){
-          orgUnits.push(orgunit.id);
+        if(detailed_orgunit.hasOwnProperty('children')){
+          for( let orgunit of detailed_orgunit.children ){
+            orgUnits.push(orgunit.id);
+          }
         }
+
       }
       // If there is more than one organisation unit selected
       else{
@@ -364,6 +370,60 @@ export class ScorecardComponent implements OnInit, AfterViewInit, OnDestroy {
     return indicators;
   }
 
+  // check if a column is empty
+  isRowEmpty(orgunit_id:string) : boolean{
+    let checker = false;
+    let sum = 0;
+    let counter = 0;
+    for ( let holder of this.scorecard.data.data_settings.indicator_holders ){
+      for( let indicator of holder.indicators ){
+        if( this.hidenColums.indexOf(indicator.id) == -1){
+          sum++;
+        }
+        if( this.hidenColums.indexOf(indicator.id) == -1 && indicator.values[orgunit_id] == null ) {
+          counter++;
+        }
+      }
+    }
+    if (counter == sum && this.hide_empty_rows){
+      checker = true;
+    }
+    return checker;
+  }
+
+  averageHiden(orgunit_id:string): boolean {
+    let checker = false;
+    let avg = this.findRowTotalAverage(this.orgunits);
+    if( this.average_selection == "all"){
+      checker = false;
+    }else if( this.average_selection == "below"){
+      if( this.findRowAverage(orgunit_id) <= avg ){
+        checker = true
+      }
+    }else if( this.average_selection == "above"){
+      if( this.findRowAverage(orgunit_id) >= avg ){
+        checker = true
+      }
+    }
+    return checker;
+  }
+
+  // check if column is empty
+  isEmptyColumn(orgunits, indicator_id,scorecard){
+    let sum = 0;
+    for ( let orgunit of orgunits ){
+      for ( let holder of scorecard.data.data_settings.indicator_holders ){
+        for( let indicator of holder.indicators ){
+          if(indicator.id == indicator_id && indicator.values[orgunit.id] == null){
+            sum++;
+          }
+        }
+      }
+    }
+    if (sum == orgunits.length){
+
+    }
+  }
   /**
    * finding the row average
    * @param orgunit_id
