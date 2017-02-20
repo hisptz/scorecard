@@ -4,9 +4,9 @@
     "description": "Score Card Generation",
     "launch_path": "index.html",
     "icons": {
-        "16": "icon.png",
-        "48": "icon.png",
-        "128": "icon.png"
+        "16": "scorecard.svg",
+        "48": "scorecard.svg",
+        "128": "scorecard.svg"
     },
     "developer": {
         "name": "HISP Tanzania",

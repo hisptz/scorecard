@@ -31,8 +31,11 @@ const actionMapping1:IActionMapping = {
 
 const actionMapping:IActionMapping = {
   mouse: {
-    dblClick: TREE_ACTIONS.TOGGLE_EXPANDED,
-    click: (node, tree, $event) => TREE_ACTIONS.TOGGLE_SELECTED_MULTI(node, tree, $event)
+    click: (node, tree, $event) => {
+      $event.ctrlKey
+        ? TREE_ACTIONS.TOGGLE_SELECTED_MULTI(node, tree, $event)
+        : TREE_ACTIONS.TOGGLE_SELECTED(node, tree, $event)
+    }
   }
 };
 
@@ -138,7 +141,8 @@ export class ViewComponent implements OnInit, AfterViewInit, OnDestroy {
     orgunit_levels: [],
     orgunit_groups: [],
     selected_orgunits: [],
-    user_orgunits: []
+    user_orgunits: [],
+    selected_user_orgunit: "USER_ORGUNIT"
   };
   constructor(private scorecardService: ScorecardService,
               private dataService: DataService,
@@ -291,6 +295,8 @@ export class ViewComponent implements OnInit, AfterViewInit, OnDestroy {
 
   }
 
+
+  // this function is used to sort organisation unit
   prepareOrganisationUnitTree(organisationUnit,type:string='top') {
     if (type == "top"){
       if (organisationUnit.children) {
@@ -309,7 +315,6 @@ export class ViewComponent implements OnInit, AfterViewInit, OnDestroy {
         })
       }
     }else{
-      console.log("Org Units",organisationUnit)
       organisationUnit.forEach((orgunit) => {
         console.log(orgunit);
         if (orgunit.children) {
@@ -329,6 +334,33 @@ export class ViewComponent implements OnInit, AfterViewInit, OnDestroy {
         }
       });
     }
+  }
+
+  // prepare a proper name for updating the organisation unit display area.
+  getProperPreOrgunitName() : string{
+    let name = "";
+    if( this.orgunit_model.selection_mode == "Group" ){
+      let use_value = this.orgunit_model.selected_group.split("-");
+      for( let single_group of this.orgunit_model.orgunit_groups ){
+        if ( single_group.id == use_value[1] ){
+          name = single_group.name;
+        }
+      }
+    }else if( this.orgunit_model.selection_mode == "Usr_orgUnit" ){
+      if( this.orgunit_model.selected_user_orgunit == "USER_ORGUNIT") name = "User org unit";
+      if( this.orgunit_model.selected_user_orgunit == "USER_ORGUNIT_CHILDREN") name = "User sub-units";
+      if( this.orgunit_model.selected_user_orgunit == "USER_ORGUNIT_GRANDCHILDREN") name = "User sub-x2-units";
+    }else if( this.orgunit_model.selection_mode == "Level" ){
+      let use_level = this.orgunit_model.selected_level.split("-");
+      for( let single_level of this.orgunit_model.orgunit_levels ){
+        if ( single_level.level == use_level[1] ){
+          name = single_level.name ;
+        }
+      }
+    }else{
+      name = "";
+    }
+    return name
   }
 
   // a function that will be used to load scorecard
@@ -365,6 +397,7 @@ export class ViewComponent implements OnInit, AfterViewInit, OnDestroy {
     }, 5);
   }
 
+  // get the name of period to be used in a tittle
   getPeriodName(id){
     for ( let period of this.filterService.getPeriodArray(this.period_type, this.filterService.getLastPeriod(id,this.period_type).substr(0,4))){
       if( this.filterService.getLastPeriod(id,this.period_type) == period.id){

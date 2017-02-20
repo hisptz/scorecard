@@ -60,17 +60,27 @@
       <th style="vertical-align: bottom">
         <input type="text" class="form-control input-sm no-print" [(ngModel)]="searchQuery" placeholder="Search for orgunits here">
       </th>
-      <td *ngFor="let indicator of getItemsFromGroups()" class="indicator_title" style="line-height: 140%"
-          title="Click to Sort By {{ getIndicatorTitle(indicator) }}" (click)="sortScoreCardFromColumn(indicator.indicators[0].id, sortAscending, orgunits, false)">
+      <td *ngFor="let indicator of getItemsFromGroups()" class="indicator_title"
+          style="line-height: 140%"
+          title="Click to Sort By {{ getIndicatorTitle(indicator) }}"
+          (click)="sortScoreCardFromColumn(indicator.indicators[0].id, sortAscending, orgunits, false)"
+          (dblclick)="loadPreview(null,indicator,null)"
+      >
         <img src="balls-3.svg" style="height: 30px" *ngIf="indicator_loading[indicator.indicators[0].id]" title="Loading old data for {{ getIndicatorTitle(indicator) }}">
         <span *ngIf="indicator_done_loading[indicator.indicators[0].id] && old_proccessed_percent != 100" class="glyphicon glyphicon-ok text-success"></span>
         {{ getIndicatorTitle(indicator) }}
         <!--sorting icons-->
+        <img src="balls-3.svg" style="height: 30px" *ngIf="sorting_on_progress[indicator.indicators[0].id]" title="processing sorting for {{ getIndicatorTitle(indicator) }}">
         <span class="glyphicon glyphicon-chevron-up pull-right text-muted" *ngIf="!current_sorting && sorting_column == indicator.indicators[0].id"></span>
         <span class="glyphicon glyphicon-chevron-down pull-right text-muted" *ngIf="current_sorting && sorting_column == indicator.indicators[0].id"></span>
       </td>
       <th class="subtotal" *ngIf="show_sum_in_row">Sum</th>
-      <th class="subtotal" *ngIf="show_average_in_row">Average</th>
+      <th class="subtotal" *ngIf="show_average_in_row" (click)="sortScoreCardFromColumn('avg', sortAscending, orgunits, false)">
+        Average
+        <!--sorting icons-->
+        <span class="glyphicon glyphicon-chevron-up pull-right text-muted" *ngIf="!current_sorting && sorting_column == 'avg'"></span>
+        <span class="glyphicon glyphicon-chevron-down pull-right text-muted" *ngIf="current_sorting && sorting_column == 'avg'"></span>
+      </th>
     </tr>
     <!--data-->
     <ng-container *ngFor="let current_orgunit of orgunits | filterByName:searchQuery; let i=index">

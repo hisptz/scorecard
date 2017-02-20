@@ -17,12 +17,15 @@
     <div class="tree-input" >
       <div>
         <div class="show_items" (click)="displayOrgTree()">
-        <span *ngIf="orgunit_model.selected_orgunits.length > 4">
+          <span>
+              {{ getProperPreOrgunitName() }}
+          </span>
+          <span *ngIf="orgunit_model.selected_orgunits.length > 4 && orgunit_model.selection_mode != 'Usr_orgUnit'">
             <span class="selected-item">
               {{ orgunit_model.selected_orgunits.length }} selected
             </span>
           </span>
-          <span *ngIf="orgunit_model.selected_orgunits.length <= 4">
+          <span *ngIf="orgunit_model.selected_orgunits.length <= 4 && orgunit_model.selection_mode != 'Usr_orgUnit'">
              <span *ngFor="let item of orgunit_model.selected_orgunits" class="selected-item ng-binding ng-scope">
               {{ item.name }}
             </span>
@@ -47,6 +50,15 @@
             <select id="groupSelection" [(ngModel)]="orgunit_model.selected_group" class="form-control" style="height: 30px ">
               <option value="">Select Group</option>
               <option *ngFor="let group of orgunit_model.orgunit_groups"  value="OU_GROUP-{{ group.id }}">{{ group.name }}</option>
+            </select>
+          </div>
+          <!--org_unit_groups-->
+          <div class="col-sm-6" style="padding-right: 0px; margin-bottom: 5px" *ngIf="orgunit_model.selection_mode == 'Usr_orgUnit'">
+            <label>Available Groups</label>
+            <select id="userOrgSelection" [(ngModel)]="orgunit_model.selected_user_orgunit" class="form-control" style="height: 30px ">
+              <option value="USER_ORGUNIT">User org unit</option>
+              <option value="USER_ORGUNIT_CHILDREN">User sub-units</option>
+              <option value="USER_ORGUNIT_GRANDCHILDREN">User sub-x2-units</option>
             </select>
           </div>
           <!--org_unit_levels-->

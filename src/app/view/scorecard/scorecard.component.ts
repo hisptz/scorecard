@@ -77,30 +77,37 @@ export class ScorecardComponent implements OnInit, AfterViewInit, OnDestroy {
   // a function to prepare a list of organisation units for analytics
   getOrgUnitsForAnalytics(orgunit_model): string{
     let orgUnits = [];
-    // if there is only one organisation unit selected
-    if ( orgunit_model.selected_orgunits.length == 1){
-      let detailed_orgunit = this.orgtree.treeModel.getNodeById(orgunit_model.selected_orgunits[0].id);
-      orgUnits.push(detailed_orgunit.id);
-      for( let orgunit of detailed_orgunit.children ){
-        orgUnits.push(orgunit.id);
+    let organisation_unit_analytics_string = "";
+    // if the selected orgunit is user org unit
+    if(orgunit_model.selection_mode == "Usr_orgUnit"){
+      organisation_unit_analytics_string += orgunit_model.selected_user_orgunit
+    }
+
+    else{
+      // if there is only one organisation unit selected
+      if ( orgunit_model.selected_orgunits.length == 1){
+        let detailed_orgunit = this.orgtree.treeModel.getNodeById(orgunit_model.selected_orgunits[0].id);
+        orgUnits.push(detailed_orgunit.id);
+        for( let orgunit of detailed_orgunit.children ){
+          orgUnits.push(orgunit.id);
+        }
+      }
+      // If there is more than one organisation unit selected
+      else{
+        orgunit_model.selected_orgunits.forEach((orgunit) => {
+          orgUnits.push(orgunit.id);
+        })
+      }
+      if(orgunit_model.selection_mode == "orgUnit"){
+
+      }if(orgunit_model.selection_mode == "Level"){
+        organisation_unit_analytics_string += orgunit_model.selected_level+";";
+      }if(orgunit_model.selection_mode == "Group"){
+        organisation_unit_analytics_string += orgunit_model.selected_group+";";
       }
     }
-    // If there is more than one organisation unit selected
-    else{
-      orgunit_model.selected_orgunits.forEach((orgunit) => {
-        orgUnits.push(orgunit.id);
-      })
-    }
-    let organisation_unit_analytics_string = "";
-    if(orgunit_model.selection_mode == "Usr_orgUnit"){
 
-    }if(orgunit_model.selection_mode == "orgUnit"){
 
-    }if(orgunit_model.selection_mode == "Level"){
-      organisation_unit_analytics_string += orgunit_model.selected_level+";";
-    }if(orgunit_model.selection_mode == "Group"){
-      organisation_unit_analytics_string += orgunit_model.selected_group+";";
-    }
     return organisation_unit_analytics_string+orgUnits.join(";");
   }
 
@@ -366,7 +373,7 @@ export class ScorecardComponent implements OnInit, AfterViewInit, OnDestroy {
     let counter = 0;
     for ( let holder of this.scorecard.data.data_settings.indicator_holders ){
       for( let indicator of holder.indicators ){
-        if( this.hidenColums.indexOf(indicator.id) == -1) {
+        if( this.hidenColums.indexOf(indicator.id) == -1 && indicator.values[orgunit_id] != null ) {
           counter++;
           sum = sum + parseFloat(indicator.values[orgunit_id]);
         }
@@ -507,9 +514,11 @@ export class ScorecardComponent implements OnInit, AfterViewInit, OnDestroy {
 
   // sorting scorecard by clicking the header(if two item in same list will use first item)
   current_sorting = true;
+  sorting_on_progress = [];
   sortScoreCardFromColumn(sortingColumn, sortAscending, orguUnits, lower_level:boolean = true){
     this.current_sorting = !this.current_sorting;
     this.sorting_column = sortingColumn;
+    this.sorting_on_progress[this.sorting_column] = true;
     sortAscending = this.current_sorting;
     if( sortingColumn == "none" ){
       this.dataService.sortArrOfObjectsByParam(orguUnits, "name", sortAscending)
@@ -532,6 +541,7 @@ export class ScorecardComponent implements OnInit, AfterViewInit, OnDestroy {
       }
       this.dataService.sortArrOfObjectsByParam(orguUnits, sortingColumn, sortAscending)
     }
+    this.sorting_on_progress[this.sorting_column] = false;
     this.sorting_column = (lower_level)?'none':sortingColumn;
   }
 

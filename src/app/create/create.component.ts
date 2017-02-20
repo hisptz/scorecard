@@ -1,4 +1,5 @@
 import {Component, OnInit, OnDestroy, ViewChild, ElementRef, AfterViewInit,style, animate, transition, trigger} from '@angular/core';
+import {Location} from '@angular/common';
 import {Http} from "@angular/http";
 import {IndicatorGroupService, IndicatorGroup} from "../shared/services/indicator-group.service";
 import {DatasetService, Dataset} from "../shared/services/dataset.service";
@@ -95,7 +96,8 @@ export class CreateComponent implements OnInit, AfterViewInit, OnDestroy {
               private activatedRouter: ActivatedRoute,
               private programService: ProgramIndicatorsService,
               private eventService: EventDataService,
-              private dataService: DataService
+              private dataService: DataService,
+              private _location: Location
   )
   {
     this.indicatorGroups = [];
@@ -284,7 +286,7 @@ export class CreateComponent implements OnInit, AfterViewInit, OnDestroy {
   }
   // cancel scorecard creation process
   cancelCreate(){
-    this.router.navigateByUrl('');
+    this._location.back();
   }
   // deal with all issues during group type switching between dataelent, indicators and datasets
   switchType(current_type): void{
