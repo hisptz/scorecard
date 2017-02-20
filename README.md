@@ -1,6 +1,18 @@
-# Sampleproject
+# Interactive scorecard
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 1.0.0-beta.31.
+Interactive scorecard is a next generation scorecard application running on top of dhis2 to support analytics and visualizaiton with scorecard, charts, tables, dictionaries and maps all in one application, as an integral solution.
+
+Among functionalities of scorecard includes
+- Support creation of multiple scorecards
+- Support for organisationunits and period filter selections
+- Support for drill down the organisation unit hiearchy
+- Support for search, sort, hide/show functionalities
+- Support for further detailed analysis with charts/tables/dictionary/maps with single click
+- Support for download and printing of scorecards and csv
+- Support previous period analysis with up/down arrows
+and many more functionalities.
+
+Interactive scorecard project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 1.0.0-beta.31.
 
 ## Development server
 Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The app will automatically reload if you change any of the source files.
