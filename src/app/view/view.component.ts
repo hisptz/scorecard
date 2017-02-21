@@ -461,7 +461,7 @@ export class ViewComponent implements OnInit, AfterViewInit, OnDestroy {
 
     //prepare organisation units
     if($event.ou == null){
-      this.orgunit_for_model = this.orgUnit;
+      this.orgunit_for_model = this.orgunit_model;
     }else{
       let node = this.orgtree.treeModel.getNodeById($event.ou);
       this.orgunit_for_model = node.data;

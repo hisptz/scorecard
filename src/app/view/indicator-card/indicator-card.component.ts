@@ -133,7 +133,7 @@ export class IndicatorCardComponent implements OnInit, AfterViewInit, OnDestroy 
     selected_orgunits: [],
     user_orgunits: [],
     selected_user_orgunit: "USER_ORGUNIT"
-  }
+  };
 
   bottleneck_first_time:boolean = false;
 
@@ -149,11 +149,16 @@ export class IndicatorCardComponent implements OnInit, AfterViewInit, OnDestroy 
     this.card_organisationunits = this.orgunit_nodes;
     this.card_period_type = this.current_period_type;
     this.card_year = this.current_year;
-    this.orgunit_model.orgunit_groups = this.default_orgunit_model.orgunit_groups;
-    this.orgunit_model.orgunit_levels = this.default_orgunit_model.orgunit_levels;
-    this.orgunit_model.user_orgunits = this.default_orgunit_model.user_orgunits;
+    if(this.default_orgunit.hasOwnProperty('orgunit_groups')){
+      this.orgunit_model = this.default_orgunit
+    }else{
+      this.orgunit_model.orgunit_groups = this.default_orgunit_model.orgunit_groups;
+      this.orgunit_model.orgunit_levels = this.default_orgunit_model.orgunit_levels;
+      this.orgunit_model.user_orgunits = this.default_orgunit_model.user_orgunits;
+      this.orgunit_model.selected_orgunits = [this.default_orgunit];
+    }
     this.card_periods = this.filterService.getPeriodArray( this.default_period_type, this.card_year );
-    this.orgunit_model.selected_orgunits = [this.default_orgunit];
+
   }
 
   ngAfterViewInit(){
