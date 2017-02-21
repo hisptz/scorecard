@@ -72,59 +72,62 @@
       </table>
     </div>
   </div>
-  <table class="table table-bordered" style="margin-bottom: 3px">
-    <tr>
-      <th></th>
-      <th
-        style="font-size: 9px; "
-        *ngFor="let indicator_holder_group of scorecard.data.data_settings.indicator_holder_groups"
-        [attr.colspan]="indicator_holder_group.indicator_holder_ids.length"
-        class="sans-pro"
-        [ngClass]="{'current':is_current_group(indicator_holder_group)}"
-      >
-        <input type="text" [(ngModel)]="indicator_holder_group.name" class="group-text">
-        <span *ngIf="indicator_holder_group.id != 1 && !deleting[indicator_holder_group.id]"
-              class="glyphicon glyphicon-trash text-danger"
-              style="cursor: pointer; padding-left: 5px"
-              (click)="deleting[indicator_holder_group.id] = true"
-        ></span>
-        <p *ngIf="indicator_holder_group.id != 1 && deleting[indicator_holder_group.id]">
-          Please Confirm, indicators will be deleted too.<br>
-          <button class="btn btn-xs btn-warning" (click)="deleting[indicator_holder_group.id] = false">cancel</button>
-          <button class="btn btn-xs btn-danger" (click)="deleteGroup(indicator_holder_group)">delete</button>
-        </p>
-      </th>
-      <th style="width: 60px">
-        <button class="btn btn-xs" *ngIf="need_for_group" (click)="createGroup()">
-          <span class="glyphicon-plus"></span> Add
-        </button>
-      </th>
-    </tr>
-    <tr>
-      <th style="vertical-align: bottom"></th>
-      <td *ngFor="let indicator of getItemsFromGroups()" style="font-size: 10px;width:90px;max-width: 90px;overflow-wrap: break-word;cursor: pointer;" class="sans-pro"
-           title="Click to update {{ getIndicatorTitle(indicator) }}"
-          [ngClass]="{'current':is_current_indicator(indicator)}"
-          (click)="updateIndicator(indicator)">
-        {{ getIndicatorTitle(indicator) }}
-      </td>
-      <th style="width: 60px">
-        <button title="Add new Indicator next to the current active indicator" class="btn btn-xs" *ngIf="need_for_indicator" (click)="enableAddIndicator(current_indicator_holder.holder_id)">
-          <span class="glyphicon-plus"></span> Add</button>
-      </th>
-    </tr>
-    <tr>
-      <td style="vertical-align: middle; padding: 0px">
+</div>
+<div class="container-fluid no-left-padding" >
+  <div class="scorecard_table">
+    <table class="table table-bordered" style="margin-bottom: 3px">
+      <tr>
+        <th></th>
+        <th
+          style="font-size: 9px; "
+          *ngFor="let indicator_holder_group of scorecard.data.data_settings.indicator_holder_groups"
+          [attr.colspan]="indicator_holder_group.indicator_holder_ids.length"
+          class="sans-pro"
+          [ngClass]="{'current':is_current_group(indicator_holder_group)}"
+        >
+          <input type="text" [(ngModel)]="indicator_holder_group.name" class="group-text">
+          <span *ngIf="indicator_holder_group.id != 1 && !deleting[indicator_holder_group.id]"
+                class="glyphicon glyphicon-trash text-danger"
+                style="cursor: pointer; padding-left: 5px"
+                (click)="deleting[indicator_holder_group.id] = true"
+          ></span>
+          <p *ngIf="indicator_holder_group.id != 1 && deleting[indicator_holder_group.id]">
+            Please Confirm, indicators will be deleted too.<br>
+            <button class="btn btn-xs btn-warning" (click)="deleting[indicator_holder_group.id] = false">cancel</button>
+            <button class="btn btn-xs btn-danger" (click)="deleteGroup(indicator_holder_group)">delete</button>
+          </p>
+        </th>
+        <th style="width: 60px">
+          <button class="btn btn-xs" *ngIf="need_for_group" (click)="createGroup()">
+            <span class="glyphicon-plus"></span> Add
+          </button>
+        </th>
+      </tr>
+      <tr>
+        <th style="vertical-align: bottom"></th>
+        <td *ngFor="let indicator of getItemsFromGroups()" style="font-size: 10px;width:90px;max-width: 90px;overflow-wrap: break-word;cursor: pointer;" class="sans-pro"
+            title="Click to update {{ getIndicatorTitle(indicator) }}"
+            [ngClass]="{'current':is_current_indicator(indicator)}"
+            (click)="updateIndicator(indicator)">
+          {{ getIndicatorTitle(indicator) }}
+        </td>
+        <th style="width: 60px">
+          <button title="Add new Indicator next to the current active indicator" class="btn btn-xs" *ngIf="need_for_indicator" (click)="enableAddIndicator(current_indicator_holder.holder_id)">
+            <span class="glyphicon-plus"></span> Add</button>
+        </th>
+      </tr>
+      <tr>
+        <td style="vertical-align: middle; padding: 0px">
 
-        <!--organisation unit tree-->
-        <div style="padding-left: 5px; min-width: 420px">
-          <div class="tree-input" >
-            <div>
-              <div class="show_items" (click)="displayOrgTree()">
+          <!--organisation unit tree-->
+          <div style="padding-left: 5px; min-width: 420px">
+            <div class="tree-input" >
+              <div>
+                <div class="show_items" (click)="displayOrgTree()">
           <span>
               {{ getProperPreOrgunitName() }}
           </span>
-                <span *ngIf="scorecard.data.orgunit_settings.selected_orgunits.length > 4 && scorecard.data.orgunit_settings.selection_mode != 'Usr_orgUnit'">
+                  <span *ngIf="scorecard.data.orgunit_settings.selected_orgunits.length > 4 && scorecard.data.orgunit_settings.selection_mode != 'Usr_orgUnit'">
             <span class="selected-item">
               {{ scorecard.data.orgunit_settings.selected_orgunits[0].name }}
             </span>
@@ -135,139 +138,140 @@
               &nbsp; and {{ scorecard.data.orgunit_settings.selected_orgunits.length - 2 }} more
             </span>
           </span>
-                <span *ngIf="scorecard.data.orgunit_settings.selected_orgunits.length <= 4 && scorecard.data.orgunit_settings.selection_mode != 'Usr_orgUnit'">
+                  <span *ngIf="scorecard.data.orgunit_settings.selected_orgunits.length <= 4 && scorecard.data.orgunit_settings.selection_mode != 'Usr_orgUnit'">
              <span *ngFor="let item of scorecard.data.orgunit_settings.selected_orgunits" class="selected-item ng-binding ng-scope">
               {{ item.name }}
             </span>
           </span>
-                <span class="no-selection"*ngIf="scorecard.data.orgunit_settings.selected_orgunits.length == 0 && !orgunit_tree_config.loading && scorecard.data.orgunit_settings.selection_mode != 'Usr_orgUnit'">{{ orgunit_tree_config.placeholder }}</span>
-                <span class="glyphicon glyphicon-triangle-bottom pull-right" *ngIf="!orgunit_tree_config.loading"></span>
-                <span *ngIf="orgunit_tree_config.loading">{{ orgunit_tree_config.loading_message }}</span>
-              </div>
-              <div class="tree-view" [ngClass]="{'hiddenTree':showOrgTree}" id="tree_view">
-                <div class="col-sm-6" style="padding-left: 0px; margin-bottom: 5px">
-                  <label>Selection Mode</label>
-                  <select id="selectionMode" [(ngModel)]="scorecard.data.orgunit_settings.selection_mode" class="form-control" style="height: 30px ">
-                    <option value="Usr_orgUnit">User orgUnit</option>
-                    <option value="orgUnit">Select Organisation Unit</option>
-                    <option value="Level">Select Level</option>
-                    <option value="Group">Select Group</option>
-                  </select>
+                  <span class="no-selection"*ngIf="scorecard.data.orgunit_settings.selected_orgunits.length == 0 && !orgunit_tree_config.loading && scorecard.data.orgunit_settings.selection_mode != 'Usr_orgUnit'">{{ orgunit_tree_config.placeholder }}</span>
+                  <span class="glyphicon glyphicon-triangle-bottom pull-right" *ngIf="!orgunit_tree_config.loading"></span>
+                  <span *ngIf="orgunit_tree_config.loading">{{ orgunit_tree_config.loading_message }}</span>
                 </div>
-                <!--org_unit_groups-->
-                <div class="col-sm-6" style="padding-right: 0px; margin-bottom: 5px" *ngIf="scorecard.data.orgunit_settings.selection_mode == 'Group'">
-                  <label>Available Groups</label>
-                  <select id="groupSelection" [(ngModel)]="scorecard.data.orgunit_settings.selected_group" class="form-control" style="height: 30px ">
-                    <option value="">Select Group</option>
-                    <option *ngFor="let group of scorecard.data.orgunit_settings.orgunit_groups"  value="OU_GROUP-{{ group.id }}">{{ group.name }}</option>
-                  </select>
-                </div>
-                <!--org_unit_groups-->
-                <div class="col-sm-6" style="padding-right: 0px; margin-bottom: 5px" *ngIf="scorecard.data.orgunit_settings.selection_mode == 'Usr_orgUnit'">
-                  <label>Available Groups</label>
-                  <select id="userOrgSelection" [(ngModel)]="scorecard.data.orgunit_settings.selected_user_orgunit" class="form-control" style="height: 30px ">
-                    <option value="USER_ORGUNIT">User org unit</option>
-                    <option value="USER_ORGUNIT_CHILDREN">User sub-units</option>
-                    <option value="USER_ORGUNIT_GRANDCHILDREN">User sub-x2-units</option>
-                  </select>
-                </div>
-                <!--org_unit_levels-->
-                <div class="col-sm-6" style="padding-right: 0px; margin-bottom: 5px" *ngIf="scorecard.data.orgunit_settings.selection_mode == 'Level'">
-                  <label>Available Levels</label>
-                  <select id="levelSelection" [(ngModel)]="scorecard.data.orgunit_settings.selected_level" class="form-control" style="height: 30px ">
-                    <option value="">Select Level</option>
-                    <option *ngFor="let single_level of scorecard.data.orgunit_settings.orgunit_levels"  value="LEVEL-{{single_level.level}}">{{ single_level.name }}</option>
-                  </select>
-                </div>
-                <div class="search-area">
-                  <form *ngIf="!orgunit_tree_config.loading && orgunit_tree_config.show_search && scorecard.data.orgunit_settings.selection_mode != 'Usr_orgUnit'" style="border-bottom: solid 1px blanchedalmond;">
-                    <input #filter (keyup)="filterNodes(filter.value, orgtree)" placeholder="{{ orgunit_tree_config.search_text }}" class="search_field"/>
-                  </form>
-                </div>
-                <div *ngIf="orgunit_tree_config.loading">{{ orgunit_tree_config.loading_message }}</div>
-                <div class="tree-area" [ngClass]="{'hiddenTree': scorecard.data.orgunit_settings.selection_mode == 'Usr_orgUnit'}">
-                  <Tree
-                    #orgtree
-                    [nodes]="organisationunits"
-                    [focused]="true"
-                    [options]="customTemplateStringOrgunitOptions"
-                    (onActivate)="activateOrg($event)"
-                    (onDeactivate)="deactivateOrg($event)"
-                  >
-                    <template #treeNodeTemplate let-node>
-                      <span>{{ node.data.name }}</span>
-                    </template>
-                  </Tree>
-                </div>
-                <div class="close-area">
-                  <button class="btn btn-default pull-right" style="height: 30px"  (click)="displayOrgTree()">
-                    <span class="glyphicon glyphicon-remove"></span> Close
-                  </button>
+                <div class="tree-view" [ngClass]="{'hiddenTree':showOrgTree}" id="tree_view">
+                  <div class="col-sm-6" style="padding-left: 0px; margin-bottom: 5px">
+                    <label>Selection Mode</label>
+                    <select id="selectionMode" [(ngModel)]="scorecard.data.orgunit_settings.selection_mode" class="form-control" style="height: 30px ">
+                      <option value="Usr_orgUnit">User orgUnit</option>
+                      <option value="orgUnit">Select Organisation Unit</option>
+                      <option value="Level">Select Level</option>
+                      <option value="Group">Select Group</option>
+                    </select>
+                  </div>
+                  <!--org_unit_groups-->
+                  <div class="col-sm-6" style="padding-right: 0px; margin-bottom: 5px" *ngIf="scorecard.data.orgunit_settings.selection_mode == 'Group'">
+                    <label>Available Groups</label>
+                    <select id="groupSelection" [(ngModel)]="scorecard.data.orgunit_settings.selected_group" class="form-control" style="height: 30px ">
+                      <option value="">Select Group</option>
+                      <option *ngFor="let group of scorecard.data.orgunit_settings.orgunit_groups"  value="OU_GROUP-{{ group.id }}">{{ group.name }}</option>
+                    </select>
+                  </div>
+                  <!--org_unit_groups-->
+                  <div class="col-sm-6" style="padding-right: 0px; margin-bottom: 5px" *ngIf="scorecard.data.orgunit_settings.selection_mode == 'Usr_orgUnit'">
+                    <label>Available Groups</label>
+                    <select id="userOrgSelection" [(ngModel)]="scorecard.data.orgunit_settings.selected_user_orgunit" class="form-control" style="height: 30px ">
+                      <option value="USER_ORGUNIT">User org unit</option>
+                      <option value="USER_ORGUNIT_CHILDREN">User sub-units</option>
+                      <option value="USER_ORGUNIT_GRANDCHILDREN">User sub-x2-units</option>
+                    </select>
+                  </div>
+                  <!--org_unit_levels-->
+                  <div class="col-sm-6" style="padding-right: 0px; margin-bottom: 5px" *ngIf="scorecard.data.orgunit_settings.selection_mode == 'Level'">
+                    <label>Available Levels</label>
+                    <select id="levelSelection" [(ngModel)]="scorecard.data.orgunit_settings.selected_level" class="form-control" style="height: 30px ">
+                      <option value="">Select Level</option>
+                      <option *ngFor="let single_level of scorecard.data.orgunit_settings.orgunit_levels"  value="LEVEL-{{single_level.level}}">{{ single_level.name }}</option>
+                    </select>
+                  </div>
+                  <div class="search-area">
+                    <form *ngIf="!orgunit_tree_config.loading && orgunit_tree_config.show_search && scorecard.data.orgunit_settings.selection_mode != 'Usr_orgUnit'" style="border-bottom: solid 1px blanchedalmond;">
+                      <input #filter (keyup)="filterNodes(filter.value, orgtree)" placeholder="{{ orgunit_tree_config.search_text }}" class="search_field"/>
+                    </form>
+                  </div>
+                  <div *ngIf="orgunit_tree_config.loading">{{ orgunit_tree_config.loading_message }}</div>
+                  <div class="tree-area" [ngClass]="{'hiddenTree': scorecard.data.orgunit_settings.selection_mode == 'Usr_orgUnit'}">
+                    <Tree
+                      #orgtree
+                      [nodes]="organisationunits"
+                      [focused]="true"
+                      [options]="customTemplateStringOrgunitOptions"
+                      (onActivate)="activateOrg($event)"
+                      (onDeactivate)="deactivateOrg($event)"
+                    >
+                      <template #treeNodeTemplate let-node>
+                        <span>{{ node.data.name }}</span>
+                      </template>
+                    </Tree>
+                  </div>
+                  <div class="close-area">
+                    <button class="btn btn-default pull-right" style="height: 30px"  (click)="displayOrgTree()">
+                      <span class="glyphicon glyphicon-remove"></span> Close
+                    </button>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
-        </div>
-        <!--end of organisation unit tree-->
-      </td>
-      <th *ngFor="let indicator of getItemsFromGroups()"
-          style="font-size: 10px;max-width: 90px;overflow-wrap: break-word; cursor: pointer; padding: 0px;line-height: 10%"
-          class="sans-pro" [ngClass]="{'current':is_current_indicator(indicator)}"
-          title="Click to Update {{ getIndicatorTitle(indicator) }}"
-          (click)="updateIndicator(indicator)">
-        <svg *ngIf="indicator.indicators.length == 2" viewbox="0 0 90 35" width="90" height="35">
-          <polygon points="0 0 90 0 90 0 0 35" [attr.fill]="assignBgColor(indicator.indicators[0],indicator.indicators[0].value)" style="stroke:#CAC0C0;stroke-width:0.4"/>
-          <text fill="#000" x="3" y="18" font-size="11" font-family="Source Sans Pro">
-            <tspan>{{ indicator.indicators[0].value }}</tspan>
-          </text>
-          <!--top arrow-->
-          <path *ngIf="indicator.indicators[0].showTopArrow && scorecard.data.header.show_arrows_definition" d="M2,8H12L7,3" style="fill:black;stroke:black;stroke-width:1"/>
-          <!--bottom arrow showing decrease-->
-          <path *ngIf="indicator.indicators[0].showBottomArrow && scorecard.data.header.show_arrows_definition" d="M2,22H12L7,30" style="fill:black;stroke:black;stroke-width:1"/>
+          <!--end of organisation unit tree-->
+        </td>
+        <th *ngFor="let indicator of getItemsFromGroups()"
+            style="font-size: 10px;max-width: 90px;overflow-wrap: break-word; cursor: pointer; padding: 0px;line-height: 10%"
+            class="sans-pro" [ngClass]="{'current':is_current_indicator(indicator)}"
+            title="Click to Update {{ getIndicatorTitle(indicator) }}"
+            (click)="updateIndicator(indicator)">
+          <svg *ngIf="indicator.indicators.length == 2" viewbox="0 0 90 35" width="90" height="35">
+            <polygon points="0 0 90 0 90 0 0 35" [attr.fill]="assignBgColor(indicator.indicators[0],indicator.indicators[0].value)" style="stroke:#CAC0C0;stroke-width:0.4"/>
+            <text fill="#000" x="3" y="18" font-size="11" font-family="Source Sans Pro">
+              <tspan>{{ indicator.indicators[0].value }}</tspan>
+            </text>
+            <!--top arrow-->
+            <path *ngIf="indicator.indicators[0].showTopArrow && scorecard.data.header.show_arrows_definition" d="M2,8H12L7,3" style="fill:black;stroke:black;stroke-width:1"/>
+            <!--bottom arrow showing decrease-->
+            <path *ngIf="indicator.indicators[0].showBottomArrow && scorecard.data.header.show_arrows_definition" d="M2,22H12L7,30" style="fill:black;stroke:black;stroke-width:1"/>
 
-          <!--second triangle-->
-          <polygon points="0 35 90 0 90 35 0 35" [attr.fill]="assignBgColor(indicator.indicators[1],indicator.indicators[1].value)" style="stroke:#CAC0C0;stroke-width:0.4"/>
-          <!--number for the second triangle-->
-          <text fill="#000" x="54" y="22" font-size="11" font-family="Source Sans Pro">
-            <tspan>{{ indicator.indicators[1].value }}</tspan>
-          </text>
-          <!--top arrow for the right triagle-->
-          <path *ngIf="indicator.indicators[1].showTopArrow && scorecard.data.header.show_arrows_definition" d="M75,10H85L80,4" style="fill:black;stroke:black;stroke-width:1"/>
-          <!--below arrow for the triangle-->
-          <path *ngIf="indicator.indicators[1].showBottomArrow && scorecard.data.header.show_arrows_definition" d="M75,24H85L80,31" style="fill:black;stroke:black;stroke-width:1"/>
-        </svg>
+            <!--second triangle-->
+            <polygon points="0 35 90 0 90 35 0 35" [attr.fill]="assignBgColor(indicator.indicators[1],indicator.indicators[1].value)" style="stroke:#CAC0C0;stroke-width:0.4"/>
+            <!--number for the second triangle-->
+            <text fill="#000" x="54" y="22" font-size="11" font-family="Source Sans Pro">
+              <tspan>{{ indicator.indicators[1].value }}</tspan>
+            </text>
+            <!--top arrow for the right triagle-->
+            <path *ngIf="indicator.indicators[1].showTopArrow && scorecard.data.header.show_arrows_definition" d="M75,10H85L80,4" style="fill:black;stroke:black;stroke-width:1"/>
+            <!--below arrow for the triangle-->
+            <path *ngIf="indicator.indicators[1].showBottomArrow && scorecard.data.header.show_arrows_definition" d="M75,24H85L80,31" style="fill:black;stroke:black;stroke-width:1"/>
+          </svg>
 
-        <!--if there is only one indicator to display-->
-        <svg *ngIf="indicator.indicators.length == 1" viewbox="0 0 90 35" width="90" height="35">
-          <!--full box to cover all area-->
-          <polygon points="0 0 90 0 90 35 0 35" [attr.fill]="assignBgColor(indicator.indicators[0],indicator.indicators[0].value)"/>
-          <text fill="#000" x="33" y="24" font-size="11" font-family="Source Sans Pro">
-            <tspan>{{ indicator.indicators[0].value }}</tspan>
-          </text>
-          <!--top arrow-->
-          <path *ngIf="indicator.indicators[0].showTopArrow && scorecard.data.header.show_arrows_definition" d="M2,8H12L7,3" style="fill:black;stroke:black;stroke-width:1"/>
-          <!--bottom arrow showing decrease-->
-          <path *ngIf="indicator.indicators[0].showBottomArrow && scorecard.data.header.show_arrows_definition" d="M2,22H12L7,30" style="fill:black;stroke:black;stroke-width:1"/>
-        </svg>
-      </th>
-      <th style="width: 60px">
+          <!--if there is only one indicator to display-->
+          <svg *ngIf="indicator.indicators.length == 1" viewbox="0 0 90 35" width="90" height="35">
+            <!--full box to cover all area-->
+            <polygon points="0 0 90 0 90 35 0 35" [attr.fill]="assignBgColor(indicator.indicators[0],indicator.indicators[0].value)"/>
+            <text fill="#000" x="33" y="24" font-size="11" font-family="Source Sans Pro">
+              <tspan>{{ indicator.indicators[0].value }}</tspan>
+            </text>
+            <!--top arrow-->
+            <path *ngIf="indicator.indicators[0].showTopArrow && scorecard.data.header.show_arrows_definition" d="M2,8H12L7,3" style="fill:black;stroke:black;stroke-width:1"/>
+            <!--bottom arrow showing decrease-->
+            <path *ngIf="indicator.indicators[0].showBottomArrow && scorecard.data.header.show_arrows_definition" d="M2,22H12L7,30" style="fill:black;stroke:black;stroke-width:1"/>
+          </svg>
+        </th>
+        <th style="width: 60px">
 
-      </th>
-    </tr>
-    <tr *ngFor="let label of scorecard.data.additional_labels">
-      <th>{{ label }}</th>
-      <th *ngFor="let indicator of getItemsFromGroups()"
-          style="font-size: 10px;max-width: 90px;overflow-wrap: break-word; cursor: pointer; line-height: 80%;padding: 0px"
-          class="sans-pro" [ngClass]="{'current':is_current_indicator(indicator)}"
-      >
-        <input type="text" [(ngModel)]="indicator.indicators[0].additional_label_values[label]" *ngIf="indicator.indicators.length != 0 && is_current_indicator(indicator)" style="width: 99%;height: 30px">
-        <p *ngIf="!is_current_indicator(indicator)" style="padding-top: 8px;padding-left: 5px">{{ getIndicatorLabel( indicator,label ) }}</p>
-      </th>
-      <th style="width: 60px">
+        </th>
+      </tr>
+      <tr *ngFor="let label of scorecard.data.additional_labels">
+        <th>{{ label }}</th>
+        <th *ngFor="let indicator of getItemsFromGroups()"
+            style="font-size: 10px;max-width: 90px;overflow-wrap: break-word; cursor: pointer; line-height: 80%;padding: 0px"
+            class="sans-pro" [ngClass]="{'current':is_current_indicator(indicator)}"
+        >
+          <input type="text" [(ngModel)]="indicator.indicators[0].additional_label_values[label]" *ngIf="indicator.indicators.length != 0 && is_current_indicator(indicator)" style="width: 99%;height: 30px">
+          <p *ngIf="!is_current_indicator(indicator)" style="padding-top: 8px;padding-left: 5px">{{ getIndicatorLabel( indicator,label ) }}</p>
+        </th>
+        <th style="width: 60px">
 
-      </th>
-    </tr>
-  </table>
+        </th>
+      </tr>
+    </table>
+  </div>
 </div>
 
 <div class="container-fluid" style="padding-left: 0px; font-size: 11px; margin-top: 3px; margin-bottom: 3px"

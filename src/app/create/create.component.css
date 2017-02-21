@@ -331,10 +331,37 @@ a:hover{
   -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.2);
 }
 
+.scorecard_table::-webkit-scrollbar {
+  width: 5px;
+}
+
+.scorecard_table::-webkit-scrollbar-track {
+  -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.2);
+  border-radius: 10px;
+}
+
+.scorecard_table::-webkit-scrollbar-thumb {
+  border-radius: 10px;
+  -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.2);
+}
+
+.scorecard_table{
+  max-width: 100%;
+  overflow: auto;
+  width: 100%;
+}
 .tree-area{
   max-height: 270px;
   overflow: hidden;
   width: 100%;
+}
+.tree-area:hover{
+  overflow: auto;
+}
+
+.scorecard_table:hover{
+  overflow: auto;
+  /*background-color: rgba(0,0,0,0.1);*/
 }
 
 .tree-area{
