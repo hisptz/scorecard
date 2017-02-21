@@ -12,6 +12,18 @@ import {EventData, EventDataService} from "../shared/services/event-data.service
 import {throttleTime} from "rxjs/operator/throttleTime";
 import {Subscription} from "rxjs";
 import {DataService} from "../shared/data.service";
+import {OrgUnitService} from "../shared/services/org-unit.service";
+import {TreeNode, TREE_ACTIONS, IActionMapping, TreeComponent} from 'angular2-tree-component';
+
+const actionMapping:IActionMapping = {
+  mouse: {
+    click: (node, tree, $event) => {
+      $event.ctrlKey
+        ? TREE_ACTIONS.TOGGLE_SELECTED_MULTI(node, tree, $event)
+        : TREE_ACTIONS.TOGGLE_SELECTED(node, tree, $event)
+    }
+  }
+};
 
 @Component({
   selector: 'app-create',
@@ -65,6 +77,9 @@ export class CreateComponent implements OnInit, AfterViewInit, OnDestroy {
   @ViewChild('description')
   discription_element:ElementRef;
 
+  @ViewChild('orgtree')
+  orgtree: TreeComponent;
+
   dataset_types = [
     {id:'', name: "Reporting Rate"},
     {id:'.REPORTING_RATE_ON_TIME', name: "Reporting Rate on time"},
@@ -87,6 +102,24 @@ export class CreateComponent implements OnInit, AfterViewInit, OnDestroy {
 
   current_action:string = "new";
   have_authorities:boolean = false;
+  showOrgTree:boolean = true;
+  showPerTree:boolean = true;
+  orgunit_tree_config: any = {
+    show_search : true,
+    search_text : 'Search',
+    level: null,
+    loading: false,
+    loading_message: 'Loading Organisation units...',
+    multiple: true,
+    placeholder: "Select Organisation Unit"
+  };
+  organisationunits: any[] = [];
+  // custom settings for tree
+  customTemplateStringOrgunitOptions: any = {
+    isExpandedField: 'expanded',
+    actionMapping
+  };
+
   constructor(private http: Http,
               private indicatorService: IndicatorGroupService,
               private datasetService: DatasetService,
@@ -97,7 +130,8 @@ export class CreateComponent implements OnInit, AfterViewInit, OnDestroy {
               private programService: ProgramIndicatorsService,
               private eventService: EventDataService,
               private dataService: DataService,
-              private _location: Location
+              private _location: Location,
+              private orgunitService: OrgUnitService
   )
   {
     this.indicatorGroups = [];
@@ -139,6 +173,19 @@ export class CreateComponent implements OnInit, AfterViewInit, OnDestroy {
                 name: scorecard_details.header.title,
                 data: scorecard_details
               };
+              // attach organisation unit if none is defined
+              if(!this.scorecard.data.orgunit_settings.hasOwnProperty("selected_orgunits")){
+                this.scorecard.data.orgunit_settings = {
+                  "selection_mode": "Usr_orgUnit",
+                  "selected_level": "",
+                  "selected_group": "",
+                  "orgunit_levels": [],
+                  "orgunit_groups": [],
+                  "selected_orgunits": [],
+                  "user_orgunits": [],
+                  "selected_user_orgunit": "USER_ORGUNIT"
+                };
+              }
               // attach period type if none is defined
               if(!this.scorecard.data.hasOwnProperty("periodType")){
                 this.scorecard.data.periodType = "Quarterly";
@@ -200,8 +247,8 @@ export class CreateComponent implements OnInit, AfterViewInit, OnDestroy {
         this.error_loading_groups.occurred = false;
         this.done_loading_groups = true;
         this.bottleneck_card.done_loading_groups = true;
-        this.load_list(this.current_groups[0].id, 'indicators')
-        this.load_bottleneck_card_list(this.bottleneck_card.current_groups[0].id, 'indicators')
+        this.load_list(this.current_groups[0].id, 'indicators');
+        this.load_bottleneck_card_list(this.bottleneck_card.current_groups[0].id, 'indicators');
       },
       error => {
         this.error_loading_groups.occurred = true;
@@ -262,7 +309,115 @@ export class CreateComponent implements OnInit, AfterViewInit, OnDestroy {
         this.error_loading_groups.message = "There was an error when loading Data sets";
       }
     );
+
+    //laod organisation units
+    this.loadOrganisationUnit();
   }
+
+  loadOrganisationUnit(){
+    if (this.orgunitService.nodes == null) {
+      this.orgunitService.getOrgunitLevelsInformation()
+        .subscribe(
+          (data: any) => {
+            // assign urgunit levels and groups to variables
+            this.scorecard.data.orgunit_settings.orgunit_levels = data.organisationUnitLevels;
+            this.orgunitService.getOrgunitGroups().subscribe( groups => {//noinspection TypeScriptUnresolvedVariable
+              this.scorecard.data.orgunit_settings.orgunit_groups = groups.organisationUnitGroups
+            });
+
+            this.orgunitService.getUserInformation().subscribe(
+              userOrgunit => {
+                let level = this.orgunitService.getUserHighestOrgUnitlevel( userOrgunit );
+                this.scorecard.data.orgunit_settings.user_orgunits = this.orgunitService.getUserOrgUnits( userOrgunit );
+                let all_levels = data.pager.total;
+                let orgunits = this.orgunitService.getuserOrganisationUnitsWithHighestlevel( level, userOrgunit );
+                let use_level = parseInt(all_levels) - (parseInt(level) - 1);
+                this.scorecard.data.orgunit_settings.user_orgunits = orgunits;
+
+                //load inital orgiunits to speed up loading speed
+                this.orgunitService.getInitialOrgunitsForTree(orgunits).subscribe(
+                  (initial_data) => {
+                    //noinspection TypeScriptUnresolvedVariable
+                    this.organisationunits = initial_data.organisationUnits;
+                    this.orgunit_tree_config.loading = false;
+                    // after done loading initial organisation units now load all organisation units
+                    let fields = this.orgunitService.generateUrlBasedOnLevels(use_level);
+                    this.orgunitService.getAllOrgunitsForTree1(fields, orgunits).subscribe(
+                      items => {
+                        //noinspection TypeScriptUnresolvedVariable
+                        this.organisationunits = items.organisationUnits;
+                        //noinspection TypeScriptUnresolvedVariable
+                        this.orgunitService.nodes = items.organisationUnits;
+                        this.prepareOrganisationUnitTree(this.organisationunits, 'parent');
+                      },
+                      error => {
+                        console.log('something went wrong while fetching Organisation units');
+                        this.orgunit_tree_config.loading = false;
+                      }
+                    )
+                  },
+                  error => {
+                    console.log('something went wrong while fetching Organisation units');
+                    this.orgunit_tree_config.loading = false;
+                  }
+                )
+
+              }
+            )
+          }
+        );
+    }
+    else {
+      this.orgunit_tree_config.loading = false;
+      this.organisationunits = this.orgunitService.nodes;
+      this.scorecard.data.orgunit_settings.orgunit_levels = this.orgunitService.orgunit_levels;
+      this.orgunitService.getOrgunitGroups().subscribe( groups => {//noinspection TypeScriptUnresolvedVariable
+        this.scorecard.data.orgunit_settings.orgunit_groups = groups.organisationUnitGroups
+      });
+      this.prepareOrganisationUnitTree(this.organisationunits, 'parent');
+    }
+  }
+
+  // this function is used to sort organisation unit
+  prepareOrganisationUnitTree(organisationUnit,type:string='top') {
+    if (type == "top"){
+      if (organisationUnit.children) {
+        organisationUnit.children.sort((a, b) => {
+          if (a.name > b.name) {
+            return 1;
+          }
+          if (a.name < b.name) {
+            return -1;
+          }
+          // a must be equal to b
+          return 0;
+        });
+        organisationUnit.children.forEach((child) => {
+          this.prepareOrganisationUnitTree(child,'top');
+        })
+      }
+    }else{
+      organisationUnit.forEach((orgunit) => {
+        console.log(orgunit);
+        if (orgunit.children) {
+          orgunit.children.sort((a, b) => {
+            if (a.name > b.name) {
+              return 1;
+            }
+            if (a.name < b.name) {
+              return -1;
+            }
+            // a must be equal to b
+            return 0;
+          });
+          orgunit.children.forEach((child) => {
+            this.prepareOrganisationUnitTree(child,'top');
+          })
+        }
+      });
+    }
+  }
+
 
   ngAfterViewInit(){
     this.title_element.nativeElement.focus();
@@ -692,8 +847,14 @@ export class CreateComponent implements OnInit, AfterViewInit, OnDestroy {
       name: "",
       data: {
         "orgunit_settings": {
-          "parent": "USER_ORGUNIT",
-          "level": "LEVEL-2"
+          "selection_mode": "Usr_orgUnit",
+          "selected_level": "",
+          "selected_group": "",
+          "orgunit_levels": [],
+          "orgunit_groups": [],
+          "selected_orgunits": [],
+          "user_orgunits": [],
+          "selected_user_orgunit": "USER_ORGUNIT"
         },
         "periodType": "Quarterly",
         "show_score": false,
@@ -870,6 +1031,7 @@ export class CreateComponent implements OnInit, AfterViewInit, OnDestroy {
       this.newLabel = "";
     }
   }
+
   deleteAdditionalLabel(label){
     this.scorecard.data.additional_labels.splice(this.scorecard.data.additional_labels.indexOf(label),1);
     for ( let holder of this.scorecard.data.data_settings.indicator_holders ){
@@ -1195,9 +1357,11 @@ export class CreateComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
   }
+
   cancelDeleteLegend(index){
     this.show_delete_legend[index] = false;
   }
+
   deleteLegand(index){
     this.scorecard.data.legendset_definitions.splice(index,1);
     this.show_delete_legend[index] = false;
@@ -1233,6 +1397,7 @@ export class CreateComponent implements OnInit, AfterViewInit, OnDestroy {
       this.show_add_legend = true;
     }
   }
+
   addLegend(){
     this.show_add_legend = false;
     let index = this.findFirstDefaultLegend();
@@ -1313,7 +1478,99 @@ export class CreateComponent implements OnInit, AfterViewInit, OnDestroy {
     return checker;
   }
 
+
+  // display Orgunit Tree
+  displayOrgTree(){
+    this.showOrgTree = !this.showOrgTree;
+  }
+
+  // display period Tree
+  displayPerTree(){
+    this.showPerTree = !this.showPerTree;
+  }
+
+  // action to be called when a tree item is deselected(Remove item in array of selected items
+  deactivateOrg ( $event ) {
+    this.scorecard.data.orgunit_settings.selected_orgunits.forEach((item,index) => {
+      if( $event.node.data.id == item.id ) {
+        this.scorecard.data.orgunit_settings.selected_orgunits.splice(index, 1);
+      }
+    });
+  };
+
+  // add item to array of selected items when item is selected
+  activateOrg = ($event) => {
+    if(!this.checkOrgunitAvailabilty($event.node.data, this.scorecard.data.orgunit_settings.selected_orgunits)){
+      this.scorecard.data.orgunit_settings.selected_orgunits.push($event.node.data);
+    }
+  };
+
+  // action to be called when a tree item is deselected(Remove item in array of selected items
+  deactivatePer ( $event ) {
+
+  };
+
+  // add item to array of selected items when item is selected
+  // activatePer = ($event) => {
+  //   this.selected_periods = [$event.node.data];
+  //   this.period = $event.node.data;
+  // };
+
+  activateNode(nodeId:any, nodes){
+    setTimeout(() => {
+      let node = nodes.treeModel.getNodeById(nodeId);
+      if (node)
+        node.toggleActivated();
+    }, 0);
+  }
+
+  // check if orgunit already exist in the orgunit display list
+  checkOrgunitAvailabilty(orgunit, array): boolean{
+    let checker = false;
+    array.forEach((value) => {
+      if( value.id == orgunit.id ){
+        checker = true;
+      }
+    });
+    return checker;
+  }
+
+  // function that is used to filter nodes
+  filterNodes(text, tree) {
+    tree.treeModel.filterNodes(text, true);
+  }
+
+  // prepare a proper name for updating the organisation unit display area.
+  getProperPreOrgunitName() : string{
+    let name = "";
+    if( this.scorecard.data.orgunit_settings.selection_mode == "Group" ){
+      let use_value = this.scorecard.data.orgunit_settings.selected_group.split("-");
+      for( let single_group of this.scorecard.data.orgunit_settings.orgunit_groups ){
+        if ( single_group.id == use_value[1] ){
+          name = single_group.name + " in";
+        }
+      }
+    }else if( this.scorecard.data.orgunit_settings.selection_mode == "Usr_orgUnit" ){
+      if( this.scorecard.data.orgunit_settings.selected_user_orgunit == "USER_ORGUNIT") name = "User org unit";
+      if( this.scorecard.data.orgunit_settings.selected_user_orgunit == "USER_ORGUNIT_CHILDREN") name = "User sub-units";
+      if( this.scorecard.data.orgunit_settings.selected_user_orgunit == "USER_ORGUNIT_GRANDCHILDREN") name = "User sub-x2-units";
+    }else if( this.scorecard.data.orgunit_settings.selection_mode == "Level" ){
+      let use_level = this.scorecard.data.orgunit_settings.selected_level.split("-");
+      for( let single_level of this.scorecard.data.orgunit_settings.orgunit_levels ){
+        if ( single_level.level == use_level[1] ){
+          name = single_level.name + " in";
+        }
+      }
+    }else{
+      name = "";
+    }
+    return name
+  }
+
+
   ngOnDestroy() {
     tinymce.remove(this.editor);
   }
+
+
 }

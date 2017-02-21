@@ -199,6 +199,21 @@ export class ViewComponent implements OnInit, AfterViewInit, OnDestroy {
           name: scorecard_details.header.title,
           data: scorecard_details
         };
+        // attach organisation unit if none is defined
+        if(!this.scorecard.data.orgunit_settings.hasOwnProperty("selected_orgunits")){
+          this.scorecard.data.orgunit_settings = {
+            "selection_mode": "Usr_orgUnit",
+            "selected_level": "",
+            "selected_group": "",
+            "orgunit_levels": [],
+            "orgunit_groups": [],
+            "selected_orgunits": [],
+            "user_orgunits": [],
+            "selected_user_orgunit": "USER_ORGUNIT"
+          };
+        }
+        this.orgunit_model = this.scorecard.data.orgunit_settings;
+        //attach a property empty row if none is defined
         if(!this.scorecard.data.hasOwnProperty("empty_rows")){
           this.scorecard.data.empty_rows = true;
         }
@@ -239,7 +254,7 @@ export class ViewComponent implements OnInit, AfterViewInit, OnDestroy {
                           name: initial_data.organisationUnits[0].name,
                           children: initial_data.organisationUnits[0].children
                         };
-                        this.orgunit_model.selected_orgunits = [this.orgUnit];
+                        // this.orgunit_model.selected_orgunits = [this.orgUnit];
                         this.orgUnitlength = this.orgUnit.children.length+1;
                         this.metadata_ready = true;
                         //noinspection TypeScriptUnresolvedVariable
@@ -281,7 +296,7 @@ export class ViewComponent implements OnInit, AfterViewInit, OnDestroy {
             name: this.orgunitService.nodes[0].name,
             children: this.orgunitService.nodes[0].children
           };
-          this.orgunit_model.selected_orgunits = [this.orgUnit];
+          // this.orgunit_model.selected_orgunits = [this.orgUnit];
           this.orgUnitlength = this.orgUnit.children.length+1;
           this.organisationunits = this.orgunitService.nodes;
           this.orgunit_model.orgunit_levels = this.orgunitService.orgunit_levels;
@@ -584,11 +599,6 @@ export class ViewComponent implements OnInit, AfterViewInit, OnDestroy {
     });
   };
 
-  // action to be called when a tree item is deselected(Remove item in array of selected items
-  deactivatePer ( $event ) {
-
-  };
-
   // add item to array of selected items when item is selected
   activateOrg = ($event) => {
     this.selected_orgunits = [$event.node.data];
@@ -596,6 +606,11 @@ export class ViewComponent implements OnInit, AfterViewInit, OnDestroy {
       this.orgunit_model.selected_orgunits.push($event.node.data);
     }
     this.orgUnit = $event.node.data;
+  };
+
+  // action to be called when a tree item is deselected(Remove item in array of selected items
+  deactivatePer ( $event ) {
+
   };
 
   // add item to array of selected items when item is selected

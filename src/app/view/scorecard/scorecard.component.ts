@@ -68,7 +68,7 @@ export class ScorecardComponent implements OnInit, AfterViewInit, OnDestroy {
     let organisation_unit_analytics_string = "";
     // if the selected orgunit is user org unit
     if(orgunit_model.selection_mode == "Usr_orgUnit"){
-      if(orgunit_model.user_orgunits.length == 1){
+      if(orgunit_model.user_orgunits.length == 1 || orgunit_model.user_orgunits.length == 0){
         let user_orgunit = this.orgtree.treeModel.getNodeById(orgunit_model.user_orgunits[0]);
         orgUnits.push(user_orgunit.id);
         if(user_orgunit.hasOwnProperty('children')){

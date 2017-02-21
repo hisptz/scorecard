@@ -27,7 +27,7 @@
             <span class="selected-item">
               {{ orgunit_model.selected_orgunits[1].name }}
             </span>
-            <span >
+            <span class="selected-item">
               &nbsp; and {{ orgunit_model.selected_orgunits.length - 2 }} more
             </span>
           </span>
@@ -36,7 +36,7 @@
               {{ item.name }}
             </span>
           </span>
-          <span class="no-selection"*ngIf="orgunit_model.selected_orgunits.length == 0 && !orgunit_tree_config.loading">{{ orgunit_tree_config.placeholder }}</span>
+          <span class="no-selection"*ngIf="orgunit_model.selected_orgunits.length == 0 && !orgunit_tree_config.loading && orgunit_model.selection_mode != 'Usr_orgUnit'">{{ orgunit_tree_config.placeholder }}</span>
           <span class="glyphicon glyphicon-triangle-bottom pull-right" *ngIf="!orgunit_tree_config.loading"></span>
           <span *ngIf="orgunit_tree_config.loading">{{ orgunit_tree_config.loading_message }}</span>
         </div>
