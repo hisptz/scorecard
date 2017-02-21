@@ -9,6 +9,8 @@ export class OrgUnitService {
 
   nodes: any[] = null;
   orgunit_levels:any[] = [];
+  user_orgunits:any[] = [];
+  orgunit_groups:any[] = [];
   constructor(private http: Http, private constant: Constants) { }
 
   // Get current user information
@@ -89,6 +91,7 @@ export class OrgUnitService {
           this.orgunit_levels = data.organisationUnitLevels;
           this.getUserInformation().subscribe(
             userOrgunit => {
+              this.user_orgunits = this.getUserOrgUnits( userOrgunit );
               let level = this.getUserHighestOrgUnitlevel(userOrgunit);
               let all_levels = data.pager.total;
               let orgunits = this.getuserOrganisationUnitsWithHighestlevel(level,userOrgunit);
@@ -104,6 +107,9 @@ export class OrgUnitService {
           )
         }
       );
+    this.getOrgunitGroups().subscribe( groups => {//noinspection TypeScriptUnresolvedVariable
+      this.orgunit_groups = groups.organisationUnitGroups
+    });
   }
 
 

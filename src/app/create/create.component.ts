@@ -104,6 +104,7 @@ export class CreateComponent implements OnInit, AfterViewInit, OnDestroy {
   have_authorities:boolean = false;
   showOrgTree:boolean = true;
   showPerTree:boolean = true;
+  showAdditionalOptions:boolean = true;
   orgunit_tree_config: any = {
     show_search : true,
     search_text : 'Search',
@@ -321,18 +322,20 @@ export class CreateComponent implements OnInit, AfterViewInit, OnDestroy {
           (data: any) => {
             // assign urgunit levels and groups to variables
             this.scorecard.data.orgunit_settings.orgunit_levels = data.organisationUnitLevels;
+            this.orgunitService.orgunit_levels = data.organisationUnitLevels;
             this.orgunitService.getOrgunitGroups().subscribe( groups => {//noinspection TypeScriptUnresolvedVariable
               this.scorecard.data.orgunit_settings.orgunit_groups = groups.organisationUnitGroups
+              this.orgunitService.orgunit_groups = groups.organisationUnitGroups
             });
 
             this.orgunitService.getUserInformation().subscribe(
               userOrgunit => {
                 let level = this.orgunitService.getUserHighestOrgUnitlevel( userOrgunit );
                 this.scorecard.data.orgunit_settings.user_orgunits = this.orgunitService.getUserOrgUnits( userOrgunit );
+                this.orgunitService.user_orgunits = this.orgunitService.getUserOrgUnits( userOrgunit );
                 let all_levels = data.pager.total;
                 let orgunits = this.orgunitService.getuserOrganisationUnitsWithHighestlevel( level, userOrgunit );
                 let use_level = parseInt(all_levels) - (parseInt(level) - 1);
-                this.scorecard.data.orgunit_settings.user_orgunits = orgunits;
 
                 //load inital orgiunits to speed up loading speed
                 this.orgunitService.getInitialOrgunitsForTree(orgunits).subscribe(
@@ -371,9 +374,9 @@ export class CreateComponent implements OnInit, AfterViewInit, OnDestroy {
       this.orgunit_tree_config.loading = false;
       this.organisationunits = this.orgunitService.nodes;
       this.scorecard.data.orgunit_settings.orgunit_levels = this.orgunitService.orgunit_levels;
-      this.orgunitService.getOrgunitGroups().subscribe( groups => {//noinspection TypeScriptUnresolvedVariable
-        this.scorecard.data.orgunit_settings.orgunit_groups = groups.organisationUnitGroups
-      });
+      this.scorecard.data.orgunit_settings.user_orgunits = this.orgunitService.user_orgunits;
+      this.scorecard.data.orgunit_settings.orgunit_groups = this.orgunitService.orgunit_groups;
+
       this.prepareOrganisationUnitTree(this.organisationunits, 'parent');
     }
   }
@@ -418,6 +421,9 @@ export class CreateComponent implements OnInit, AfterViewInit, OnDestroy {
     }
   }
 
+  showOptions(){
+    this.showAdditionalOptions = !this.showAdditionalOptions;
+  }
 
   ngAfterViewInit(){
     this.title_element.nativeElement.focus();

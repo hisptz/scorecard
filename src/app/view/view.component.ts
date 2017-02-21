@@ -232,18 +232,21 @@ export class ViewComponent implements OnInit, AfterViewInit, OnDestroy {
               (data: any) => {
                 // assign urgunit levels and groups to variables
                 this.orgunit_model.orgunit_levels = data.organisationUnitLevels;
+                this.orgunitService.orgunit_levels = data.organisationUnitLevels;
                 this.orgunitService.getOrgunitGroups().subscribe( groups => {//noinspection TypeScriptUnresolvedVariable
                   this.orgunit_model.orgunit_groups = groups.organisationUnitGroups
+                  this.orgunitService.orgunit_groups = groups.organisationUnitGroups
                 });
 
                 this.orgunitService.getUserInformation().subscribe(
                   userOrgunit => {
                     let level = this.orgunitService.getUserHighestOrgUnitlevel( userOrgunit );
                     this.orgunit_model.user_orgunits = this.orgunitService.getUserOrgUnits( userOrgunit );
+                    this.orgunitService.user_orgunits = this.orgunitService.getUserOrgUnits( userOrgunit );
                     let all_levels = data.pager.total;
                     let orgunits = this.orgunitService.getuserOrganisationUnitsWithHighestlevel( level, userOrgunit );
                     let use_level = parseInt(all_levels) - (parseInt(level) - 1);
-                    this.orgunit_model.user_orgunits = orgunits;
+                    // this.orgunit_model.user_orgunits = orgunits;
 
                     //load inital orgiunits to speed up loading speed
                     this.orgunitService.getInitialOrgunitsForTree(orgunits).subscribe(
@@ -268,7 +271,7 @@ export class ViewComponent implements OnInit, AfterViewInit, OnDestroy {
                             this.organisationunits = items.organisationUnits;
                             //noinspection TypeScriptUnresolvedVariable
                             this.orgunitService.nodes = items.organisationUnits;
-                            this.activateNode(this.orgUnit.id, this.orgtree);
+                            // this.activateNode(this.orgUnit.id, this.orgtree);
                             this.prepareOrganisationUnitTree(this.organisationunits, 'parent');
                           },
                           error => {
@@ -300,10 +303,9 @@ export class ViewComponent implements OnInit, AfterViewInit, OnDestroy {
           this.orgUnitlength = this.orgUnit.children.length+1;
           this.organisationunits = this.orgunitService.nodes;
           this.orgunit_model.orgunit_levels = this.orgunitService.orgunit_levels;
-          this.orgunitService.getOrgunitGroups().subscribe( groups => {//noinspection TypeScriptUnresolvedVariable
-            this.orgunit_model.orgunit_groups = groups.organisationUnitGroups
-          });
-          this.activateNode(this.orgUnit.id, this.orgtree);
+          this.orgunit_model.user_orgunits = this.orgunitService.user_orgunits;
+          this.orgunit_model.orgunit_groups = this.orgunitService.orgunit_groups;
+          // this.activateNode(this.orgUnit.id, this.orgtree);
           this.prepareOrganisationUnitTree(this.organisationunits, 'parent');
           // TODO: make a sort level information dynamic
           this.metadata_ready = true;
