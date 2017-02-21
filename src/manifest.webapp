@@ -18,7 +18,7 @@
             "href": "../../.."
         },
         "build": {
-           "command":"ng build -dev && rm -r /home/kelvin/dhis-home/apps/score/* &&  cp -f -r dist/* /home/kelvin/dhis-home/apps/score"
+           "command":"ng build --prod --aot && rm -r /home/kelvin/dhis-home/apps/score/* &&  cp -f -r dist/* /home/kelvin/dhis-home/apps/score"
         }
     }
 }

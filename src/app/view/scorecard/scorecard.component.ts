@@ -47,12 +47,9 @@ export class ScorecardComponent implements OnInit, AfterViewInit, OnDestroy {
 
   keep_options_open:boolean = true;
   constructor(
-    private scorecardService: ScorecardService,
     private dataService: DataService,
-    private activatedRouter: ActivatedRoute,
     private filterService: FilterService,
     private costant: Constants,
-    private orgunitService: OrgUnitService
   ) {
     this.base_url = this.costant.root_dir;
   }
@@ -63,16 +60,6 @@ export class ScorecardComponent implements OnInit, AfterViewInit, OnDestroy {
 
   ngAfterViewInit(){
 
-  }
-
-  // a function to prepare a list of organisation units for analytics
-  getOrgUnitsForAnalytics1(selectedOrgunits): string{
-    let orgUnits = [];
-    orgUnits.push(selectedOrgunits.id);
-    for( let orgunit of selectedOrgunits.children ){
-      orgUnits.push(orgunit.id);
-    }
-    return orgUnits.join(";");
   }
 
   // a function to prepare a list of organisation units for analytics
@@ -125,20 +112,47 @@ export class ScorecardComponent implements OnInit, AfterViewInit, OnDestroy {
     return organisation_unit_analytics_string+orgUnits.join(";");
   }
 
+  // prepare a proper name for updating the organisation unit display area.
+  getProperPreOrgunitName() : string{
+    let name = "";
+    if( this.orgunit_model.selection_mode == "Group" ){
+      let use_value = this.orgunit_model.selected_group.split("-");
+      for( let single_group of this.orgunit_model.orgunit_groups ){
+        if ( single_group.id == use_value[1] ){
+          name = single_group.name + " in";
+        }
+      }
+    }else if( this.orgunit_model.selection_mode == "Usr_orgUnit" ){
+      if( this.orgunit_model.selected_user_orgunit == "USER_ORGUNIT") name = "User org unit";
+      if( this.orgunit_model.selected_user_orgunit == "USER_ORGUNIT_CHILDREN") name = "User sub-units";
+      if( this.orgunit_model.selected_user_orgunit == "USER_ORGUNIT_GRANDCHILDREN") name = "User sub-x2-units";
+    }else if( this.orgunit_model.selection_mode == "Level" ){
+      let use_level = this.orgunit_model.selected_level.split("-");
+      for( let single_level of this.orgunit_model.orgunit_levels ){
+        if ( single_level.level == use_level[1] ){
+          name = single_level.name + " in";
+        }
+      }
+    }else{
+      name = "";
+    }
+    return name
+  }
+
+  // get organisation unit name for display on scorecard title
   // get organisation unit name for display on scorecard title
   getOrgunitName(orgunit_model){
-    let name= "";
+    let name= [];
     if ( orgunit_model.selected_orgunits.length == 1){
-      let detailed_orgunit = this.orgtree.treeModel.getNodeById(orgunit_model.selected_orgunits[0].id);
-      name = detailed_orgunit.name;
+      name.push( orgunit_model.selected_orgunits[0].name );
     }
     // If there is more than one organisation unit selected
     else{
       orgunit_model.selected_orgunits.forEach((orgunit) => {
-        name = orgunit.name;
+        name.push( orgunit.name );
       })
     }
-    return name;
+    return name.join(", ");
   }
 
   // a function that will be used to load scorecard
