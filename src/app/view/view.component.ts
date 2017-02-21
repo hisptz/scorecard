@@ -212,7 +212,25 @@ export class ViewComponent implements OnInit, AfterViewInit, OnDestroy {
             "selected_user_orgunit": "USER_ORGUNIT"
           };
         }
+
         this.orgunit_model = this.scorecard.data.orgunit_settings;
+
+        // attach average_selection if none is defined
+        if(!this.scorecard.data.hasOwnProperty("average_selection")){
+          this.scorecard.data.average_selection = "all";
+        }
+        // attach shown_records if none is defined
+        if(!this.scorecard.data.hasOwnProperty("shown_records")){
+          this.scorecard.data.shown_records = "all";
+        }
+        // attach show_average_in_row if none is defined
+        if(!this.scorecard.data.hasOwnProperty("show_average_in_row")){
+          this.scorecard.data.show_average_in_row = false;
+        }
+        // attach show_average_in_column if none is defined
+        if(!this.scorecard.data.hasOwnProperty("show_average_in_column")){
+          this.scorecard.data.show_average_in_column = false;
+        }
         //attach a property empty row if none is defined
         if(!this.scorecard.data.hasOwnProperty("empty_rows")){
           this.scorecard.data.empty_rows = true;

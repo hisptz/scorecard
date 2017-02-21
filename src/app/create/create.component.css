@@ -394,3 +394,21 @@ span.selected-item {
   text-align: center;
   font-size: xx-small;
 }
+
+.additional-options {
+  text-align: left;
+  background-color: #fff;
+  position: absolute;
+  z-index: 999;
+  border: 1px solid rgba(0, 0, 0, .15);
+  border-radius: 4px;
+  -webkit-box-shadow: 0 6px 12px rgba(0, 0, 0, .175);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, .175);
+  min-width: 420px;
+  margin-right: 13px;
+  max-height: 400px;
+  overflow: auto;
+  padding: 10px 5px;
+  margin-top: 30px;
+  right: 0px;
+}

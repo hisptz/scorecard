@@ -191,6 +191,26 @@ export class CreateComponent implements OnInit, AfterViewInit, OnDestroy {
               if(!this.scorecard.data.hasOwnProperty("periodType")){
                 this.scorecard.data.periodType = "Quarterly";
               }
+              // attach average_selection if none is defined
+              if(!this.scorecard.data.hasOwnProperty("average_selection")){
+                this.scorecard.data.average_selection = "all";
+              }
+              // attach shown_records if none is defined
+              if(!this.scorecard.data.hasOwnProperty("shown_records")){
+                this.scorecard.data.shown_records = "all";
+              }
+              // attach show_average_in_row if none is defined
+              if(!this.scorecard.data.hasOwnProperty("show_average_in_row")){
+                this.scorecard.data.show_average_in_row = false;
+              }
+              // attach show_average_in_column if none is defined
+              if(!this.scorecard.data.hasOwnProperty("show_average_in_column")){
+                this.scorecard.data.show_average_in_column = false;
+              }
+              //attach a property empty row if none is defined
+              if(!this.scorecard.data.hasOwnProperty("empty_rows")){
+                this.scorecard.data.empty_rows = true;
+              }
               // this.getItemsFromGroups();
               let i = 0;
               for( let item of this.scorecard.data.data_settings.indicator_holder_groups ){
@@ -862,6 +882,10 @@ export class CreateComponent implements OnInit, AfterViewInit, OnDestroy {
           "user_orgunits": [],
           "selected_user_orgunit": "USER_ORGUNIT"
         },
+        "average_selection":"all",
+        "shown_records":"all",
+        "show_average_in_row":false,
+        "show_average_in_column":false,
         "periodType": "Quarterly",
         "show_score": false,
         "show_rank": false,
@@ -920,6 +944,15 @@ export class CreateComponent implements OnInit, AfterViewInit, OnDestroy {
         "indicator_dataElement_reporting_rate_selection": "Indicators"
       }
     }
+  }
+  // dealing with showing average
+  showAverageInRow(e){
+    this.scorecard.data.show_average_in_row = e.target.checked;
+  }
+
+  // dealing with showing average
+  showAverageInColumn(e){
+    this.scorecard.data.show_average_in_column = e.target.checked;
   }
 
   // define a default indicator structure
