@@ -67,7 +67,7 @@ export class ViewComponent implements OnInit, AfterViewInit, OnDestroy {
   scorecard: ScoreCard;
   scorecardId: string;
   orgUnit: any = {};
-  period: any = {};
+  period: any = [];
   orgunits: any[] = [];
   loading: boolean = true;
   base_url: string;
@@ -93,7 +93,7 @@ export class ViewComponent implements OnInit, AfterViewInit, OnDestroy {
   organisationunits: any[] = [];
   periods: any[] = [];
   selected_orgunits: any[] = [];
-  selected_periods:any[] = [];
+  selected_periods:any = [];
   period_type: string = "Quarterly";
   year: number = 2016;
   default_orgUnit: string[] = [];
@@ -239,11 +239,11 @@ export class ViewComponent implements OnInit, AfterViewInit, OnDestroy {
           this.period_type = this.scorecard.data.periodType
         }
         this.periods = this.filterService.getPeriodArray( this.period_type, this.year );
-        this.period = {
+        this.period = [{
           id:this.filterService.getPeriodArray( this.period_type, this.year )[0].id,
           name:this.filterService.getPeriodArray( this.period_type, this.year )[0].name
-        };
-        this.activateNode(this.period.id, this.pertree);
+        }];
+        this.activateNode(this.period[0].id, this.pertree);
         if (this.orgunitService.nodes == null) {
           this.orgunitService.getOrgunitLevelsInformation()
             .subscribe(
@@ -289,7 +289,10 @@ export class ViewComponent implements OnInit, AfterViewInit, OnDestroy {
                             this.organisationunits = items.organisationUnits;
                             //noinspection TypeScriptUnresolvedVariable
                             this.orgunitService.nodes = items.organisationUnits;
-                            // this.activateNode(this.orgUnit.id, this.orgtree);
+                            //activate organisation units
+                            for( let active_orgunit of this.orgunit_model.selected_orgunits ){
+                              this.activateNode(active_orgunit.id, this.orgtree);
+                            }
                             this.prepareOrganisationUnitTree(this.organisationunits, 'parent');
                           },
                           error => {
@@ -323,7 +326,10 @@ export class ViewComponent implements OnInit, AfterViewInit, OnDestroy {
           this.orgunit_model.orgunit_levels = this.orgunitService.orgunit_levels;
           this.orgunit_model.user_orgunits = this.orgunitService.user_orgunits;
           this.orgunit_model.orgunit_groups = this.orgunitService.orgunit_groups;
-          // this.activateNode(this.orgUnit.id, this.orgtree);
+          //activate organisation units
+          for( let active_orgunit of this.orgunit_model.selected_orgunits ){
+            this.activateNode(active_orgunit.id, this.orgtree);
+          }
           this.prepareOrganisationUnitTree(this.organisationunits, 'parent');
           // TODO: make a sort level information dynamic
           this.metadata_ready = true;
@@ -418,19 +424,19 @@ export class ViewComponent implements OnInit, AfterViewInit, OnDestroy {
     if(type == "down"){
       this.periods = this.filterService.getPeriodArray(this.period_type, this.filterService.getLastPeriod(this.period.id,this.period_type).substr(0,4));
       this.activateNode(this.filterService.getLastPeriod(this.period.id,this.period_type), this.pertree);
-      this.period = {
+      this.period = [{
         id:this.filterService.getLastPeriod(this.period.id,this.period_type),
         name:this.getPeriodName(this.filterService.getLastPeriod(this.period.id,this.period_type))
-      };
+      }];
 
     }
     if(type == "up"){
       this.periods = this.filterService.getPeriodArray(this.period_type, this.filterService.getNextPeriod(this.period.id,this.period_type).substr(0,4));
       this.activateNode(this.filterService.getNextPeriod(this.period.id,this.period_type), this.pertree);
-      this.period = {
+      this.period = [{
         id:this.filterService.getNextPeriod(this.period.id,this.period_type),
         name:this.getPeriodName(this.filterService.getNextPeriod(this.period.id,this.period_type))
-      };
+      }];
 
     }
     setTimeout(() => {
@@ -596,7 +602,7 @@ export class ViewComponent implements OnInit, AfterViewInit, OnDestroy {
   // custom settings for tree
   customTemplateStringPeriodOptions: any = {
     isExpandedField: 'expanded',
-    actionMapping1
+    actionMapping
   };
 
   // display Orgunit Tree
@@ -630,20 +636,25 @@ export class ViewComponent implements OnInit, AfterViewInit, OnDestroy {
 
   // action to be called when a tree item is deselected(Remove item in array of selected items
   deactivatePer ( $event ) {
-
+    let count = 0;
+    for( let per of this.selected_periods ){
+      if( per.id == $event.node.data.id){
+        this.selected_periods.splice(count,1);
+      }
+      count++;
+    }
   };
 
   // add item to array of selected items when item is selected
   activatePer = ($event) => {
-    this.selected_periods = [$event.node.data];
-    this.period = $event.node.data;
+    this.selected_periods.push($event.node.data);
   };
 
   activateNode(nodeId:any, nodes){
     setTimeout(() => {
       let node = nodes.treeModel.getNodeById(nodeId);
       if (node)
-        node.toggleActivated();
+        node.setIsActive(true, true);
     }, 0);
   }
 

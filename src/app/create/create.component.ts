@@ -187,6 +187,10 @@ export class CreateComponent implements OnInit, AfterViewInit, OnDestroy {
                   "selected_user_orgunit": "USER_ORGUNIT"
                 };
               }
+              //activate organisation units
+              for( let active_orgunit of this.scorecard.data.orgunit_settings.selected_orgunits ){
+                this.activateNode(active_orgunit.id, this.orgtree);
+              }
               // attach period type if none is defined
               if(!this.scorecard.data.hasOwnProperty("periodType")){
                 this.scorecard.data.periodType = "Quarterly";
@@ -1559,7 +1563,8 @@ export class CreateComponent implements OnInit, AfterViewInit, OnDestroy {
     setTimeout(() => {
       let node = nodes.treeModel.getNodeById(nodeId);
       if (node)
-        node.toggleActivated();
+      // node.toggleActivated();
+        node.setIsActive(true,true);
     }, 0);
   }
 

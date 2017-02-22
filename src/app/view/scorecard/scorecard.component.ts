@@ -19,7 +19,7 @@ export class ScorecardComponent implements OnInit, AfterViewInit, OnDestroy {
   private subscription: Subscription;
   private indicatorCalls: Subscription[] = [];
   @Input() scorecard: ScoreCard;
-  @Input() period: any;
+  @Input() period: any = [];
   @Input() orgUnit: any;
   @Input() period_type: string;
   @Input() show_sum_in_row: boolean = false;
@@ -181,7 +181,7 @@ export class ScorecardComponent implements OnInit, AfterViewInit, OnDestroy {
             indicator['showBottomArrow'] = [];
           }
           indicator['loading'] = true;
-          this.indicatorCalls.push(this.dataService.getIndicatorsRequest(this.getOrgUnitsForAnalytics(this.orgunit_model),this.period.id, indicator.id)
+          this.indicatorCalls.push(this.dataService.getIndicatorsRequest(this.getOrgUnitsForAnalytics(this.orgunit_model),this.period[0].id, indicator.id)
             .subscribe(
               (data) => {
                 indicator.loading = false;
@@ -201,17 +201,19 @@ export class ScorecardComponent implements OnInit, AfterViewInit, OnDestroy {
                     })
                   }
 
-                  indicator.values[orgunit] = this.dataService.getIndicatorData(orgunit,this.period.id, data);
+                  let value_key = orgunit+'.'+this.period[0].id;
+                  indicator.values[value_key] = this.dataService.getIndicatorData(orgunit,this.period[0].id, data);
                 }
                 this.shown_records = this.orgunits.length;
                 this.indicator_loading[indicator.id] = true;
                 //load previous data
                 let effective_gap = parseInt( indicator.arrow_settings.effective_gap );
-                this.indicatorCalls.push(this.dataService.getIndicatorsRequest(this.getOrgUnitsForAnalytics(this.orgunit_model),this.filterService.getLastPeriod(this.period.id,this.period_type), indicator.id)
+                this.indicatorCalls.push(this.dataService.getIndicatorsRequest(this.getOrgUnitsForAnalytics(this.orgunit_model),this.filterService.getLastPeriod(this.period[0].id,this.period_type), indicator.id)
                   .subscribe(
                     ( olddata ) => {
                       for( let prev_orgunit of this.orgunits ){
-                        indicator.previous_values[prev_orgunit.id] = this.dataService.getIndicatorData(prev_orgunit.id,this.filterService.getLastPeriod(this.period.id,this.period_type), olddata);
+                        let prev_key = prev_orgunit.id+'.'+this.period[0].id;
+                        indicator.previous_values[prev_orgunit.id] = this.dataService.getIndicatorData(prev_orgunit.id,this.filterService.getLastPeriod(this.period[0].id,this.period_type), olddata);
                       }
                       if(indicator.hasOwnProperty("arrow_settings")){
                         for( let key in indicator.values ) {
@@ -224,12 +226,12 @@ export class ScorecardComponent implements OnInit, AfterViewInit, OnDestroy {
                             if(indicator.showTopArrow[key] && indicator.values[key] != null && indicator.previous_values[key] != null && olddata.metaData.names.hasOwnProperty(key)){
                               let  rise = indicator.values[key] - parseInt( indicator.previous_values[key]);
                               //noinspection TypeScriptUnresolvedVariable
-                              indicator.tooltip[key] = indicator.title +" has raised by "+rise.toFixed(2)+" from "+this.getPeriodName(this.period.id)+ " for "+ data.metaData.names[key]+" (Minimum gap "+indicator.arrow_settings.effective_gap+")";
+                              indicator.tooltip[key] = indicator.title +" has raised by "+rise.toFixed(2)+" from "+this.getPeriodName(this.period[0].id)+ " for "+ data.metaData.names[key]+" (Minimum gap "+indicator.arrow_settings.effective_gap+")";
                             }//noinspection TypeScriptUnresolvedVariable
                             if(indicator.showBottomArrow[key] && indicator.values[key] != null && indicator.previous_values[key] != null && olddata.metaData.names.hasOwnProperty(key)){
                               let  rise = parseFloat( indicator.previous_values[key] ) - indicator.values[key];
                               //noinspection TypeScriptUnresolvedVariable
-                              indicator.tooltip[key] = indicator.title +" has decreased by "+rise.toFixed(2)+" from "+this.getPeriodName(this.period.id)+ " for "+ data.metaData.names[key]+" (Minimum gap "+indicator.arrow_settings.effective_gap+")";
+                              indicator.tooltip[key] = indicator.title +" has decreased by "+rise.toFixed(2)+" from "+this.getPeriodName(this.period[0].id)+ " for "+ data.metaData.names[key]+" (Minimum gap "+indicator.arrow_settings.effective_gap+")";
                             }
                           }
                         }

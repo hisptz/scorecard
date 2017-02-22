@@ -24,6 +24,7 @@
     <span *ngIf="orgunit_model.selection_mode != 'Usr_orgUnit' && orgunit_model.selection_mode != 'orgUnit'"> For </span> &nbsp;{{getProperPreOrgunitName()}}&nbsp;
     {{ getOrgunitName(orgunit_model) }} &nbsp;&nbsp;&nbsp; {{ period.name }}
   </h3>
+
   <!--legend area-->
   <div class="row legend" style="margin-bottom: 10px" *ngIf="scorecard.data.header.show_legend_definition">
     <div class="col-sm-2 legendItem" *ngFor="let legend of scorecard.data.legendset_definitions">
@@ -39,6 +40,7 @@
       </table>
     </div>
   </div>
+
   <!--scorecard table-->
   <table class="table table-bordered scorecard_table">
     <!--Groups-->
@@ -102,7 +104,7 @@
             (click)="loadPreview(null,indicator,current_orgunit.id)"
             title="{{ prepareTooltip(indicator,current_orgunit.id) }}"
         >
-          <svg-item [indicator]="indicator" [current_orgunit]="current_orgunit" [indicator_list]="getVisibleIndicators(indicator)" [scorecard]="scorecard"></svg-item>
+          <svg-item [indicator]="indicator" [current_orgunit]="current_orgunit" [indicator_list]="getVisibleIndicators(indicator)" [scorecard]="scorecard" [period]="period[0].id"></svg-item>
         </td>
 
         <td style="font-size: 10px;max-width: 90px;overflow-wrap: break-word;padding: 8px; line-height: 80%;" *ngIf="show_sum_in_row">{{ findRowSum(current_orgunit.id) | number : '1.2-2' }}</td>

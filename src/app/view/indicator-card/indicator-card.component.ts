@@ -163,9 +163,12 @@ export class IndicatorCardComponent implements OnInit, AfterViewInit, OnDestroy 
 
   ngAfterViewInit(){
     console.log(this.default_orgunit);
-    this.updateIndicatorCard(this.indicator, "table", [this.default_period], this.orgunit_model, true);
-    this.activateNode( this.default_period.id, this.pertree );
-    this.activateNode( this.default_orgunit.id, this.orgtree );
+    this.updateIndicatorCard(this.indicator, "table", this.default_period, this.orgunit_model, true);
+    this.activateNode( this.default_period[0].id, this.pertree );
+    //activate organisation units
+    for( let active_orgunit of this.orgunit_model.selected_orgunits ){
+      this.activateNode(active_orgunit.id, this.orgtree);
+    }
 
   }
 
@@ -485,7 +488,7 @@ export class IndicatorCardComponent implements OnInit, AfterViewInit, OnDestroy 
       if(orgunit_model.user_orgunits.length == 1){
         let user_orgunit = this.orgtree.treeModel.getNodeById(orgunit_model.user_orgunits[0]);
         orgUnits.push(user_orgunit.id);
-        if(user_orgunit.hasOwnProperty('children') && with_children){
+        if(user_orgunit.hasOwnProperty('children')){
           for( let orgunit of user_orgunit.children ){
             orgUnits.push(orgunit.id);
           }
@@ -502,6 +505,7 @@ export class IndicatorCardComponent implements OnInit, AfterViewInit, OnDestroy 
         orgUnits.push(detailed_orgunit.id);
         if(detailed_orgunit.hasOwnProperty('children') && with_children){
           for( let orgunit of detailed_orgunit.children ){
+            this.activateNode(orgunit.id, this.orgtree);
             orgUnits.push(orgunit.id);
           }
         }
@@ -580,7 +584,7 @@ export class IndicatorCardComponent implements OnInit, AfterViewInit, OnDestroy 
       let node = nodes.treeModel.getNodeById(nodeId);
       if (node)
         // node.toggleActivated();
-        node.setIsActive(true);
+        node.setIsActive(true,true);
     }, 0);
   }
 
