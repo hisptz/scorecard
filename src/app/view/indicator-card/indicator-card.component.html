@@ -102,7 +102,14 @@
             <div class="show_items" (click)="displayPerTree()">
               <span *ngIf="card_selected_periods.length > 4">
             <span class="selected-item">
-              {{ card_selected_periods.length }} selected
+              {{ card_selected_periods[0].name }} selected
+            </span>
+                <span class="selected-item">
+              {{ card_selected_periods[1].name }} selected
+            </span><span class="selected-item">
+              {{ card_selected_periods[2].name }} selected
+            </span><span class="selected-item">
+              and {{ card_selected_periods.length -3 }} more
             </span>
           </span>
               <span *ngIf="card_selected_periods.length <= 4">

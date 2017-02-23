@@ -113,9 +113,23 @@
         <div class="tree-input" >
           <div>
             <div class="show_items" (click)="displayPerTree()">
-      <span *ngFor="let item of selected_periods" class="selected-item ng-binding ng-scope">
-        {{ item.name }}
-      </span>
+              <span *ngIf="selected_periods.length > 4">
+            <span class="selected-item">
+              {{ selected_periods[0].name }} selected
+            </span>
+                <span class="selected-item">
+              {{ selected_periods[1].name }} selected
+            </span><span class="selected-item">
+              {{ selected_periods[2].name }} selected
+            </span><span class="selected-item">
+              and {{ selected_periods.length -3 }} more
+            </span>
+          </span>
+                <span *ngIf="selected_periods.length <= 4">
+                <span *ngFor="let item of selected_periods" class="selected-item ng-binding ng-scope">
+                  {{ item.name }}
+                </span>
+              </span>
               <span class="no-selection"*ngIf="selected_periods.length == 0 && !period_tree_config.loading">{{ period_tree_config.placeholder }}</span>
               <span class="glyphicon glyphicon-triangle-bottom pull-right" *ngIf="!period_tree_config.loading"></span>
               <span *ngIf="period_tree_config.loading">{{ period_tree_config.loading_message }}</span>
@@ -160,7 +174,7 @@
                   #pertree
                   [nodes]="periods"
                   [focused]="true"
-                  [options]="customTemplateStringPeriodOptions"
+                  [options]="customTemplateStringOrgunitOptions"
                   (onActivate)="activatePer($event)"
                   (onDeactivate)="deactivatePer($event)"
                 >
@@ -262,7 +276,8 @@
   *ngIf="metadata_ready"
   [scorecard]="scorecard"
   [orgUnit]="orgUnit"
-  [period]="period"
+  [period]="selected_periods"
+  [default_period]="period"
   [period_type]="period_type"
   [show_average_in_column]="scorecard.data.show_average_in_column"
   [show_average_in_row]="scorecard.data.show_average_in_row"

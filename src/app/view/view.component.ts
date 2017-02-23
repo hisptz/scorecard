@@ -146,6 +146,7 @@ export class ViewComponent implements OnInit, AfterViewInit, OnDestroy {
     user_orgunits: [],
     selected_user_orgunit: "USER_ORGUNIT"
   };
+
   constructor(private scorecardService: ScorecardService,
               private dataService: DataService,
               private activatedRouter: ActivatedRoute,
@@ -422,20 +423,20 @@ export class ViewComponent implements OnInit, AfterViewInit, OnDestroy {
   //setting the period to next or previous
   setPeriod(type){
     if(type == "down"){
-      this.periods = this.filterService.getPeriodArray(this.period_type, this.filterService.getLastPeriod(this.period.id,this.period_type).substr(0,4));
-      this.activateNode(this.filterService.getLastPeriod(this.period.id,this.period_type), this.pertree);
+      this.periods = this.filterService.getPeriodArray(this.period_type, this.filterService.getLastPeriod(this.period[0].id,this.period_type).substr(0,4));
+      this.activateNode(this.filterService.getLastPeriod(this.period[0].id,this.period_type), this.pertree);
       this.period = [{
-        id:this.filterService.getLastPeriod(this.period.id,this.period_type),
-        name:this.getPeriodName(this.filterService.getLastPeriod(this.period.id,this.period_type))
+        id:this.filterService.getLastPeriod(this.period[0].id,this.period_type),
+        name:this.getPeriodName(this.filterService.getLastPeriod(this.period[0].id,this.period_type))
       }];
 
     }
     if(type == "up"){
-      this.periods = this.filterService.getPeriodArray(this.period_type, this.filterService.getNextPeriod(this.period.id,this.period_type).substr(0,4));
-      this.activateNode(this.filterService.getNextPeriod(this.period.id,this.period_type), this.pertree);
+      this.periods = this.filterService.getPeriodArray(this.period_type, this.filterService.getNextPeriod(this.period[0].id,this.period_type).substr(0,4));
+      this.activateNode(this.filterService.getNextPeriod(this.period[0].id,this.period_type), this.pertree);
       this.period = [{
-        id:this.filterService.getNextPeriod(this.period.id,this.period_type),
-        name:this.getPeriodName(this.filterService.getNextPeriod(this.period.id,this.period_type))
+        id:this.filterService.getNextPeriod(this.period[0].id,this.period_type),
+        name:this.getPeriodName(this.filterService.getNextPeriod(this.period[0].id,this.period_type))
       }];
 
     }
@@ -617,7 +618,6 @@ export class ViewComponent implements OnInit, AfterViewInit, OnDestroy {
 
   // action to be called when a tree item is deselected(Remove item in array of selected items
   deactivateOrg ( $event ) {
-    console.log($event.node.data);
     this.orgunit_model.selected_orgunits.forEach((item,index) => {
       if( $event.node.data.id == item.id ) {
         this.orgunit_model.selected_orgunits.splice(index, 1);
@@ -636,16 +636,14 @@ export class ViewComponent implements OnInit, AfterViewInit, OnDestroy {
 
   // action to be called when a tree item is deselected(Remove item in array of selected items
   deactivatePer ( $event ) {
-    let count = 0;
-    for( let per of this.selected_periods ){
-      if( per.id == $event.node.data.id){
-        this.selected_periods.splice(count,1);
+    this.selected_periods.forEach((item,index) => {
+      if( $event.node.data.id == item.id ) {
+        this.selected_periods.splice(index, 1);
       }
-      count++;
-    }
+    });
   };
 
-  // add item to array of selected items when item is selected
+  /// add item to array of selected items when period is selected
   activatePer = ($event) => {
     this.selected_periods.push($event.node.data);
   };
