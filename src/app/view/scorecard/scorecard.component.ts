@@ -415,17 +415,17 @@ export class ScorecardComponent implements OnInit, AfterViewInit, OnDestroy {
     return checker;
   }
 
-  averageHidden(orgunit_id:string): boolean {
+  averageHidden(orgunit_id:string, period:string): boolean {
     let checker = false;
-    let avg = this.findRowTotalAverage(this.orgunits);
+    let avg = this.findRowTotalAverage(this.orgunits,period);
     if( this.average_selection == "all"){
       checker = false;
     }else if( this.average_selection == "below"){
-      if( this.findRowAverage(orgunit_id) >= avg ){
+      if( this.findRowAverage(orgunit_id,period) >= avg ){
         checker = true
       }
     }else if( this.average_selection == "above"){
-      if( this.findRowAverage(orgunit_id) <= avg ){
+      if( this.findRowAverage(orgunit_id,period) <= avg ){
         checker = true
       }
     }
@@ -452,14 +452,15 @@ export class ScorecardComponent implements OnInit, AfterViewInit, OnDestroy {
    * finding the row average
    * @param orgunit_id
    */
-  findRowAverage(orgunit_id){
+  findRowAverage(orgunit_id,period){
     let sum = 0;
     let counter = 0;
+    let use_key = orgunit_id+"."+period;
     for ( let holder of this.scorecard.data.data_settings.indicator_holders ){
       for( let indicator of holder.indicators ){
-        if( this.hidenColums.indexOf(indicator.id) == -1 && indicator.values[orgunit_id] != null ) {
+        if( this.hidenColums.indexOf(indicator.id) == -1 && indicator.values[use_key] != null ) {
           counter++;
-          sum = sum + parseFloat(indicator.values[orgunit_id]);
+          sum = sum + parseFloat(indicator.values[use_key]);
         }
       }
     }
@@ -469,16 +470,17 @@ export class ScorecardComponent implements OnInit, AfterViewInit, OnDestroy {
    * finding the row average
    * @param orgunit_id
    */
-  findRowTotalAverage(orgunits){
+  findRowTotalAverage(orgunits,period){
     let sum = 0;
     let n = 0;
     for ( let holder of this.scorecard.data.data_settings.indicator_holders ){
       for( let indicator of holder.indicators ){
         if( this.hidenColums.indexOf(indicator.id) == -1 ){
           for ( let orgunit of orgunits ){
-            if(orgunit.id in indicator.values && indicator.values[orgunit.id] != null){
+            let usekey = orgunit.id+"."+period;
+            if(usekey in indicator.values && indicator.values[usekey] != null){
               n++;
-              sum = sum + parseFloat(indicator.values[orgunit.id])
+              sum = sum + parseFloat(indicator.values[usekey])
             }
           }
         }
@@ -491,16 +493,17 @@ export class ScorecardComponent implements OnInit, AfterViewInit, OnDestroy {
    * finding the row average
    * @param orgunit_id
    */
-  findRowTotalSum(orgunits){
+  findRowTotalSum(orgunits,period){
     let sum = 0;
     let n = 0;
     for ( let holder of this.scorecard.data.data_settings.indicator_holders ){
       for( let indicator of holder.indicators ){
         if( this.hidenColums.indexOf(indicator.id) == -1 ){
           for ( let orgunit of orgunits ){
-            if(orgunit.id in indicator.values && indicator.values[orgunit.id] != null){
+            let use_key = orgunit.id+"."+period;
+            if(orgunit.id in indicator.values && indicator.values[use_key] != null){
               n++;
-              sum = sum + parseFloat(indicator.values[orgunit.id])
+              sum = sum + parseFloat(indicator.values[use_key])
             }
           }
         }
@@ -549,13 +552,14 @@ export class ScorecardComponent implements OnInit, AfterViewInit, OnDestroy {
    * finding the row average
    * @param orgunit_id
    */
-  findRowSum(orgunit_id){
+  findRowSum(orgunit_id:string, period:string){
     let sum = 0;
+    let use_key = orgunit_id+"."+period;
     for ( let holder of this.scorecard.data.data_settings.indicator_holders ){
       for( let indicator of holder.indicators ){
-        if(orgunit_id in indicator.values && indicator.values[orgunit_id] != null ){
+        if(orgunit_id in indicator.values && indicator.values[use_key] != null ){
           if( this.hidenColums.indexOf(indicator.id) == -1) {
-            sum = sum + parseFloat(indicator.values[orgunit_id])
+            sum = sum + parseFloat(indicator.values[use_key])
           }
         }
       }
@@ -577,11 +581,12 @@ export class ScorecardComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   // prepare a proper tooltip to display to counter multiple indicators in the same td
-  prepareTooltip(holder,orgunit): string{
+  prepareTooltip(holder,orgunit,period): string{
     let tooltip = [];
+    let use_key = orgunit+"."+period;
     for (let indicator of holder.indicators ){
-      if(indicator.tooltip[orgunit]){
-        tooltip.push(indicator.tooltip[orgunit])
+      if(indicator.tooltip[use_key]){
+        tooltip.push(indicator.tooltip[use_key])
       }
     }
     return tooltip.join(", ");
@@ -599,7 +604,7 @@ export class ScorecardComponent implements OnInit, AfterViewInit, OnDestroy {
   // sorting scorecard by clicking the header(if two item in same list will use first item)
   current_sorting = true;
   sorting_on_progress = [];
-  sortScoreCardFromColumn(sortingColumn, sortAscending, orguUnits, lower_level:boolean = true){
+  sortScoreCardFromColumn(sortingColumn, sortAscending, orguUnits,period:string, lower_level:boolean = true){
     this.current_sorting = !this.current_sorting;
     this.sorting_column = sortingColumn;
     this.sorting_on_progress[this.sorting_column] = true;
@@ -609,19 +614,19 @@ export class ScorecardComponent implements OnInit, AfterViewInit, OnDestroy {
     }
     else if( sortingColumn == 'avg' ){
       for ( let orgunit of orguUnits ){
-        orgunit['avg'] = parseFloat(this.findRowAverage(orgunit.id));
+        orgunit['avg'] = parseFloat(this.findRowAverage(orgunit.id,period));
       }
       this.dataService.sortArrOfObjectsByParam(orguUnits, sortingColumn, sortAscending)
     }
     else if( sortingColumn == 'sum' ){
       for ( let orgunit of orguUnits ){
-        orgunit['sum'] = this.findRowSum(orgunit.id);
+        orgunit['sum'] = this.findRowSum(orgunit.id,period);
       }
       this.dataService.sortArrOfObjectsByParam(orguUnits, sortingColumn, sortAscending)
     }
     else{
       for ( let orgunit of orguUnits ){
-        orgunit[sortingColumn] = this.findOrgunitIndicatorValue(orgunit.id, sortingColumn );
+        orgunit[sortingColumn] = this.findOrgunitIndicatorValue(orgunit.id, sortingColumn, period );
       }
       this.dataService.sortArrOfObjectsByParam(orguUnits, sortingColumn, sortAscending)
     }
@@ -630,12 +635,13 @@ export class ScorecardComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   // hack to find a value of indicator for a specific orgunit
-  private findOrgunitIndicatorValue(orgunit_id: string, indicator_id:string){
+  private findOrgunitIndicatorValue(orgunit_id: string, indicator_id:string, period:string){
     let val:number = 0;
+    let use_key = orgunit_id+"."+period;
     for ( let holder of this.scorecard.data.data_settings.indicator_holders ){
       for( let indicator of holder.indicators ){
-        if(orgunit_id in indicator.values && indicator.values[orgunit_id] != null && indicator.id == indicator_id){
-          val = parseFloat(indicator.values[orgunit_id])
+        if(use_key in indicator.values && indicator.values[use_key] != null && indicator.id == indicator_id){
+          val = parseFloat(indicator.values[use_key])
         }
       }
     }

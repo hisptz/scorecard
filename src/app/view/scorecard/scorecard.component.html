@@ -41,12 +41,89 @@
     </div>
   </div>
 
-  <!--scorecard table-->
-  <table class="table table-bordered scorecard_table">
+
+  <!--scorecard table indicators in the left data on top-->
+  <table class="table table-bordered scorecard_table" *ngIf="false">
+    <!--orgunits-->
+    <tr>
+      <th *ngIf="scorecard.data.show_rank"  style="width: 30px">No#</th>
+      <th style="vertical-align: bottom">
+        <input type="text" class="form-control input-sm no-print" [(ngModel)]="searchQuery" placeholder="Search for orgunits here">
+      </th>
+      <td *ngFor="let current_orgunit of orgunits" class="indicator_title"
+          style="line-height: 140%"
+          title="Click to Sort By {{ current_orgunit.name }}"
+      >
+        {{ current_orgunit.name }}
+        <!--sorting icons-->
+        <!--<span class="glyphicon glyphicon-chevron-up pull-right text-muted" *ngIf="!current_sorting && sorting_column == indicator.indicators[0].id"></span>-->
+        <!--<span class="glyphicon glyphicon-chevron-down pull-right text-muted" *ngIf="current_sorting && sorting_column == indicator.indicators[0].id"></span>-->
+      </td>
+      <th class="subtotal" *ngIf="show_sum_in_row">Sum</th>
+      <th class="subtotal" *ngIf="show_average_in_row" (click)="sortScoreCardFromColumn('avg', sortAscending, orgunits, period[0].id, false)">
+        Average
+        <!--sorting icons-->
+        <span class="glyphicon glyphicon-chevron-up pull-right text-muted" *ngIf="!current_sorting && sorting_column == 'avg'"></span>
+        <span class="glyphicon glyphicon-chevron-down pull-right text-muted" *ngIf="current_sorting && sorting_column == 'avg'"></span>
+      </th>
+      <th *ngFor="let label of scorecard.data.additional_labels" style="font-size: 10px;max-width: 90px;overflow-wrap: break-word; cursor: pointer; line-height: 80%"
+          class="sans-pro">
+        {{ label }}
+      </th>
+    </tr>
+    <!--data-->
+    <ng-container *ngFor="let indicator of getItemsFromGroups() | filterIndicatorByName:searchQuery; let i=index">
+      <tr style="height: 35px; max-height: 35px; overflow-y: hidden; line-height: 80%" class="orunitTr" *ngIf="scorecard.data.shown_records == 'all' || i < scorecard.data.shown_records">
+        <td style="vertical-align: bottom;font-size: 10px;cursor: pointer;line-height: 80%;padding: 8px" *ngIf="scorecard.data.show_rank">{{ i+1 }}</td>
+        <td style="vertical-align: bottom;font-size: 10px;cursor: pointer;line-height: 80%;padding: 8px" class="orgUnitName" >
+          {{ getIndicatorTitle(indicator) }}
+        </td>
+        <td *ngFor="let current_orgunit of orgunits"
+            style="font-size: 10px;max-width: 90px;overflow-wrap: break-word; cursor: pointer; padding: 0px;line-height: 10%;"
+            class="sans-pro"
+            (click)="loadPreview(null,indicator,current_orgunit.id)"
+            title="{{ prepareTooltip(indicator,current_orgunit.id) }}"
+        >
+          <svg-item [indicator]="indicator" [current_orgunit]="current_orgunit" [indicator_list]="getVisibleIndicators(indicator)" [scorecard]="scorecard" [period]="period[0].id"></svg-item>
+        </td>
+        <td style="font-size: 10px;max-width: 90px;overflow-wrap: break-word;padding: 8px; line-height: 80%;" *ngIf="show_sum_in_row">{{ findRowSum(current_orgunit.id, period[0].id) | number : '1.2-2' }}</td>
+        <td style="font-size: 10px;max-width: 90px;overflow-wrap: break-word;padding: 8px; line-height: 80%;" *ngIf="show_average_in_row">{{ findRowAverage(current_orgunit.id, period[0].id) }}</td>
+        <td *ngFor="let label of scorecard.data.additional_labels" style="font-size: 10px;max-width: 90px;overflow-wrap: break-word; cursor: pointer; line-height: 80%"
+            class="sans-pro">
+          {{ getIndicatorLabel( indicator,label ) }}
+        </td>
+      </tr>
+
+    </ng-container>
+
+    <!--sum column-->
+    <tr *ngIf="show_sum_in_column" style="height: 35px; max-height: 35px; overflow-y: hidden; line-height: 80%">
+      <th *ngIf="scorecard.data.show_rank" style="width: 30px"></th>
+      <th style="line-height: 10%">Sum</th>
+      <th *ngFor="let indicator of getItemsFromGroups()" style="width: 90px;max-width: 90px;line-height: 10%;padding: 0px">
+        <app-subtotal [indicator]="indicator" [orgunits]="orgunits" [scorecard]="scorecard" [calculation]="'sum'" [indicator_list]="getVisibleIndicators(indicator)"></app-subtotal>
+      </th>
+      <th *ngIf="show_sum_in_row">{{ findRowTotalSum(orgunits, period[0].id) | number : '1.2-2'}}</th>
+      <th *ngIf="show_average_in_row">{{ findRowTotalAverage(orgunits, period[0].id)}}</th>
+    </tr>
+    <!--Average column-->
+    <tr *ngIf="show_average_in_column" style="height: 35px; max-height: 35px; overflow-y: hidden; line-height: 80%">
+      <th *ngIf="scorecard.data.show_rank" style="width: 30px"></th>
+      <th>Average</th>
+      <th *ngFor="let indicator of getItemsFromGroups()" style="width: 90px;max-width: 90px;line-height: 10%;padding: 0px">
+        <app-subtotal [indicator]="indicator" [orgunits]="orgunits" [scorecard]="scorecard" [calculation]="'avg'" [indicator_list]="getVisibleIndicators(indicator)"></app-subtotal>
+      </th>
+      <th *ngIf="show_sum_in_row">{{ findRowTotalSum(orgunits, period[0].id)  | number : '1.2-2'}}</th>
+      <th *ngIf="show_average_in_row">{{ findRowTotalAverage(orgunits, period[0].id)}}</th>
+    </tr>
+  </table>
+
+  <!--scorecard table orgunit on the left data on top-->
+  <table class="table table-bordered scorecard_table" *ngIf="true">
     <!--Groups-->
     <tr [ngClass]="{'hide_no_group': scorecard.data.data_settings.indicator_holder_groups.length == 1}" style="line-height: 140%">
       <th *ngIf="scorecard.data.show_rank" style="width: 30px"></th>
-      <th class="orgUnitName" (click)="sortScoreCardFromColumn('none', sortAscending, orgunits, false)" title="Sort scorecard by organisation unit">
+      <th class="orgUnitName" (click)="sortScoreCardFromColumn('none', sortAscending, orgunits, period[0].id, false)" title="Sort scorecard by organisation unit">
         <!--sorting icons-->
         <span class="glyphicon glyphicon-chevron-up pull-right text-muted" *ngIf="!current_sorting && sorting_column == 'none'"></span>
         <span class="glyphicon glyphicon-chevron-down pull-right text-muted" *ngIf="current_sorting && sorting_column == 'none'"></span>
@@ -72,7 +149,7 @@
       <td *ngFor="let indicator of getItemsFromGroups()" class="indicator_title"
           style="line-height: 140%"
           title="Click to Sort By {{ getIndicatorTitle(indicator) }}"
-          (click)="sortScoreCardFromColumn(indicator.indicators[0].id, sortAscending, orgunits, false)"
+          (click)="sortScoreCardFromColumn(indicator.indicators[0].id, sortAscending, orgunits, period[0].id, false)"
           (dblclick)="loadPreview(null,indicator,null)"
       >
         <img src="balls-3.svg" style="height: 30px" *ngIf="indicator_loading[indicator.indicators[0].id]" title="Loading old data for {{ getIndicatorTitle(indicator) }}">
@@ -84,7 +161,7 @@
         <span class="glyphicon glyphicon-chevron-down pull-right text-muted" *ngIf="current_sorting && sorting_column == indicator.indicators[0].id"></span>
       </td>
       <th class="subtotal" *ngIf="show_sum_in_row">Sum</th>
-      <th class="subtotal" *ngIf="show_average_in_row" (click)="sortScoreCardFromColumn('avg', sortAscending, orgunits, false)">
+      <th class="subtotal" *ngIf="show_average_in_row" (click)="sortScoreCardFromColumn('avg', sortAscending, orgunits, period[0].id, false)">
         Average
         <!--sorting icons-->
         <span class="glyphicon glyphicon-chevron-up pull-right text-muted" *ngIf="!current_sorting && sorting_column == 'avg'"></span>
@@ -93,7 +170,7 @@
     </tr>
     <!--data-->
     <ng-container *ngFor="let current_orgunit of orgunits | filterByName:searchQuery; let i=index">
-      <tr style="height: 35px; max-height: 35px; overflow-y: hidden; line-height: 80%" class="orunitTr" *ngIf="scorecard.data.shown_records == 'all' || i < scorecard.data.shown_records"  [ngClass]="{'hide_no_group': isRowEmpty(current_orgunit.id) || averageHidden(current_orgunit.id)}">
+      <tr style="height: 35px; max-height: 35px; overflow-y: hidden; line-height: 80%" class="orunitTr" *ngIf="scorecard.data.shown_records == 'all' || i < scorecard.data.shown_records"  [ngClass]="{'hide_no_group': isRowEmpty(current_orgunit.id) || averageHidden(current_orgunit.id,period[0].id)}">
         <td style="vertical-align: bottom;font-size: 10px;cursor: pointer;line-height: 80%;padding: 8px" *ngIf="scorecard.data.show_rank">{{ i+1 }}</td>
         <td style="vertical-align: bottom;font-size: 10px;cursor: pointer;line-height: 80%;padding: 8px" class="orgUnitName" (click)="loadChildrenData(current_orgunit)" [style.cursor]="getCursorStyle(current_orgunit)">
           {{ current_orgunit.name }}
@@ -107,8 +184,8 @@
           <svg-item [indicator]="indicator" [current_orgunit]="current_orgunit" [indicator_list]="getVisibleIndicators(indicator)" [scorecard]="scorecard" [period]="period[0].id"></svg-item>
         </td>
 
-        <td style="font-size: 10px;max-width: 90px;overflow-wrap: break-word;padding: 8px; line-height: 80%;" *ngIf="show_sum_in_row">{{ findRowSum(current_orgunit.id) | number : '1.2-2' }}</td>
-        <td style="font-size: 10px;max-width: 90px;overflow-wrap: break-word;padding: 8px; line-height: 80%;" *ngIf="show_average_in_row">{{ findRowAverage(current_orgunit.id) }}</td>
+        <td style="font-size: 10px;max-width: 90px;overflow-wrap: break-word;padding: 8px; line-height: 80%;" *ngIf="show_sum_in_row">{{ findRowSum(current_orgunit.id,period[0].id) | number : '1.2-2' }}</td>
+        <td style="font-size: 10px;max-width: 90px;overflow-wrap: break-word;padding: 8px; line-height: 80%;" *ngIf="show_average_in_row">{{ findRowAverage(current_orgunit.id, period[0].id) }}</td>
       </tr>
 
       <tr *ngIf="showSubScorecard[current_orgunit.id]">
@@ -144,20 +221,20 @@
       <th *ngIf="scorecard.data.show_rank" style="width: 30px"></th>
       <th style="line-height: 10%">Sum</th>
       <th *ngFor="let indicator of getItemsFromGroups()" style="width: 90px;max-width: 90px;line-height: 10%;padding: 0px">
-        <app-subtotal [indicator]="indicator" [orgunits]="orgunits" [scorecard]="scorecard" [calculation]="'sum'" [indicator_list]="getVisibleIndicators(indicator)"></app-subtotal>
+        <app-subtotal [indicator]="indicator" [orgunits]="orgunits" [scorecard]="scorecard" [calculation]="'sum'" [indicator_list]="getVisibleIndicators(indicator)" [period]="period[0].id"></app-subtotal>
       </th>
-      <th *ngIf="show_sum_in_row">{{ findRowTotalSum(orgunits) | number : '1.2-2'}}</th>
-      <th *ngIf="show_average_in_row">{{ findRowTotalAverage(orgunits)}}</th>
+      <th *ngIf="show_sum_in_row">{{ findRowTotalSum(orgunits,period[0].id) | number : '1.2-2'}}</th>
+      <th *ngIf="show_average_in_row">{{ findRowTotalAverage(orgunits,period[0].id)}}</th>
     </tr>
     <!--Average column-->
     <tr *ngIf="show_average_in_column" style="height: 35px; max-height: 35px; overflow-y: hidden; line-height: 80%">
       <th *ngIf="scorecard.data.show_rank" style="width: 30px"></th>
       <th>Average</th>
       <th *ngFor="let indicator of getItemsFromGroups()" style="width: 90px;max-width: 90px;line-height: 10%;padding: 0px">
-        <app-subtotal [indicator]="indicator" [orgunits]="orgunits" [scorecard]="scorecard" [calculation]="'avg'" [indicator_list]="getVisibleIndicators(indicator)"></app-subtotal>
+        <app-subtotal [indicator]="indicator" [orgunits]="orgunits" [scorecard]="scorecard" [calculation]="'avg'" [indicator_list]="getVisibleIndicators(indicator)" [period]="period[0].id"></app-subtotal>
       </th>
-      <th *ngIf="show_sum_in_row">{{ findRowTotalSum(orgunits)  | number : '1.2-2'}}</th>
-      <th *ngIf="show_average_in_row">{{ findRowTotalAverage(orgunits)}}</th>
+      <th *ngIf="show_sum_in_row">{{ findRowTotalSum(orgunits,period[0].id)  | number : '1.2-2'}}</th>
+      <th *ngIf="show_average_in_row">{{ findRowTotalAverage(orgunits,period[0].id)}}</th>
     </tr>
     <!--additinal label-->
     <tr *ngFor="let label of scorecard.data.additional_labels">
@@ -172,6 +249,7 @@
       <th *ngIf="show_average_in_row"></th>
     </tr>
   </table>
+
   <div class="text-center" *ngIf="orgunits.length == 0">
     <img src="balls-4.svg" style="height: 200px; width: 200px"><br>
     <h3>Getting the scorecard ready</h3>
