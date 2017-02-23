@@ -457,11 +457,11 @@ export class ScorecardComponent implements OnInit, AfterViewInit, OnDestroy {
     if( this.average_selection == "all"){
       checker = false;
     }else if( this.average_selection == "below"){
-      if( this.findRowAverage(orgunit_id,period) >= avg ){
+      if( this.findRowAverage(orgunit_id, this.periods_list, null) >= avg ){
         checker = true
       }
     }else if( this.average_selection == "above"){
-      if( this.findRowAverage(orgunit_id,period) <= avg ){
+      if( this.findRowAverage(orgunit_id, this.periods_list, null) <= avg ){
         checker = true
       }
     }
@@ -488,20 +488,33 @@ export class ScorecardComponent implements OnInit, AfterViewInit, OnDestroy {
    * finding the row average
    * @param orgunit_id
    */
-  findRowAverage(orgunit_id,period){
+  findRowAverage(orgunit_id,periods_list,period){
     let sum = 0;
     let counter = 0;
-    for ( let holder of this.scorecard.data.data_settings.indicator_holders ){
-      for( let indicator of holder.indicators ){
-          for( let per of period ){
+    if(period == null){
+      for ( let holder of this.scorecard.data.data_settings.indicator_holders ){
+        for( let indicator of holder.indicators ){
+          for( let per of periods_list ){
             let use_key = orgunit_id+"."+per.id;
             if( this.hidenColums.indexOf(indicator.id) == -1 && indicator.values[use_key] != null ) {
               counter++;
               sum = sum + parseFloat(indicator.values[use_key]);
+            }
+          }
+        }
+      }
+    }else{
+      let use_key = orgunit_id+"."+period;
+      for ( let holder of this.scorecard.data.data_settings.indicator_holders ){
+        for( let indicator of holder.indicators ){
+          if( this.hidenColums.indexOf(indicator.id) == -1 && indicator.values[use_key] != null ) {
+            counter++;
+            sum = sum + parseFloat(indicator.values[use_key]);
           }
         }
       }
     }
+
     return (sum / counter).toFixed(2);
   }
   /**
@@ -654,7 +667,7 @@ export class ScorecardComponent implements OnInit, AfterViewInit, OnDestroy {
     }
     else if( sortingColumn == 'avg' ){
       for ( let orgunit of orguUnits ){
-        orgunit['avg'] = parseFloat(this.findRowAverage(orgunit.id,period));
+        orgunit['avg'] = parseFloat(this.findRowAverage(orgunit.id, this.periods_list, null));
       }
       this.dataService.sortArrOfObjectsByParam(orguUnits, sortingColumn, sortAscending)
     }
@@ -690,7 +703,7 @@ export class ScorecardComponent implements OnInit, AfterViewInit, OnDestroy {
     }
     else if( sortingColumn == 'avg' ){
       for ( let orgunit of orguUnits ){
-        orgunit['avg'] = parseFloat(this.findRowAverage(orgunit.id,period));
+        orgunit['avg'] = parseFloat(this.findRowAverage(orgunit.id, this.periods_list, null));
       }
       this.dataService.sortArrOfObjectsByParam(orguUnits, sortingColumn, sortAscending)
     }

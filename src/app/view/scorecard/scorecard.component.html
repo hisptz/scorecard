@@ -155,7 +155,7 @@
       <th>Average</th>
       <ng-container *ngFor="let current_orgunit of orgunits">
         <th *ngFor="let per of periods_list" style="font-size: 10px;max-width: 90px;overflow-wrap: break-word;padding: 8px; line-height: 80%;">
-          {{ findRowAverage(current_orgunit.id, period[0].id) }}
+          {{ findRowAverage(current_orgunit.id, periods_list, per.id) }}
         </th>
       </ng-container>
       <th *ngIf="show_sum_in_row">{{ findRowTotalSum(orgunits, period[0].id)  | number : '1.2-2'}}</th>
@@ -264,7 +264,7 @@
           </td>
         </ng-container>
         <td style="font-size: 10px;max-width: 90px;overflow-wrap: break-word;padding: 8px; line-height: 80%;" *ngIf="show_sum_in_row">{{ findRowSum(current_orgunit.id,period[0].id) | number : '1.2-2' }}</td>
-        <td style="font-size: 10px;max-width: 90px;overflow-wrap: break-word;padding: 8px; line-height: 80%;" *ngIf="show_average_in_row">{{ findRowAverage(current_orgunit.id, selected_periods) }}</td>
+        <td style="font-size: 10px;max-width: 90px;overflow-wrap: break-word;padding: 8px; line-height: 80%;" *ngIf="show_average_in_row">{{ findRowAverage(current_orgunit.id, periods_list,null) }}</td>
       </tr>
 
       <tr *ngIf="showSubScorecard[current_orgunit.id]">
