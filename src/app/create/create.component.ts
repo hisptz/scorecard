@@ -701,6 +701,41 @@ export class CreateComponent implements OnInit, AfterViewInit, OnDestroy {
 
   }
 
+  // load a single item for use in a score card
+  load_itemFromDragNDrop(item): void{
+
+    if( this.indicatorExist( this.scorecard.data.data_settings.indicator_holders, item )){
+      //this.deleteIndicator(item);
+    }else{
+      let indicator = this.getIndicatorStructure(item.name, item.id,this.getIndicatorLegendSet());
+      indicator.value = Math.floor(Math.random() * 60) + 40;
+      let random = Math.floor(Math.random() * 6) + 1;
+      if( random % 2 == 0){ indicator.showTopArrow = true}
+      else{ indicator.showBottomArrow = true}
+      // ensure indicator has all additinal labels
+      for (let label of this.scorecard.data.additional_labels ){
+        indicator.additional_label_values[label] = "";
+      }
+      // this.current_indicator_holder.holder_id = this.current_group_id;
+      if(this.current_indicator_holder.indicators.length < 2){
+        this.current_indicator_holder.indicators.push( indicator );
+      }else{
+        this.current_group_id = this.getStartingIndicatorId() + 1;
+        this.current_indicator_holder = {
+          "holder_id": this.current_group_id,
+          "indicators": []
+        };
+        this.current_indicator_holder.indicators.push( indicator );
+        this.need_for_indicator = false;
+        this.cleanUpEmptyColumns();
+      }
+      this.addIndicatorHolder(this.current_indicator_holder);
+      this.current_holder_group.id = this.current_holder_group_id;
+      this.addHolderGroups(this.current_holder_group, this.current_indicator_holder);
+    }
+
+  }
+
   // add an indicator holder to a scorecard
   addIndicatorHolder(indicator_holder): void{
     let add_new = true;
@@ -724,6 +759,28 @@ export class CreateComponent implements OnInit, AfterViewInit, OnDestroy {
       if (group.id == holder_group.id){
         if( group.indicator_holder_ids.indexOf(holder.holder_id) == -1 ){
           let index = this.findSelectedIndicatorIndex( current_id, group );
+          group.indicator_holder_ids.splice(index,0,holder.holder_id);
+          // group.indicator_holder_ids.push(holder.holder_id);
+        }
+        add_new = false;
+      }
+    }
+    if(add_new){
+      this.deleting[holder_group.id] = false;
+      if( holder_group.indicator_holder_ids.indexOf(holder.holder_id) == -1 ) holder_group.indicator_holder_ids.push(holder.holder_id);
+      this.scorecard.data.data_settings.indicator_holder_groups.push(holder_group);
+    }
+  }
+
+  // add a group of holders to a scorecard
+  addHolderGroupsFromDragNDrop( holder_group,holder,current_id: any = null ): void{
+    this.need_for_group = true;
+    let add_new = true;
+    for( let group of this.scorecard.data.data_settings.indicator_holder_groups ){
+      if (group.id == holder_group.id){
+        if( group.indicator_holder_ids.indexOf(holder.holder_id) == -1 ){
+          let index = this.findSelectedIndicatorIndex( current_id, group )-1;
+          console.log( group.indicator_holder_ids);
           group.indicator_holder_ids.splice(index,0,holder.holder_id);
           // group.indicator_holder_ids.push(holder.holder_id);
         }
@@ -775,6 +832,21 @@ export class CreateComponent implements OnInit, AfterViewInit, OnDestroy {
     this.addIndicatorHolder(this.current_indicator_holder);
     this.current_holder_group.id = this.current_holder_group_id;
     this.addHolderGroups(this.current_holder_group, this.current_indicator_holder, current_id);
+  }
+
+  // enable adding of new Indicator
+  enableAddIndicatorFromDragNDrop( current_id: any = null ): void{
+    this.current_group_id = this.getStartingIndicatorId() + 1;
+    this.current_indicator_holder = {
+      "holder_id": this.current_group_id,
+      "indicators": []
+    };
+    this.need_for_indicator = false;
+    this.cleanUpEmptyColumns();
+
+    this.addIndicatorHolder(this.current_indicator_holder);
+    this.current_holder_group.id = this.current_holder_group_id;
+    this.addHolderGroupsFromDragNDrop(this.current_holder_group, this.current_indicator_holder, current_id);
   }
 
   //try to deduce last number needed to start adding indicator
@@ -1611,6 +1683,127 @@ export class CreateComponent implements OnInit, AfterViewInit, OnDestroy {
     return name
   }
 
+  transferDataSuccess($event, drop_area:string, object:any){
+    if(drop_area == "group"){
+      // check if someone is trying to reorder items within the scorecard
+
+      if( $event.dragData.hasOwnProperty('holder_id') ){
+        let last_holder = ( object.indicator_holder_ids.length == 0 )?0:object.indicator_holder_ids.length - 1;
+        if(object.indicator_holder_ids.indexOf($event.dragData.holder_id) ==-1){
+          this.deleteHolder( $event.dragData );
+          this.insertHolder( $event.dragData, this.getHolderById(object.indicator_holder_ids[last_holder]), 1);
+          this.updateIndicator($event.dragData);
+        }else{ }
+      }
+      else if($event.dragData.hasOwnProperty('indicator_holder_ids')){
+        if($event.dragData.id != object.id){
+          this.scorecard.data.data_settings.indicator_holder_groups.forEach((group, group_index) => {
+            if( group.id == $event.dragData.id){
+              this.scorecard.data.data_settings.indicator_holder_groups.splice(group_index,1);
+            }
+          });
+          this.scorecard.data.data_settings.indicator_holder_groups.forEach((group, group_index) => {
+            if( group.id == object.id && this.getgroupById($event.dragData.id) == null){
+              this.scorecard.data.data_settings.indicator_holder_groups.splice(group_index,0,$event.dragData);
+            }
+          });
+        }
+
+      }
+      else{
+        let last_holder_position = ( object.indicator_holder_ids.length == 0 )?0:object.indicator_holder_ids.length - 1;
+        this.updateIndicator(this.getHolderById(object.indicator_holder_ids[last_holder_position]));
+        this.enableAddIndicator(this.current_indicator_holder.holder_id);
+        this.load_item($event.dragData)
+      }
+    }
+    else if(drop_area == "table_data"){
+      // check if someone is trying to reorder items within the scorecard
+      if( $event.dragData.hasOwnProperty('holder_id') ){
+        if( $event.dragData.holder_id == object.holder_id ){
+          console.log("cant move item to itself");
+        }
+        else{
+          this.deleteHolder( $event.dragData );
+          this.insertHolder( $event.dragData, object, 0);
+          this.updateIndicator($event.dragData);
+        }
+      }
+      else if($event.dragData.hasOwnProperty('indicator_holder_ids')){ }
+      else{
+        this.updateIndicator(object);
+        this.enableAddIndicatorFromDragNDrop(this.current_indicator_holder.holder_id);
+        this.load_itemFromDragNDrop($event.dragData)
+      }
+    }
+    else if(drop_area == "new-group"){
+      this.createGroup();
+      if( $event.dragData.hasOwnProperty('holder_id') ){
+        let last_holder = ( this.getgroupById(this.current_holder_group_id).indicator_holder_ids.length == 0 )?0:this.getgroupById(this.current_holder_group_id).indicator_holder_ids.length - 1;
+        if(this.getgroupById(this.current_holder_group_id).indicator_holder_ids.indexOf($event.dragData.holder_id) ==-1){
+          this.deleteHolder( $event.dragData );
+          this.insertHolder( $event.dragData, this.getHolderById(this.getgroupById(this.current_holder_group_id).indicator_holder_ids[last_holder]), 1);
+          this.updateIndicator($event.dragData);
+        }else{ }
+      }else if($event.dragData.hasOwnProperty('indicator_holder_ids')){}
+      else{
+        this.enableAddIndicator(this.current_indicator_holder.holder_id);
+        this.load_item($event.dragData)
+      }
+    }
+    else{
+      if( $event.dragData.hasOwnProperty('holder_id') ){ }
+      else if($event.dragData.hasOwnProperty('indicator_holder_ids')){ }
+      else{
+        this.enableAddIndicator(this.current_indicator_holder.holder_id);
+        this.load_item($event.dragData)
+      }
+    }
+  }
+
+  getgroupById(group_id){
+    let return_id = null;
+    for ( let group of this.scorecard.data.data_settings.indicator_holder_groups ){
+      if( group.id == group_id ){
+        return_id = group;
+        break;
+      }
+    }
+    return return_id;
+  }
+
+  getHolderById( holder_id ){
+    let return_id = null;
+    for ( let holder of this.scorecard.data.data_settings.indicator_holders ){
+      if( holder.holder_id == holder_id ){
+        return_id = holder;
+        break;
+      }
+    }
+    return return_id;
+  }
+
+  deleteHolder( holder_to_delete ){
+    this.scorecard.data.data_settings.indicator_holder_groups.forEach((group, holder_index) => {
+      group.indicator_holder_ids.forEach((holder, indicator_index) => {
+        if( holder == holder_to_delete.holder_id){
+          group.indicator_holder_ids.splice(indicator_index,1);
+        }
+      });
+    });
+  }
+
+  insertHolder( holder_to_insert, current_holder, num:number ){
+    this.scorecard.data.data_settings.indicator_holder_groups.forEach((group, holder_index) => {
+      group.indicator_holder_ids.forEach((holder, indicator_index) => {
+        console.log(holder +"=="+ current_holder.holder_id);
+        if( holder == current_holder.holder_id && group.indicator_holder_ids.indexOf(holder_to_insert.holder_id) == -1){
+          group.indicator_holder_ids.splice( indicator_index+num,0,holder_to_insert.holder_id );
+        }
+      });
+    });
+    this.cleanUpEmptyColumns();
+  }
 
   ngOnDestroy() {
     tinymce.remove(this.editor);

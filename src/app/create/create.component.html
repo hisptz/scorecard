@@ -77,47 +77,54 @@
   <div class="scorecard_table">
     <table class="table table-bordered" style="margin-bottom: 3px">
       <tr>
-        <th></th>
+        <th dnd-droppable (onDropSuccess)="transferDataSuccess($event,'new',null)"></th>
         <th
           style="font-size: 9px; "
           *ngFor="let indicator_holder_group of scorecard.data.data_settings.indicator_holder_groups"
           [attr.colspan]="indicator_holder_group.indicator_holder_ids.length"
           class="sans-pro"
           [ngClass]="{'current':is_current_group(indicator_holder_group)}"
+          dnd-droppable (onDropSuccess)="transferDataSuccess($event,'group',indicator_holder_group)"
         >
-          <input type="text" [(ngModel)]="indicator_holder_group.name" class="group-text">
-          <span *ngIf="indicator_holder_group.id != 1 && !deleting[indicator_holder_group.id]"
-                class="glyphicon glyphicon-trash text-danger"
-                style="cursor: pointer; padding-left: 5px"
-                (click)="deleting[indicator_holder_group.id] = true"
-          ></span>
-          <p *ngIf="indicator_holder_group.id != 1 && deleting[indicator_holder_group.id]">
-            Please Confirm, indicators will be deleted too.<br>
-            <button class="btn btn-xs btn-warning" (click)="deleting[indicator_holder_group.id] = false">cancel</button>
-            <button class="btn btn-xs btn-danger" (click)="deleteGroup(indicator_holder_group)">delete</button>
-          </p>
+          <div dnd-draggable [dragEnabled]="true" [dragData]="indicator_holder_group">
+            <input type="text" [(ngModel)]="indicator_holder_group.name" class="group-text">
+            <span *ngIf="indicator_holder_group.id != 1 && !deleting[indicator_holder_group.id]"
+                  class="glyphicon glyphicon-trash text-danger"
+                  style="cursor: pointer; padding-left: 5px"
+                  (click)="deleting[indicator_holder_group.id] = true"
+            ></span>
+            <p *ngIf="indicator_holder_group.id != 1 && deleting[indicator_holder_group.id]">
+              Please Confirm, indicators will be deleted too.<br>
+              <button class="btn btn-xs btn-warning" (click)="deleting[indicator_holder_group.id] = false">cancel</button>
+              <button class="btn btn-xs btn-danger" (click)="deleteGroup(indicator_holder_group)">delete</button>
+            </p>
+          </div>
         </th>
-        <th style="width: 60px">
+        <th style="width: 60px"  dnd-droppable (onDropSuccess)="transferDataSuccess($event,'new-group',null)">
           <button class="btn btn-xs" *ngIf="need_for_group" (click)="createGroup()">
             <span class="glyphicon-plus"></span> Add
           </button>
         </th>
       </tr>
       <tr>
-        <th style="vertical-align: bottom"></th>
-        <td *ngFor="let indicator of getItemsFromGroups()" style="font-size: 10px;width:90px;max-width: 90px;overflow-wrap: break-word;cursor: pointer;" class="sans-pro"
-            title="Click to update {{ getIndicatorTitle(indicator) }}"
-            [ngClass]="{'current':is_current_indicator(indicator)}"
-            (click)="updateIndicator(indicator)">
-          {{ getIndicatorTitle(indicator) }}
-        </td>
+        <th style="vertical-align: bottom" dnd-droppable (onDropSuccess)="transferDataSuccess($event,'new',null)"></th>
+          <td *ngFor="let indicator of getItemsFromGroups()" style="font-size: 10px;width:90px;max-width: 90px;overflow-wrap: break-word;cursor: pointer;" class="sans-pro"
+              title="Click to update {{ getIndicatorTitle(indicator) }}"
+              [ngClass]="{'current':is_current_indicator(indicator)}"
+              (click)="updateIndicator(indicator)"
+              dnd-droppable (onDropSuccess)="transferDataSuccess($event,'table_data',indicator)"
+          >
+            <div dnd-draggable [dragEnabled]="true" [dragData]="indicator">
+            {{ getIndicatorTitle(indicator) }}
+            </div>
+          </td>
         <th style="width: 60px">
           <button title="Add new Indicator next to the current active indicator" class="btn btn-xs" *ngIf="need_for_indicator" (click)="enableAddIndicator(current_indicator_holder.holder_id)">
             <span class="glyphicon-plus"></span> Add</button>
         </th>
       </tr>
       <tr>
-        <td style="vertical-align: middle; padding: 0px">
+        <td style="vertical-align: middle; padding: 0px" dnd-droppable (onDropSuccess)="transferDataSuccess($event,'new',null)">
 
           <!--organisation unit tree-->
           <div style="padding-left: 5px; min-width: 420px">
@@ -442,6 +449,7 @@
             *ngFor="let item of current_listing | filterByName:listQuery | paginate: { id: 'list', itemsPerPage: 8, currentPage: r }"
             [ngClass]="{'already_selected': indicatorExist(scorecard.data.data_settings.indicator_holders, item)}"
             (click)="load_item(item)"
+            dnd-draggable [dragEnabled]="true" [dragData]="item"
           >
             <span class="glyphicon glyphicon-ok-circle text-success" *ngIf="indicatorExist(scorecard.data.data_settings.indicator_holders, item)"></span> {{ item.name }}
           </li>
