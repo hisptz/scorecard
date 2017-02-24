@@ -1724,8 +1724,9 @@ export class CreateComponent implements OnInit, AfterViewInit, OnDestroy {
           console.log("cant move item to itself");
         }
         else{
+          let position = this.getHolderPosition($event.dragData,object);
           this.deleteHolder( $event.dragData );
-          this.insertHolder( $event.dragData, object, 0);
+          this.insertHolder( $event.dragData, object, position);
           this.updateIndicator($event.dragData);
         }
       }
@@ -1803,6 +1804,27 @@ export class CreateComponent implements OnInit, AfterViewInit, OnDestroy {
       });
     });
     this.cleanUpEmptyColumns();
+  }
+
+  // Dertimine if indicators are in the same group and say whether the first is larger of not
+  getHolderPosition(holder_to_check, current_holder){
+    let holders_in_same_group = false;
+    let holder_group = null;
+    let increment_number = 0;
+    this.scorecard.data.data_settings.indicator_holder_groups.forEach((group, holder_index) => {
+      if(group.indicator_holder_ids.indexOf(holder_to_check.holder_id) != -1 && group.indicator_holder_ids.indexOf(current_holder.holder_id) != -1){
+        holders_in_same_group = true;
+        holder_group = group.indicator_holder_ids;
+      }
+    });
+    if(holders_in_same_group){
+      if( holder_group.indexOf(holder_to_check.holder_id) > holder_group.indexOf(current_holder.holder_id)){
+        increment_number = 0;
+      }else{
+        increment_number = 1;
+      }
+    }
+    return increment_number;
   }
 
   ngOnDestroy() {

@@ -43,7 +43,7 @@
 
 
   <!--scorecard table indicators in the left data on top-->
-  <table class="table table-bordered scorecard_table" *ngIf="false">
+  <table class="table table-bordered scorecard_table" *ngIf="show_data_in_column">
     <!--orgunits-->
     <tr>
       <th *ngIf="scorecard.data.show_rank"  style="width: 30px">No#</th>
@@ -51,11 +51,15 @@
         <input type="text" class="form-control input-sm no-print" [(ngModel)]="searchQuery" placeholder="Search..">
       </th>
       <td *ngFor="let current_orgunit of orgunits" class="indicator_title"
-          style="line-height: 140%"
+          style="line-height: 140%; padding: 0px"
           title="Click to Sort By {{ current_orgunit.name }}"
           [attr.colspan]="periods_list.length"
+          dnd-droppable (onDropSuccess)="dragItemSuccessfull($event,'orgunit',current_orgunit)"
       >
-        {{ current_orgunit.name }}
+
+        <div dnd-draggable [dragEnabled]="true" [dragData]="current_orgunit" style="padding: 8%">
+          {{ current_orgunit.name }}
+        </div>
         <!--sorting icons-->
         <!--<span class="glyphicon glyphicon-chevron-up pull-right text-muted" *ngIf="!current_sorting && sorting_column == indicator.indicators[0].id"></span>-->
         <!--<span class="glyphicon glyphicon-chevron-down pull-right text-muted" *ngIf="current_sorting && sorting_column == indicator.indicators[0].id"></span>-->
@@ -106,13 +110,20 @@
     <ng-container *ngFor="let indicator of getItemsFromGroups() | filterIndicatorByName:searchQuery; let i=index">
       <tr style="height: 35px; max-height: 35px; overflow-y: hidden; line-height: 80%" class="orunitTr" *ngIf="scorecard.data.shown_records == 'all' || i < scorecard.data.shown_records">
         <td style="vertical-align: bottom;font-size: 10px;cursor: pointer;line-height: 80%;padding: 8px" *ngIf="scorecard.data.show_rank">{{ i+1 }}</td>
-        <td style="vertical-align: bottom;font-size: 10px;cursor: pointer;line-height: 80%;padding: 8px" class="orgUnitName" >
-          <img src="balls-3.svg"
-               style="height: 30px" *ngIf="indicator_loading[indicator.indicators[0].id]"
-               title="Loading old data for {{ getIndicatorTitle(indicator) }}">
-          <span *ngIf="indicator_done_loading[indicator.indicators[0].id] && old_proccessed_percent != 100" class="glyphicon glyphicon-ok text-success"></span>
-          {{ getIndicatorTitle(indicator) }}
+        <td style="vertical-align: bottom;font-size: 10px;cursor: pointer;line-height: 80%;"
+            class="orgUnitName"
+            dnd-droppable (onDropSuccess)="dragItemSuccessfull($event,'indicator',indicator)"
+        >
+
+            <img src="balls-3.svg"
+                 style="height: 30px" *ngIf="indicator_loading[indicator.indicators[0].id]"
+                 title="Loading old data for {{ getIndicatorTitle(indicator) }}">
+            <span *ngIf="indicator_done_loading[indicator.indicators[0].id] && old_proccessed_percent != 100" class="glyphicon glyphicon-ok text-success"></span>
+          <div dnd-draggable [dragEnabled]="true" [dragData]="indicator" style="padding: 8px">
+            {{ getIndicatorTitle(indicator) }}
+          </div>
         </td>
+
         <ng-container *ngFor="let current_orgunit of orgunits; let i=index">
         <td *ngFor="let per of periods_list"
             style="font-size: 10px;max-width: 90px;overflow-wrap: break-word; cursor: pointer; padding: 0px;line-height: 10%;"
@@ -164,7 +175,7 @@
   </table>
 
   <!--scorecard table orgunit on the left data on top-->
-  <table class="table table-bordered scorecard_table" *ngIf="true">
+  <table class="table table-bordered scorecard_table" *ngIf="!show_data_in_column">
     <!--Groups-->
     <tr [ngClass]="{'hide_no_group': scorecard.data.data_settings.indicator_holder_groups.length == 1}" style="line-height: 140%">
       <th *ngIf="scorecard.data.show_rank" style="width: 30px"></th>
@@ -179,8 +190,12 @@
         [attr.colspan]="getGroupColspan(indicator_holder_group.indicator_holder_ids)"
         [ngClass]="{'hide_no_group': getGroupColspan(indicator_holder_group.indicator_holder_ids) == 0}"
         (click)="loadPreview(indicator_holder_group,null,null)"
-        title="Click to analyse indicators for {{ indicator_holder_group.name }}">
-        {{ indicator_holder_group.name }}
+        title="Click to analyse indicators for {{ indicator_holder_group.name }}"
+        dnd-droppable (onDropSuccess)="dragItemSuccessfull($event,'group',indicator_holder_group)"
+      >
+        <div dnd-draggable [dragEnabled]="true" [dragData]="indicator_holder_group">
+          {{ indicator_holder_group.name }}
+        </div>
       </th>
       <th *ngIf="show_sum_in_row"></th>
       <th *ngIf="show_average_in_row"></th>
@@ -192,19 +207,22 @@
         <input type="text" class="form-control input-sm no-print" [(ngModel)]="searchQuery" placeholder="Search for orgunits here">
       </th>
       <td *ngFor="let indicator of getItemsFromGroups()" class="indicator_title"
-          style="line-height: 140%"
+          style="line-height: 140%; padding: 0px"
           title="Click to Sort By {{ getIndicatorTitle(indicator) }}"
           (click)="sortScoreCardFromColumn(indicator.indicators[0].id, sortAscending, orgunits, periods_list[0].id, false)"
           (dblclick)="loadPreview(null,indicator,null)"
           [attr.colspan]="periods_list.length"
+          dnd-droppable (onDropSuccess)="dragItemSuccessfull($event,'indicator',indicator)"
       >
-        <img src="balls-3.svg" style="height: 30px" *ngIf="indicator_loading[indicator.indicators[0].id] && periods_list.length > 1" title="Loading old data for {{ getIndicatorTitle(indicator) }}">
-        <span *ngIf="indicator_done_loading[indicator.indicators[0].id] && old_proccessed_percent != 100 && periods_list.length > 1" class="glyphicon glyphicon-ok text-success"></span>
-        {{ getIndicatorTitle(indicator) }}
-        <!--sorting icons-->
-        <img src="balls-3.svg" style="height: 30px" *ngIf="sorting_on_progress[indicator.indicators[0].id] && periods_list.length > 1" title="processing sorting for {{ getIndicatorTitle(indicator) }}">
-        <span class="glyphicon glyphicon-chevron-up pull-right text-muted" *ngIf="!current_sorting && sorting_column == indicator.indicators[0].id && periods_list.length == 1"></span>
-        <span class="glyphicon glyphicon-chevron-down pull-right text-muted" *ngIf="current_sorting && sorting_column == indicator.indicators[0].id && periods_list.length == 1"></span>
+        <div dnd-draggable [dragEnabled]="true" [dragData]="indicator" style="padding: 8px">
+          <img src="balls-3.svg" style="height: 30px" *ngIf="indicator_loading[indicator.indicators[0].id] && periods_list.length > 1" title="Loading old data for {{ getIndicatorTitle(indicator) }}">
+          <span *ngIf="indicator_done_loading[indicator.indicators[0].id] && old_proccessed_percent != 100 && periods_list.length > 1" class="glyphicon glyphicon-ok text-success"></span>
+          {{ getIndicatorTitle(indicator) }}
+          <!--sorting icons-->
+          <img src="balls-3.svg" style="height: 30px" *ngIf="sorting_on_progress[indicator.indicators[0].id] && periods_list.length > 1" title="processing sorting for {{ getIndicatorTitle(indicator) }}">
+          <span class="glyphicon glyphicon-chevron-up pull-right text-muted" *ngIf="!current_sorting && sorting_column == indicator.indicators[0].id && periods_list.length == 1"></span>
+          <span class="glyphicon glyphicon-chevron-down pull-right text-muted" *ngIf="current_sorting && sorting_column == indicator.indicators[0].id && periods_list.length == 1"></span>
+        </div>
       </td>
       <th class="subtotal" *ngIf="show_sum_in_row">Sum</th>
       <th class="subtotal" *ngIf="show_average_in_row" (click)="sortScoreCardFromColumn('avg', sortAscending, orgunits, periods_list[0].id, false)">
@@ -228,6 +246,7 @@
             (click)="sortScoreCardFromColumn(indicator.indicators[0].id, sortAscending, orgunits, per.id, false)"
             (dblclick)="loadPreview(null,indicator,null)"
         >
+
           <img src="balls-3.svg" style="height: 30px" *ngIf="indicator_loading[indicator.indicators[0].id]" title="Loading old data for {{ getIndicatorTitle(indicator) }}">
           <span *ngIf="indicator_done_loading[indicator.indicators[0].id] && old_proccessed_percent != 100" class="glyphicon glyphicon-ok text-success"></span>
           {{ per.name }}
@@ -250,8 +269,15 @@
     <ng-container *ngFor="let current_orgunit of orgunits | filterByName:searchQuery; let i=index">
       <tr style="height: 35px; max-height: 35px; overflow-y: hidden; line-height: 80%" class="orunitTr" *ngIf="scorecard.data.shown_records == 'all' || i < scorecard.data.shown_records"  [ngClass]="{'hide_no_group': isRowEmpty(current_orgunit.id) || averageHidden(current_orgunit.id,periods_list[0].id)}">
         <td style="vertical-align: bottom;font-size: 10px;cursor: pointer;line-height: 80%;padding: 8px" *ngIf="scorecard.data.show_rank">{{ i+1 }}</td>
-        <td style="vertical-align: bottom;font-size: 10px;cursor: pointer;line-height: 80%;padding: 8px;min-width:120px" class="orgUnitName" (click)="loadChildrenData(current_orgunit)" [style.cursor]="getCursorStyle(current_orgunit)">
-          {{ current_orgunit.name }}
+        <td style="vertical-align: bottom;font-size: 10px;cursor: pointer;line-height: 80%;padding: 8px;min-width:120px"
+            class="orgUnitName"
+            (click)="loadChildrenData(current_orgunit)"
+            [style.cursor]="getCursorStyle(current_orgunit)"
+            dnd-droppable (onDropSuccess)="dragItemSuccessfull($event,'orgunit',current_orgunit)"
+        >
+          <div dnd-draggable [dragEnabled]="true" [dragData]="current_orgunit">
+            {{ current_orgunit.name }}
+          </div>
         </td>
         <ng-container *ngFor="let indicator of getItemsFromGroups()">
           <td *ngFor="let per of periods_list"

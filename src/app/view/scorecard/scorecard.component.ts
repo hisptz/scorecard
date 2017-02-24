@@ -47,6 +47,7 @@ export class ScorecardComponent implements OnInit, AfterViewInit, OnDestroy {
   showSubScorecard: any[] = [];
   periods_list: any = [];
   keep_options_open:boolean = true;
+  show_data_in_column: boolean = false;
   constructor(
     private dataService: DataService,
     private filterService: FilterService,
@@ -757,6 +758,177 @@ export class ScorecardComponent implements OnInit, AfterViewInit, OnDestroy {
     });
   }
 
+  // deals with the drag and drop issue
+  dragItemSuccessfull($event, drop_area:string, object:any){
+    if( drop_area == "orgunit"){
+      if( $event.dragData.hasOwnProperty('holder_id') ){
+        this.show_data_in_column = !this.show_data_in_column;
+      }
+      else if($event.dragData.hasOwnProperty('indicator_holder_ids')){
+        this.show_data_in_column = !this.show_data_in_column;
+      }
+      else{
+        let number = (this.getOrgunitPosition($event.dragData.id) > this.getOrgunitPosition(object.id))?0:1;
+        this.deleteOrgunit( $event.dragData );
+        this.insertOrgunit( $event.dragData, object, number);
+      }
+    }
+    else if(drop_area == "indicator"){
+      if( $event.dragData.hasOwnProperty('holder_id') ){
+        if( $event.dragData.holder_id == object.holder_id ){
+          console.log("cant move item to itself");
+        }
+        else{
+          let position = this.getHolderPosition($event.dragData,object);
+          this.deleteHolder( $event.dragData );
+          this.insertHolder( $event.dragData, object, position);
+        }
+      }
+      else if($event.dragData.hasOwnProperty('indicator_holder_ids')){ }
+      else{
+        this.show_data_in_column = !this.show_data_in_column;
+      }
+    }
+    else if(drop_area == "group"){
+      if( $event.dragData.hasOwnProperty('holder_id') ){
+        let last_holder = ( object.indicator_holder_ids.length == 0 )?0:object.indicator_holder_ids.length - 1;
+        if(object.indicator_holder_ids.indexOf($event.dragData.holder_id) ==-1){
+          this.deleteHolder( $event.dragData );
+          this.insertHolder( $event.dragData, this.getHolderById(object.indicator_holder_ids[last_holder]), 1);
+        }else{ }
+      }
+      else if($event.dragData.hasOwnProperty('indicator_holder_ids')){
+        if($event.dragData.id != object.id){
+          this.scorecard.data.data_settings.indicator_holder_groups.forEach((group, group_index) => {
+            if( group.id == $event.dragData.id){
+              this.scorecard.data.data_settings.indicator_holder_groups.splice(group_index,1);
+            }
+          });
+          this.scorecard.data.data_settings.indicator_holder_groups.forEach((group, group_index) => {
+            if( group.id == object.id && this.getgroupById($event.dragData.id) == null){
+              this.scorecard.data.data_settings.indicator_holder_groups.splice(group_index,0,$event.dragData);
+            }
+          });
+        }
+      }
+      else{
+        this.show_data_in_column = !this.show_data_in_column;
+      }
+    }
+    else{
+    }
+  }
+
+  // get indicator group by Id this function helps to check if the group is available or not
+  getgroupById(group_id){
+    let return_id = null;
+    for ( let group of this.scorecard.data.data_settings.indicator_holder_groups ){
+      if( group.id == group_id ){
+        return_id = group;
+        break;
+      }
+    }
+    return return_id;
+  }
+
+  // this function will return an holder with specified ID
+  getHolderById( holder_id ){
+    let return_id = null;
+    for ( let holder of this.scorecard.data.data_settings.indicator_holders ){
+      if( holder.holder_id == holder_id ){
+        return_id = holder;
+        break;
+      }
+    }
+    return return_id;
+  }
+
+  // This function will find the location of holder in the group and delete it
+  deleteHolder( holder_to_delete ){
+    this.scorecard.data.data_settings.indicator_holder_groups.forEach((group, holder_index) => {
+      group.indicator_holder_ids.forEach((holder, indicator_index) => {
+        if( holder == holder_to_delete.holder_id){
+          group.indicator_holder_ids.splice(indicator_index,1);
+        }
+      });
+    });
+  }
+
+  // This function will add a new holder in the place of the current holder
+  // TODO: Check if it is forward movement of backward movement
+  insertHolder( holder_to_insert, current_holder, num:number ){
+    this.scorecard.data.data_settings.indicator_holder_groups.forEach((group, holder_index) => {
+      group.indicator_holder_ids.forEach((holder, indicator_index) => {
+        console.log(holder +"=="+ current_holder.holder_id);
+        if( holder == current_holder.holder_id && group.indicator_holder_ids.indexOf(holder_to_insert.holder_id) == -1){
+          group.indicator_holder_ids.splice( indicator_index+num,0,holder_to_insert.holder_id );
+        }
+      });
+    });
+  }
+
+  // Dertimine if indicators are in the same group and say whether the first is larger of not
+  getHolderPosition(holder_to_check, current_holder){
+    let holders_in_same_group = false;
+    let holder_group = null;
+    let increment_number = 0;
+    this.scorecard.data.data_settings.indicator_holder_groups.forEach((group, holder_index) => {
+      if(group.indicator_holder_ids.indexOf(holder_to_check.holder_id) != -1 && group.indicator_holder_ids.indexOf(current_holder.holder_id) != -1){
+        holders_in_same_group = true;
+        holder_group = group.indicator_holder_ids;
+      }
+    });
+    if(holders_in_same_group){
+      if( holder_group.indexOf(holder_to_check.holder_id) > holder_group.indexOf(current_holder.holder_id)){
+        increment_number = 0;
+      }else{
+        increment_number = 1;
+      }
+    }
+    return increment_number;
+  }
+
+  // this function will delete orgunit from the list of organisation units
+  deleteOrgunit( orgunit_to_delete ){
+    this.orgunits.forEach((orgunit, orgunit_index) => {
+        if( orgunit_to_delete.id == orgunit.id){
+          this.orgunits.splice(orgunit_index,1);
+        }
+    });
+  }
+
+  // This function will add orgunit in the behind of the provided orgunit
+  insertOrgunit( orgunit_to_insert, current_orgunit, num:number ){
+    this.orgunits.forEach((orgunit, orgunit_index) => {
+      if( current_orgunit.id == orgunit.id && !this.orgunitAvailable(orgunit_to_insert.id)){
+        this.orgunits.splice(orgunit_index+num,0,orgunit_to_insert);
+      }
+    });
+  }
+
+  // This function is used to check if Organisation unit is available
+  orgunitAvailable(orgunit_id:string): boolean {
+    let checker = false;
+    this.orgunits.forEach((orgunit, orgunit_index) => {
+      if( orgunit_id == orgunit.id ){
+        checker = true;
+      }
+    });
+    return checker;
+  }
+
+  // Get the position of the organisation unit.
+  getOrgunitPosition(orgunit_id){
+    let orgunit_index = null;
+    this.orgunits.forEach((orgunit, index) => {
+      if(orgunit.id == orgunit_id){
+        orgunit_index = index;
+      }
+    });
+    return orgunit_index;
+  }
+
+  // Use this for all clean ups
   ngOnDestroy (){
     if( this.subscription ){
       this.subscription.unsubscribe();
