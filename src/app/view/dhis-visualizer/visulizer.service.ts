@@ -549,7 +549,7 @@ export class VisulizerService {
     for (let i = 0; i < column_items_array.length; i++ ) {
       if ( table_columns_array.length === 0 ) {
         for ( let item of column_items_array[i] ) {
-          table_columns_array.push( item );
+          table_columns_array.push( [item] );
         }
       }else {
         let temp_arr = table_columns_array.concat();
