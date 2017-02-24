@@ -58,20 +58,12 @@ export class ScorecardComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngOnInit() {
+    this.show_data_in_column = this.scorecard.data.show_data_in_column;
     this.loadScoreCard();
   }
 
   ngAfterViewInit(){
 
-  }
-
-  // a function to prepare a list of periods units for analytics
-  getPeriodsForAnalytics(periods){
-    let period = [];
-    for( let per of periods ){
-      period.push(per.id);
-    }
-    return period.join(";");
   }
 
   // a function to prepare a list of organisation units for analytics
@@ -155,16 +147,27 @@ export class ScorecardComponent implements OnInit, AfterViewInit, OnDestroy {
   // get organisation unit name for display on scorecard title
   getOrgunitName(orgunit_model){
     let name= [];
+    let other_names = "";
     if ( orgunit_model.selected_orgunits.length == 1){
       name.push( orgunit_model.selected_orgunits[0].name );
     }
     // If there is more than one organisation unit selected
     else{
+      let i = 0;
       orgunit_model.selected_orgunits.forEach((orgunit) => {
-        name.push( orgunit.name );
-      })
+        i++;
+        if(i<4){
+          name.push( orgunit.name );
+        }else{
+
+        }
+      });
+      if( i>=4 ){
+        let k = i-3;
+        other_names = " and "+ k+" Others";
+      }
     }
-    return name.join(", ");
+    return name.join(", ")+other_names;
   }
 
   // a function that will be used to load scorecard
@@ -180,7 +183,6 @@ export class ScorecardComponent implements OnInit, AfterViewInit, OnDestroy {
     this.loading = true;
     this.orgunits = [];
     this.loading_message = " Getting scorecard details ";
-
     // prepare period list( if not ready use the default period )
     if( this.period.length == 0){
       for( let per of this.default_period ){

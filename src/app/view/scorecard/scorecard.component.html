@@ -22,7 +22,8 @@
   <div [innerHTML]="scorecard.data.header.template.content | safeHtml"></div>
   <h3>{{ scorecard.data.header.title }} &nbsp;
     <span *ngIf="orgunit_model.selection_mode != 'Usr_orgUnit' && orgunit_model.selection_mode != 'orgUnit'"> For </span> &nbsp;{{getProperPreOrgunitName()}}&nbsp;
-    {{ getOrgunitName(orgunit_model) }} &nbsp;&nbsp;&nbsp; {{ period.name }}
+    {{ getOrgunitName(orgunit_model) }} &nbsp;&nbsp;&nbsp;
+    <span *ngIf="periods_list.length==1"> {{ periods_list[0].name }} </span>
   </h3>
 
   <!--legend area-->

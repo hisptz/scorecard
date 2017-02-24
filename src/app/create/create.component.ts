@@ -14,6 +14,7 @@ import {Subscription} from "rxjs";
 import {DataService} from "../shared/data.service";
 import {OrgUnitService} from "../shared/services/org-unit.service";
 import {TreeNode, TREE_ACTIONS, IActionMapping, TreeComponent} from 'angular2-tree-component';
+import {FilterService} from "../shared/services/filter.service";
 
 const actionMapping:IActionMapping = {
   mouse: {
@@ -80,6 +81,12 @@ export class CreateComponent implements OnInit, AfterViewInit, OnDestroy {
   @ViewChild('orgtree')
   orgtree: TreeComponent;
 
+  @ViewChild('pertree')
+  pertree: TreeComponent;
+  periods: any[] = [];
+  selected_periods:any = [];
+  period_type: string = "Quarterly";
+  year: number = 2016;
   dataset_types = [
     {id:'', name: "Reporting Rate"},
     {id:'.REPORTING_RATE_ON_TIME', name: "Reporting Rate on time"},
@@ -114,6 +121,16 @@ export class CreateComponent implements OnInit, AfterViewInit, OnDestroy {
     multiple: true,
     placeholder: "Select Organisation Unit"
   };
+
+  period_tree_config: any = {
+    show_search : true,
+    search_text : 'Search',
+    level: null,
+    loading: false,
+    loading_message: 'Loading Periods...',
+    multiple: true,
+    placeholder: "Select period"
+  };
   organisationunits: any[] = [];
   // custom settings for tree
   customTemplateStringOrgunitOptions: any = {
@@ -132,7 +149,8 @@ export class CreateComponent implements OnInit, AfterViewInit, OnDestroy {
               private eventService: EventDataService,
               private dataService: DataService,
               private _location: Location,
-              private orgunitService: OrgUnitService
+              private orgunitService: OrgUnitService,
+              private filterService: FilterService,
   )
   {
     this.indicatorGroups = [];
@@ -159,9 +177,11 @@ export class CreateComponent implements OnInit, AfterViewInit, OnDestroy {
     );
     this.subscription = activatedRouter.params.subscribe(
       (params: any) => {
+
         let id = params['scorecardid'];
         let type = params['type'];
         if(type == 'new'){
+          this.period_type = this.scorecard.data.periodType;
           this.current_action = 'new';
         }else{
           this.current_action = 'update';
@@ -174,6 +194,15 @@ export class CreateComponent implements OnInit, AfterViewInit, OnDestroy {
                 name: scorecard_details.header.title,
                 data: scorecard_details
               };
+              //check if period configuration is there
+              if(!this.scorecard.data.hasOwnProperty('periodType')){
+                this.scorecard.data.periodType = "Quarterly";
+              }
+              if(!this.scorecard.data.hasOwnProperty('selected_periods')){
+                this.scorecard.data.selected_periods = [];
+              }
+              this.period_type = this.scorecard.data.periodType;
+
               // attach organisation unit if none is defined
               if(!this.scorecard.data.orgunit_settings.hasOwnProperty("selected_orgunits")){
                 this.scorecard.data.orgunit_settings = {
@@ -337,6 +366,9 @@ export class CreateComponent implements OnInit, AfterViewInit, OnDestroy {
 
     //laod organisation units
     this.loadOrganisationUnit();
+
+    //period configuration
+    this.periods = this.filterService.getPeriodArray( this.period_type, this.year );
   }
 
   loadOrganisationUnit(){
@@ -468,6 +500,16 @@ export class CreateComponent implements OnInit, AfterViewInit, OnDestroy {
         });
       },
     });
+    // if scorecard has preset period activate the current period selection
+    if( this.scorecard.data.selected_periods.length == 0 ){
+      this.activateNode(this.filterService.getPeriodArray( this.period_type, this.year )[0].id, this.pertree);
+    }else{
+      this.scorecard.data.selected_periods.forEach((period) =>{
+        this.selected_periods.push( period );
+      })
+    }
+
+
   }
   // cancel scorecard creation process
   cancelCreate(){
@@ -731,7 +773,7 @@ export class CreateComponent implements OnInit, AfterViewInit, OnDestroy {
       }
       this.addIndicatorHolder(this.current_indicator_holder);
       this.current_holder_group.id = this.current_holder_group_id;
-      this.addHolderGroups(this.current_holder_group, this.current_indicator_holder);
+      this.addHolderGroupsFromDragNDrop(this.current_holder_group, this.current_indicator_holder);
     }
 
   }
@@ -963,6 +1005,8 @@ export class CreateComponent implements OnInit, AfterViewInit, OnDestroy {
         "show_average_in_row":false,
         "show_average_in_column":false,
         "periodType": "Quarterly",
+        "selected_periods":[],
+        "show_data_in_column":false,
         "show_score": false,
         "show_rank": false,
         "rank_position_last": true,
@@ -1020,15 +1064,6 @@ export class CreateComponent implements OnInit, AfterViewInit, OnDestroy {
         "indicator_dataElement_reporting_rate_selection": "Indicators"
       }
     }
-  }
-  // dealing with showing average
-  showAverageInRow(e){
-    this.scorecard.data.show_average_in_row = e.target.checked;
-  }
-
-  // dealing with showing average
-  showAverageInColumn(e){
-    this.scorecard.data.show_average_in_column = e.target.checked;
   }
 
   // define a default indicator structure
@@ -1620,16 +1655,21 @@ export class CreateComponent implements OnInit, AfterViewInit, OnDestroy {
     }
   };
 
+
   // action to be called when a tree item is deselected(Remove item in array of selected items
   deactivatePer ( $event ) {
-
+    this.selected_periods.forEach((item,index) => {
+      if( $event.node.data.id == item.id ) {
+        this.selected_periods.splice(index, 1);
+      }
+    });
   };
 
-  // add item to array of selected items when item is selected
-  // activatePer = ($event) => {
-  //   this.selected_periods = [$event.node.data];
-  //   this.period = $event.node.data;
-  // };
+  /// add item to array of selected items when period is selected
+  activatePer = ($event) => {
+    this.selected_periods.push($event.node.data);
+  };
+
 
   activateNode(nodeId:any, nodes){
     setTimeout(() => {
@@ -1639,6 +1679,21 @@ export class CreateComponent implements OnInit, AfterViewInit, OnDestroy {
         node.setIsActive(true,true);
     }, 0);
   }
+
+  pushPeriodForward(){
+    this.year += 1;
+    this.periods = this.filterService.getPeriodArray(this.period_type,this.year);
+  }
+
+  pushPeriodBackward(){
+    this.year -= 1;
+    this.periods = this.filterService.getPeriodArray(this.period_type,this.year);
+  }
+
+  changePeriodType(){
+    this.periods = this.filterService.getPeriodArray(this.period_type,this.year);
+  }
+
 
   // check if orgunit already exist in the orgunit display list
   checkOrgunitAvailabilty(orgunit, array): boolean{

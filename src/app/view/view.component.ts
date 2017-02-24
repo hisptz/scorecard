@@ -239,6 +239,9 @@ export class ViewComponent implements OnInit, AfterViewInit, OnDestroy {
         if(this.scorecard.data.hasOwnProperty("periodType")){
           this.period_type = this.scorecard.data.periodType
         }
+        if(!this.scorecard.data.hasOwnProperty("show_data_in_column")){
+          this.scorecard.data.show_data_in_column = false;
+        }
         this.periods = this.filterService.getPeriodArray( this.period_type, this.year );
         this.period = [{
           id:this.filterService.getPeriodArray( this.period_type, this.year )[0].id,
@@ -438,7 +441,6 @@ export class ViewComponent implements OnInit, AfterViewInit, OnDestroy {
         id:this.filterService.getNextPeriod(this.period[0].id,this.period_type),
         name:this.getPeriodName(this.filterService.getNextPeriod(this.period[0].id,this.period_type))
       }];
-
     }
     setTimeout(() => {
       this.loadScoreCard()
@@ -529,17 +531,28 @@ export class ViewComponent implements OnInit, AfterViewInit, OnDestroy {
   // Define default scorecard sample
   getEmptyScoreCard():ScoreCard{
     return {
-      id: this.scorecardId,
-      name:"",
+      id: "",
+      name: "",
       data: {
         "orgunit_settings": {
-          "parent": "USER_ORGUNIT",
-          "level": "LEVEL-2"
+          "selection_mode": "Usr_orgUnit",
+          "selected_level": "",
+          "selected_group": "",
+          "orgunit_levels": [],
+          "orgunit_groups": [],
+          "selected_orgunits": [],
+          "user_orgunits": [],
+          "selected_user_orgunit": "USER_ORGUNIT"
         },
+        "average_selection":"all",
+        "shown_records":"all",
+        "show_average_in_row":false,
+        "show_average_in_column":false,
         "periodType": "Quarterly",
+        "selected_periods":[],
+        "show_data_in_column":false,
         "show_score": false,
         "show_rank": false,
-        "empty_rows":true,
         "rank_position_last": true,
         "header": {
           "title": "",
@@ -567,11 +580,13 @@ export class ViewComponent implements OnInit, AfterViewInit, OnDestroy {
           },
           {
             "color": "#D3D3D3",
-            "definition": "N/A"
+            "definition": "N/A",
+            "default": true
           },
           {
             "color": "#FFFFFF",
-            "definition": "No data"
+            "definition": "No data",
+            "default": true
           }
         ],
         "highlighted_indicators": {

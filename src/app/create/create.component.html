@@ -44,8 +44,9 @@
         </li>
         <li class="list-group-item">
           <div class="row">
-            <div class="col-sm-6"><label title="tick to show score"><input type="checkbox" [(ngModel)]="scorecard.data.show_score" > Score</label></div>
-            <div class="col-sm-6"><label title="tick to show arrows on scorecard"><input type="checkbox" [(ngModel)]="scorecard.data.header.show_arrows_definition" > Arrows</label></div>
+            <div class="col-sm-3"><label title="tick to show score"><input type="checkbox" [(ngModel)]="scorecard.data.show_score" > Score</label></div>
+            <div class="col-sm-3"><label title="tick to show arrows on scorecard"><input type="checkbox" [(ngModel)]="scorecard.data.header.show_arrows_definition" > Arrows</label></div>
+            <div class="col-sm-6"><label title="tick to show data in rows"><input type="checkbox" [(ngModel)]="scorecard.data.show_data_in_column" > show data in rows</label></div>
 
           </div>
         </li>
@@ -107,7 +108,85 @@
         </th>
       </tr>
       <tr>
-        <th style="vertical-align: bottom" dnd-droppable (onDropSuccess)="transferDataSuccess($event,'new',null)"></th>
+        <td style="vertical-align: bottom" dnd-droppable (onDropSuccess)="transferDataSuccess($event,'new',null)">
+
+          <!--period configurations-->
+          <div class="tree-input" title="default starting period(s) hold control to multiselect">
+            <div>
+              <div class="show_items" (click)="displayPerTree()">
+              <span *ngIf="selected_periods.length > 3">
+            <span class="selected-item">
+              {{ selected_periods[0].name }} selected
+            </span>
+                <span class="selected-item">
+              {{ selected_periods[1].name }} selected
+            </span><span class="selected-item">
+              and {{ selected_periods.length -2 }} more
+            </span>
+          </span>
+                <span *ngIf="selected_periods.length <= 3">
+                <span *ngFor="let item of selected_periods" class="selected-item ng-binding ng-scope">
+                  {{ item.name }}
+                </span>
+              </span>
+                <span class="no-selection"*ngIf="selected_periods.length == 0 && !period_tree_config.loading">{{ period_tree_config.placeholder }}</span>
+                <span class="glyphicon glyphicon-triangle-bottom pull-right" *ngIf="!period_tree_config.loading"></span>
+                <span *ngIf="period_tree_config.loading">{{ period_tree_config.loading_message }}</span>
+              </div>
+              <div class="tree-view" [ngClass]="{'hiddenTree':showPerTree}">
+                <div class="col-sm-7" style="padding-left: 0px; margin-bottom: 5px">
+                  <label>Period Type</label>
+                  <select id="periodType" [(ngModel)]="period_type" class="form-control" style="height: 30px " (change)="changePeriodType()">
+                    <option value="">[ Select period type ]</option>
+                    <option value="Monthly">Monthly</option>
+                    <option value="BiMonthly">Bimonthly</option>
+                    <option value="Quarterly">Quarterly</option>
+                    <option value="SixMonthly">Six-monthly</option>
+                    <option value="SixMonthlyApril">Six-monthly April</option>
+                    <option value="Yearly">Yearly</option>
+                    <option value="FinancialApril">Financial-April</option>
+                    <option value="FinancialJuly">Financial-July</option>
+                    <option value="FinancialOct">Financial-Oct</option>
+                  </select>
+                </div>
+                <div class="col-sm-5" style="padding-right: 0px; margin-bottom: 5px">
+                  <label>&nbsp;</label>
+                  <div class="btn-group" style="width: 100%">
+                    <button type="button" class="btn btn-default pull-right" style="height: 30px; font-size: 11px" (click)="pushPeriodForward()">>> year</button>
+                    <button type="button" class="btn btn-default pull-right" style="height: 30px; font-size: 11px;" (click)="pushPeriodBackward()"><< year</button>
+                  </div>
+                </div>
+
+                <div class="search-area">
+                  <form *ngIf="!period_tree_config.loading && period_tree_config.show_search" style="border-bottom: solid 1px blanchedalmond;">
+                    <input #filter (keyup)="filterNodes(filter.value, pertree)" placeholder="{{ period_tree_config.search_text }}" id="search_field"/>
+
+                  </form>
+                </div>
+                <div *ngIf="period_tree_config.loading">{{ period_tree_config.loading_message }}</div>
+                <div class="tree-area1" *ngIf="!period_tree_config.loading">
+                  <Tree
+                    #pertree
+                    [nodes]="periods"
+                    [focused]="true"
+                    [options]="customTemplateStringOrgunitOptions"
+                    (onActivate)="activatePer($event)"
+                    (onDeactivate)="deactivatePer($event)"
+                  >
+                    <template #treeNodeTemplate let-node>
+                      <span>{{ node.data.name }}</span>
+                    </template>
+                  </Tree>
+                </div>
+                <div class="close-area">
+                  <button class="btn btn-default pull-right" style="height: 30px"  (click)="displayPerTree()">
+                    <span class="glyphicon glyphicon-remove"></span> Close
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </td>
           <td *ngFor="let indicator of getItemsFromGroups()" style="font-size: 10px;width:90px;max-width: 90px;overflow-wrap: break-word;cursor: pointer;" class="sans-pro"
               title="Click to update {{ getIndicatorTitle(indicator) }}"
               [ngClass]="{'current':is_current_indicator(indicator)}"
