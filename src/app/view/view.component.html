@@ -23,9 +23,11 @@
           <span *ngIf="orgunit_model.selected_orgunits.length > 4 && orgunit_model.selection_mode != 'Usr_orgUnit'">
             <span class="selected-item">
               {{ orgunit_model.selected_orgunits[0].name }}
+              <a (click)="deActivateNode(orgunit_model.selected_orgunits[0].id,orgtree,$event)" class="removeorgunit">x</a>
             </span>
             <span class="selected-item">
               {{ orgunit_model.selected_orgunits[1].name }}
+              <a (click)="deActivateNode(orgunit_model.selected_orgunits[0].id,orgtree,$event)" class="removeorgunit">x</a>
             </span>
             <span class="selected-item">
               &nbsp; and {{ orgunit_model.selected_orgunits.length - 2 }} more
@@ -34,6 +36,7 @@
           <span *ngIf="orgunit_model.selected_orgunits.length <= 4 && orgunit_model.selection_mode != 'Usr_orgUnit'">
              <span *ngFor="let item of orgunit_model.selected_orgunits" class="selected-item ng-binding ng-scope">
               {{ item.name }}
+               <a (click)="deActivateNode(item.id,orgtree,$event)" class="removeorgunit">x</a>
             </span>
           </span>
           <span class="no-selection"*ngIf="orgunit_model.selected_orgunits.length == 0 && !orgunit_tree_config.loading && orgunit_model.selection_mode != 'Usr_orgUnit'">{{ orgunit_tree_config.placeholder }}</span>
@@ -115,19 +118,20 @@
             <div class="show_items" (click)="displayPerTree()">
               <span *ngIf="selected_periods.length > 4">
             <span class="selected-item">
-              {{ selected_periods[0].name }} selected
+              {{ selected_periods[0].name }}
+              <a (click)="deActivateNode(selected_periods[0].id,pertree,$event)" class="removeorgunit">x</a>
             </span>
                 <span class="selected-item">
-              {{ selected_periods[1].name }} selected
+              {{ selected_periods[1].name }}
+                  <a (click)="deActivateNode(selected_periods[1].id,pertree,$event)" class="removeorgunit">x</a>
             </span><span class="selected-item">
-              {{ selected_periods[2].name }} selected
-            </span><span class="selected-item">
-              and {{ selected_periods.length -3 }} more
+              and {{ selected_periods.length -2 }} more
             </span>
           </span>
                 <span *ngIf="selected_periods.length <= 4">
                 <span *ngFor="let item of selected_periods" class="selected-item ng-binding ng-scope">
                   {{ item.name }}
+                  <a (click)="deActivateNode(item.id,pertree,$event)" class="removeorgunit">x</a>
                 </span>
               </span>
               <span class="no-selection"*ngIf="selected_periods.length == 0 && !period_tree_config.loading">{{ period_tree_config.placeholder }}</span>
@@ -306,7 +310,7 @@
           [current_period_type]="period_type"
           [current_year]="year"
           [indicator]="selected_indicator"
-          [default_period]="period"
+          [default_period]="default_selected_periods"
           [default_period_type]="period_type"
           [default_orgunit] = "orgunit_for_model"
           [hidden_columns] = "hidenColums"

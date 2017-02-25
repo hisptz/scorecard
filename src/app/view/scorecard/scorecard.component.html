@@ -96,10 +96,10 @@
       </ng-container>
       <th class="subtotal" *ngIf="show_sum_in_row">Sum</th>
       <!--<th class="subtotal" *ngIf="show_average_in_row" (click)="sortScoreCardFromColumn('avg', sortAscending, orgunits, periods_list[0].id, false)"></th>-->
-      <th *ngFor="let label of scorecard.data.additional_labels" style="font-size: 10px;max-width: 90px;overflow-wrap: break-word; cursor: pointer; line-height: 80%"
-          class="sans-pro">
-        {{ label }}
-      </th>
+      <!--<th *ngFor="let label of scorecard.data.additional_labels" style="font-size: 10px;max-width: 90px;overflow-wrap: break-word; cursor: pointer; line-height: 80%"-->
+          <!--class="sans-pro">-->
+        <!--{{ label }}-->
+      <!--</th>-->
     </tr>
 
     <!--data-->
@@ -124,7 +124,7 @@
         <td *ngFor="let per of periods_list"
             style="font-size: 10px;max-width: 90px;overflow-wrap: break-word; cursor: pointer; padding: 0px;line-height: 10%;"
             class="sans-pro"
-            (click)="loadPreview(null,indicator,current_orgunit.id)"
+            (click)="loadPreview(null,indicator,current_orgunit.id,per)"
             title="{{ prepareTooltip(indicator,current_orgunit.id, per.id) }}"
         >
           <svg-item [indicator]="indicator" [current_orgunit]="current_orgunit" [indicator_list]="getVisibleIndicators(indicator)" [scorecard]="scorecard" [period]="per.id"></svg-item>
@@ -136,10 +136,10 @@
         <td style="width: 90px;max-width: 90px;line-height: 10%;padding: 0px"  *ngIf="show_average_in_row">
           <app-subtotal [indicator]="indicator" [orgunits]="orgunits" [scorecard]="scorecard" [calculation]="'avg'" [indicator_list]="getVisibleIndicators(indicator)" [period]="periods_list[0].id"></app-subtotal>
         </td>
-        <!--<td *ngFor="let label of scorecard.data.additional_labels" style="font-size: 10px;max-width: 90px;overflow-wrap: break-word; cursor: pointer; line-height: 80%"-->
-            <!--class="sans-pro">-->
-          <!--{{ getIndicatorLabel( indicator,label ) }}-->
-        <!--</td>-->
+        <td *ngFor="let label of scorecard.data.additional_labels" style="font-size: 10px;max-width: 90px;overflow-wrap: break-word; cursor: pointer; line-height: 80%"
+            class="sans-pro">
+          {{ getIndicatorLabel( indicator,label ) }}
+        </td>
       </tr>
 
     </ng-container>
@@ -185,7 +185,7 @@
         *ngFor="let indicator_holder_group of scorecard.data.data_settings.indicator_holder_groups"
         [attr.colspan]="getGroupColspan(indicator_holder_group.indicator_holder_ids)"
         [ngClass]="{'hide_no_group': getGroupColspan(indicator_holder_group.indicator_holder_ids) == 0}"
-        (click)="loadPreview(indicator_holder_group,null,null)"
+        (click)="loadPreview(indicator_holder_group,null,null,null)"
         title="Click to analyse indicators for {{ indicator_holder_group.name }}"
         dnd-droppable (onDropSuccess)="dragItemSuccessfull($event,'group',indicator_holder_group)"
       >
@@ -206,7 +206,7 @@
           style="line-height: 140%; padding: 0px;vertical-align: bottom;"
           title="Click to Sort By {{ getIndicatorTitle(indicator) }}"
           (click)="sortScoreCardFromColumn(indicator.indicators[0].id, sortAscending, orgunits, periods_list[0].id, false)"
-          (dblclick)="loadPreview(null,indicator,null)"
+          (dblclick)="loadPreview(null,indicator,null,null)"
           [attr.colspan]="periods_list.length"
           dnd-droppable (onDropSuccess)="dragItemSuccessfull($event,'indicator',indicator)"
       >
@@ -240,7 +240,7 @@
             style="line-height: 140%"
             title="Click to Sort By {{ getIndicatorTitle(indicator) }}"
             (click)="sortScoreCardFromColumn(indicator.indicators[0].id, sortAscending, orgunits, per.id, false)"
-            (dblclick)="loadPreview(null,indicator,null)"
+            (dblclick)="loadPreview(null,indicator,null,per)"
         >
           <img src="balls-3.svg" style="height: 30px" *ngIf="indicator_loading[indicator.indicators[0].id]" title="Loading old data for {{ getIndicatorTitle(indicator) }}">
           <span *ngIf="indicator_done_loading[indicator.indicators[0].id] && old_proccessed_percent != 100" class="glyphicon glyphicon-ok text-success"></span>
@@ -273,7 +273,7 @@
           <td *ngFor="let per of periods_list"
               style="font-size: 10px;max-width: 90px;overflow-wrap: break-word; cursor: pointer; padding: 0px;line-height: 10%;"
               class="sans-pro"
-              (click)="loadPreview(null,indicator,current_orgunit.id)"
+              (click)="loadPreview(null,indicator,current_orgunit.id,per)"
               title="{{ prepareTooltip(indicator,current_orgunit.id,per.id) }}"
           >
             <svg-item [indicator]="indicator" [current_orgunit]="current_orgunit" [indicator_list]="getVisibleIndicators(indicator)" [scorecard]="scorecard" [period]="per.id"></svg-item>

@@ -18,11 +18,8 @@ import {FilterService} from "../shared/services/filter.service";
 
 const actionMapping:IActionMapping = {
   mouse: {
-    click: (node, tree, $event) => {
-      $event.ctrlKey
-        ? TREE_ACTIONS.TOGGLE_SELECTED_MULTI(node, tree, $event)
-        : TREE_ACTIONS.TOGGLE_SELECTED(node, tree, $event)
-    }
+    dblClick: TREE_ACTIONS.TOGGLE_EXPANDED,
+    click: (node, tree, $event) => TREE_ACTIONS.TOGGLE_SELECTED_MULTI(node, tree, $event)
   }
 };
 
@@ -197,7 +194,8 @@ export class CreateComponent implements OnInit, AfterViewInit, OnDestroy {
         let type = params['type'];
         if(type == 'new'){
           this.period_type = this.scorecard.data.periodType;
-          this.activateNode(this.filterService.getPeriodArray( this.period_type, this.year )[0].id, this.pertree);
+          this.periods = this.filterService.getPeriodArray( this.period_type, this.year );
+          // this.activateNode(this.filterService.getPeriodArray( this.period_type, this.year )[0].id, this.pertree);
           this.current_action = 'new';
         }else{
           this.current_action = 'update';
@@ -283,6 +281,7 @@ export class CreateComponent implements OnInit, AfterViewInit, OnDestroy {
               }
 
               if( this.scorecard.data.selected_periods.length == 0 ){
+                this.periods = this.filterService.getPeriodArray( this.period_type, this.year );
                 this.activateNode(this.filterService.getPeriodArray( this.period_type, this.year )[0].id, this.pertree);
               }else{
                 this.periods = this.scorecard.data.selected_periods;
@@ -513,7 +512,12 @@ export class CreateComponent implements OnInit, AfterViewInit, OnDestroy {
           this.scorecard.data.header.template.content = content;
         });
       },
+
     });
+    if( this.current_action == 'new' ){
+      this.activateNode(this.filterService.getPeriodArray( this.period_type, this.year )[0].id, this.pertree);
+    }
+
 
   }
   // cancel scorecard creation process
@@ -934,6 +938,14 @@ export class CreateComponent implements OnInit, AfterViewInit, OnDestroy {
           this.scorecard.data.data_settings.indicator_holder_groups.splice(groupIndex,1);
         }
       })
+    });
+  }
+
+  deleteEmptyGroups(){
+    this.scorecard.data.data_settings.indicator_holder_groups.forEach( (group, groupIndex)=>{
+      if( group.indicator_holder_ids.length == 0){
+        this.scorecard.data.data_settings.indicator_holder_groups.splice(groupIndex,1);
+      }
     });
   }
 
@@ -1686,6 +1698,18 @@ export class CreateComponent implements OnInit, AfterViewInit, OnDestroy {
     }, 0);
   }
 
+  // a method to activate the model
+  deActivateNode(nodeId:any, nodes, event){
+    setTimeout(() => {
+      let node = nodes.treeModel.getNodeById(nodeId);
+      if (node)
+        node.setIsActive(false, true);
+    }, 0);
+    if( event != null){
+      event.stopPropagation();
+    }
+  }
+
   pushPeriodForward(){
     this.year += 1;
     this.periods = this.filterService.getPeriodArray(this.period_type,this.year);
@@ -1755,6 +1779,7 @@ export class CreateComponent implements OnInit, AfterViewInit, OnDestroy {
           this.insertHolder( $event.dragData, this.getHolderById(object.indicator_holder_ids[last_holder]), 1);
           this.updateIndicator($event.dragData);
         }else{ }
+        this.deleteEmptyGroups();
       }
       else if($event.dragData.hasOwnProperty('indicator_holder_ids')){
         if($event.dragData.id != object.id){
@@ -1790,6 +1815,7 @@ export class CreateComponent implements OnInit, AfterViewInit, OnDestroy {
           this.insertHolder( $event.dragData, object, position);
           this.updateIndicator($event.dragData);
         }
+        this.deleteEmptyGroups();
       }
       else if($event.dragData.hasOwnProperty('indicator_holder_ids')){ }
       else{
@@ -1888,6 +1914,22 @@ export class CreateComponent implements OnInit, AfterViewInit, OnDestroy {
     return increment_number;
   }
 
+  //helper function to dynamical provide colspan attribute for a group
+  getGroupColspan(group_holders){
+    let colspan= 0;
+    for (let holder of this.scorecard.data.data_settings.indicator_holders ){
+      if(group_holders.indexOf(holder.holder_id) != -1){
+        if(this.selected_periods.length == 0){
+          colspan++
+        }else{
+          for (let per of this.selected_periods){
+            colspan++
+          }
+        }
+      }
+    }
+    return colspan;
+  }
   ngOnDestroy() {
     tinymce.remove(this.editor);
   }

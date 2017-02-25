@@ -215,9 +215,11 @@
                   <span *ngIf="scorecard.data.orgunit_settings.selected_orgunits.length > 4 && scorecard.data.orgunit_settings.selection_mode != 'Usr_orgUnit'">
             <span class="selected-item">
               {{ scorecard.data.orgunit_settings.selected_orgunits[0].name }}
+              <a (click)="deActivateNode(scorecard.data.orgunit_settings.selected_orgunits[0].id,orgtree,$event)" class="removeorgunit">x</a>
             </span>
             <span class="selected-item">
               {{ scorecard.data.orgunit_settings.selected_orgunits[1].name }}
+              <a (click)="deActivateNode(scorecard.data.orgunit_settings.selected_orgunits[1].id,orgtree,$event)" class="removeorgunit">x</a>
             </span>
             <span >
               &nbsp; and {{ scorecard.data.orgunit_settings.selected_orgunits.length - 2 }} more
@@ -226,6 +228,7 @@
                   <span *ngIf="scorecard.data.orgunit_settings.selected_orgunits.length <= 4 && scorecard.data.orgunit_settings.selection_mode != 'Usr_orgUnit'">
              <span *ngFor="let item of scorecard.data.orgunit_settings.selected_orgunits" class="selected-item ng-binding ng-scope">
               {{ item.name }}
+               <a (click)="deActivateNode(item.id,orgtree,$event)" class="removeorgunit">x</a>
             </span>
           </span>
                   <span class="no-selection"*ngIf="scorecard.data.orgunit_settings.selected_orgunits.length == 0 && !orgunit_tree_config.loading && scorecard.data.orgunit_settings.selection_mode != 'Usr_orgUnit'">{{ orgunit_tree_config.placeholder }}</span>

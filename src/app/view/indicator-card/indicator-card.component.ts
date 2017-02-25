@@ -158,18 +158,21 @@ export class IndicatorCardComponent implements OnInit, AfterViewInit, OnDestroy 
       this.orgunit_model.selected_orgunits = [this.default_orgunit];
     }
     this.card_periods = this.filterService.getPeriodArray( this.default_period_type, this.card_year );
+    this.card_selected_periods = this.default_period;
 
   }
 
   ngAfterViewInit(){
     console.log(this.default_orgunit);
+
     this.updateIndicatorCard(this.indicator, "table", this.default_period, this.orgunit_model, true);
-    this.activateNode( this.default_period[0].id, this.pertree );
+    this.default_period.forEach((current_period) => {
+      this.activateNode( current_period.id, this.pertree );
+    });
     //activate organisation units
     for( let active_orgunit of this.orgunit_model.selected_orgunits ){
       this.activateNode(active_orgunit.id, this.orgtree);
     }
-
   }
 
   switchBottleneck(indicator){
@@ -316,9 +319,6 @@ export class IndicatorCardComponent implements OnInit, AfterViewInit, OnDestroy 
         )
       }
     }
-
-
-
   }
 
   checkIfParametersChanged(orgunits, periods, indicators): boolean{

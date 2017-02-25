@@ -741,12 +741,13 @@ export class ScorecardComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   // load a preview function
-  loadPreview(holderGroup,indicator, ou){
+  loadPreview(holderGroup,indicator, ou,period){
     // emit the array with these items;
     this.show_details.emit({
       holderGroup:holderGroup,
       indicator: indicator,
-      ou: ou
+      ou: ou,
+      period: period
     });
   }
 
@@ -861,7 +862,6 @@ export class ScorecardComponent implements OnInit, AfterViewInit, OnDestroy {
   insertHolder( holder_to_insert, current_holder, num:number ){
     this.scorecard.data.data_settings.indicator_holder_groups.forEach((group, holder_index) => {
       group.indicator_holder_ids.forEach((holder, indicator_index) => {
-        console.log(holder +"=="+ current_holder.holder_id);
         if( holder == current_holder.holder_id && group.indicator_holder_ids.indexOf(holder_to_insert.holder_id) == -1){
           group.indicator_holder_ids.splice( indicator_index+num,0,holder_to_insert.holder_id );
         }

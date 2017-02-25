@@ -31,11 +31,8 @@ const actionMapping1:IActionMapping = {
 
 const actionMapping:IActionMapping = {
   mouse: {
-    click: (node, tree, $event) => {
-      $event.ctrlKey
-        ? TREE_ACTIONS.TOGGLE_SELECTED_MULTI(node, tree, $event)
-        : TREE_ACTIONS.TOGGLE_SELECTED(node, tree, $event)
-    }
+    dblClick: TREE_ACTIONS.TOGGLE_EXPANDED,
+    click: (node, tree, $event) => TREE_ACTIONS.TOGGLE_SELECTED_MULTI(node, tree, $event)
   }
 };
 
@@ -495,9 +492,15 @@ export class ViewComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   // load a preview function
+  default_selected_periods: any = [];
   loadPreview($event){
     this.selected_indicator = [];
     // prepare indicators
+    if($event.period == null){
+      this.default_selected_periods = this.selected_periods;
+    }else{
+      this.default_selected_periods = [$event.period];
+    }
     if($event.holderGroup == null){
       this.selected_indicator = [$event.indicator];
     }else{
@@ -630,11 +633,13 @@ export class ViewComponent implements OnInit, AfterViewInit, OnDestroy {
 
   // display Orgunit Tree
   displayOrgTree(){
+    this.showPerTree = false;
     this.showOrgTree = !this.showOrgTree;
   }
 
   // display period Tree
   displayPerTree(){
+    this.showOrgTree = false;
     this.showPerTree = !this.showPerTree;
   }
 
@@ -682,12 +687,15 @@ export class ViewComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   // a method to activate the model
-  deActivateNode(nodeId:any, nodes){
+  deActivateNode(nodeId:any, nodes, event){
     setTimeout(() => {
       let node = nodes.treeModel.getNodeById(nodeId);
       if (node)
         node.setIsActive(false, true);
     }, 0);
+    if( event != null){
+      event.stopPropagation();
+    }
   }
 
   // check if orgunit already exist in the orgunit display list
