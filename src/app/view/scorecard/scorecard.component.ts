@@ -173,6 +173,8 @@ export class ScorecardComponent implements OnInit, AfterViewInit, OnDestroy {
   // a function that will be used to load scorecard
   indicator_loading: boolean[] = [];
   indicator_done_loading: boolean[] = [];
+  period_loading: boolean[] = [];
+  period_done_loading: boolean[] = [];
   old_proccessed_percent = 0;
   proccesed_indicators = 0;
   loadScoreCard( orgunit: any = null ){
@@ -207,6 +209,7 @@ export class ScorecardComponent implements OnInit, AfterViewInit, OnDestroy {
           }
           indicator['loading'] = true;
           for ( let current_period of this.periods_list ){
+            this.period_loading[current_period.id] = true;
             this.indicatorCalls.push(this.dataService.getIndicatorsRequest(this.getOrgUnitsForAnalytics(this.orgunit_model),current_period.id, indicator.id)
               .subscribe(
                 (data) => {
@@ -265,6 +268,8 @@ export class ScorecardComponent implements OnInit, AfterViewInit, OnDestroy {
                         }
                         this.indicator_loading[indicator.id] = false;
                         this.indicator_done_loading[indicator.id] = true;
+                        this.period_loading[current_period.id] = false;
+                        this.period_done_loading[current_period.id] = true;
                         old_proccesed_indicators++;
                         this.old_proccessed_percent = (old_proccesed_indicators / indicator_list.length) * 100;
 
@@ -306,7 +311,7 @@ export class ScorecardComponent implements OnInit, AfterViewInit, OnDestroy {
       }else{
         setTimeout(function() {
           this.showSubScorecard = [];
-        }, 2000);
+        }, 5000);
       }
 
     }
@@ -410,6 +415,33 @@ export class ScorecardComponent implements OnInit, AfterViewInit, OnDestroy {
     }
     return indicators_list;
   }
+
+  // A function used to decouple indicator list and prepare them for a display
+  getSubscorecardColspan(){
+    let indicators_list = 0;
+    for(let data of this.scorecard.data.data_settings.indicator_holder_groups ){
+      for( let holders_list of data.indicator_holder_ids ){
+        for( let holder of this.scorecard.data.data_settings.indicator_holders ){
+          if(holder.holder_id == holders_list){
+            // check if indicators in a card are hidden so don show them
+            let hide_this: boolean = true;
+            for ( let indicator of holder.indicators ){
+              if( this.hidenColums.indexOf(indicator.id) == -1){
+                hide_this = false;
+              }
+            }
+            if( !hide_this ){
+              for( let per of this.periods_list ){
+                indicators_list++;
+              }
+            }
+          }
+        }
+      }
+    }
+    return indicators_list+1;
+  }
+
 
   // simplify title displaying by switching between two or on indicator
   getIndicatorTitle(holder): string{
@@ -930,6 +962,7 @@ export class ScorecardComponent implements OnInit, AfterViewInit, OnDestroy {
     return orgunit_index;
   }
 
+  // findinf a proper row-span for no, average and additional labels
   getCurrentRowsPan():number{
     if(this.periods_list.length == 1 || this.periods_list.length == 0 ){
       return 1;
@@ -938,6 +971,10 @@ export class ScorecardComponent implements OnInit, AfterViewInit, OnDestroy {
     }
   }
 
+  // here we are trying to construct a scorecard from a list of indicators
+  createScorecardByIndicators(indicators:any){
+
+  }
   // Use this for all clean ups
   ngOnDestroy (){
     if( this.subscription ){

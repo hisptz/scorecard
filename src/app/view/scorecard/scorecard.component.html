@@ -284,7 +284,7 @@
       </tr>
 
       <tr *ngIf="showSubScorecard[current_orgunit.id]">
-        <td [attr.colspan]="getItemsFromGroups().length +1 + getCorrectColspan()" style="background-color: rgba(0,0,0,0.1)">
+        <td [attr.colspan]="getSubscorecardColspan() + getCorrectColspan()" style="background-color: rgba(0,0,0,0.1)">
           <!--Internal score card-->
           <h3 class="text-center text-muted" *ngIf="!children_available[current_orgunit.id]">This Organisation Unit has no Children</h3>
           <app-scorecard

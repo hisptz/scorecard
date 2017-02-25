@@ -158,7 +158,7 @@ export class CreateComponent implements OnInit, AfterViewInit, OnDestroy {
     this.current_groups = [];
     this.current_listing = [];
     // initialize the scorecard with a uid
-    this.scorecard = this.getEmptyScoreCard();
+    this.scorecard = this.scorecardService.getEmptyScoreCard();
     this.dataService.getUserInformation().subscribe(
       userInfo => {
         //noinspection TypeScriptUnresolvedVariable
@@ -722,7 +722,7 @@ export class CreateComponent implements OnInit, AfterViewInit, OnDestroy {
     if( this.indicatorExist( this.scorecard.data.data_settings.indicator_holders, item )){
       this.deleteIndicator(item);
     }else{
-      let indicator = this.getIndicatorStructure(item.name, item.id,this.getIndicatorLegendSet());
+      let indicator = this.scorecardService.getIndicatorStructure(item.name, item.id,this.getIndicatorLegendSet());
       indicator.value = Math.floor(Math.random() * 60) + 40;
       let random = Math.floor(Math.random() * 6) + 1;
       if( random % 2 == 0){ indicator.showTopArrow = true}
@@ -757,7 +757,7 @@ export class CreateComponent implements OnInit, AfterViewInit, OnDestroy {
     if( this.indicatorExist( this.scorecard.data.data_settings.indicator_holders, item )){
       //this.deleteIndicator(item);
     }else{
-      let indicator = this.getIndicatorStructure(item.name, item.id,this.getIndicatorLegendSet());
+      let indicator = this.scorecardService.getIndicatorStructure(item.name, item.id,this.getIndicatorLegendSet());
       indicator.value = Math.floor(Math.random() * 60) + 40;
       let random = Math.floor(Math.random() * 6) + 1;
       if( random % 2 == 0){ indicator.showTopArrow = true}
@@ -988,122 +988,6 @@ export class CreateComponent implements OnInit, AfterViewInit, OnDestroy {
       });
     });
     this.cleanUpEmptyColumns();
-  }
-
-  // generate a random list of Id for use as scorecard id
-  makeid(): string{
-    let text = "";
-    let possible_combinations = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-    for( var i=0; i < 11; i++ )
-      text += possible_combinations.charAt(Math.floor(Math.random() * possible_combinations.length));
-    return text;
-  }
-
-  // Define default scorecard sample
-  getEmptyScoreCard():ScoreCard{
-    return {
-      id: this.makeid(),
-      name: "",
-      data: {
-        "orgunit_settings": {
-          "selection_mode": "Usr_orgUnit",
-          "selected_level": "",
-          "selected_group": "",
-          "orgunit_levels": [],
-          "orgunit_groups": [],
-          "selected_orgunits": [],
-          "user_orgunits": [],
-          "selected_user_orgunit": "USER_ORGUNIT"
-        },
-        "average_selection":"all",
-        "shown_records":"all",
-        "show_average_in_row":false,
-        "show_average_in_column":false,
-        "periodType": "Quarterly",
-        "selected_periods":[],
-        "show_data_in_column":false,
-        "show_score": false,
-        "show_rank": false,
-        "rank_position_last": true,
-        "header": {
-          "title": "",
-          "sub_title":"",
-          "description": "",
-          "show_arrows_definition": true,
-          "show_legend_definition": false,
-          "template": {
-            "display": false,
-            "content": ""
-          }
-        },
-        "legendset_definitions": [
-          {
-            "color": "#008000",
-            "definition": "Target achieved / on track"
-          },
-          {
-            "color": "#FFFF00",
-            "definition": "Progress, but more effort required"
-          },
-          {
-            "color": "#FF0000",
-            "definition": "Not on track"
-          },
-          {
-            "color": "#D3D3D3",
-            "definition": "N/A",
-            "default": true
-          },
-          {
-            "color": "#FFFFFF",
-            "definition": "No data",
-            "default": true
-          }
-        ],
-        "highlighted_indicators": {
-          "display": false,
-          "definitions": []
-        },
-        "data_settings": {
-          "indicator_holders": [],
-          "indicator_holder_groups": []
-        },
-        "additional_labels": [],
-        "footer": {
-          "display_generated_date": false,
-          "display_title": false,
-          "sub_title": null,
-          "description": null,
-          "template": null
-        },
-        "indicator_dataElement_reporting_rate_selection": "Indicators"
-      }
-    }
-  }
-
-  // define a default indicator structure
-  getIndicatorStructure(name:string, id:string, legendset:any = null): any{
-    return {
-          "name": name,
-          "id": id,
-          "title": name,
-          "high_is_good": true,
-          "value": 0,
-          "weight": 100,
-          "legend_display": true,
-          "legendset":legendset,
-          "additional_label_values": {},
-          "bottleneck_indicators": [],
-          "arrow_settings": {
-            "effective_gap": 5,
-            "display": true
-          },
-          "label_settings": {
-            "display": true,
-            "font_size": ""
-          }
-        }
-
   }
 
   // A function used to decouple indicator list and prepare them for a display
