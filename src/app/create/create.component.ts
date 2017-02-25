@@ -175,13 +175,29 @@ export class CreateComponent implements OnInit, AfterViewInit, OnDestroy {
         })
       }
     );
-    this.subscription = activatedRouter.params.subscribe(
-      (params: any) => {
 
+    // this.getItemsFromGroups();
+    this.current_indicator_holder = {
+      "holder_id": this.getStartingIndicatorId(),
+      "indicators": []
+    };
+    this.current_holder_group = {
+      "id": this.getStartingGroupHolderId(),
+      "name": "Default",
+      "indicator_holder_ids": [],
+      "background_color": "#ffffff",
+      "holder_style": null
+    };
+  }
+
+  ngOnInit() {
+    this.subscription = this.activatedRouter.params.subscribe(
+      (params: any) => {
         let id = params['scorecardid'];
         let type = params['type'];
         if(type == 'new'){
           this.period_type = this.scorecard.data.periodType;
+          this.activateNode(this.filterService.getPeriodArray( this.period_type, this.year )[0].id, this.pertree);
           this.current_action = 'new';
         }else{
           this.current_action = 'update';
@@ -201,8 +217,6 @@ export class CreateComponent implements OnInit, AfterViewInit, OnDestroy {
               if(!this.scorecard.data.hasOwnProperty('selected_periods')){
                 this.scorecard.data.selected_periods = [];
               }
-              this.period_type = this.scorecard.data.periodType;
-
               // attach organisation unit if none is defined
               if(!this.scorecard.data.orgunit_settings.hasOwnProperty("selected_orgunits")){
                 this.scorecard.data.orgunit_settings = {
@@ -219,11 +233,13 @@ export class CreateComponent implements OnInit, AfterViewInit, OnDestroy {
               //activate organisation units
               for( let active_orgunit of this.scorecard.data.orgunit_settings.selected_orgunits ){
                 this.activateNode(active_orgunit.id, this.orgtree);
+
               }
               // attach period type if none is defined
               if(!this.scorecard.data.hasOwnProperty("periodType")){
                 this.scorecard.data.periodType = "Quarterly";
               }
+              this.period_type = this.scorecard.data.periodType;
               // attach average_selection if none is defined
               if(!this.scorecard.data.hasOwnProperty("average_selection")){
                 this.scorecard.data.average_selection = "all";
@@ -265,25 +281,23 @@ export class CreateComponent implements OnInit, AfterViewInit, OnDestroy {
                   this.current_indicator_holder = item;
                 }else{ continue; }
               }
-            })
+
+              if( this.scorecard.data.selected_periods.length == 0 ){
+                this.activateNode(this.filterService.getPeriodArray( this.period_type, this.year )[0].id, this.pertree);
+              }else{
+                this.periods = this.scorecard.data.selected_periods;
+                this.scorecard.data.selected_periods.forEach((period) =>{
+                  this.selected_periods.push(period);
+                  let use_period = this.filterService.deducePeriodType(period.id);
+                  this.period_type = use_period.type;
+                  this.activateNode(period.id, this.pertree);
+                })
+              }
+            });
+
         }
       }
     );
-    // this.getItemsFromGroups();
-    this.current_indicator_holder = {
-      "holder_id": this.getStartingIndicatorId(),
-      "indicators": []
-    };
-    this.current_holder_group = {
-      "id": this.getStartingGroupHolderId(),
-      "name": "Default",
-      "indicator_holder_ids": [],
-      "background_color": "#ffffff",
-      "holder_style": null
-    };
-  }
-
-  ngOnInit() {
     //get indicatorGroups
     this.indicatorService.loadAll().subscribe(
       indicatorGroups => {
@@ -500,15 +514,6 @@ export class CreateComponent implements OnInit, AfterViewInit, OnDestroy {
         });
       },
     });
-    // if scorecard has preset period activate the current period selection
-    if( this.scorecard.data.selected_periods.length == 0 ){
-      this.activateNode(this.filterService.getPeriodArray( this.period_type, this.year )[0].id, this.pertree);
-    }else{
-      this.scorecard.data.selected_periods.forEach((period) =>{
-        this.selected_periods.push( period );
-      })
-    }
-
 
   }
   // cancel scorecard creation process
@@ -711,7 +716,6 @@ export class CreateComponent implements OnInit, AfterViewInit, OnDestroy {
   load_item(item): void{
 
     if( this.indicatorExist( this.scorecard.data.data_settings.indicator_holders, item )){
-      console.log(item);
       this.deleteIndicator(item);
     }else{
       let indicator = this.getIndicatorStructure(item.name, item.id,this.getIndicatorLegendSet());
@@ -773,7 +777,7 @@ export class CreateComponent implements OnInit, AfterViewInit, OnDestroy {
       }
       this.addIndicatorHolder(this.current_indicator_holder);
       this.current_holder_group.id = this.current_holder_group_id;
-      this.addHolderGroupsFromDragNDrop(this.current_holder_group, this.current_indicator_holder);
+      this.addHolderGroups(this.current_holder_group, this.current_indicator_holder);
     }
 
   }
@@ -822,7 +826,6 @@ export class CreateComponent implements OnInit, AfterViewInit, OnDestroy {
       if (group.id == holder_group.id){
         if( group.indicator_holder_ids.indexOf(holder.holder_id) == -1 ){
           let index = this.findSelectedIndicatorIndex( current_id, group )-1;
-          console.log( group.indicator_holder_ids);
           group.indicator_holder_ids.splice(index,0,holder.holder_id);
           // group.indicator_holder_ids.push(holder.holder_id);
         }
@@ -1177,7 +1180,6 @@ export class CreateComponent implements OnInit, AfterViewInit, OnDestroy {
           indicator.additional_label_values[this.newLabel] = "";
         }
       }
-      console.log(this.scorecard.data.data_settings);
       this.newLabel = "";
     }
   }
@@ -1201,6 +1203,7 @@ export class CreateComponent implements OnInit, AfterViewInit, OnDestroy {
     }
     return labels.join(' / ')
   }
+
   // saving scorecard details
   saveScoreCard(action: string = "save"): void {
     // display error if some fields are missing
@@ -1219,7 +1222,8 @@ export class CreateComponent implements OnInit, AfterViewInit, OnDestroy {
     }else{
       // delete all empty indicators if any
       this.cleanUpEmptyColumns();
-
+      console.log(this.selected_periods);
+      this.scorecard.data.selected_periods = this.selected_periods;
       // post the data
       this.saving_scorecard = true;
       if(action == "save"){
@@ -1650,7 +1654,7 @@ export class CreateComponent implements OnInit, AfterViewInit, OnDestroy {
 
   // add item to array of selected items when item is selected
   activateOrg = ($event) => {
-    if(!this.checkOrgunitAvailabilty($event.node.data, this.scorecard.data.orgunit_settings.selected_orgunits)){
+    if(!this.checkItemAvailabilty($event.node.data, this.scorecard.data.orgunit_settings.selected_orgunits)){
       this.scorecard.data.orgunit_settings.selected_orgunits.push($event.node.data);
     }
   };
@@ -1667,7 +1671,9 @@ export class CreateComponent implements OnInit, AfterViewInit, OnDestroy {
 
   /// add item to array of selected items when period is selected
   activatePer = ($event) => {
-    this.selected_periods.push($event.node.data);
+    if(!this.checkItemAvailabilty($event.node.data, this.selected_periods)){
+      this.selected_periods.push($event.node.data);
+    }
   };
 
 
@@ -1696,10 +1702,10 @@ export class CreateComponent implements OnInit, AfterViewInit, OnDestroy {
 
 
   // check if orgunit already exist in the orgunit display list
-  checkOrgunitAvailabilty(orgunit, array): boolean{
+  checkItemAvailabilty(item, array): boolean{
     let checker = false;
     array.forEach((value) => {
-      if( value.id == orgunit.id ){
+      if( value.id == item.id ){
         checker = true;
       }
     });

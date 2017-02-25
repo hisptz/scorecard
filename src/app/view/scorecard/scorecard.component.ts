@@ -764,10 +764,10 @@ export class ScorecardComponent implements OnInit, AfterViewInit, OnDestroy {
   dragItemSuccessfull($event, drop_area:string, object:any){
     if( drop_area == "orgunit"){
       if( $event.dragData.hasOwnProperty('holder_id') ){
-        this.show_data_in_column = !this.show_data_in_column;
+        this.scorecard.data.show_data_in_column = !this.scorecard.data.show_data_in_column;
       }
       else if($event.dragData.hasOwnProperty('indicator_holder_ids')){
-        this.show_data_in_column = !this.show_data_in_column;
+        this.scorecard.data.show_data_in_column = !this.scorecard.data.show_data_in_column;
       }
       else{
         let number = (this.getOrgunitPosition($event.dragData.id) > this.getOrgunitPosition(object.id))?0:1;
@@ -788,7 +788,7 @@ export class ScorecardComponent implements OnInit, AfterViewInit, OnDestroy {
       }
       else if($event.dragData.hasOwnProperty('indicator_holder_ids')){ }
       else{
-        this.show_data_in_column = !this.show_data_in_column;
+        this.scorecard.data.show_data_in_column = !this.scorecard.data.show_data_in_column;
       }
     }
     else if(drop_area == "group"){
@@ -928,6 +928,14 @@ export class ScorecardComponent implements OnInit, AfterViewInit, OnDestroy {
       }
     });
     return orgunit_index;
+  }
+
+  getCurrentRowsPan():number{
+    if(this.periods_list.length == 1 || this.periods_list.length == 0 ){
+      return 1;
+    }else if( this.periods_list.length > 1 ){
+      return 2
+    }
   }
 
   // Use this for all clean ups

@@ -542,7 +542,7 @@ export class IndicatorCardComponent implements OnInit, AfterViewInit, OnDestroy 
 
   // add item to array of selected items when item is selected
   activateOrg = ($event) => {
-    if(!this.checkOrgunitAvailabilty($event.node.data, this.orgunit_model.selected_orgunits)){
+    if(!this.checkItemAvailabilty($event.node.data, this.orgunit_model.selected_orgunits)){
       this.orgunit_model.selected_orgunits.push($event.node.data);
     }
   };
@@ -553,7 +553,7 @@ export class IndicatorCardComponent implements OnInit, AfterViewInit, OnDestroy 
   };
 
   // check if orgunit already exist in the orgunit display list
-  checkOrgunitAvailabilty(orgunit, array): boolean{
+  checkItemAvailabilty(orgunit, array): boolean{
     let checker = false;
     array.forEach((value) => {
       if( value.id == orgunit.id ){
@@ -573,9 +573,12 @@ export class IndicatorCardComponent implements OnInit, AfterViewInit, OnDestroy 
     });
   };
 
+
   // add item to array of selected items when period is selected
   activatePer = ($event) => {
-    this.card_selected_periods.push($event.node.data);
+    if(!this.checkItemAvailabilty($event.node.data, this.card_selected_periods)) {
+      this.card_selected_periods.push($event.node.data);
+    }
     this.card_period = $event.node.data;
   };
 

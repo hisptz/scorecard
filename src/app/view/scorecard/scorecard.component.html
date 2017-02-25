@@ -43,22 +43,22 @@
   </div>
 
 
-  <!--scorecard table indicators in the left data on top-->
-  <table class="table table-bordered scorecard_table" *ngIf="show_data_in_column">
+  <!--scorecard table data in the top orgunit on left-->
+  <table class="table table-bordered scorecard_table" *ngIf="scorecard.data.show_data_in_column">
     <!--orgunits-->
     <tr>
-      <th *ngIf="scorecard.data.show_rank"  style="width: 30px">No#</th>
+      <th *ngIf="scorecard.data.show_rank"  style="width: 30px;vertical-align: bottom" [attr.rowspan]="getCurrentRowsPan()">No#</th>
       <th style="vertical-align: bottom">
         <input type="text" class="form-control input-sm no-print" [(ngModel)]="searchQuery" placeholder="Search..">
       </th>
       <td *ngFor="let current_orgunit of orgunits" class="indicator_title"
-          style="line-height: 140%; padding: 0px"
+          style="line-height: 140%; padding: 0px;vertical-align: bottom"
           title="Click to Sort By {{ current_orgunit.name }}"
           [attr.colspan]="periods_list.length"
           dnd-droppable (onDropSuccess)="dragItemSuccessfull($event,'orgunit',current_orgunit)"
       >
 
-        <div dnd-draggable [dragEnabled]="true" [dragData]="current_orgunit" style="padding: 8%">
+        <div dnd-draggable [dragEnabled]="true" [dragData]="current_orgunit" style="padding: 8px">
           {{ current_orgunit.name }}
         </div>
         <!--sorting icons-->
@@ -66,21 +66,21 @@
         <!--<span class="glyphicon glyphicon-chevron-down pull-right text-muted" *ngIf="current_sorting && sorting_column == indicator.indicators[0].id"></span>-->
       </td>
       <th class="subtotal" *ngIf="show_sum_in_row">Sum</th>
-      <th class="subtotal" *ngIf="show_average_in_row" (click)="sortScoreCardFromColumn('avg', sortAscending, orgunits, periods_list[0].id, false)">
+      <th class="subtotal" *ngIf="show_average_in_row" (click)="sortScoreCardFromColumn('avg', sortAscending, orgunits, periods_list[0].id, false)" [attr.rowspan]="getCurrentRowsPan()" style="vertical-align: bottom">
         Average
         <!--sorting icons-->
         <span class="glyphicon glyphicon-chevron-up pull-right text-muted" *ngIf="!current_sorting && sorting_column == 'avg'"></span>
         <span class="glyphicon glyphicon-chevron-down pull-right text-muted" *ngIf="current_sorting && sorting_column == 'avg'"></span>
       </th>
       <th *ngFor="let label of scorecard.data.additional_labels" style="font-size: 10px;max-width: 90px;overflow-wrap: break-word; cursor: pointer; line-height: 80%"
-          class="sans-pro">
+          class="sans-pro" [attr.rowspan]="getCurrentRowsPan()">
         {{ label }}
       </th>
     </tr>
 
     <!--testing adding period dimension-->
     <tr *ngIf="periods_list.length > 1">
-      <th *ngIf="scorecard.data.show_rank"  style="width: 30px"></th>
+      <!--<th *ngIf="scorecard.data.show_rank"  style="width: 30px"></th>-->
       <th style="vertical-align: bottom">
 
       </th>
@@ -95,12 +95,7 @@
         </td>
       </ng-container>
       <th class="subtotal" *ngIf="show_sum_in_row">Sum</th>
-      <th class="subtotal" *ngIf="show_average_in_row" (click)="sortScoreCardFromColumn('avg', sortAscending, orgunits, periods_list[0].id, false)">
-        Average
-        <!--sorting icons-->
-        <span class="glyphicon glyphicon-chevron-up pull-right text-muted" *ngIf="!current_sorting && sorting_column == 'avg'"></span>
-        <span class="glyphicon glyphicon-chevron-down pull-right text-muted" *ngIf="current_sorting && sorting_column == 'avg'"></span>
-      </th>
+      <!--<th class="subtotal" *ngIf="show_average_in_row" (click)="sortScoreCardFromColumn('avg', sortAscending, orgunits, periods_list[0].id, false)"></th>-->
       <th *ngFor="let label of scorecard.data.additional_labels" style="font-size: 10px;max-width: 90px;overflow-wrap: break-word; cursor: pointer; line-height: 80%"
           class="sans-pro">
         {{ label }}
@@ -111,7 +106,7 @@
     <ng-container *ngFor="let indicator of getItemsFromGroups() | filterIndicatorByName:searchQuery; let i=index">
       <tr style="height: 35px; max-height: 35px; overflow-y: hidden; line-height: 80%" class="orunitTr" *ngIf="scorecard.data.shown_records == 'all' || i < scorecard.data.shown_records">
         <td style="vertical-align: bottom;font-size: 10px;cursor: pointer;line-height: 80%;padding: 8px" *ngIf="scorecard.data.show_rank">{{ i+1 }}</td>
-        <td style="vertical-align: bottom;font-size: 10px;cursor: pointer;line-height: 80%;"
+        <td style="vertical-align: bottom;font-size: 10px;cursor: pointer;line-height: 80%;padding: 0px;min-width:150px"
             class="orgUnitName"
             dnd-droppable (onDropSuccess)="dragItemSuccessfull($event,'indicator',indicator)"
         >
@@ -141,10 +136,10 @@
         <td style="width: 90px;max-width: 90px;line-height: 10%;padding: 0px"  *ngIf="show_average_in_row">
           <app-subtotal [indicator]="indicator" [orgunits]="orgunits" [scorecard]="scorecard" [calculation]="'avg'" [indicator_list]="getVisibleIndicators(indicator)" [period]="periods_list[0].id"></app-subtotal>
         </td>
-        <td *ngFor="let label of scorecard.data.additional_labels" style="font-size: 10px;max-width: 90px;overflow-wrap: break-word; cursor: pointer; line-height: 80%"
-            class="sans-pro">
-          {{ getIndicatorLabel( indicator,label ) }}
-        </td>
+        <!--<td *ngFor="let label of scorecard.data.additional_labels" style="font-size: 10px;max-width: 90px;overflow-wrap: break-word; cursor: pointer; line-height: 80%"-->
+            <!--class="sans-pro">-->
+          <!--{{ getIndicatorLabel( indicator,label ) }}-->
+        <!--</td>-->
       </tr>
 
     </ng-container>
@@ -176,7 +171,7 @@
   </table>
 
   <!--scorecard table orgunit on the left data on top-->
-  <table class="table table-bordered scorecard_table" *ngIf="!show_data_in_column">
+  <table class="table table-bordered scorecard_table" *ngIf="!scorecard.data.show_data_in_column">
     <!--Groups-->
     <tr [ngClass]="{'hide_no_group': scorecard.data.data_settings.indicator_holder_groups.length == 1}" style="line-height: 140%">
       <th *ngIf="scorecard.data.show_rank" style="width: 30px"></th>
@@ -203,12 +198,12 @@
     </tr>
     <!--indicator titles-->
     <tr>
-      <th *ngIf="scorecard.data.show_rank"  style="width: 30px">No#</th>
+      <th *ngIf="scorecard.data.show_rank"  style="width: 30px;vertical-align: bottom;" [attr.rowspan]="getCurrentRowsPan()">No#</th>
       <th style="vertical-align: bottom">
         <input type="text" class="form-control input-sm no-print" [(ngModel)]="searchQuery" placeholder="Search for orgunits here">
       </th>
       <td *ngFor="let indicator of getItemsFromGroups()" class="indicator_title"
-          style="line-height: 140%; padding: 0px"
+          style="line-height: 140%; padding: 0px;vertical-align: bottom;"
           title="Click to Sort By {{ getIndicatorTitle(indicator) }}"
           (click)="sortScoreCardFromColumn(indicator.indicators[0].id, sortAscending, orgunits, periods_list[0].id, false)"
           (dblclick)="loadPreview(null,indicator,null)"
@@ -226,7 +221,7 @@
         </div>
       </td>
       <th class="subtotal" *ngIf="show_sum_in_row">Sum</th>
-      <th class="subtotal" *ngIf="show_average_in_row" (click)="sortScoreCardFromColumn('avg', sortAscending, orgunits, periods_list[0].id, false)">
+      <th class="subtotal" *ngIf="show_average_in_row" (click)="sortScoreCardFromColumn('avg', sortAscending, orgunits, periods_list[0].id, false)" [attr.rowspan]="getCurrentRowsPan()" style="vertical-align: bottom;">
         Average
         <!--sorting icons-->
         <span class="glyphicon glyphicon-chevron-up pull-right text-muted" *ngIf="!current_sorting && sorting_column == 'avg'"></span>
@@ -236,7 +231,7 @@
 
     <!-- period dimension-->
     <tr *ngIf="periods_list.length > 1">
-      <th *ngIf="scorecard.data.show_rank"  style="width: 30px">No#</th>
+      <!--<th *ngIf="scorecard.data.show_rank && getCurrentRowsPan() == 1"  style="width: 30px"></th>-->
       <th style="vertical-align: bottom">
 
       </th>
@@ -247,7 +242,6 @@
             (click)="sortScoreCardFromColumn(indicator.indicators[0].id, sortAscending, orgunits, per.id, false)"
             (dblclick)="loadPreview(null,indicator,null)"
         >
-
           <img src="balls-3.svg" style="height: 30px" *ngIf="indicator_loading[indicator.indicators[0].id]" title="Loading old data for {{ getIndicatorTitle(indicator) }}">
           <span *ngIf="indicator_done_loading[indicator.indicators[0].id] && old_proccessed_percent != 100" class="glyphicon glyphicon-ok text-success"></span>
           {{ per.name }}
@@ -258,25 +252,20 @@
         </td>
       </ng-container>
       <th class="subtotal" *ngIf="show_sum_in_row">Sum</th>
-      <th class="subtotal" *ngIf="show_average_in_row" (click)="sortScoreCardFromColumn('avg', sortAscending, orgunits, periods_list[0].id, false)">
-        Average
-        <!--sorting icons-->
-        <span class="glyphicon glyphicon-chevron-up pull-right text-muted" *ngIf="!current_sorting && sorting_column == 'avg'"></span>
-        <span class="glyphicon glyphicon-chevron-down pull-right text-muted" *ngIf="current_sorting && sorting_column == 'avg'"></span>
-      </th>
+      <!--<th class="subtotal" *ngIf="show_average_in_row" (click)="sortScoreCardFromColumn('avg', sortAscending, orgunits, periods_list[0].id, false)"></th>-->
     </tr>
 
     <!--data-->
     <ng-container *ngFor="let current_orgunit of orgunits | filterByName:searchQuery; let i=index">
       <tr style="height: 35px; max-height: 35px; overflow-y: hidden; line-height: 80%" class="orunitTr" *ngIf="scorecard.data.shown_records == 'all' || i < scorecard.data.shown_records"  [ngClass]="{'hide_no_group': isRowEmpty(current_orgunit.id) || averageHidden(current_orgunit.id,periods_list[0].id)}">
         <td style="vertical-align: bottom;font-size: 10px;cursor: pointer;line-height: 80%;padding: 8px" *ngIf="scorecard.data.show_rank">{{ i+1 }}</td>
-        <td style="vertical-align: bottom;font-size: 10px;cursor: pointer;line-height: 80%;padding: 8px;min-width:120px"
+        <td style="vertical-align: bottom;font-size: 10px;cursor: pointer;line-height: 80%;padding: 0px;min-width:150px"
             class="orgUnitName"
             (click)="loadChildrenData(current_orgunit)"
             [style.cursor]="getCursorStyle(current_orgunit)"
             dnd-droppable (onDropSuccess)="dragItemSuccessfull($event,'orgunit',current_orgunit)"
         >
-          <div dnd-draggable [dragEnabled]="true" [dragData]="current_orgunit">
+          <div dnd-draggable [dragEnabled]="true" [dragData]="current_orgunit" style="padding: 8px">
             {{ current_orgunit.name }}
           </div>
         </td>

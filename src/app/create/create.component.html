@@ -109,7 +109,6 @@
       </tr>
       <tr>
         <td style="vertical-align: bottom" dnd-droppable (onDropSuccess)="transferDataSuccess($event,'new',null)">
-
           <!--period configurations-->
           <div class="tree-input" title="default starting period(s) hold control to multiselect">
             <div>
@@ -164,7 +163,7 @@
                   </form>
                 </div>
                 <div *ngIf="period_tree_config.loading">{{ period_tree_config.loading_message }}</div>
-                <div class="tree-area1" *ngIf="!period_tree_config.loading">
+                <div class="tree-area" *ngIf="!period_tree_config.loading">
                   <Tree
                     #pertree
                     [nodes]="periods"

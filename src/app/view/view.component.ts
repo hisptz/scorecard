@@ -242,12 +242,19 @@ export class ViewComponent implements OnInit, AfterViewInit, OnDestroy {
         if(!this.scorecard.data.hasOwnProperty("show_data_in_column")){
           this.scorecard.data.show_data_in_column = false;
         }
-        this.periods = this.filterService.getPeriodArray( this.period_type, this.year );
-        this.period = [{
-          id:this.filterService.getPeriodArray( this.period_type, this.year )[0].id,
-          name:this.filterService.getPeriodArray( this.period_type, this.year )[0].name
-        }];
-        this.activateNode(this.period[0].id, this.pertree);
+
+        if( this.scorecard.data.selected_periods.length == 0 ){
+          this.periods = this.filterService.getPeriodArray( this.period_type, this.year );
+          this.activateNode(this.filterService.getPeriodArray( this.period_type, this.year )[0].id, this.pertree);
+        }else{
+          this.periods = this.scorecard.data.selected_periods;
+          this.scorecard.data.selected_periods.forEach((period) =>{
+            this.selected_periods.push(period);
+            let use_period = this.filterService.deducePeriodType(period.id);
+            this.period_type = use_period.type;
+            this.activateNode(period.id, this.pertree);
+          })
+        }
         if (this.orgunitService.nodes == null) {
           this.orgunitService.getOrgunitLevelsInformation()
             .subscribe(
@@ -643,7 +650,7 @@ export class ViewComponent implements OnInit, AfterViewInit, OnDestroy {
   // add item to array of selected items when item is selected
   activateOrg = ($event) => {
     this.selected_orgunits = [$event.node.data];
-    if(!this.checkOrgunitAvailabilty($event.node.data, this.orgunit_model.selected_orgunits)){
+    if(!this.checkItemAvailabilty($event.node.data, this.orgunit_model.selected_orgunits)){
       this.orgunit_model.selected_orgunits.push($event.node.data);
     }
     this.orgUnit = $event.node.data;
@@ -660,9 +667,12 @@ export class ViewComponent implements OnInit, AfterViewInit, OnDestroy {
 
   /// add item to array of selected items when period is selected
   activatePer = ($event) => {
-    this.selected_periods.push($event.node.data);
+    if(!this.checkItemAvailabilty($event.node.data, this.selected_periods)){
+      this.selected_periods.push($event.node.data);
+    }
   };
 
+  // a method to activate the model
   activateNode(nodeId:any, nodes){
     setTimeout(() => {
       let node = nodes.treeModel.getNodeById(nodeId);
@@ -671,11 +681,20 @@ export class ViewComponent implements OnInit, AfterViewInit, OnDestroy {
     }, 0);
   }
 
+  // a method to activate the model
+  deActivateNode(nodeId:any, nodes){
+    setTimeout(() => {
+      let node = nodes.treeModel.getNodeById(nodeId);
+      if (node)
+        node.setIsActive(false, true);
+    }, 0);
+  }
+
   // check if orgunit already exist in the orgunit display list
-  checkOrgunitAvailabilty(orgunit, array): boolean{
+  checkItemAvailabilty(item, array): boolean{
     let checker = false;
     array.forEach((value) => {
-      if( value.id == orgunit.id ){
+      if( value.id == item.id ){
         checker = true;
       }
     });
