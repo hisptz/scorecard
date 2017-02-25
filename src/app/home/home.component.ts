@@ -5,6 +5,7 @@ import {ScoreCard,ScorecardService} from "../shared/services/scorecard.service";
 import {OrgUnitService} from "../shared/services/org-unit.service";
 import {DataService} from "../shared/data.service";
 import {PaginationInstance} from "ng2-pagination";
+import {Router} from "@angular/router";
 
 @Component({
   selector: 'app-home',
@@ -32,8 +33,11 @@ export class HomeComponent implements OnInit {
   error_deleting: boolean[] = [];
   confirm_deleting: boolean[] = [];
   have_authorities:boolean = false;
-  constructor( private scoreCardService: ScorecardService, private orgUnitService: OrgUnitService, private dataService: DataService) {
-    this.scorecards = []
+  constructor( private scoreCardService: ScorecardService,
+               private orgUnitService: OrgUnitService,
+               private dataService: DataService,
+               private router: Router) {
+    this.scorecards = [];
     this.scorecards_loading = true;
     this.complete_percent = 0;
     this.loading_message = "Loading First Score card";
@@ -101,6 +105,11 @@ export class HomeComponent implements OnInit {
       }
     );
     this.orgUnitService.prepareOrgunits();
+  }
+
+  openscorecard(id,event){
+    this.router.navigate(['create','edit',id]);
+    event.stopPropagation();
   }
 
   deleteScoreCard( scorecard ){
