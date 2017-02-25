@@ -60,11 +60,42 @@ export class ScorecardService {
       .catch(this.handleError);
   }
 
-  private extractData(res: Response) {
-    let body = res.json();
-    return body.data || { };
+  addRelatedIndicator(indicator_id, related_indicators){
+    this.getRelatedIndicators(indicator_id).subscribe(
+      // if it is available update the item in data store
+      (data) => {
+        this.updateRelatedIndicator(indicator_id, related_indicators).subscribe(
+          data => console.log("added"),
+          error => console.log("something went wrong")
+        );
+      },
+      // if it is not available add new item in datastore
+      (error) => {
+        this.createRelatedIndicator(indicator_id, related_indicators).subscribe(
+          data => console.log("added"),
+          error => console.log("something went wrong")
+        );
+      }
+    )
   }
 
+  getRelatedIndicators(indicator_id){
+    return this.http.get(`${this.baseUrl}api/dataStore/scorecardRelatedIndicators/${indicator_id}`)
+      .map((response: Response) => response.json())
+      .catch(this.handleError);
+  }
+
+  createRelatedIndicator(indicator_id, related_indicators) {
+    return this.http.post(this.baseUrl+"api/dataStore/scorecardRelatedIndicators/"+indicator_id, related_indicators)
+      .map((response: Response) => response.json())
+      .catch(this.handleError);
+  }
+
+  updateRelatedIndicator(indicator_id, related_indicators) {
+    return this.http.put(this.baseUrl+"api/dataStore/scorecardRelatedIndicators/"+indicator_id, related_indicators)
+      .map((response: Response) => response.json())
+      .catch(this.handleError);
+  }
   private handleError (error: Response | any) {
     // In a real world app, we might use a remote logging infrastructure
     let errMsg: string;

@@ -1234,7 +1234,16 @@ export class CreateComponent implements OnInit, AfterViewInit, OnDestroy {
     }else{
       // delete all empty indicators if any
       this.cleanUpEmptyColumns();
-      console.log(this.selected_periods);
+
+      // add related indicators to another datastore to enable flexible data analysis
+      this.scorecard.data.data_settings.indicator_holders.forEach((holder) => {
+        holder.indicators.forEach( (indicator) => {
+          if( indicator.bottleneck_indicators.length != 0 ){
+            this.scorecardService.addRelatedIndicator(indicator.id, indicator.bottleneck_indicators);
+          }
+        })
+      });
+
       this.scorecard.data.selected_periods = this.selected_periods;
       // post the data
       this.saving_scorecard = true;
@@ -1262,6 +1271,8 @@ export class CreateComponent implements OnInit, AfterViewInit, OnDestroy {
           }
         );
       }
+
+
     }
 
 
