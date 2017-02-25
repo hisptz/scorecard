@@ -8,6 +8,7 @@ import {OrgUnitService} from "../../shared/services/org-unit.service";
 import {Constants} from "../../shared/costants";
 import {subscribeOn} from "rxjs/operator/subscribeOn";
 import {TreeComponent} from "angular2-tree-component";
+import {forEach} from "@angular/router/src/utils/collection";
 
 @Component({
   selector: 'app-scorecard',
@@ -52,6 +53,7 @@ export class ScorecardComponent implements OnInit, AfterViewInit, OnDestroy {
     private dataService: DataService,
     private filterService: FilterService,
     private costant: Constants,
+    private scorecardService: ScorecardService
   ) {
     this.base_url = this.costant.root_dir;
 
@@ -178,6 +180,7 @@ export class ScorecardComponent implements OnInit, AfterViewInit, OnDestroy {
   old_proccessed_percent = 0;
   proccesed_indicators = 0;
   loadScoreCard( orgunit: any = null ){
+    console.log(this.scorecard)
     this.showSubScorecard = [];
     this.periods_list = [];
     this.indicator_done_loading = [];
@@ -200,7 +203,7 @@ export class ScorecardComponent implements OnInit, AfterViewInit, OnDestroy {
     let indicator_list = this.getIndicatorList(this.scorecard,this.periods_list);
     for( let holder of this.scorecard.data.data_settings.indicator_holders ){
         for( let indicator of holder.indicators ){
-          if(this.level == 'top'){
+          if(this.level == 'top' || this.scorecard.data.is_bottleck){
             indicator['values'] = [];
             indicator['tooltip'] = [];
             indicator['previous_values'] = [];
@@ -223,11 +226,20 @@ export class ScorecardComponent implements OnInit, AfterViewInit, OnDestroy {
                   //noinspection TypeScriptUnresolvedVariable
                   for ( let orgunit of data.metaData.ou ){
                     if(!this.checkOrgunitAvailability(orgunit,this.orgunits)){
-                      //noinspection TypeScriptUnresolvedVariable
-                      this.orgunits.push({"id":orgunit,
-                        "name":data.metaData.names[orgunit],
-                        "is_parent":this.orgUnit.id == orgunit
-                      })
+                      if( this.scorecard.data.show_data_in_column ){
+                        //noinspection TypeScriptUnresolvedVariable
+                        this.orgunits.push({"id":orgunit,
+                          "name":data.metaData.names[orgunit],
+                          "is_parent":false
+                        })
+                      }else{
+                        //noinspection TypeScriptUnresolvedVariable
+                        this.orgunits.push({"id":orgunit,
+                          "name":data.metaData.names[orgunit],
+                          "is_parent":this.orgUnit.id == orgunit
+                        })
+                      }
+
                     }
 
                     let value_key = orgunit+'.'+current_period.id;
@@ -289,30 +301,101 @@ export class ScorecardComponent implements OnInit, AfterViewInit, OnDestroy {
   sub_unit;
   sub_model:any;
   children_available:boolean[] = [];
-  loadChildrenData(selectedorgunit){
-    if( selectedorgunit.is_parent || this.showSubScorecard[selectedorgunit.id]){
-      this.showSubScorecard = [];
-    }
-    else{
-      let orgunit_with_children = this.orgtree.treeModel.getNodeById(selectedorgunit.id);
-      this.sub_unit = orgunit_with_children.data;
-      this.sub_model = {
-        selection_mode: "orgUnit",
-        selected_level: "",
-        selected_group: "",
-        orgunit_levels: [],
-        orgunit_groups: [],
-        selected_orgunits: [this.sub_unit],
-        user_orgunits: []
-      };
-      this.showSubScorecard[selectedorgunit.id] = true;
-      if( this.sub_unit.hasOwnProperty('children')){
-        this.children_available[selectedorgunit.id] = true;
-      }else{
-        setTimeout(function() {
-          this.showSubScorecard = [];
-        }, 5000);
+  subscorecard: ScoreCard;
+  loadChildrenData(selectedorgunit, indicator){
+    if( indicator == null ){
+      if( selectedorgunit.is_parent || this.showSubScorecard[selectedorgunit.id]){
+        this.showSubScorecard = [];
       }
+      else{
+        let orgunit_with_children = this.orgtree.treeModel.getNodeById(selectedorgunit.id);
+        this.sub_unit = orgunit_with_children.data;
+        this.sub_model = {
+          selection_mode: "orgUnit",
+          selected_level: "",
+          selected_group: "",
+          orgunit_levels: [],
+          orgunit_groups: [],
+          selected_orgunits: [this.sub_unit],
+          user_orgunits: []
+        };
+        this.showSubScorecard[selectedorgunit.id] = true;
+        if( this.sub_unit.hasOwnProperty('children')){
+          this.children_available[selectedorgunit.id] = true;
+        }else{
+          setTimeout(function() {
+            this.showSubScorecard = [];
+          }, 5000);
+        }
+
+      }
+    }
+    if( selectedorgunit == null ){
+
+      if( this.showSubScorecard[indicator.id]){
+        this.showSubScorecard = [];
+      }
+      this.scorecardService.getRelatedIndicators(indicator.id).subscribe(
+        (data) => {
+          console.log(data);
+          if( data.length == 0){
+            this.children_available[indicator.id] = false;
+            this.showSubScorecard[indicator.id] = true;
+          }else{
+            this.children_available[indicator.id] = true;
+            // this.subscorecard = this.createScorecardByIndicators(indicator,indicator.bottleneck_indicators);
+            let created_scorecard = this.scorecardService.getEmptyScoreCard();
+            let legendSet = [
+              {
+                color: "#008000",
+                min: "80",
+                max: "-"
+              },
+              {
+                color: "#FFFF00",
+                min: "60",
+                max: "80"
+              },
+              {
+                color: "#FF0000",
+                min: "0",
+                max: "60"
+              }
+            ];
+            let holder_ids = [];
+            data.forEach((item, item_index) => {
+              let indicator_holder = {
+                "holder_id": item_index+1,
+                "indicators": [
+                  this.scorecardService.getIndicatorStructure(item.name, item.id, legendSet, item.bottleneck_title)
+                ]
+              };
+              holder_ids.push(item_index+1);
+              created_scorecard.data.data_settings.indicator_holders.push(indicator_holder);
+            });
+
+            created_scorecard.data.data_settings.indicator_holder_groups = [{
+              "id": "1",
+              "name": "New Group",
+              "indicator_holder_ids": holder_ids,
+              "background_color": "#ffffff",
+              "holder_style": null
+            }];
+            created_scorecard.data.show_data_in_column = true;
+            created_scorecard.data.is_bottleck = true;
+            created_scorecard.data.name = "Bottleneck Indicators for "+ indicator.name;
+            created_scorecard.data.header.title = "Bottleneck Indicators for "+ indicator.name;
+            this.subscorecard = created_scorecard;
+
+            this.showSubScorecard[indicator.id] = true;
+          }
+
+        },
+        (error)=>{
+          this.children_available[indicator.id] = false;
+          this.showSubScorecard[indicator.id] = true;
+        }
+      )
 
     }
 
@@ -671,7 +754,7 @@ export class ScorecardComponent implements OnInit, AfterViewInit, OnDestroy {
     let tooltip = [];
     let use_key = orgunit+"."+period;
     for (let indicator of holder.indicators ){
-      if(indicator.tooltip[use_key]){
+      if(indicator.tooltip && indicator.tooltip[use_key]){
         tooltip.push(indicator.tooltip[use_key])
       }
     }
@@ -971,10 +1054,6 @@ export class ScorecardComponent implements OnInit, AfterViewInit, OnDestroy {
     }
   }
 
-  // here we are trying to construct a scorecard from a list of indicators
-  createScorecardByIndicators(indicators:any){
-
-  }
   // Use this for all clean ups
   ngOnDestroy (){
     if( this.subscription ){

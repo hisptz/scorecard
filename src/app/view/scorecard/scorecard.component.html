@@ -109,6 +109,7 @@
         <td style="vertical-align: bottom;font-size: 10px;cursor: pointer;line-height: 80%;padding: 0px;min-width:150px"
             class="orgUnitName"
             dnd-droppable (onDropSuccess)="dragItemSuccessfull($event,'indicator',indicator)"
+            (click)="loadChildrenData(null,indicator.indicators[0])"
         >
 
             <img src="balls-3.svg"
@@ -139,9 +140,37 @@
         <td *ngFor="let label of scorecard.data.additional_labels" style="font-size: 10px;max-width: 90px;overflow-wrap: break-word; cursor: pointer; line-height: 80%"
             class="sans-pro">
           {{ getIndicatorLabel( indicator,label ) }}
+
         </td>
       </tr>
 
+      <tr *ngIf="showSubScorecard[indicator.indicators[0].id]">
+        <td [attr.colspan]="getSubscorecardColspan() + getCorrectColspan()" style="background-color: rgba(0,0,0,0.1)">
+          <!--Internal score card-->
+          <h3 class="text-center text-muted" *ngIf="!children_available[indicator.indicators[0].id]">This indicator has no bottleneck indicators</h3>
+          <app-scorecard
+            *ngIf="children_available[indicator.indicators[0].id]"
+            [scorecard] = "subscorecard"
+            [orgUnit] = "sub_unit"
+            [period] = "period"
+            [default_period]="default_period"
+            [period_type] = "period_type"
+            [show_average_in_column] = "show_average_in_column"
+            [show_average_in_row] = "show_average_in_row"
+            [show_sum_in_column] = "show_sum_in_column"
+            [show_sum_in_row] = "show_sum_in_row"
+            [shown_records] = "shown_records"
+            [average_selection] = "average_selection"
+            [hidenColums] = "hidenColums"
+            [show_rank] ="show_rank"
+            [sorting_column] ="sorting_column"
+            [orgtree] ="orgtree"
+            [level] ="'non_top'"
+            [orgunit_model] ="orgunit_model"
+            (show_details) = "loadPreviewFromChild($event)"
+          ></app-scorecard>
+        </td>
+      </tr>
     </ng-container>
 
     <!--sum column-->
@@ -261,7 +290,7 @@
         <td style="vertical-align: bottom;font-size: 10px;cursor: pointer;line-height: 80%;padding: 8px" *ngIf="scorecard.data.show_rank">{{ i+1 }}</td>
         <td style="vertical-align: bottom;font-size: 10px;cursor: pointer;line-height: 80%;padding: 0px;min-width:150px"
             class="orgUnitName"
-            (click)="loadChildrenData(current_orgunit)"
+            (click)="loadChildrenData(current_orgunit,null)"
             [style.cursor]="getCursorStyle(current_orgunit)"
             dnd-droppable (onDropSuccess)="dragItemSuccessfull($event,'orgunit',current_orgunit)"
         >
