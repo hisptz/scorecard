@@ -1,50 +1,240 @@
-import { Injectable } from '@angular/core';
+import {Component, OnInit, Output, Input, EventEmitter, ViewChild, AfterViewInit} from '@angular/core';
+import {TreeComponent, IActionMapping, TREE_ACTIONS} from "angular2-tree-component";
 
-import { Http, Response } from '@angular/http';
-import 'rxjs/Rx';
-import {Observable} from 'rxjs';
-import {Constants} from "../costants";
 
-@Injectable()
-export class FilterService {
+const PERIOD_TYPE: Array<any> = [
+  {value:'Monthly', name: 'Monthly', shown: true},
+  {value:'BiMonthly', name: 'BiMonthly', shown: true},
+  {value:'Quarterly', name: 'Quarterly', shown: true},
+  {value:'SixMonthly', name: 'Six-Monthly', shown: true},
+  {value:'SixMonthlyApril', name: 'Six-Monthly April', shown: true},
+  {value:'Yearly', name: 'Yearly', shown: true},
+  {value:'FinancialApril', name: 'Financial-April', shown: true},
+  {value:'FinancialJuly', name: 'Financial-July', shown: true},
+  {value:'FinancialOct', name: 'Financial-Oct', shown: true},
+];
 
-  constructor(private http: Http, private constant: Constants) { }
 
-  checkItemAvailabilty(item, array): boolean{
+@Component({
+  selector: 'app-period-filter',
+  templateUrl: './period-filter.component.html',
+  styleUrls: ['./period-filter.component.css']
+})
+export class PeriodFilterComponent implements OnInit, AfterViewInit {
+
+
+  @Input() period_tree_config: any = {
+    show_search : true,
+    search_text : 'Search',
+    level: null,
+    loading: false,
+    loading_message: 'Loading Periods...',
+    multiple: false,
+    multiple_key:"none", //can be control or shift
+    starting_periods: [],
+    period_type: "Monthly",
+    starting_year: null,
+    placeholder: "Select period"
+  };
+  selected_periods:any[] = [];
+  @Output() onPeriodUpdate: EventEmitter<any> = new EventEmitter<any>();
+  periods = [];
+  period: any = {};
+  showPerTree:boolean = true;
+  period_type: string = 'Monthly';
+  year: number = 2016;
+  default_period: string[] = [];
+  period_type_config: Array<any>;
+  constructor() {
+    let date = new Date();
+    date.setDate(0);
+    console.log(this.period_tree_config);
+    // if(this.period_tree_config.starting_periods.length == 0){
+    //   this.period_tree_config.starting_year = date.getFullYear();
+    //   this.year = (this.period_tree_config.starting_year)?this.period_tree_config.starting_year:date.getFullYear();
+    //   let datestring = date.getFullYear() + ("0"+(date.getMonth()+1)).slice(-2);
+    //   this.period_tree_config.starting_periods=[datestring];
+    //   if(!this.period_tree_config.hasOwnProperty("multiple_key")){
+    //     this.period_tree_config.multiple_key = "none";
+    //   }
+    // }
+  }
+
+
+  ngOnInit() {
+    this.period_type_config = PERIOD_TYPE;
+    for( let period of this.period_tree_config.starting_periods ){
+      this.activatePer(period);
+    }
+    this.period_type = this.period_tree_config.period_type;
+    if(this.period_type != '') {
+      this.changePeriodType();
+    }
+  }
+
+  // check if period already exist in the period display list
+  checkPeriodAvailabilty(period, array): boolean{
     let checker = false;
-    array.forEach((value) => {
-      if( value.id == item.id ){
-        checker = true;
+    for( let per of array ){
+      if( per.id == period.id){
+        checker =true;
       }
-    });
+    }
     return checker;
   }
 
-  // Get available organisation units levels information
-  getOrgunitLevelsInformation () {
-    return this.http.get(this.constant.root_dir + 'api/organisationUnitLevels.json?fields=id')
-      .map((response: Response) => response.json())
-      .catch( this.handleError );
-  }
-
-  // Get orgunits and children
-  getOrgunitDetails (orgunit) {
-    return this.http.get(this.constant.root_dir + 'api/organisationUnits/'+orgunit+'.json?fields=id,name,level,children[id,name,level]')
-      .map((response: Response) => response.json())
-      .catch( this.handleError );
-  }
-
-  // Get starting organisation Unit
-  getInitialOrgunitsForTree (uid:string = null) {
-    if( uid == null ){
-      return this.http.get(this.constant.root_dir + 'api/organisationUnits.json?filter=level:eq:1&paging=false&fields=id,name,level,children[id,name,level]')
-        .map((response: Response) => response.json())
-        .catch( this.handleError );
-    }else{
-      return this.http.get(this.constant.root_dir + 'api/organisationUnits/'+uid+'.json?fields=id,name,level')
-        .map((response: Response) => response.json())
-        .catch( this.handleError );
+  // check if period already exist in the period display list
+  getPeriodById(period_id, array): boolean{
+    let checker:any;
+    for( let per of array ){
+      if( per.id == period_id){
+        checker = per;
+      }
     }
+    return checker;
+  }
+
+  resetSelection(){
+    this.period_type = "";
+    this.selected_periods = [];
+    this.periods = [];
+  }
+
+  ngAfterViewInit(){
+
+  }
+
+  hideTree(){
+    this.showPerTree = true;
+  }
+
+
+  activateNode(nodeId:any, nodes){
+    setTimeout(() => {
+      let node = nodes.treeModel.getNodeById(nodeId);
+      if (node)
+        node.setIsActive(true, true);
+    }, 0);
+  }
+
+  // a method to activate the model
+  deActivateNode(nodeId:any, nodes, event){
+    setTimeout(() => {
+      let node = nodes.treeModel.getNodeById(nodeId);
+      if (node)
+        node.setIsActive(false, true);
+    }, 0);
+    if( event != null){
+      event.stopPropagation();
+    }
+  }
+
+  pushPeriodForward(){
+    this.year += 1;
+    this.periods = this.getPeriodArray(this.period_type,this.year);
+  }
+
+  pushPeriodBackward(){
+    this.year -= 1;
+    this.periods = this.getPeriodArray(this.period_type,this.year);
+  }
+
+  changePeriodType(){
+    this.periods = this.getPeriodArray(this.period_type,this.year);
+  }
+
+  //setting the period to next or previous
+  setPeriod(type,period){
+    if(type == "down"){
+      this.periods = this.getPeriodArray(this.period_type, this.getLastPeriod(period.id,this.period_type).substr(0,4));
+      this.selected_periods = [this.getPeriodById(this.getLastPeriod(period.id,this.period_type),this.periods)]
+    }
+    if(type == "up"){
+      this.periods = this.getPeriodArray(this.period_type, this.getNextPeriod(period.id,this.period_type).substr(0,4));
+      this.selected_periods = [this.getPeriodById(this.getNextPeriod(period.id,this.period_type),this.periods)]
+    }
+    setTimeout(() => {
+      // emmit the selected periods
+    }, 5);
+  }
+
+  // get the name of period to be used in a tittle
+  getPeriodName(id){
+    for ( let period of this.getPeriodArray(this.period_type, this.getLastPeriod(id,this.period_type).substr(0,4))){
+      if( this.getLastPeriod(id,this.period_type) == period.id){
+        return period.name;
+      }
+    }
+  }
+
+
+  // display period Tree
+  displayPerTree(){
+    this.showPerTree = !this.showPerTree;
+  }
+
+  // action to be called when a tree item is deselected(Remove item in array of selected items
+  deactivatePer ( $event, data ) {
+    this.selected_periods.splice(this.selected_periods.indexOf(data),1)
+    $event.stopPropagation();
+  };
+
+  // add item to array of selected items when item is selected
+  activatePer($event) {
+    if(!this.checkPeriodAvailabilty($event,this.selected_periods)){
+      this.selected_periods.push($event);
+    }
+  };
+
+  updatePeriodModel() {
+    this.displayPerTree();
+    this.onPeriodUpdate.emit({name: 'pe', value: this.getPeriodsForAnalytics(this.selected_periods)});
+  }
+
+  getPeriodsForAnalytics(selectedPeriod) {
+    let periodForAnalytics = "";
+    selectedPeriod.forEach((periodValue, periodIndex) => {
+      periodForAnalytics += periodIndex == 0 ? periodValue.id : ';' + periodValue.id;
+    });
+    return periodForAnalytics
+  }
+  transferDataSuccess(data,current){
+    if(data.dragData.id == current.id){
+      console.log("Droping in the same area")
+    }else{
+      let number = (this.getPeriodPosition(data.dragData.id) > this.getPeriodPosition(current.id))?0:1;
+      this.deletePeriod( data.dragData );
+      this.insertPeriod( data.dragData, current, number);
+    }
+  }
+
+  // helper method to find the index of dragged item
+  getPeriodPosition(period_id){
+    let period_index = null;
+    this.selected_periods.forEach((period, index) => {
+      if(period.id == period_id){
+        period_index = index;
+      }
+    });
+    return period_index;
+  }
+
+  // help method to delete the selected period in list before inserting it in another position
+  deletePeriod( period_to_delete ){
+    this.selected_periods.forEach((period, period_index) => {
+      if( period_to_delete.id == period.id){
+        this.selected_periods.splice(period_index,1);
+      }
+    });
+  }
+
+  // Helper method to insert period in new position after drag drop event
+  insertPeriod( period_to_insert, current_period, num:number ){
+    this.selected_periods.forEach((period, period_index) => {
+      if( current_period.id == period.id && !this.checkPeriodAvailabilty(period_to_insert,this.selected_periods) ){
+        this.selected_periods.splice(period_index+num,0,period_to_insert);
+      }
+    });
   }
 
   getPeriodArray(type,year){
@@ -78,7 +268,7 @@ export class FilterService {
       for (var i = 0; i <= 10; i++) {
         let useYear = parseInt(year) - i;
         let currentYear = useYear + 1;
-          periods.push({id:useYear+'July',name:'July '+useYear+' - June '+ currentYear})
+        periods.push({id:useYear+'July',name:'July '+useYear+' - June '+ currentYear})
       }
     }else if(type == "FinancialApril"){
       for (var i = 0; i <= 10; i++) {
@@ -102,7 +292,7 @@ export class FilterService {
       periods.push({id:'THIS_YEAR',name:'This Financial Year'},{id:'LAST_YEAR',name:'Last Financial Year',selected:true},{id:'LAST_5_YEARS',name:'Last 5 Five financial years'});
     }
     return periods;
-}
+  }
 
   getLastPeriod(period: any, period_type:string ="Quarterly" ):any{
     if(period_type == "Weekly"){
@@ -221,7 +411,7 @@ export class FilterService {
     }
 
 
-}
+  }
 
   getNextPeriod(period: any, period_type:string ="Quarterly"):any{
     if(period_type == "Weekly"){
@@ -338,55 +528,5 @@ export class FilterService {
       return last_year+"April"
     }
   }
-
-  deducePeriodType(period: any):any{
-    let period_length = period.length;
-    let period_type = "";
-    let period_object = {
-      "type":"",
-      "year":period.substr(0,4)
-    };
-    if( period_length == 4){
-      period_type = "Yearly";
-    }else if( period_length == 6 ){
-
-      if(period.substr(4,1) == "Q"){
-        period_type = "Quarterly";
-      }else if(period.substr(4,1) == "S"){
-        period_type = "SixMonthly";
-      }else{
-        period_type = "Monthly"
-      }
-
-    }else if( period_length == 7 ){
-
-      if(period.substr(6,1) == "B"){
-        period_type = "BiMonthly";
-      }else if(period.substr(4,3) == "Oct"){
-        period_type = "FinancialOct";
-      }
-
-    }else if( period_length == 8 ){
-      if(period.substr(4,4) == "July"){
-        period_type = "FinancialJuly";
-      }
-    }else if( period_length == 9 ){
-      if(period.substr(4,5) == "April"){
-        period_type = "FinancialApril";
-      }
-    }else if( period_length == 11 ){
-      if(period.substr(4,6) == "AprilS"){
-        period_type = "SixMonthlyApril";
-      }
-    }
-    period_object.type = period_type;
-    return period_object;
-  }
-
-  // Handling error
-  handleError (error: any) {
-    return Observable.throw( error );
-  }
-
 
 }

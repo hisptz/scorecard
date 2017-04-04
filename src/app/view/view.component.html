@@ -14,192 +14,18 @@
 <div class="container-fluid no-print" id="filters" style="padding: 0px">
   <div class="col-sm-4" style="padding-left: 5px">
     <label>Organisation Units</label>
-    <div class="tree-input" >
-      <div>
-        <div class="show_items" (click)="displayOrgTree()">
-          <span>
-              {{ getProperPreOrgunitName() }}
-          </span>
-          <span *ngIf="orgunit_model.selected_orgunits.length > 4 && orgunit_model.selection_mode != 'Usr_orgUnit'">
-            <span class="selected-item">
-              {{ orgunit_model.selected_orgunits[0].name }}
-              <a (click)="deActivateNode(orgunit_model.selected_orgunits[0].id,orgtree,$event)" class="removeorgunit">x</a>
-            </span>
-            <span class="selected-item">
-              {{ orgunit_model.selected_orgunits[1].name }}
-              <a (click)="deActivateNode(orgunit_model.selected_orgunits[0].id,orgtree,$event)" class="removeorgunit">x</a>
-            </span>
-            <span class="selected-item">
-              &nbsp; and {{ orgunit_model.selected_orgunits.length - 2 }} more
-            </span>
-          </span>
-          <span *ngIf="orgunit_model.selected_orgunits.length <= 4 && orgunit_model.selection_mode != 'Usr_orgUnit'">
-             <span *ngFor="let item of orgunit_model.selected_orgunits" class="selected-item ng-binding ng-scope">
-              {{ item.name }}
-               <a (click)="deActivateNode(item.id,orgtree,$event)" class="removeorgunit">x</a>
-            </span>
-          </span>
-          <span class="no-selection"*ngIf="orgunit_model.selected_orgunits.length == 0 && !orgunit_tree_config.loading && orgunit_model.selection_mode != 'Usr_orgUnit'">{{ orgunit_tree_config.placeholder }}</span>
-          <span class="glyphicon glyphicon-triangle-bottom pull-right" *ngIf="!orgunit_tree_config.loading"></span>
-          <span *ngIf="orgunit_tree_config.loading">{{ orgunit_tree_config.loading_message }}</span>
-        </div>
-        <div class="tree-view" [ngClass]="{'hiddenTree':showOrgTree}" id="tree_view">
-          <div class="col-sm-6" style="padding-left: 0px; margin-bottom: 5px">
-            <label>Selection Mode</label>
-            <select id="selectionMode" [(ngModel)]="orgunit_model.selection_mode" class="form-control" style="height: 30px ">
-              <option value="Usr_orgUnit">User orgUnit</option>
-              <option value="orgUnit">Select Organisation Unit</option>
-              <option value="Level">Select Level</option>
-              <option value="Group">Select Group</option>
-            </select>
-          </div>
-          <!--org_unit_groups-->
-          <div class="col-sm-6" style="padding-right: 0px; margin-bottom: 5px" *ngIf="orgunit_model.selection_mode == 'Group'">
-            <label>Available Groups</label>
-            <select id="groupSelection" [(ngModel)]="orgunit_model.selected_group" class="form-control" style="height: 30px ">
-              <option value="">Select Group</option>
-              <option *ngFor="let group of orgunit_model.orgunit_groups"  value="OU_GROUP-{{ group.id }}">{{ group.name }}</option>
-            </select>
-          </div>
-          <!--org_unit_groups-->
-          <div class="col-sm-6" style="padding-right: 0px; margin-bottom: 5px" *ngIf="orgunit_model.selection_mode == 'Usr_orgUnit'">
-            <label>Available Groups</label>
-            <select id="userOrgSelection" [(ngModel)]="orgunit_model.selected_user_orgunit" class="form-control" style="height: 30px ">
-              <option value="USER_ORGUNIT">User org unit</option>
-              <option value="USER_ORGUNIT_CHILDREN">User sub-units</option>
-              <option value="USER_ORGUNIT_GRANDCHILDREN">User sub-x2-units</option>
-            </select>
-          </div>
-          <!--org_unit_levels-->
-          <div class="col-sm-6" style="padding-right: 0px; margin-bottom: 5px" *ngIf="orgunit_model.selection_mode == 'Level'">
-            <label>Available Levels</label>
-            <select id="levelSelection" [(ngModel)]="orgunit_model.selected_level" class="form-control" style="height: 30px ">
-              <option value="">Select Level</option>
-              <option *ngFor="let single_level of orgunit_model.orgunit_levels"  value="LEVEL-{{single_level.level}}">{{ single_level.name }}</option>
-            </select>
-          </div>
-          <div class="search-area">
-            <form *ngIf="!orgunit_tree_config.loading && orgunit_tree_config.show_search && orgunit_model.selection_mode != 'Usr_orgUnit'" style="border-bottom: solid 1px blanchedalmond;">
-              <input #filter (keyup)="filterNodes(filter.value, orgtree)" placeholder="{{ orgunit_tree_config.search_text }}" class="search_field"/>
-            </form>
-          </div>
-          <div *ngIf="orgunit_tree_config.loading">{{ orgunit_tree_config.loading_message }}</div>
-          <div class="tree-area" [ngClass]="{'hiddenTree': orgunit_model.selection_mode == 'Usr_orgUnit'}">
-            <Tree
-              #orgtree
-              [nodes]="organisationunits"
-              [focused]="true"
-              [options]="customTemplateStringOrgunitOptions"
-              (onActivate)="activateOrg($event)"
-              (onDeactivate)="deactivateOrg($event)"
-            >
-              <template #treeNodeTemplate let-node>
-                <span>{{ node.data.name }}</span>
-              </template>
-            </Tree>
-          </div>
-          <div class="close-area">
-            <button class="btn btn-default pull-right" style="height: 30px"  (click)="displayOrgTree()">
-              <span class="glyphicon glyphicon-remove"></span> Close
-            </button>
-            <button type="button" class="btn btn-default pull-right"  style="height: 30px" (click)="loadScoreCard()">
-              <span class="glyphicon glyphicon-refresh"></span>  Update
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
+    <app-org-unit-filter
+      #orgUnitComponent
+      *ngIf="metadata_ready"
+      [orgunit_tree_config]="orgunit_tree_config"
+      [orgunit_model]="orgunit_model"
+      (orgunitready)="initilizeScoreCard($event)"
+    ></app-org-unit-filter>
 
   </div>
   <div class="col-sm-4">
-        <label>Selected Period</label>
-        <div class="tree-input" >
-          <div>
-            <div class="show_items" (click)="displayPerTree()">
-              <span *ngIf="selected_periods.length > 4">
-            <span class="selected-item">
-              {{ selected_periods[0].name }}
-              <a (click)="deActivateNode(selected_periods[0].id,pertree,$event)" class="removeorgunit">x</a>
-            </span>
-                <span class="selected-item">
-              {{ selected_periods[1].name }}
-                  <a (click)="deActivateNode(selected_periods[1].id,pertree,$event)" class="removeorgunit">x</a>
-            </span><span class="selected-item">
-              and {{ selected_periods.length -2 }} more
-            </span>
-          </span>
-                <span *ngIf="selected_periods.length <= 4">
-                <span *ngFor="let item of selected_periods" class="selected-item ng-binding ng-scope">
-                  {{ item.name }}
-                  <a (click)="deActivateNode(item.id,pertree,$event)" class="removeorgunit">x</a>
-                </span>
-              </span>
-              <span class="no-selection"*ngIf="selected_periods.length == 0 && !period_tree_config.loading">{{ period_tree_config.placeholder }}</span>
-              <span class="glyphicon glyphicon-triangle-bottom pull-right" *ngIf="!period_tree_config.loading"></span>
-              <span *ngIf="period_tree_config.loading">{{ period_tree_config.loading_message }}</span>
-            </div>
-            <div class="show_tops">
-              <div class="arrows" title="go to next period" style="height: 19px;border-bottom: 1px solid black" (click)="setPeriod('up')" ><span class="glyphicon glyphicon-triangle-top"></span> </div>
-              <div class="arrows" title="go to previous period" style="height: 17px" (click)="setPeriod('down')"> <span class="glyphicon glyphicon-triangle-bottom"></span></div>
-            </div>
-            <div class="tree-view" [ngClass]="{'hiddenTree':showPerTree}">
-              <div class="col-sm-7" style="padding-left: 0px; margin-bottom: 5px">
-                <label>Period Type</label>
-                <select id="periodType" [(ngModel)]="period_type" class="form-control" style="height: 30px " (change)="changePeriodType()">
-                  <option value="">[ Select period type ]</option>
-                  <option value="Monthly">Monthly</option>
-                  <option value="BiMonthly">Bimonthly</option>
-                  <option value="Quarterly">Quarterly</option>
-                  <option value="SixMonthly">Six-monthly</option>
-                  <option value="SixMonthlyApril">Six-monthly April</option>
-                  <option value="Yearly">Yearly</option>
-                  <option value="FinancialApril">Financial-April</option>
-                  <option value="FinancialJuly">Financial-July</option>
-                  <option value="FinancialOct">Financial-Oct</option>
-                </select>
-              </div>
-              <div class="col-sm-5" style="padding-right: 0px; margin-bottom: 5px">
-                <label>&nbsp;</label>
-                <div class="btn-group" style="width: 100%">
-                  <button type="button" class="btn btn-default pull-right" style="height: 30px; font-size: 11px" (click)="pushPeriodForward()">>> year</button>
-                  <button type="button" class="btn btn-default pull-right" style="height: 30px; font-size: 11px;" (click)="pushPeriodBackward()"><< year</button>
-                </div>
-              </div>
-
-              <div class="search-area">
-                <form *ngIf="!period_tree_config.loading && period_tree_config.show_search" style="border-bottom: solid 1px blanchedalmond;">
-                  <input #filter (keyup)="filterNodes(filter.value, pertree)" placeholder="{{ period_tree_config.search_text }}" id="search_field"/>
-
-                </form>
-              </div>
-              <div *ngIf="period_tree_config.loading">{{ period_tree_config.loading_message }}</div>
-              <div class="tree-area1" *ngIf="!period_tree_config.loading">
-                <Tree
-                  #pertree
-                  [nodes]="periods"
-                  [focused]="true"
-                  [options]="customTemplateStringOrgunitOptions"
-                  (onActivate)="activatePer($event)"
-                  (onDeactivate)="deactivatePer($event)"
-                >
-                  <template #treeNodeTemplate let-node>
-                    <span>{{ node.data.name }}</span>
-                  </template>
-                </Tree>
-              </div>
-              <div class="close-area">
-                <button class="btn btn-default pull-right" style="height: 30px"  (click)="displayPerTree()">
-                  <span class="glyphicon glyphicon-remove"></span> Close
-                </button>
-                <button type="button" class="btn btn-default pull-right"  style="height: 30px" (click)="loadScoreCard()">
-                  <span class="glyphicon glyphicon-refresh"></span>  Update
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-
-
+    <label>Period</label>
+    <app-period-filter *ngIf="metadata_ready" [period_tree_config]="period_tree_config"></app-period-filter>
   </div>
   <!--options-->
   <div class="col-sm-4">
@@ -277,12 +103,8 @@
 <!--main scorecard-->
 <app-scorecard
   #scorecardCcomponent
-  *ngIf="metadata_ready"
+  *ngIf="scorecard_ready"
   [scorecard]="scorecard"
-  [orgUnit]="orgUnit"
-  [period]="selected_periods"
-  [default_period]="period"
-  [period_type]="period_type"
   [show_average_in_column]="scorecard.data.show_average_in_column"
   [show_average_in_row]="scorecard.data.show_average_in_row"
   [show_sum_in_column]="show_sum_in_column"
@@ -292,9 +114,9 @@
   [hidenColums]="hidenColums"
   [show_rank]="scorecard.data.show_rank"
   [sorting_column]="sorting_column"
-  [orgtree]="orgtree"
   [level]="'top'"
   [orgunit_model]="orgunit_model"
+  [orgunit_component]="orgUnitComponent"
   (show_details) = "loadPreview($event)"
 ></app-scorecard>
 

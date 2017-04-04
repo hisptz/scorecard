@@ -11,7 +11,6 @@ import { SvgItemComponent } from './svg-item/svg-item.component';
 import { SubtotalComponent } from './subtotal/subtotal.component';
 import { MetadataDictionaryComponent } from "./metadatadictionary/metadata-dictionary.component";
 import { ScorecardComponent } from './scorecard/scorecard.component';
-import { OrganisationUnitTreeComponent } from "./organisation-unit-tree/organisation-unit-tree.component";
 
 @NgModule({
   imports: [
@@ -20,6 +19,6 @@ import { OrganisationUnitTreeComponent } from "./organisation-unit-tree/organisa
     Ng2HighchartsModule,
     ChartModule,
   ],
-  declarations: [ViewComponent, FilterComponent, IndicatorCardComponent, SvgItemComponent, SubtotalComponent, MetadataDictionaryComponent, ScorecardComponent, OrganisationUnitTreeComponent]
+  declarations: [ViewComponent, FilterComponent, IndicatorCardComponent, SvgItemComponent, SubtotalComponent, MetadataDictionaryComponent, ScorecardComponent]
 })
 export class ViewModule { }

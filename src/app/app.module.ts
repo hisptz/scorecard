@@ -17,11 +17,11 @@ import { IndicatorGroupService } from "./shared/services/indicator-group.service
 import { DatasetService } from "./shared/services/dataset.service";
 import { DataElementGroupService } from "./shared/services/data-element-group.service";
 import { ScoreCardFilterPipe } from './home/score-card-filter.pipe';
-import { FilterService } from "./shared/services/filter.service";
-import { OrgUnitService } from "./shared/services/org-unit.service";
+import { FilterService } from "./shared/services/filter.service"
 import { VisulizerService } from "./view/dhis-visualizer/visulizer.service";
 import { ProgramIndicatorsService } from "./shared/services/program-indicators.service";
 import { EventDataService } from "./shared/services/event-data.service";
+import {OrgUnitService} from "./shared/org-unit-filter/org-unit.service";
 
 @NgModule({
   declarations: [

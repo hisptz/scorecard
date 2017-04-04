@@ -1,0 +1,94 @@
+<div class="tree-input" >
+  <div appClickOutside (clickOutside)="hideTree()">
+    <div class="show_items" (click)="displayPerTree()">
+      <span *ngIf="selected_periods.length > 2">
+        <span class="selected-item">
+            {{ selected_periods[0].name }}
+            <a (click)="deActivateNode(selected_periods[0].id,pertree,$event)" class="removeorgunit" >x</a>
+          </span>
+          <span class="selected-item">
+            {{ selected_periods[1].name }}
+            <a (click)="deActivateNode(selected_periods[1].id,pertree,$event)" class="removeorgunit">x</a>
+          </span>
+          <span class="selected-item">
+            &nbsp; and {{ selected_periods.length - 2 }} more
+          </span>
+      </span>
+      <span *ngIf="selected_periods.length <= 2">
+
+        <span *ngFor="let item of selected_periods" class="selected-item ng-binding ng-scope">
+        {{ item.name }}
+          <a (click)="deActivateNode(item.id,pertree,$event)" class="removeorgunit" *ngIf="selected_periods.length > 1">x</a>
+      </span>
+      </span>
+      <span class="no-selection"*ngIf="selected_periods.length == 0 && !period_tree_config.loading">{{ period_tree_config.placeholder }}</span>
+      <span *ngIf="period_tree_config.loading">{{ period_tree_config.loading_message }}</span>
+    </div>
+    <div class="show_tops" *ngIf="selected_periods.length == 1">
+    <div class="arrows" title="go to next period" style="height: 19px;border-bottom: 1px solid black" (click)="setPeriod('up',selected_periods[0])" ><span class="glyphicon glyphicon-triangle-top"></span> </div>
+    <div class="arrows" title="go to previous period" style="height: 17px" (click)="setPeriod('down',selected_periods[0])"> <span class="glyphicon glyphicon-triangle-bottom"></span></div>
+    </div>
+    <div class="tree-view" [ngClass]="{'hiddenTree':showPerTree}">
+      <div class="col-sm-7" style="padding-left: 0px; margin-bottom: 5px">
+        <select id="periodType" [(ngModel)]="period_type" class="form-control" style="height: 30px " (change)="changePeriodType()">
+          <!--<option value="" disabled="disabled" selected="selected">Select period type</option>-->
+          <option *ngFor="let periodType of period_type_config" [value]="periodType.value" [hidden]="!periodType.shown">{{periodType.name}}</option>
+        </select>
+      </div>
+      <div class="col-sm-5" style="padding-right: 0px; margin-bottom: 5px">
+        <div class="btn-group btn-group-sm pull-right">
+          <button type="button" class="btn btn-default" (click)="pushPeriodBackward()" style="font-size: 11px"><< Year</button>
+          <button type="button" class="btn btn-default" (click)="pushPeriodForward()" style="font-size: 11px" >>> Year</button>
+        </div>
+      </div>
+
+      <div class="search-area">
+        <form *ngIf="!period_tree_config.loading && period_tree_config.show_search" style="border-bottom: solid 1px blanchedalmond;">
+          <input #filter (keyup)="filterNodes(filter.value, pertree)" placeholder="{{ period_tree_config.search_text }}" id="search_field"/>
+
+        </form>
+      </div>
+      <div *ngIf="period_tree_config.loading">{{ period_tree_config.loading_message }}</div>
+      <div class="tree-area1" *ngIf="!period_tree_config.loading">
+        <div class="container-fluid" style="border-bottom: solid 1px blanchedalmond;padding: 4px 0px;margin-bottom: 3px">
+          <div class="col-sm-6" style="border-right: 1px solid rgba(0,0,0,0.1); text-align: left;font-size: 11px">Available</div>
+          <div class="col-sm-6" style="text-align: right;font-size: 11px">Selected</div>
+        </div>
+        <div class="col-sm-6 tree-area2" style="border-right: 1px solid rgba(0,0,0,0.1)">
+
+          <ul class="nav nav-pills nav-stacked">
+            <li *ngFor="let period of periods"
+                class="period" (click)="activatePer(period)"
+                [ngClass]="{'hiddenTree': checkPeriodAvailabilty(period,selected_periods)}"
+                title="Click to select"
+            >
+              {{ period.name }}
+            </li>
+          </ul>
+        </div>
+        <div class="col-sm-6 tree-area2">
+          <ul class="nav nav-pills nav-stacked">
+            <li *ngFor="let period of selected_periods"
+                class="period" (click)="deactivatePer($event, period)"
+                title="Click to deselect"
+                dnd-droppable (onDropSuccess)="transferDataSuccess($event,period)"
+            >
+              <div dnd-draggable [dragEnabled]="true" [dragData]="period">{{ period.name }}</div>
+            </li>
+          </ul>
+        </div>
+
+      </div>
+      <div class="close-area">
+        <div class="pull-right">
+          <button type="button" class="btn btn-default btn-sm" (click)="updatePeriodModel()">
+            <span class="glyphicon glyphicon-refresh"></span>  Update
+          </button>
+          <button class="btn btn-default btn-sm"  (click)="displayPerTree()">
+            <span class="glyphicon glyphicon-remove"></span> Close
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

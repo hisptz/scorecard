@@ -9,17 +9,28 @@ import { SafeHtmlPipe } from './safe-html.pipe';
 import { ColorPickerModule } from "ngx-color-picker";
 import { FilterIndicatorByNamePipe } from './filter-indicator-by-name.pipe';
 import {DndModule} from "ng2-dnd";
+import { ClickOutsideDirective } from './click-outside.directive';
+import {PeriodFilterComponent} from "./period-filter/period-filter.component";
+import {OrgUnitFilterComponent} from "./org-unit-filter/org-unit-filter.component";
 // import {FilterPipe} from "./filter.pipe";
 
 @NgModule({
   imports: [
     CommonModule,
+    FormsModule,
     TreeModule,
     ColorPickerModule,
     DndModule.forRoot()
 
   ],
-  declarations: [ FilterByNamePipe, TinymceEditorDirective, SafeHtmlPipe, FilterIndicatorByNamePipe],
+  declarations: [
+    FilterByNamePipe,
+    TinymceEditorDirective,
+    SafeHtmlPipe,
+    FilterIndicatorByNamePipe,
+    PeriodFilterComponent,
+    OrgUnitFilterComponent,
+    ClickOutsideDirective],
   exports: [
     TreeModule,
     FormsModule,
@@ -30,7 +41,10 @@ import {DndModule} from "ng2-dnd";
     TinymceEditorDirective,
     FilterIndicatorByNamePipe,
     SafeHtmlPipe,
-    DndModule
+    DndModule,
+    PeriodFilterComponent,
+    OrgUnitFilterComponent,
+    ClickOutsideDirective
   ]
 })
 export class SharedModule { }

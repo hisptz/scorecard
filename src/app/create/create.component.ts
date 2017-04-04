@@ -12,9 +12,9 @@ import {EventData, EventDataService} from "../shared/services/event-data.service
 import {throttleTime} from "rxjs/operator/throttleTime";
 import {Subscription} from "rxjs";
 import {DataService} from "../shared/data.service";
-import {OrgUnitService} from "../shared/services/org-unit.service";
 import {TreeNode, TREE_ACTIONS, IActionMapping, TreeComponent} from 'angular2-tree-component';
 import {FilterService} from "../shared/services/filter.service";
+import {OrgUnitService} from "../shared/org-unit-filter/org-unit.service";
 
 const actionMapping:IActionMapping = {
   mouse: {

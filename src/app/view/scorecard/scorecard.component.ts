@@ -2,13 +2,11 @@ import {Component, OnInit, Input, AfterViewInit, OnDestroy, EventEmitter, Output
 import {ScoreCard, ScorecardService} from "../../shared/services/scorecard.service";
 import {Subscription} from "rxjs";
 import {DataService} from "../../shared/data.service";
-import {ActivatedRoute} from "@angular/router";
 import {FilterService} from "../../shared/services/filter.service";
-import {OrgUnitService} from "../../shared/services/org-unit.service";
 import {Constants} from "../../shared/costants";
-import {subscribeOn} from "rxjs/operator/subscribeOn";
 import {TreeComponent} from "angular2-tree-component";
-import {forEach} from "@angular/router/src/utils/collection";
+import * as XLSX from 'xlsx';
+import { saveAs } from 'file-saver';
 
 @Component({
   selector: 'app-scorecard',
@@ -20,10 +18,6 @@ export class ScorecardComponent implements OnInit, AfterViewInit, OnDestroy {
   private subscription: Subscription;
   private indicatorCalls: Subscription[] = [];
   @Input() scorecard: ScoreCard;
-  @Input() period: any = [];
-  @Input() default_period: any = [];
-  @Input() orgUnit: any;
-  @Input() period_type: string;
   @Input() show_sum_in_row: boolean = false;
   @Input() show_sum_in_column: boolean = false;
   @Input() show_average_in_row: boolean = false;
@@ -34,7 +28,7 @@ export class ScorecardComponent implements OnInit, AfterViewInit, OnDestroy {
   @Input() show_rank: boolean = false;
   @Input() sorting_column: any = "none";
   @Input() orgunit_model: any;
-  @Input() orgtree: TreeComponent;
+  @Input() orgunit_component: any;
   @Input() level: string = "top";
 
   @Output() show_details = new EventEmitter<any>();
@@ -60,6 +54,8 @@ export class ScorecardComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngOnInit() {
+    console.log("orgunits",this.orgunit_model.selected_orgunits)
+    console.log("scorecard",this.scorecard.data)
     this.show_data_in_column = this.scorecard.data.show_data_in_column;
     this.loadScoreCard();
   }
@@ -75,7 +71,7 @@ export class ScorecardComponent implements OnInit, AfterViewInit, OnDestroy {
     // if the selected orgunit is user org unit
     if(orgunit_model.selection_mode == "Usr_orgUnit"){
       if(orgunit_model.user_orgunits.length == 1 || orgunit_model.user_orgunits.length == 0){
-        let user_orgunit = this.orgtree.treeModel.getNodeById(orgunit_model.user_orgunits[0]);
+        let user_orgunit = orgunit_model.selected_orgunits[0];
         orgUnits.push(user_orgunit.id);
         if(user_orgunit.hasOwnProperty('children')){
           for( let orgunit of user_orgunit.children ){
@@ -90,7 +86,7 @@ export class ScorecardComponent implements OnInit, AfterViewInit, OnDestroy {
     else{
       // if there is only one organisation unit selected
       if ( orgunit_model.selected_orgunits.length == 1 ){
-        let detailed_orgunit = this.orgtree.treeModel.getNodeById(orgunit_model.selected_orgunits[0].id);
+        let detailed_orgunit = orgunit_model.selected_orgunits[0];
         orgUnits.push(detailed_orgunit.id);
         if(detailed_orgunit.hasOwnProperty('children')){
           for( let orgunit of detailed_orgunit.children ){
@@ -113,8 +109,6 @@ export class ScorecardComponent implements OnInit, AfterViewInit, OnDestroy {
         organisation_unit_analytics_string += orgunit_model.selected_group+";";
       }
     }
-
-
     return organisation_unit_analytics_string+orgUnits.join(";");
   }
 
@@ -180,7 +174,7 @@ export class ScorecardComponent implements OnInit, AfterViewInit, OnDestroy {
   old_proccessed_percent = 0;
   proccesed_indicators = 0;
   loadScoreCard( orgunit: any = null ){
-    console.log(this.scorecard)
+    console.log(this.scorecard);
     this.showSubScorecard = [];
     this.periods_list = [];
     this.indicator_done_loading = [];
@@ -189,15 +183,10 @@ export class ScorecardComponent implements OnInit, AfterViewInit, OnDestroy {
     this.orgunits = [];
     this.loading_message = " Getting scorecard details ";
     // prepare period list( if not ready use the default period )
-    if( this.period.length == 0){
-      for( let per of this.default_period ){
+    for( let per of this.scorecard.data.selected_periods ){
         this.periods_list.push(per);
-      }
-    }else{
-      for( let per of this.period ){
-        this.periods_list.push(per);
-      }
     }
+    console.log(this.periods_list)
     this.proccesed_indicators = 0;
     let old_proccesed_indicators = 0;
     let indicator_list = this.getIndicatorList(this.scorecard,this.periods_list);
@@ -236,7 +225,7 @@ export class ScorecardComponent implements OnInit, AfterViewInit, OnDestroy {
                         //noinspection TypeScriptUnresolvedVariable
                         this.orgunits.push({"id":orgunit,
                           "name":data.metaData.names[orgunit],
-                          "is_parent":this.orgUnit.id == orgunit
+                          "is_parent":false
                         })
                       }
 
@@ -249,12 +238,13 @@ export class ScorecardComponent implements OnInit, AfterViewInit, OnDestroy {
                   this.indicator_loading[indicator.id] = true;
                   //load previous data
                   let effective_gap = parseInt( indicator.arrow_settings.effective_gap );
-                  this.indicatorCalls.push(this.dataService.getIndicatorsRequest(this.getOrgUnitsForAnalytics(this.orgunit_model),this.filterService.getLastPeriod(current_period.id,this.period_type), indicator.id)
+                  let period_type = this.filterService.deducePeriodType(current_period.id).type;
+                  this.indicatorCalls.push(this.dataService.getIndicatorsRequest(this.getOrgUnitsForAnalytics(this.orgunit_model),this.filterService.getLastPeriod(current_period.id, period_type), indicator.id)
                     .subscribe(
                       ( olddata ) => {
                         for( let prev_orgunit of this.orgunits ){
                           let prev_key = prev_orgunit.id+'.'+current_period.id;
-                          indicator.previous_values[prev_key] = this.dataService.getIndicatorData(prev_orgunit.id,this.filterService.getLastPeriod(current_period.id,this.period_type), olddata);
+                          indicator.previous_values[prev_key] = this.dataService.getIndicatorData(prev_orgunit.id,this.filterService.getLastPeriod(current_period.id, period_type), olddata);
                         }
                         if(indicator.hasOwnProperty("arrow_settings")){
                           for( let key in indicator.values ) {
@@ -308,7 +298,7 @@ export class ScorecardComponent implements OnInit, AfterViewInit, OnDestroy {
         this.showSubScorecard = [];
       }
       else{
-        let orgunit_with_children = this.orgtree.treeModel.getNodeById(selectedorgunit.id);
+        let orgunit_with_children = this.orgunit_component.orgtree.treeModel.getNodeById(selectedorgunit.id);
         this.sub_unit = orgunit_with_children.data;
         this.sub_model = {
           selection_mode: "orgUnit",
@@ -327,7 +317,6 @@ export class ScorecardComponent implements OnInit, AfterViewInit, OnDestroy {
             this.showSubScorecard = [];
           }, 5000);
         }
-
       }
     }
     if( selectedorgunit == null ){
@@ -449,8 +438,9 @@ export class ScorecardComponent implements OnInit, AfterViewInit, OnDestroy {
 
   // Get the name of the last period for a tooltip display
   getPeriodName(id:string){
-    for ( let period of this.filterService.getPeriodArray(this.period_type, this.filterService.getLastPeriod(id,this.period_type).substr(0,4))){
-      if( this.filterService.getLastPeriod(id,this.period_type) == period.id){
+    let period_type = this.filterService.deducePeriodType(id).type;
+    for ( let period of this.filterService.getPeriodArray( period_type, this.filterService.getLastPeriod(id, period_type).substr(0,4))){
+      if( this.filterService.getLastPeriod(id, period_type) == period.id){
         return period.name;
       }
     }
@@ -1068,4 +1058,145 @@ export class ScorecardComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
 
+  ///////////////////////////////////////////
+  //////////// Excel Example////////////////
+  /////////////////////////////////////////
+  saveExcel(param: any, filename: string) {
+
+    var wb = new Workbook();
+
+    var write = new Array;
+    param.forEach(function (row,index) {
+
+      var each = new Array;
+      var keys = Object.keys(row); // all the keys
+      if (index == 0) {
+        // column headers
+        for (var i = 0; i < keys.length; i++) {
+          each.push(keys[i]);
+        }
+        write.push(each); // write header
+        each = [];
+        for (var i = 0; i < keys.length; i++) {
+          each.push(row[keys[i]]);
+        }
+      }
+      else
+      {
+        for (var i = 0; i < keys.length; i++) {
+          each.push(row[keys[i]]);
+        }
+      }
+      write.push(each);
+    }, this);
+
+    var data = write;
+
+    var ws_name = "Sheet 1";
+    wb.SheetNames.push(ws_name);
+    wb.Sheets[ws_name] = this.sheet_from_array_of_arrays(data);
+
+    var wbout = XLSX.write(wb, { bookType: 'xlsx', type: 'binary' }); //bookSST: true,
+    saveAs(new Blob([this.s2ab(wbout)], { type: "application/octet-stream" }), filename+".xlsx");
+  }
+
+
+  s2ab(s) {
+    var buf = new ArrayBuffer(s.length);
+    var view = new Uint8Array(buf);
+    for (var i = 0; i != s.length; ++i) view[i] = s.charCodeAt(i) & 0xFF;
+    return buf;
+  }
+
+  sheet_from_array_of_arrays(data: any, opts?: any): any {
+    var ws: any = {};
+
+    var wscols = [
+      { wch: 20 },
+      { wch: 20 },
+      { wch: 20 },
+      { wch: 20 },
+      { wch: 20 },
+      { wch: 20 },
+      { wch: 20 },
+      { wch: 20 },
+      { wch: 20 },
+      { wch: 20 },
+      { wch: 20 }
+    ];
+
+    var startCell = { c: 10000000, r: 10000000 };
+    var endCell = { c: 0, r: 0 };
+
+    var range = { s: startCell, e: endCell };
+    for (var R = 0; R != data.length; ++R) {
+      for (var C = 0; C != data[R].length; ++C) {
+        if (range.s.r > R) range.s.r = R;
+        if (range.s.c > C) range.s.c = C;
+        if (range.e.r < R) range.e.r = R;
+        if (range.e.c < C) range.e.c = C;
+        //var cell = { v: data[R][C], t: 'n' };
+        //if (cell.v == null) continue;
+        //var cell_ref = XLSX.utils.encode_cell({ c: C, r: R });
+
+        //if (typeof cell.v === 'number') cell.t = 'n';
+        //else if (typeof cell.v === 'boolean') cell.t = 'b';
+        //else cell.t = 's';
+
+        //var cell = new Cell();
+        var cell: any = {};
+        cell.v = data[R][C];
+        //console.log(cell);
+        var cell_ref = XLSX.utils.encode_cell({ c: C, r: R });
+        //console.log(cell_ref);
+        if (cell.v == null) continue;
+        if (typeof cell.v === 'number') cell.t = 'n';
+        else if (typeof cell.v === 'boolean') cell.t = 'b';
+        else cell.t = 's';
+        //console.log(cell);
+        ws[cell_ref] = cell;
+        //console.log(ws);
+      }
+    }
+    if (range.s.c < 10000000) ws['!ref'] = XLSX.utils.encode_range(startCell, endCell);
+    ws['!cols'] = wscols;
+    return ws;
+  }
+
+  clicked(event) {
+    // var data = [
+    //     [1, 2, 3],
+    //     [true, false, null, "sheetjs"],
+    //     ["foo", "bar", new Date("2014-02-19T14:30Z"), "0.3"],
+    //     ["baz", null, "qux"]
+    //   ];
+
+    var data = [
+      {
+        columnOne: 'one',
+        columnTwo: 'two'
+      },
+      {
+        columnOne: 'three',
+        columnTwo: 4
+      },
+      {
+        columnOne: new Date(),
+        columnTwo: null
+      }
+    ];
+
+    this.saveExcel(data, "test-file");
+
+    // let blob = new Blob(['Hello Blob!'], { type: 'text/plain;charset=utf-8' });
+    // saveAs(blob, 'hey-blob.txt');
+
+    console.log(`I was clicked - ${event}`);
+  };
+
+}
+
+export class Workbook {
+  SheetNames: any = [];
+  Sheets: any = {};
 }

@@ -2,10 +2,10 @@ import {
   Component, OnInit,  style, state, animate, transition, trigger
 } from '@angular/core';
 import {ScoreCard,ScorecardService} from "../shared/services/scorecard.service";
-import {OrgUnitService} from "../shared/services/org-unit.service";
 import {DataService} from "../shared/data.service";
 import {PaginationInstance} from "ng2-pagination";
 import {Router} from "@angular/router";
+import {OrgUnitService} from "../shared/org-unit-filter/org-unit.service";
 
 @Component({
   selector: 'app-home',
@@ -112,7 +112,8 @@ export class HomeComponent implements OnInit {
     event.stopPropagation();
   }
 
-  deleteScoreCard( scorecard ){
+  deleteScoreCard( scorecard, event ){
+
     this.deleting[scorecard.id] = true;
     this.confirm_deleting[scorecard.id] = false;
     this.scoreCardService.remove( scorecard ).subscribe(
@@ -134,6 +135,7 @@ export class HomeComponent implements OnInit {
         }, 4000);
       }
     )
+    event.stopPropagation();
   }
 
 

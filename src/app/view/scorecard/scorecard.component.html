@@ -1,4 +1,3 @@
-
 <!--loading message-->
 <div class="container-fluid no-print"  *ngIf="loading" style="margin-top: 10px;padding-left: 0px">
   <div class="col-md-10 col-sm-10 col-xs-9">
@@ -151,10 +150,6 @@
           <app-scorecard
             *ngIf="children_available[indicator.indicators[0].id]"
             [scorecard] = "subscorecard"
-            [orgUnit] = "sub_unit"
-            [period] = "period"
-            [default_period]="default_period"
-            [period_type] = "period_type"
             [show_average_in_column] = "show_average_in_column"
             [show_average_in_row] = "show_average_in_row"
             [show_sum_in_column] = "show_sum_in_column"
@@ -164,9 +159,9 @@
             [hidenColums] = "hidenColums"
             [show_rank] ="show_rank"
             [sorting_column] ="sorting_column"
-            [orgtree] ="orgtree"
             [level] ="'non_top'"
             [orgunit_model] ="orgunit_model"
+            [orgunit_component] ="orgunit_component"
             (show_details) = "loadPreviewFromChild($event)"
           ></app-scorecard>
         </td>
@@ -319,10 +314,6 @@
           <app-scorecard
             *ngIf="children_available[current_orgunit.id]"
             [scorecard] = "scorecard"
-            [orgUnit] = "sub_unit"
-            [period] = "period"
-            [default_period]="default_period"
-            [period_type] = "period_type"
             [show_average_in_column] = "show_average_in_column"
             [show_average_in_row] = "show_average_in_row"
             [show_sum_in_column] = "show_sum_in_column"
@@ -332,9 +323,9 @@
             [hidenColums] = "hidenColums"
             [show_rank] ="show_rank"
             [sorting_column] ="sorting_column"
-            [orgtree] ="orgtree"
             [level] ="'non_top'"
             [orgunit_model] ="sub_model"
+            [orgunit_component] ="orgunit_component"
             (show_details) = "loadPreviewFromChild($event)"
           ></app-scorecard>
         </td>

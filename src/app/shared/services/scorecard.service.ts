@@ -22,42 +22,104 @@ export interface ScoreCard {
 @Injectable()
 export class ScorecardService {
 
-  _scorecards: ScoreCard[];
+  public scorecards: any = [];
+  public detailed_scorecard: any = [];
+  public related_indicators: any =[];
   private baseUrl: string;
 
   constructor(private http: Http, private costant: Constants) {
     this.baseUrl = this.costant.root_dir;
   }
 
+  getAll(){
+    this.loadAll()
+  }
+
   loadAll() {
-    return this.http.get(this.baseUrl+"api/dataStore/scorecards")
-      .map((response: Response) => response.json())
-      .catch(this.handleError);
+    return Observable.create(observor => {
+      if(this.scorecards.length != 0){
+        observor.next(this.scorecards);
+        observor.complete();
+      }else{
+        this.http.get(this.baseUrl+"api/dataStore/scorecards")
+          .map((response: Response) => response.json())
+          .catch(this.handleError)
+          .subscribe((cards) => {
+            this.scorecards = cards;
+            observor.next(this.scorecards);
+            observor.complete();
+          },error => {
+            observor.error("Something went wrong while trying to get scorecards");
+          })
+      }
+    });
   }
 
   load(id: string ) {
-    return this.http.get(`${this.baseUrl}api/dataStore/scorecards/${id}`)
-      .map((response: Response) => response.json())
-      .catch(this.handleError);
+    return Observable.create(observor => {
+      if(this.detailed_scorecard[id]){
+        observor.next(this.detailed_scorecard[id]);
+        observor.complete();
+      }else{
+        this.http.get(`${this.baseUrl}api/dataStore/scorecards/${id}`)
+          .map((response: Response) => response.json())
+          .catch(this.handleError)
+          .subscribe((scorecard) => {
+            this.detailed_scorecard[id] = scorecard;
+            observor.next(this.detailed_scorecard[id]);
+            observor.complete();
+          }, error => {
+            observor.error("something went wrong");
+          });
+      }
+    });
   }
 
   create(scorecard: ScoreCard) {
-    return this.http.post(this.baseUrl+"api/dataStore/scorecards/"+scorecard.id, scorecard.data)
-      .map((response: Response) => response.json())
-      .catch(this.handleError);
+    return Observable.create(observor => {
+      this.http.post(this.baseUrl+"api/dataStore/scorecards/"+scorecard.id, scorecard.data)
+        .map((response: Response) => response.json())
+        .catch(this.handleError)
+        .subscribe(item => {
+          this.scorecards.push(scorecard.id);
+          this.detailed_scorecard[scorecard.id] = scorecard.data;
+          observor.next(item);
+          observor.complete();
+        }, error => {
+          observor.error("error occurred");
+        })
+    });
   }
 
   update(scorecard: ScoreCard) {
-    console.log(JSON.stringify(scorecard));
-    return this.http.put(this.baseUrl+"api/dataStore/scorecards/"+scorecard.id, scorecard.data)
-      .map((response: Response) => response.json())
-      .catch(this.handleError);
+    return Observable.create(observor => {
+      this.http.put(this.baseUrl+"api/dataStore/scorecards/"+scorecard.id, scorecard.data)
+        .map((response: Response) => response.json())
+        .catch(this.handleError)
+        .subscribe(item => {
+          this.detailed_scorecard[scorecard.id] = scorecard.data;
+          observor.next(item);
+          observor.complete();
+        },error => {
+          observor.error("Something went wrong try again");
+        })
+    });
   }
 
   remove(scorecard: ScoreCard) {
-    return this.http.delete(this.baseUrl+"api/dataStore/scorecards/"+scorecard.id)
-      .map((response: Response) => response.json())
-      .catch(this.handleError);
+    return Observable.create(observor => {
+      this.http.delete(this.baseUrl+"api/dataStore/scorecards/"+scorecard.id)
+        .map((response: Response) => response.json())
+        .catch(this.handleError)
+        .subscribe(item => {
+          observor.next(item);
+          observor.complete();
+          this.scorecards.splice(this.scorecards.indexOf(scorecard.id),1);
+          delete this.detailed_scorecard[scorecard.id];
+        }, error => {
+          observor.error(error);
+        });
+    });
   }
 
   addRelatedIndicator(indicator_id, related_indicators){
@@ -65,36 +127,68 @@ export class ScorecardService {
       // if it is available update the item in data store
       (data) => {
         this.updateRelatedIndicator(indicator_id, related_indicators).subscribe(
-          data => console.log("added"),
-          error => console.log("something went wrong")
+          data => console.info("added"),
+          error => console.error(error)
         );
       },
       // if it is not available add new item in datastore
       (error) => {
         this.createRelatedIndicator(indicator_id, related_indicators).subscribe(
-          data => console.log("added"),
-          error => console.log("something went wrong")
+          data => console.info("added"),
+          error => console.error(error)
         );
       }
     )
   }
 
   getRelatedIndicators(indicator_id){
-    return this.http.get(`${this.baseUrl}api/dataStore/scorecardRelatedIndicators/${indicator_id}`)
-      .map((response: Response) => response.json())
-      .catch(this.handleError);
+    return Observable.create(observor => {
+      if(this.related_indicators[indicator_id]){
+        observor.next(this.related_indicators[indicator_id]);
+        observor.complete();
+      }else{
+        this.http.get(`${this.baseUrl}api/dataStore/scorecardRelatedIndicators/${indicator_id}`)
+          .map((response: Response) => response.json())
+          .catch(this.handleError)
+          .subscribe(indicators => {
+            this.related_indicators[indicator_id] = indicators;
+            observor.next(this.related_indicators[indicator_id]);
+            observor.complete();
+          },error=>{
+            observor.error("Something went wrong when fetching related indicators");
+          })
+      }
+    });
   }
 
   createRelatedIndicator(indicator_id, related_indicators) {
-    return this.http.post(this.baseUrl+"api/dataStore/scorecardRelatedIndicators/"+indicator_id, related_indicators)
-      .map((response: Response) => response.json())
-      .catch(this.handleError);
+    return Observable.create(observor => {
+      this.http.post(this.baseUrl+"api/dataStore/scorecardRelatedIndicators/"+indicator_id, related_indicators)
+        .map((response: Response) => response.json())
+        .catch(this.handleError)
+        .subscribe((indicator) => {
+          this.related_indicators[indicator_id] = related_indicators;
+          observor.next(indicator);
+          observor.complete();
+        },error => {
+          observor.error("Something went wrong when created related indicator");
+        })
+    });
   }
 
   updateRelatedIndicator(indicator_id, related_indicators) {
-    return this.http.put(this.baseUrl+"api/dataStore/scorecardRelatedIndicators/"+indicator_id, related_indicators)
-      .map((response: Response) => response.json())
-      .catch(this.handleError);
+    return Observable.create(observor => {
+      this.http.put(this.baseUrl+"api/dataStore/scorecardRelatedIndicators/"+indicator_id, related_indicators)
+        .map((response: Response) => response.json())
+        .catch(this.handleError)
+        .subscribe(indicator=>{
+          this.related_indicators[indicator_id]  = related_indicators;
+          observor.next(indicator);
+          observor.complete();
+        },error => {
+          observor.error("Something went wrong when updating related indicators");
+        });
+    });
   }
   private handleError (error: Response | any) {
     // In a real world app, we might use a remote logging infrastructure
@@ -126,14 +220,15 @@ export class ScorecardService {
       name: "",
       data: {
         "orgunit_settings": {
-          "selection_mode": "Usr_orgUnit",
-          "selected_level": "",
-          "selected_group": "",
-          "orgunit_levels": [],
-          "orgunit_groups": [],
-          "selected_orgunits": [],
-          "user_orgunits": [],
-          "selected_user_orgunit": "USER_ORGUNIT"
+          selection_mode: "Usr_orgUnit",
+          selected_level: "",
+          selected_group: "",
+          orgunit_levels: [],
+          orgunit_groups: [],
+          selected_orgunits: [],
+          user_orgunits: [],
+          type: "report",
+          selected_user_orgunit: "USER_ORGUNIT"
         },
         "average_selection":"all",
         "shown_records":"all",
