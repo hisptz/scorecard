@@ -1,13 +1,13 @@
 import {Component, OnInit, Input, ViewChild, AfterViewInit, OnDestroy, Output, EventEmitter} from '@angular/core';
 import {FilterService} from "../../shared/services/filter.service";
 import {TreeNode, TREE_ACTIONS, IActionMapping, TreeComponent} from 'angular2-tree-component';
-import {VisulizerService} from "../dhis-visualizer/visulizer.service";
 import {Constants} from "../../shared/costants";
 import { Http, Response } from '@angular/http';
 import 'rxjs/Rx';
 import {Observable} from 'rxjs';
 import { Subscription } from 'rxjs/Rx';
 import {Angular2Csv} from "angular2-csv";
+import {VisualizerService} from "../dhis-visualizer/visulizer.service";
 
 const actionMapping1:IActionMapping = {
   mouse: {
@@ -89,7 +89,7 @@ export class IndicatorCardComponent implements OnInit, AfterViewInit, OnDestroy 
 
   chartData: any = {};
   tableData: any = {};
-  visualizer_config = {
+  visualizer_config:any = {
     'type': 'table',
     'tableConfiguration': {
     'title': 'My chart',
@@ -138,7 +138,7 @@ export class IndicatorCardComponent implements OnInit, AfterViewInit, OnDestroy 
   bottleneck_first_time:boolean = false;
 
   constructor(private filterService: FilterService,
-              private visulizationService: VisulizerService,
+              private visulizationService: VisualizerService,
               private constant: Constants,
               private http: Http
   ) {
@@ -165,7 +165,7 @@ export class IndicatorCardComponent implements OnInit, AfterViewInit, OnDestroy 
   ngAfterViewInit(){
     console.log(this.default_orgunit);
 
-    this.updateIndicatorCard(this.indicator, "table", this.default_period, this.orgunit_model, true);
+    this.updateIndicatorCard(this.indicator, "table", this.default_period, this.orgunit_model, false);
     this.default_period.forEach((current_period) => {
       this.activateNode( current_period.id, this.pertree );
     });
@@ -203,17 +203,20 @@ export class IndicatorCardComponent implements OnInit, AfterViewInit, OnDestroy 
     let periodArray = [];
 
     // check first if your supposed to load bottleneck indicators too for analysis
-
+    let labels = null;
     if( this.showBottleneck ){
+      labels = [];
       for ( let holder of holders ){
         for ( let item of holder.indicators ){
           if( this.hidden_columns.indexOf( item.id ) == -1){
-            // indicatorsArray.push( item.id );
             if( item.hasOwnProperty("bottleneck_indicators") ){
               for( let bottleneck of item.bottleneck_indicators ){
                 indicatorsArray.push( bottleneck.id );
+                labels.push({'id':bottleneck.id, 'name':bottleneck.bottleneck_title })
               }
             }
+            indicatorsArray.push( item.id );
+            labels.push({'id':item.id, 'name':item.title })
           }
         }
       }
@@ -225,10 +228,12 @@ export class IndicatorCardComponent implements OnInit, AfterViewInit, OnDestroy 
         this.bottleneck_first_time = false;
       }
     }else{
+      labels = [];
       for ( let holder of holders ){
         for ( let item of holder.indicators ){
           if( this.hidden_columns.indexOf( item.id ) == -1){
             indicatorsArray.push( item.id );
+            labels.push({'id':item.id, 'name':item.title })
           }
         }
       }
@@ -241,14 +246,16 @@ export class IndicatorCardComponent implements OnInit, AfterViewInit, OnDestroy 
         'tableConfiguration': {
           'title': this.prepareCardTitle(this.indicator),
           'rows': ['ou'],
-          'columns': ['dx','pe']
+          'columns': ['dx','pe'],
+          'labels': labels
         },
         'chartConfiguration': {
           'type':type,
           'show_labels':show_labels,
           'title': this.prepareCardTitle( this.indicator ),
           'xAxisType': 'pe',
-          'yAxisType': 'ou'
+          'yAxisType': 'ou',
+          'labels': labels
         }
       }
     }
@@ -265,14 +272,16 @@ export class IndicatorCardComponent implements OnInit, AfterViewInit, OnDestroy 
         'tableConfiguration': {
           'title': this.prepareCardTitle( this.indicator ),
           'rows': ['ou'] ,
-          'columns': ['pe']
+          'columns': ['pe'],
+          'labels': labels
         },
         'chartConfiguration': {
           'type':type,
           'show_labels':show_labels,
           'title': this.prepareCardTitle( this.indicator ),
           'xAxisType': config_array[1],
-          'yAxisType': config_array[0]
+          'yAxisType': config_array[0],
+          'labels': labels
         }
       };
     }
@@ -298,7 +307,7 @@ export class IndicatorCardComponent implements OnInit, AfterViewInit, OnDestroy 
           this.current_parameters.push(item.id);
         }
         // create an api analytics call
-        let url = this.constant.root_dir+"api/analytics.json?dimension=dx:" + indicatorsArray.join(";") + "&dimension=ou:" + this.getOrgUnitsForAnalytics(orgunits,with_children) + "&dimension=pe:" + periodArray.join(";") + "&displayProperty=NAME";
+        let url = this.constant.root_api+"analytics.json?dimension=dx:" + indicatorsArray.join(";") + "&dimension=ou:" + this.getOrgUnitsForAnalytics(orgunits,with_children) + "&dimension=pe:" + periodArray.join(";") + "&displayProperty=NAME";
 
         this.subscription = this.loadAnalytics(url).subscribe(
           (data) => {
@@ -531,6 +540,7 @@ export class IndicatorCardComponent implements OnInit, AfterViewInit, OnDestroy 
   }
 
 
+
 // action to be called when a tree item is deselected(Remove item in array of selected items
   deactivateOrg ( $event ) {
     this.orgunit_model.selected_orgunits.forEach((item,index) => {
@@ -547,10 +557,6 @@ export class IndicatorCardComponent implements OnInit, AfterViewInit, OnDestroy 
     }
   };
 
-  // add item to array of selected items when item is selected
-  removeOrg = (id) => {
-    this.deActivateNode( id, this.orgtree );
-  };
 
   // check if orgunit already exist in the orgunit display list
   checkItemAvailabilty(orgunit, array): boolean{
@@ -591,13 +597,16 @@ export class IndicatorCardComponent implements OnInit, AfterViewInit, OnDestroy 
     }, 0);
   }
 
-  deActivateNode(nodeId:any, nodes){
+  // a method to activate the model
+  deActivateNode(nodeId:any, nodes, event){
     setTimeout(() => {
       let node = nodes.treeModel.getNodeById(nodeId);
       if (node)
-        // node.toggleActivated();
-        node.setIsActive(false);
+        node.setIsActive(false, true);
     }, 0);
+    if( event != null){
+      event.stopPropagation();
+    }
   }
 
   // function that is used to filter nodes

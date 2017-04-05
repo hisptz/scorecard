@@ -110,7 +110,7 @@
       <tr>
         <td style="vertical-align: bottom" dnd-droppable (onDropSuccess)="transferDataSuccess($event,'new',null)">
           <!--period configurations-->
-          <div class="tree-input" title="default starting period(s) hold control to multiselect">
+          <div class="tree-input" title="default starting period(s) hold control to multiselect" appClickOutside (clickOutside)="showPerTree = true">
             <div>
               <div class="show_items" (click)="displayPerTree()">
               <span *ngIf="selected_periods.length > 3">
@@ -206,7 +206,7 @@
 
           <!--organisation unit tree-->
           <div style="padding-left: 5px; min-width: 420px">
-            <div class="tree-input" >
+            <div class="tree-input" appClickOutside (clickOutside)="showOrgTree = true">
               <div>
                 <div class="show_items" (click)="displayOrgTree()">
           <span>

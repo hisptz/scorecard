@@ -19,17 +19,17 @@ import {initDomAdapter} from "@angular/platform-browser/src/browser";
 import {ScorecardComponent} from "./scorecard/scorecard.component";
 
 
-const actionMapping1:IActionMapping = {
+const actionMapping:IActionMapping = {
   mouse: {
     click: (node, tree, $event) => {
-      $event.shiftKey
+      $event.ctrlKey
         ? TREE_ACTIONS.TOGGLE_SELECTED_MULTI(node, tree, $event)
         : TREE_ACTIONS.TOGGLE_SELECTED(node, tree, $event)
     }
   }
 };
 
-const actionMapping:IActionMapping = {
+const actionMapping1:IActionMapping = {
   mouse: {
     dblClick: TREE_ACTIONS.TOGGLE_EXPANDED,
     click: (node, tree, $event) => TREE_ACTIONS.TOGGLE_SELECTED_MULTI(node, tree, $event)
@@ -428,22 +428,23 @@ export class ViewComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   //setting the period to next or previous
-  setPeriod(type){
+  setPeriod(type,selected_periods){
+    this.selected_periods = [];
     if(type == "down"){
-      this.periods = this.filterService.getPeriodArray(this.period_type, this.filterService.getLastPeriod(this.period[0].id,this.period_type).substr(0,4));
-      this.activateNode(this.filterService.getLastPeriod(this.period[0].id,this.period_type), this.pertree);
+      this.periods = this.filterService.getPeriodArray(this.period_type, this.filterService.getLastPeriod(selected_periods,this.period_type).substr(0,4));
+      this.activateNode(this.filterService.getLastPeriod(selected_periods,this.period_type), this.pertree);
       this.period = [{
-        id:this.filterService.getLastPeriod(this.period[0].id,this.period_type),
-        name:this.getPeriodName(this.filterService.getLastPeriod(this.period[0].id,this.period_type))
+        id:this.filterService.getLastPeriod(selected_periods,this.period_type),
+        name:this.getPeriodName(this.filterService.getLastPeriod(selected_periods,this.period_type))
       }];
 
     }
     if(type == "up"){
-      this.periods = this.filterService.getPeriodArray(this.period_type, this.filterService.getNextPeriod(this.period[0].id,this.period_type).substr(0,4));
-      this.activateNode(this.filterService.getNextPeriod(this.period[0].id,this.period_type), this.pertree);
+      this.periods = this.filterService.getPeriodArray(this.period_type, this.filterService.getNextPeriod(selected_periods,this.period_type).substr(0,4));
+      this.activateNode(this.filterService.getNextPeriod(selected_periods,this.period_type), this.pertree);
       this.period = [{
-        id:this.filterService.getNextPeriod(this.period[0].id,this.period_type),
-        name:this.getPeriodName(this.filterService.getNextPeriod(this.period[0].id,this.period_type))
+        id:this.filterService.getNextPeriod(selected_periods,this.period_type),
+        name:this.getPeriodName(this.filterService.getNextPeriod(selected_periods,this.period_type))
       }];
     }
     setTimeout(() => {

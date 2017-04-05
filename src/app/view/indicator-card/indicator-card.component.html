@@ -1,7 +1,7 @@
 <div class="container-fluid" id="filters" style="padding: 0px">
   <div class="col-sm-4" style="padding-left: 5px">
     <label>Organisation Units</label>
-    <div class="tree-input" >
+    <div class="tree-input" appClickOutside (clickOutside)="showOrgTree = true" >
       <div>
         <div class="show_items" (click)="displayOrgTree()">
           <span>
@@ -10,9 +10,11 @@
           <span *ngIf="orgunit_model.selected_orgunits.length > 4 && orgunit_model.selection_mode != 'Usr_orgUnit'">
             <span class="selected-item">
               {{ orgunit_model.selected_orgunits[0].name }}
+              <a (click)="deActivateNode(orgunit_model.selected_orgunits[0].id,orgtree,$event)" class="removeorgunit">x</a>
             </span>
             <span class="selected-item">
               {{ orgunit_model.selected_orgunits[1].name }}
+              <a (click)="deActivateNode(orgunit_model.selected_orgunits[1].id,orgtree,$event)" class="removeorgunit">x</a>
             </span>
             <span >
               &nbsp; and {{ orgunit_model.selected_orgunits.length - 2 }} more
@@ -21,6 +23,7 @@
           <span *ngIf="orgunit_model.selected_orgunits.length <= 4 && orgunit_model.selection_mode != 'Usr_orgUnit'">
              <span *ngFor="let item of orgunit_model.selected_orgunits" class="selected-item ng-binding ng-scope">
               {{ item.name }}
+               <a (click)="deActivateNode(item.id,orgtree,$event)" class="removeorgunit">x</a>
             </span>
           </span>
           <span class="no-selection"*ngIf="orgunit_model.selected_orgunits.length == 0 && !card_orgunit_tree_config.loading">{{ card_orgunit_tree_config.placeholder }}</span>
@@ -97,17 +100,20 @@
   </div>
   <div class="col-sm-3">
         <label>Selected Period</label>
-        <div class="tree-input" >
+        <div class="tree-input" appClickOutside (clickOutside)="showPerTree = true">
           <div>
             <div class="show_items" (click)="displayPerTree()">
               <span *ngIf="card_selected_periods.length > 4">
             <span class="selected-item">
-              {{ card_selected_periods[0].name }} selected
+              {{ card_selected_periods[0].name }}
+              <a (click)="deActivateNode(card_selected_periods[0].id,pertree,$event)" class="removeorgunit">x</a>
             </span>
                 <span class="selected-item">
-              {{ card_selected_periods[1].name }} selected
+              {{ card_selected_periods[1].name }}
+                  <a (click)="deActivateNode(card_selected_periods[1].id,pertree,$event)" class="removeorgunit">x</a>
             </span><span class="selected-item">
-              {{ card_selected_periods[2].name }} selected
+              {{ card_selected_periods[2].name }}
+                <a (click)="deActivateNode(card_selected_periods[2].id,pertree,$event)" class="removeorgunit">x</a>
             </span><span class="selected-item">
               and {{ card_selected_periods.length -3 }} more
             </span>
@@ -115,6 +121,7 @@
               <span *ngIf="card_selected_periods.length <= 4">
                 <span *ngFor="let item of card_selected_periods" class="selected-item ng-binding ng-scope">
                   {{ item.name }}
+                  <a (click)="deActivateNode(item.id,pertree,$event)" class="removeorgunit">x</a>
                 </span>
               </span>
               <span class="no-selection"*ngIf="card_selected_periods.length == 0 && !card_period_tree_config.loading">{{ card_period_tree_config.placeholder }}</span>

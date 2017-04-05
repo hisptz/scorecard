@@ -14,7 +14,7 @@
 <div class="container-fluid no-print" id="filters" style="padding: 0px">
   <div class="col-sm-4" style="padding-left: 5px">
     <label>Organisation Units</label>
-    <div class="tree-input" >
+    <div class="tree-input" appClickOutside (clickOutside)="showOrgTree = true" >
       <div>
         <div class="show_items" (click)="displayOrgTree()">
           <span>
@@ -113,7 +113,7 @@
   </div>
   <div class="col-sm-4">
         <label>Selected Period</label>
-        <div class="tree-input" >
+        <div class="tree-input"  appClickOutside (clickOutside)="showPerTree = true" >
           <div>
             <div class="show_items" (click)="displayPerTree()">
               <span *ngIf="selected_periods.length > 4">
@@ -138,9 +138,9 @@
               <span class="glyphicon glyphicon-triangle-bottom pull-right" *ngIf="!period_tree_config.loading"></span>
               <span *ngIf="period_tree_config.loading">{{ period_tree_config.loading_message }}</span>
             </div>
-            <div class="show_tops">
-              <div class="arrows" title="go to next period" style="height: 19px;border-bottom: 1px solid black" (click)="setPeriod('up')" ><span class="glyphicon glyphicon-triangle-top"></span> </div>
-              <div class="arrows" title="go to previous period" style="height: 17px" (click)="setPeriod('down')"> <span class="glyphicon glyphicon-triangle-bottom"></span></div>
+            <div class="show_tops" *ngIf="selected_periods.length == 1">
+              <div class="arrows" title="go to next period" style="height: 19px;border-bottom: 1px solid black" (click)="setPeriod('up',selected_periods[0].id)" ><span class="glyphicon glyphicon-triangle-top"></span> </div>
+              <div class="arrows" title="go to previous period" style="height: 17px" (click)="setPeriod('down',selected_periods[0].id)"> <span class="glyphicon glyphicon-triangle-bottom"></span></div>
             </div>
             <div class="tree-view" [ngClass]="{'hiddenTree':showPerTree}">
               <div class="col-sm-7" style="padding-left: 0px; margin-bottom: 5px">
