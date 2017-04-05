@@ -1,0 +1,14 @@
+{
+  "/api": {
+    "target": "http://localhost:8080",
+    "target2": "http://139.162.241.220",
+    "secure": "false",
+    "auth":"admin:district"
+  },
+  "/": {
+    "target": "http://localhost:8080",
+    "target2": "http://139.162.241.220",
+    "secure": "false",
+    "auth":"admin:district"
+  }
+}

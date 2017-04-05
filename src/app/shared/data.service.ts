@@ -45,7 +45,7 @@ export class DataService {
   }
 
   getIndicatorsRequest ( orgunits: string, period:string, indicator:string ) {
-    return this.http.get(this.constant.root_dir + 'api/analytics.json?dimension=dx:'+indicator+'&dimension=ou:'+orgunits+'&dimension=pe:'+period+'&displayProperty=NAME')
+    return this.http.get(this.constant.root_api + 'analytics.json?dimension=dx:'+indicator+'&dimension=ou:'+orgunits+'&dimension=pe:'+period+'&displayProperty=NAME')
       .map((response: Response) => response.json())
       .catch( this.handleError );
   }

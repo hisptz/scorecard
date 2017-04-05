@@ -1,13 +1,13 @@
 import {Component, OnInit, Input, ViewChild, AfterViewInit, OnDestroy, Output, EventEmitter} from '@angular/core';
 import {FilterService} from "../../shared/services/filter.service";
 import {TreeNode, TREE_ACTIONS, IActionMapping, TreeComponent} from 'angular2-tree-component';
-import {VisulizerService} from "../dhis-visualizer/visulizer.service";
 import {Constants} from "../../shared/costants";
 import { Http, Response } from '@angular/http';
 import 'rxjs/Rx';
 import {Observable} from 'rxjs';
 import { Subscription } from 'rxjs/Rx';
 import {Angular2Csv} from "angular2-csv";
+import {VisualizerService} from "../dhis-visualizer/visulizer.service";
 
 const actionMapping1:IActionMapping = {
   mouse: {
@@ -138,7 +138,7 @@ export class IndicatorCardComponent implements OnInit, AfterViewInit, OnDestroy 
   bottleneck_first_time:boolean = false;
 
   constructor(private filterService: FilterService,
-              private visulizationService: VisulizerService,
+              private visulizationService: VisualizerService,
               private constant: Constants,
               private http: Http
   ) {
@@ -292,7 +292,7 @@ export class IndicatorCardComponent implements OnInit, AfterViewInit, OnDestroy 
           this.current_parameters.push(item.id);
         }
         // create an api analytics call
-        let url = this.constant.root_dir+"api/analytics.json?dimension=dx:" + indicatorsArray.join(";") + "&dimension=ou:" + this.getOrgUnitsForAnalytics(orgunits,with_children) + "&dimension=pe:" + periodArray.join(";") + "&displayProperty=NAME";
+        let url = this.constant.root_api+"analytics.json?dimension=dx:" + indicatorsArray.join(";") + "&dimension=ou:" + this.getOrgUnitsForAnalytics(orgunits,with_children) + "&dimension=pe:" + periodArray.join(";") + "&displayProperty=NAME";
 
         this.subscription = this.loadAnalytics(url).subscribe(
           (data) => {

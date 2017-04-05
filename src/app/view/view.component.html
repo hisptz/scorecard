@@ -14,7 +14,7 @@
 <div class="container-fluid no-print" id="filters" style="padding: 0px">
   <div class="col-sm-4" style="padding-left: 5px">
     <label>Organisation Units</label>
-    <div class="tree-input" >
+    <div class="tree-input" appClickOutside (clickOutside)="showOrgTree = true">
       <div>
         <div class="show_items" (click)="displayOrgTree()">
           <span>
@@ -110,7 +110,7 @@
   </div>
   <div class="col-sm-4">
         <label>Selected Period</label>
-        <div class="tree-input" >
+        <div class="tree-input" appClickOutside (clickOutside)="showPerTree = true">
           <div>
             <div class="show_items" (click)="displayPerTree()">
       <span *ngFor="let item of selected_periods" class="selected-item ng-binding ng-scope">

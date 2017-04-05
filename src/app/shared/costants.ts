@@ -7,9 +7,11 @@ import {Observable, Subscription} from "rxjs";
 @Injectable()
 export class Constants {
     root_dir: string = null;
+    root_api: string = null;
 
     constructor( private http: Http ){
       this.root_dir = '../../../';
+      this.root_api = '../../../api/25/';
     }
 
   load() {

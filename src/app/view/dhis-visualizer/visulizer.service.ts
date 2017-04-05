@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 
 @Injectable()
-export class VisulizerService {
+export class VisualizerService {
   enable_labels:boolean = false;
   constructor() { }
 
@@ -62,6 +62,7 @@ export class VisulizerService {
         chartObject = this.drawOtherCharts(analyticObject, chartConfiguration);
         break;
     }
+    chartObject.credits =  {enabled: false};
     return chartObject;
   }
 
@@ -82,6 +83,38 @@ export class VisulizerService {
       counter++;
     }
     return index;
+  }
+
+  _sanitizeIncomingAnalytics( analyticsObject:any ){
+    for(let header of analyticsObject.headers ){
+      if(header.hasOwnProperty("optionSet")){
+        if( analyticsObject.metaData[header.name].length == 0 ){
+          analyticsObject.metaData[header.name] = this._getRowItems(this._getTitleIndex(analyticsObject.headers, header.name), analyticsObject.rows);
+          for( let item of analyticsObject.metaData[header.name] ){
+            analyticsObject.metaData.names[item] = item;
+          }
+
+        }else{
+          for( let item of analyticsObject.metaData[header.name] ){
+            analyticsObject.metaData.names[item] = item;
+          }
+        }
+      }
+    }
+
+    return analyticsObject;
+  }
+
+  _getRowItems( position:number, array ) {
+    let return_array = [];
+    for (let item of array ){
+      if( return_array.indexOf(item[position]) == -1 ){
+        return_array.push(item[position]);
+      }
+    }
+
+    console.log(return_array)
+    return return_array;
   }
 
   /**
@@ -114,6 +147,7 @@ export class VisulizerService {
    */
   getDetailedMetadataArray ( analyticsObject, metadataType: string ) {
     let metadataArray = [];
+    analyticsObject = this._sanitizeIncomingAnalytics(analyticsObject);
     for (let item of analyticsObject.metaData[metadataType]) {
       metadataArray.push({
         id:item,
@@ -134,6 +168,7 @@ export class VisulizerService {
    * @returns {{xAxisItems: Array, yAxisItems: Array}}
    */
   prepareCategories ( analyticsObject, xAxis: string, yAxis: string, xAxisItems = [],  yAxisItems = []){
+    analyticsObject = this._sanitizeIncomingAnalytics(analyticsObject);
     let structure = {
       'xAxisItems':[],
       'yAxisItems':[]
@@ -166,6 +201,7 @@ export class VisulizerService {
    * @returns {{xAxisItems: Array, yAxisItems: Array}}
    */
   prepareSingleCategories ( analyticsObject, itemIdentifier , preDefinedItems = [] ){
+    analyticsObject = this._sanitizeIncomingAnalytics(analyticsObject);
     let structure = [];
     if ( preDefinedItems.length === 0 ) {
       for ( let val of this.getMetadataArray(analyticsObject, itemIdentifier )){
@@ -246,7 +282,7 @@ export class VisulizerService {
     chartObject.series.push({
       name: chartConfiguration.title ,
       data: serie,
-      showInLegend: true,
+      showInLegend: false,
       dataLabels: {
         enabled: false
       } });
@@ -510,118 +546,217 @@ export class VisulizerService {
     return piechartObject;
   }
 
-
   drawTable ( analyticsObject , tableConfiguration ) {
+    // console.log(tableConfiguration);
     let table = {
       'headers': [],
       'columns': [],
-      'rows': []
+      'rows': [],
+      'titles': {
+        'rows': [],
+        'column': []
+      }
     };
-    for ( let columnItem of tableConfiguration.columns ) {
-      let dimension = this.calculateColSpan (analyticsObject , tableConfiguration.columns, columnItem);
-      let currentColumnItems = this.prepareSingleCategories( analyticsObject, columnItem );
-      let headerItem = [];
-      for (let i = 0; i < dimension.duplication; i++ ) {
-        for ( let currentItem of currentColumnItems ){
-          headerItem.push({ 'name': currentItem.name, 'span': dimension.col_span });
-        }
-      }
-      let styles = '';
-      if(tableConfiguration.hasOwnProperty('style') ){
-        if(tableConfiguration.styles.hasOwnProperty(columnItem)){
-          styles = tableConfiguration.styles[columnItem]
-        }
-      }
-      table.headers.push( {'items': headerItem, 'style': styles} );
-    }
-    for ( let rowItem of tableConfiguration.rows ) {
-      table.columns.push( rowItem );
-    }
-
-    // Preparing table columns
-    let column_length = tableConfiguration.columns.length;
-    let column_items_array = [];
-    for ( let i = 0; i < column_length; i++ ) {
-      let currentRowItems = this.prepareSingleCategories( analyticsObject, tableConfiguration.columns[i] );
-      column_items_array.push( currentRowItems );
-    }
-    let table_columns_array = [];
-    for (let i = 0; i < column_items_array.length; i++ ) {
-      if ( table_columns_array.length === 0 ) {
-        for ( let item of column_items_array[i] ) {
-          table_columns_array.push( item );
-        }
-      }else {
-        let temp_arr = table_columns_array.concat();
-        table_columns_array = [];
-        for ( let item of temp_arr ) {
-          for ( let val of  column_items_array[i] ) {
-            if ( item instanceof Array ) {
-              let tempArr = Array.from(item);
-              table_columns_array.push(tempArr.concat([val]));
-            }else {
-              table_columns_array.push([item, val]);
-            }
-          }
-        }
-      }
-
-    }
-
-    // Preparing table rows
-    let rows_length = tableConfiguration.rows.length;
-    let row_items_array = [];
-    for ( let i = 0; i < rows_length; i++ ) {
-      let dimension = this.calculateColSpan (analyticsObject , tableConfiguration.rows, tableConfiguration.rows[i]);
-      let currentRowItems = this.prepareSingleCategories( analyticsObject, tableConfiguration.rows[i] );
-      row_items_array.push( {'items': currentRowItems, 'dimensions': dimension} );
-    }
-    let table_rows_array = [];
-    for (let i = 0; i < row_items_array.length; i++ ) {
-      if ( table_rows_array.length === 0 ) {
-        for ( let item of row_items_array[i].items ) {
-          item.dimensions = row_items_array[i].dimensions;
-          table_rows_array.push( [item] );
-        }
-      }else {
-        let temp_arr = table_rows_array.concat();
-        table_rows_array = [];
-        for ( let item of temp_arr ) {
-          for ( let val of  row_items_array[i].items ) {
-            val.dimensions = row_items_array[i].dimensions;
-            if ( item instanceof Array ) {
-              let tempArr = Array.from(item);
-              table_rows_array.push(tempArr.concat([val]));
-            }else {
-              table_rows_array.push([item, val]);
-            }
-          }
-        }
-      }
-
-    }
-
-    let counter = 0;
-    for ( let rowItem of table_rows_array ) {
-      let item = {
-        'items': [],
-        'headers': rowItem
+    if (tableConfiguration.hasOwnProperty("display_list") && tableConfiguration.display_list) {
+      table.headers[0] = {
+        items: [],
+        style: ""
       };
-      for (let val of rowItem ){
-        if ( counter === 0 || counter % val.dimensions.col_span === 0) {
-          item.items.push( {'name': val.uid , 'val': val.name, 'row_span': val.dimensions.col_span} );
+      tableConfiguration.columns[tableConfiguration.columns.indexOf('pe')] = 'eventdate';
+      tableConfiguration.columns[tableConfiguration.columns.indexOf('ou')] = 'ouname';
+      for ( let item of tableConfiguration.columns ){
+        table.headers[0].items.push(
+          {
+            name: analyticsObject.headers[this._getTitleIndex(analyticsObject.headers,item)].column,
+            span: 1
+          }
+        )
+      }
+      for( let item of analyticsObject.rows ){
+        let column_items = [];
+        for ( let col of tableConfiguration.columns ){
+          let index = this._getTitleIndex( analyticsObject.headers,col );
+          column_items.push({
+            name:"",
+            display:true,
+            row_span: "1",
+            val: item[index]
+          })
+
+        }
+        table.rows.push(
+          {
+            headers:[],
+            items:column_items
+          }
+        )
+      }
+    } else {
+      // add names to titles array
+      for (let item of tableConfiguration.columns) {
+        table.titles.column.push(analyticsObject.headers[this._getTitleIndex(analyticsObject.headers, item)].column);
+      }
+      for (let item of tableConfiguration.rows) {
+        table.titles.rows.push(analyticsObject.headers[this._getTitleIndex(analyticsObject.headers, item)].column);
+      }
+      for (let columnItem of tableConfiguration.columns) {
+        let dimension = this.calculateColSpan(analyticsObject, tableConfiguration.columns, columnItem);
+        let currentColumnItems = this.prepareSingleCategories(analyticsObject, columnItem);
+        let headerItem = [];
+        for (let i = 0; i < dimension.duplication; i++) {
+          for (let currentItem of currentColumnItems) {
+            headerItem.push({'name': currentItem.name, 'span': dimension.col_span});
+          }
+        }
+        let styles = '';
+        if (tableConfiguration.hasOwnProperty('style')) {
+          if (tableConfiguration.styles.hasOwnProperty(columnItem)) {
+            styles = tableConfiguration.styles[columnItem]
+          }
+        }
+        table.headers.push({'items': headerItem, 'style': styles});
+      }
+      for (let rowItem of tableConfiguration.rows) {
+        table.columns.push(rowItem);
+      }
+
+      // Preparing table columns
+      let column_length = tableConfiguration.columns.length;
+      let column_items_array = [];
+      for (let i = 0; i < column_length; i++) {
+        let currentRowItems = this.prepareSingleCategories(analyticsObject, tableConfiguration.columns[i]);
+        column_items_array.push(currentRowItems);
+      }
+      let table_columns_array = [];
+      for (let i = 0; i < column_items_array.length; i++) {
+        if (table_columns_array.length === 0) {
+          for (let item of column_items_array[i]) {
+            table_columns_array.push([item]);
+          }
+        } else {
+          let temp_arr = table_columns_array.concat();
+          table_columns_array = [];
+          for (let item of temp_arr) {
+            for (let val of  column_items_array[i]) {
+              if (item instanceof Array) {
+                let tempArr = Array.from(item);
+                table_columns_array.push(tempArr.concat([val]));
+              } else {
+                table_columns_array.push([item, val]);
+              }
+            }
+          }
+        }
+
+      }
+
+      // Preparing table rows
+      let rows_length = tableConfiguration.rows.length;
+      let row_items_array = [];
+      for (let i = 0; i < rows_length; i++) {
+        let dimension = this.calculateColSpan(analyticsObject, tableConfiguration.rows, tableConfiguration.rows[i]);
+        let currentRowItems = this.prepareSingleCategories(analyticsObject, tableConfiguration.rows[i]);
+        row_items_array.push({'items': currentRowItems, 'dimensions': dimension});
+      }
+      let table_rows_array = [];
+      for (let i = 0; i < row_items_array.length; i++) {
+        if (table_rows_array.length === 0) {
+          for (let item of row_items_array[i].items) {
+            item.dimensions = row_items_array[i].dimensions;
+            table_rows_array.push([item]);
+          }
+        } else {
+          let temp_arr = table_rows_array.concat();
+          table_rows_array = [];
+          for (let item of temp_arr) {
+            for (let val of  row_items_array[i].items) {
+              val.dimensions = row_items_array[i].dimensions;
+              if (item instanceof Array) {
+                let tempArr = Array.from(item);
+                table_rows_array.push(tempArr.concat([val]));
+              } else {
+                table_rows_array.push([item, val]);
+              }
+            }
+          }
+        }
+
+      }
+
+      let counter = 0;
+      if(table_rows_array.length != 0){
+        for (let rowItem of table_rows_array) {
+          let item = {
+            'items': [],
+            'headers': rowItem
+          };
+          for (let val of rowItem) {
+            if (counter === 0 || counter % val.dimensions.col_span === 0) {
+              item.items.push({'name': val.uid, 'val': val.name, 'row_span': val.dimensions.col_span});
+            }
+          }
+          for (let colItem of table_columns_array) {
+            let dataItem = [];
+            for (let val of rowItem) {
+              dataItem.push({'type': val.type, 'value': val.uid});
+            }
+            for (let val of colItem) {
+              dataItem.push({'type': val.type, 'value': val.uid});
+            }
+            item.items.push({
+              'name': '',
+              'val': this.getDataValue(analyticsObject, dataItem),
+              'row_span': '1',
+              'display': true
+            });
+          }
+          if (tableConfiguration.hasOwnProperty("hide_zeros") && tableConfiguration.hide_zeros) {
+            if (!this.checkZeros(tableConfiguration.rows.length, item.items)) {
+              table.rows.push(item);
+            }
+          } else {
+            table.rows.push(item);
+          }
+
+          counter++;
+        }
+      }else{
+        let item = {
+          'items': [],
+          'headers': []
+        };
+        for (let colItem of table_columns_array) {
+          let dataItem = [];
+          for (let val of colItem) {
+            dataItem.push({'type': val.type, 'value': val.uid});
+          }
+          item.items.push({
+            'name': '',
+            'val': this.getDataValue(analyticsObject, dataItem),
+            'row_span': '1',
+            'display': true
+          });
+        }
+        if (tableConfiguration.hasOwnProperty("hide_zeros") && tableConfiguration.hide_zeros) {
+          if (!this.checkZeros(tableConfiguration.rows.length, item.items)) {
+            table.rows.push(item);
+          }
+        } else {
+          table.rows.push(item);
         }
       }
-      for ( let colItem of table_columns_array ) {
-        let dataItem = [];
-        for (let val of rowItem ){ dataItem.push( {'type': val.type, 'value': val.uid} );  }
-        for (let val of colItem ){ dataItem.push( {'type': val.type, 'value': val.uid} );  }
-        item.items.push( {'name': '' , 'val': this.getDataValue( analyticsObject, dataItem ), 'row_span': '1', 'display': true} );
-      }
-      table.rows.push( item );
-      counter++;
     }
     return table;
+  }
+
+  checkZeros(stating_length,  array ): boolean{
+    let checker = true;
+    for (let  i =stating_length; i<array.length; i++){
+      if( parseInt(array[i].val) != 0 ){
+        checker = false
+      }
+    }
+    return checker;
   }
 
   calculateColSpan (analyticsObject, array, item ) {
@@ -660,7 +795,7 @@ export class VisulizerService {
         xAxis: {
           categories: [],
           labels: {
-            rotation: -60,
+            rotation: -45,
             style: {'color': '#000000', 'fontWeight': 'normal'}
           }
         },
@@ -779,7 +914,7 @@ export class VisulizerService {
       return {
         chart: {
           type: 'solidgauge',
-            events: {
+          events: {
             load: function(chart) {
               setTimeout(function() {
                 chart.target.reflow();
@@ -794,14 +929,14 @@ export class VisulizerService {
 
         pane: {
           center: ['50%', '85%'],
-            size: '140%',
-            startAngle: -90,
-            endAngle: 90,
-            background: {
+          size: '140%',
+          startAngle: -90,
+          endAngle: 90,
+          background: {
             backgroundColor: '#EEE',
-              innerRadius: '60%',
-              outerRadius: '100%',
-              shape: 'arc'
+            innerRadius: '60%',
+            outerRadius: '100%',
+            shape: 'arc'
           }
         },
 
@@ -816,16 +951,16 @@ export class VisulizerService {
             [0.5, '#DDDF0D'], // yellow
             [0.9, '#55BF3B'] // red
           ],
-            lineWidth: 0,
-            minorTickInterval: null,
-            tickPixelInterval: 400,
-            tickWidth: 0,
-            labels: {
+          lineWidth: 0,
+          minorTickInterval: null,
+          tickPixelInterval: 400,
+          tickWidth: 0,
+          labels: {
             y: 16
           },
           min: 0,
-            max: 100,
-            title: {
+          max: 100,
+          title: {
             text: ''
           }
         },
@@ -834,8 +969,8 @@ export class VisulizerService {
           solidgauge: {
             dataLabels: {
               y: 5,
-                borderWidth: 0,
-                useHTML: true
+              borderWidth: 0,
+              useHTML: true
             }
           }
         },
@@ -861,11 +996,15 @@ export class VisulizerService {
         },
         plotOptions: {
           pie: {
+            borderWidth: 0,
             allowPointSelect: true,
             cursor: 'pointer',
             dataLabels: {
               enabled: true,
-              format: '<b>{point.name}</b>: {point.percentage:.1f} %'
+              format: '<b>{point.name}</b>: {point.percentage:.1f} %',
+              style: {
+                color: 'black'
+              }
             }
           }
         },
@@ -873,6 +1012,4 @@ export class VisulizerService {
       };
     }
   }
-
-
 }
