@@ -7,6 +7,7 @@ import { FilterByNamePipe } from './filter-by-name.pipe';
 import { TinymceEditorDirective } from "./text-editor/tinymice-editor-directive.directive";
 import { SafeHtmlPipe } from './safe-html.pipe';
 import { ColorPickerModule } from "ngx-color-picker";
+import {ClickOutsideDirective} from "./click-outside.directive";
 // import {FilterPipe} from "./filter.pipe";
 
 @NgModule({
@@ -16,7 +17,7 @@ import { ColorPickerModule } from "ngx-color-picker";
     ColorPickerModule
 
   ],
-  declarations: [ FilterByNamePipe, TinymceEditorDirective, SafeHtmlPipe],
+  declarations: [ FilterByNamePipe, TinymceEditorDirective, SafeHtmlPipe, ClickOutsideDirective],
   exports: [
     TreeModule,
     FormsModule,
@@ -25,7 +26,8 @@ import { ColorPickerModule } from "ngx-color-picker";
     ColorPickerModule,
     FilterByNamePipe,
     TinymceEditorDirective,
-    SafeHtmlPipe
+    SafeHtmlPipe,
+    ClickOutsideDirective
   ]
 })
 export class SharedModule { }
