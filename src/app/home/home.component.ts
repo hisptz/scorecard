@@ -5,6 +5,7 @@ import {ScoreCard,ScorecardService} from "../shared/services/scorecard.service";
 import {OrgUnitService} from "../shared/services/org-unit.service";
 import {DataService} from "../shared/data.service";
 import {PaginationInstance} from "ng2-pagination";
+import {Router} from "@angular/router";
 
 @Component({
   selector: 'app-home',
@@ -31,23 +32,20 @@ export class HomeComponent implements OnInit {
   deleted: boolean[] = [];
   error_deleting: boolean[] = [];
   confirm_deleting: boolean[] = [];
-  have_authorities:boolean = false;
-  constructor( private scoreCardService: ScorecardService, private orgUnitService: OrgUnitService, private dataService: DataService) {
-    this.scorecards = []
+  have_authorities:boolean = true;
+  userInfo:any = {};
+  constructor( private scoreCardService: ScorecardService,
+               private orgUnitService: OrgUnitService,
+               private dataService: DataService,
+               private router: Router) {
+    this.scorecards = [];
     this.scorecards_loading = true;
     this.complete_percent = 0;
     this.loading_message = "Loading First Score card";
     this.dataService.getUserInformation().subscribe(
       userInfo => {
-        //noinspection TypeScriptUnresolvedVariable
-        userInfo.userCredentials.userRoles.forEach( (role) => {
-          role.authorities.forEach( (ath) => {
-            if( ath == "ALL"){
-              this.have_authorities = true;
-            }
-          } );
+        this.userInfo = userInfo;
 
-        })
       }
     )
   }
@@ -67,11 +65,14 @@ export class HomeComponent implements OnInit {
           this.scoreCardService.load(scorecard).subscribe(
             scorecard_details => {
               this.loading_message = "Loading data for "+scorecard_details.header.title;
-              this.scorecards.push({
+              let scorecard_item = {
                 id: scorecard,
                 name: scorecard_details.header.title,
-                data: scorecard_details
-              });
+                data: scorecard_details,
+                can_see:this.dataService.checkForUserGroupInScorecard(scorecard_details,this.userInfo).see,
+                can_edit:this.dataService.checkForUserGroupInScorecard(scorecard_details,this.userInfo).edit,
+              };
+              this.scorecards.push(scorecard_item);
               this.dataService.sortArrOfObjectsByParam(this.scorecards, 'name',true);
               this.deleting[scorecard] = false;
               this.confirm_deleting[scorecard] = false;
@@ -103,7 +104,13 @@ export class HomeComponent implements OnInit {
     this.orgUnitService.prepareOrgunits();
   }
 
-  deleteScoreCard( scorecard ){
+  openscorecard(id,event){
+    this.router.navigate(['create','edit',id]);
+    event.stopPropagation();
+  }
+
+  deleteScoreCard( scorecard, event ){
+    event.stopPropagation();
     this.deleting[scorecard.id] = true;
     this.confirm_deleting[scorecard.id] = false;
     this.scoreCardService.remove( scorecard ).subscribe(
@@ -124,7 +131,7 @@ export class HomeComponent implements OnInit {
           this.error_deleting[scorecard.id] = false;
         }, 4000);
       }
-    )
+    );
   }
 
 

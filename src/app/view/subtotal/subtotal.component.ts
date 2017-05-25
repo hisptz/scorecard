@@ -12,6 +12,7 @@ export class SubtotalComponent implements OnInit {
   @Input() scorecard: any;
   @Input() calculation: any;
   @Input() indicator_list: any[] = [];
+  @Input() period: string;
   constructor() {
 
   }
@@ -35,16 +36,19 @@ export class SubtotalComponent implements OnInit {
    */
   findColumnAverage(orgunits, indicator_id,scorecard){
     let sum = 0;
+    let counter = 0;
     for ( let orgunit of orgunits ){
+      let use_key = orgunit.id+"."+this.period;
       for ( let holder of scorecard.data.data_settings.indicator_holders ){
         for( let indicator of holder.indicators ){
-          if(orgunit.id in indicator.values && indicator.id == indicator_id && indicator.values[orgunit.id] != null){
-            sum = sum + parseFloat(indicator.values[orgunit.id])
+          if(use_key in indicator.values && indicator.id == indicator_id && indicator.values[use_key] != null){
+            counter++;
+            sum = sum + parseFloat(indicator.values[use_key])
           }
         }
       }
     }
-    return (sum/ orgunits.length).toFixed(2);
+    return (sum/ counter).toFixed(2);
   }
 
   /**
@@ -54,10 +58,11 @@ export class SubtotalComponent implements OnInit {
   findColumnSum(orgunits, indicator_id, scorecard){
     let sum = 0;
     for ( let orgunit of orgunits ){
+      let use_key = orgunit.id+"."+this.period;
       for ( let holder of scorecard.data.data_settings.indicator_holders ){
         for( let indicator of holder.indicators ){
-          if(orgunit.id in indicator.values && indicator.id == indicator_id && indicator.values[orgunit.id] != null){
-            sum = sum + parseFloat(indicator.values[orgunit.id])
+          if(use_key in indicator.values && indicator.id == indicator_id && indicator.values[use_key] != null){
+            sum = sum + parseFloat(indicator.values[use_key])
           }
         }
       }

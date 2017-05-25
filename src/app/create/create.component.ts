@@ -14,14 +14,12 @@ import {Subscription} from "rxjs";
 import {DataService} from "../shared/data.service";
 import {OrgUnitService} from "../shared/services/org-unit.service";
 import {TreeNode, TREE_ACTIONS, IActionMapping, TreeComponent} from 'angular2-tree-component';
+import {FilterService} from "../shared/services/filter.service";
 
 const actionMapping:IActionMapping = {
   mouse: {
-    click: (node, tree, $event) => {
-      $event.ctrlKey
-        ? TREE_ACTIONS.TOGGLE_SELECTED_MULTI(node, tree, $event)
-        : TREE_ACTIONS.TOGGLE_SELECTED(node, tree, $event)
-    }
+    dblClick: TREE_ACTIONS.TOGGLE_EXPANDED,
+    click: (node, tree, $event) => TREE_ACTIONS.TOGGLE_SELECTED_MULTI(node, tree, $event)
   }
 };
 
@@ -80,6 +78,12 @@ export class CreateComponent implements OnInit, AfterViewInit, OnDestroy {
   @ViewChild('orgtree')
   orgtree: TreeComponent;
 
+  @ViewChild('pertree')
+  pertree: TreeComponent;
+  periods: any[] = [];
+  selected_periods:any = [];
+  period_type: string = "Quarterly";
+  year: number = 2016;
   dataset_types = [
     {id:'', name: "Reporting Rate"},
     {id:'.REPORTING_RATE_ON_TIME', name: "Reporting Rate on time"},
@@ -104,6 +108,7 @@ export class CreateComponent implements OnInit, AfterViewInit, OnDestroy {
   have_authorities:boolean = false;
   showOrgTree:boolean = true;
   showPerTree:boolean = true;
+  showShareTree:boolean = true;
   showAdditionalOptions:boolean = true;
   orgunit_tree_config: any = {
     show_search : true,
@@ -114,12 +119,28 @@ export class CreateComponent implements OnInit, AfterViewInit, OnDestroy {
     multiple: true,
     placeholder: "Select Organisation Unit"
   };
+
+  period_tree_config: any = {
+    show_search : true,
+    search_text : 'Search',
+    level: null,
+    loading: false,
+    loading_message: 'Loading Periods...',
+    multiple: true,
+    placeholder: "Select period"
+  };
   organisationunits: any[] = [];
   // custom settings for tree
   customTemplateStringOrgunitOptions: any = {
     isExpandedField: 'expanded',
     actionMapping
   };
+
+  user:any = {};
+  userGroups: any = [];
+  group_loading = true;
+  selected_groups: any = [];
+  share_filter: string = "";
 
   constructor(private http: Http,
               private indicatorService: IndicatorGroupService,
@@ -132,7 +153,8 @@ export class CreateComponent implements OnInit, AfterViewInit, OnDestroy {
               private eventService: EventDataService,
               private dataService: DataService,
               private _location: Location,
-              private orgunitService: OrgUnitService
+              private orgunitService: OrgUnitService,
+              private filterService: FilterService,
   )
   {
     this.indicatorGroups = [];
@@ -143,10 +165,12 @@ export class CreateComponent implements OnInit, AfterViewInit, OnDestroy {
     this.current_groups = [];
     this.current_listing = [];
     // initialize the scorecard with a uid
-    this.scorecard = this.getEmptyScoreCard();
+    this.scorecard = this.scorecardService.getEmptyScoreCard();
     this.dataService.getUserInformation().subscribe(
       userInfo => {
         //noinspection TypeScriptUnresolvedVariable
+        this.user.name = userInfo.name;
+        this.user.id = userInfo.id;
         userInfo.userCredentials.userRoles.forEach( (role) => {
           role.authorities.forEach( (ath) => {
             if( ath == "ALL"){
@@ -157,12 +181,36 @@ export class CreateComponent implements OnInit, AfterViewInit, OnDestroy {
         })
       }
     );
-    this.subscription = activatedRouter.params.subscribe(
+
+    // this.getItemsFromGroups();
+    this.current_indicator_holder = {
+      "holder_id": this.getStartingIndicatorId(),
+      "indicators": []
+    };
+    this.current_holder_group = {
+      "id": this.getStartingGroupHolderId(),
+      "name": "Default",
+      "indicator_holder_ids": [],
+      "background_color": "#ffffff",
+      "holder_style": null
+    };
+  }
+
+  ngOnInit() {
+    this.dataService.getUserGroupInformation().subscribe( userGroups => {
+      this.group_loading = false;
+      this.userGroups = userGroups.userGroups;
+    });
+    this.subscription = this.activatedRouter.params.subscribe(
       (params: any) => {
         let id = params['scorecardid'];
         let type = params['type'];
         if(type == 'new'){
+          this.period_type = this.scorecard.data.periodType;
+          this.periods = this.filterService.getPeriodArray( this.period_type, this.year );
+          // this.activateNode(this.filterService.getPeriodArray( this.period_type, this.year )[0].id, this.pertree);
           this.current_action = 'new';
+          this.scorecard.data.user = this.user;
         }else{
           this.current_action = 'update';
           this.need_for_group = true;
@@ -174,6 +222,19 @@ export class CreateComponent implements OnInit, AfterViewInit, OnDestroy {
                 name: scorecard_details.header.title,
                 data: scorecard_details
               };
+              //check if period configuration is there
+              if(!this.scorecard.data.hasOwnProperty('periodType')){
+                this.scorecard.data.periodType = "Quarterly";
+              }
+              if(!this.scorecard.data.hasOwnProperty('selected_periods')){
+                this.scorecard.data.selected_periods = [];
+              }
+              if(!this.scorecard.data.hasOwnProperty('user')){
+                this.scorecard.data.user = this.user;
+              }
+              if(!this.scorecard.data.hasOwnProperty('user_groups')){
+                this.scorecard.data.user_groups = [];
+              }
               // attach organisation unit if none is defined
               if(!this.scorecard.data.orgunit_settings.hasOwnProperty("selected_orgunits")){
                 this.scorecard.data.orgunit_settings = {
@@ -187,10 +248,16 @@ export class CreateComponent implements OnInit, AfterViewInit, OnDestroy {
                   "selected_user_orgunit": "USER_ORGUNIT"
                 };
               }
+              //activate organisation units
+              for( let active_orgunit of this.scorecard.data.orgunit_settings.selected_orgunits ){
+                this.activateNode(active_orgunit.id, this.orgtree);
+
+              }
               // attach period type if none is defined
               if(!this.scorecard.data.hasOwnProperty("periodType")){
                 this.scorecard.data.periodType = "Quarterly";
               }
+              this.period_type = this.scorecard.data.periodType;
               // attach average_selection if none is defined
               if(!this.scorecard.data.hasOwnProperty("average_selection")){
                 this.scorecard.data.average_selection = "all";
@@ -232,25 +299,24 @@ export class CreateComponent implements OnInit, AfterViewInit, OnDestroy {
                   this.current_indicator_holder = item;
                 }else{ continue; }
               }
-            })
+
+              if( this.scorecard.data.selected_periods.length == 0 ){
+                this.periods = this.filterService.getPeriodArray( this.period_type, this.year );
+                this.activateNode(this.filterService.getPeriodArray( this.period_type, this.year )[0].id, this.pertree);
+              }else{
+                this.periods = this.scorecard.data.selected_periods;
+                this.scorecard.data.selected_periods.forEach((period) =>{
+                  this.selected_periods.push(period);
+                  let use_period = this.filterService.deducePeriodType(period.id);
+                  this.period_type = use_period.type;
+                  this.activateNode(period.id, this.pertree);
+                })
+              }
+            });
+
         }
       }
     );
-    // this.getItemsFromGroups();
-    this.current_indicator_holder = {
-      "holder_id": this.getStartingIndicatorId(),
-      "indicators": []
-    };
-    this.current_holder_group = {
-      "id": this.getStartingGroupHolderId(),
-      "name": "Default",
-      "indicator_holder_ids": [],
-      "background_color": "#ffffff",
-      "holder_style": null
-    };
-  }
-
-  ngOnInit() {
     //get indicatorGroups
     this.indicatorService.loadAll().subscribe(
       indicatorGroups => {
@@ -333,6 +399,9 @@ export class CreateComponent implements OnInit, AfterViewInit, OnDestroy {
 
     //laod organisation units
     this.loadOrganisationUnit();
+
+    //period configuration
+    this.periods = this.filterService.getPeriodArray( this.period_type, this.year );
   }
 
   loadOrganisationUnit(){
@@ -463,7 +532,13 @@ export class CreateComponent implements OnInit, AfterViewInit, OnDestroy {
           this.scorecard.data.header.template.content = content;
         });
       },
+
     });
+    if( this.current_action == 'new' ){
+      this.activateNode(this.filterService.getPeriodArray( this.period_type, this.year )[0].id, this.pertree);
+    }
+
+
   }
   // cancel scorecard creation process
   cancelCreate(){
@@ -665,10 +740,44 @@ export class CreateComponent implements OnInit, AfterViewInit, OnDestroy {
   load_item(item): void{
 
     if( this.indicatorExist( this.scorecard.data.data_settings.indicator_holders, item )){
-      console.log(item);
       this.deleteIndicator(item);
     }else{
-      let indicator = this.getIndicatorStructure(item.name, item.id,this.getIndicatorLegendSet());
+      let indicator = this.scorecardService.getIndicatorStructure(item.name, item.id,this.getIndicatorLegendSet());
+      indicator.value = Math.floor(Math.random() * 60) + 40;
+      let random = Math.floor(Math.random() * 6) + 1;
+      if( random % 2 == 0){ indicator.showTopArrow = true}
+      else{ indicator.showBottomArrow = true}
+      // ensure indicator has all additinal labels
+      for (let label of this.scorecard.data.additional_labels ){
+        indicator.additional_label_values[label] = "";
+      }
+      // this.current_indicator_holder.holder_id = this.current_group_id;
+      if(this.current_indicator_holder.indicators.length < 2){
+        this.current_indicator_holder.indicators.push( indicator );
+      }else{
+        this.current_group_id = this.getStartingIndicatorId() + 1;
+        this.current_indicator_holder = {
+          "holder_id": this.current_group_id,
+          "indicators": []
+        };
+        this.current_indicator_holder.indicators.push( indicator );
+        this.need_for_indicator = false;
+        this.cleanUpEmptyColumns();
+      }
+      this.addIndicatorHolder(this.current_indicator_holder);
+      this.current_holder_group.id = this.current_holder_group_id;
+      this.addHolderGroups(this.current_holder_group, this.current_indicator_holder);
+    }
+
+  }
+
+  // load a single item for use in a score card
+  load_itemFromDragNDrop(item): void{
+
+    if( this.indicatorExist( this.scorecard.data.data_settings.indicator_holders, item )){
+      //this.deleteIndicator(item);
+    }else{
+      let indicator = this.scorecardService.getIndicatorStructure(item.name, item.id,this.getIndicatorLegendSet());
       indicator.value = Math.floor(Math.random() * 60) + 40;
       let random = Math.floor(Math.random() * 6) + 1;
       if( random % 2 == 0){ indicator.showTopArrow = true}
@@ -733,6 +842,27 @@ export class CreateComponent implements OnInit, AfterViewInit, OnDestroy {
     }
   }
 
+  // add a group of holders to a scorecard
+  addHolderGroupsFromDragNDrop( holder_group,holder,current_id: any = null ): void{
+    this.need_for_group = true;
+    let add_new = true;
+    for( let group of this.scorecard.data.data_settings.indicator_holder_groups ){
+      if (group.id == holder_group.id){
+        if( group.indicator_holder_ids.indexOf(holder.holder_id) == -1 ){
+          let index = this.findSelectedIndicatorIndex( current_id, group )-1;
+          group.indicator_holder_ids.splice(index,0,holder.holder_id);
+          // group.indicator_holder_ids.push(holder.holder_id);
+        }
+        add_new = false;
+      }
+    }
+    if(add_new){
+      this.deleting[holder_group.id] = false;
+      if( holder_group.indicator_holder_ids.indexOf(holder.holder_id) == -1 ) holder_group.indicator_holder_ids.push(holder.holder_id);
+      this.scorecard.data.data_settings.indicator_holder_groups.push(holder_group);
+    }
+  }
+
   // find the position of the selected Indicator
   findSelectedIndicatorIndex(current_id, group){
     let i = 0; let index = group.indicator_holder_ids.length;
@@ -771,6 +901,21 @@ export class CreateComponent implements OnInit, AfterViewInit, OnDestroy {
     this.addIndicatorHolder(this.current_indicator_holder);
     this.current_holder_group.id = this.current_holder_group_id;
     this.addHolderGroups(this.current_holder_group, this.current_indicator_holder, current_id);
+  }
+
+  // enable adding of new Indicator
+  enableAddIndicatorFromDragNDrop( current_id: any = null ): void{
+    this.current_group_id = this.getStartingIndicatorId() + 1;
+    this.current_indicator_holder = {
+      "holder_id": this.current_group_id,
+      "indicators": []
+    };
+    this.need_for_indicator = false;
+    this.cleanUpEmptyColumns();
+
+    this.addIndicatorHolder(this.current_indicator_holder);
+    this.current_holder_group.id = this.current_holder_group_id;
+    this.addHolderGroupsFromDragNDrop(this.current_holder_group, this.current_indicator_holder, current_id);
   }
 
   //try to deduce last number needed to start adding indicator
@@ -816,6 +961,14 @@ export class CreateComponent implements OnInit, AfterViewInit, OnDestroy {
     });
   }
 
+  deleteEmptyGroups(){
+    this.scorecard.data.data_settings.indicator_holder_groups.forEach( (group, groupIndex)=>{
+      if( group.indicator_holder_ids.length == 0){
+        this.scorecard.data.data_settings.indicator_holder_groups.splice(groupIndex,1);
+      }
+    });
+  }
+
   //function to remove the indicator holder group form the scorecard
   deleteGroup(holderGroup){
     for( let holder of holderGroup.indicator_holder_ids ){
@@ -855,129 +1008,6 @@ export class CreateComponent implements OnInit, AfterViewInit, OnDestroy {
       });
     });
     this.cleanUpEmptyColumns();
-  }
-
-  // generate a random list of Id for use as scorecard id
-  makeid(): string{
-    let text = "";
-    let possible_combinations = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-    for( var i=0; i < 11; i++ )
-      text += possible_combinations.charAt(Math.floor(Math.random() * possible_combinations.length));
-    return text;
-  }
-
-  // Define default scorecard sample
-  getEmptyScoreCard():ScoreCard{
-    return {
-      id: this.makeid(),
-      name: "",
-      data: {
-        "orgunit_settings": {
-          "selection_mode": "Usr_orgUnit",
-          "selected_level": "",
-          "selected_group": "",
-          "orgunit_levels": [],
-          "orgunit_groups": [],
-          "selected_orgunits": [],
-          "user_orgunits": [],
-          "selected_user_orgunit": "USER_ORGUNIT"
-        },
-        "average_selection":"all",
-        "shown_records":"all",
-        "show_average_in_row":false,
-        "show_average_in_column":false,
-        "periodType": "Quarterly",
-        "show_score": false,
-        "show_rank": false,
-        "rank_position_last": true,
-        "header": {
-          "title": "",
-          "sub_title":"",
-          "description": "",
-          "show_arrows_definition": true,
-          "show_legend_definition": false,
-          "template": {
-            "display": false,
-            "content": ""
-          }
-        },
-        "legendset_definitions": [
-          {
-            "color": "#008000",
-            "definition": "Target achieved / on track"
-          },
-          {
-            "color": "#FFFF00",
-            "definition": "Progress, but more effort required"
-          },
-          {
-            "color": "#FF0000",
-            "definition": "Not on track"
-          },
-          {
-            "color": "#D3D3D3",
-            "definition": "N/A",
-            "default": true
-          },
-          {
-            "color": "#FFFFFF",
-            "definition": "No data",
-            "default": true
-          }
-        ],
-        "highlighted_indicators": {
-          "display": false,
-          "definitions": []
-        },
-        "data_settings": {
-          "indicator_holders": [],
-          "indicator_holder_groups": []
-        },
-        "additional_labels": [],
-        "footer": {
-          "display_generated_date": false,
-          "display_title": false,
-          "sub_title": null,
-          "description": null,
-          "template": null
-        },
-        "indicator_dataElement_reporting_rate_selection": "Indicators"
-      }
-    }
-  }
-  // dealing with showing average
-  showAverageInRow(e){
-    this.scorecard.data.show_average_in_row = e.target.checked;
-  }
-
-  // dealing with showing average
-  showAverageInColumn(e){
-    this.scorecard.data.show_average_in_column = e.target.checked;
-  }
-
-  // define a default indicator structure
-  getIndicatorStructure(name:string, id:string, legendset:any = null): any{
-    return {
-          "name": name,
-          "id": id,
-          "title": name,
-          "high_is_good": true,
-          "value": 0,
-          "weight": 100,
-          "legend_display": true,
-          "legendset":legendset,
-          "additional_label_values": {},
-          "bottleneck_indicators": [],
-          "arrow_settings": {
-            "effective_gap": 5,
-            "display": true
-          },
-          "label_settings": {
-            "display": true,
-            "font_size": ""
-          }
-        }
-
   }
 
   // A function used to decouple indicator list and prepare them for a display
@@ -1066,7 +1096,6 @@ export class CreateComponent implements OnInit, AfterViewInit, OnDestroy {
           indicator.additional_label_values[this.newLabel] = "";
         }
       }
-      console.log(this.scorecard.data.data_settings);
       this.newLabel = "";
     }
   }
@@ -1090,6 +1119,7 @@ export class CreateComponent implements OnInit, AfterViewInit, OnDestroy {
     }
     return labels.join(' / ')
   }
+
   // saving scorecard details
   saveScoreCard(action: string = "save"): void {
     // display error if some fields are missing
@@ -1109,6 +1139,16 @@ export class CreateComponent implements OnInit, AfterViewInit, OnDestroy {
       // delete all empty indicators if any
       this.cleanUpEmptyColumns();
 
+      // add related indicators to another datastore to enable flexible data analysis
+      this.scorecard.data.data_settings.indicator_holders.forEach((holder) => {
+        holder.indicators.forEach( (indicator) => {
+          if( indicator.bottleneck_indicators.length != 0 ){
+            this.scorecardService.addRelatedIndicator(indicator.id, indicator.bottleneck_indicators);
+          }
+        })
+      });
+
+      this.scorecard.data.selected_periods = this.selected_periods;
       // post the data
       this.saving_scorecard = true;
       if(action == "save"){
@@ -1135,6 +1175,8 @@ export class CreateComponent implements OnInit, AfterViewInit, OnDestroy {
           }
         );
       }
+
+
     }
 
 
@@ -1528,6 +1570,11 @@ export class CreateComponent implements OnInit, AfterViewInit, OnDestroy {
     this.showPerTree = !this.showPerTree;
   }
 
+  // display sharing Tree
+  displayShareTree(){
+    this.showShareTree = !this.showShareTree;
+  }
+
   // action to be called when a tree item is deselected(Remove item in array of selected items
   deactivateOrg ( $event ) {
     this.scorecard.data.orgunit_settings.selected_orgunits.forEach((item,index) => {
@@ -1539,35 +1586,106 @@ export class CreateComponent implements OnInit, AfterViewInit, OnDestroy {
 
   // add item to array of selected items when item is selected
   activateOrg = ($event) => {
-    if(!this.checkOrgunitAvailabilty($event.node.data, this.scorecard.data.orgunit_settings.selected_orgunits)){
+    if(!this.checkItemAvailabilty($event.node.data, this.scorecard.data.orgunit_settings.selected_orgunits)){
       this.scorecard.data.orgunit_settings.selected_orgunits.push($event.node.data);
     }
   };
 
+
   // action to be called when a tree item is deselected(Remove item in array of selected items
   deactivatePer ( $event ) {
-
+    this.selected_periods.forEach((item,index) => {
+      if( $event.node.data.id == item.id ) {
+        this.selected_periods.splice(index, 1);
+      }
+    });
   };
 
-  // add item to array of selected items when item is selected
-  // activatePer = ($event) => {
-  //   this.selected_periods = [$event.node.data];
-  //   this.period = $event.node.data;
-  // };
+  /// add item to array of selected items when period is selected
+  activatePer = ($event) => {
+    if(!this.checkItemAvailabilty($event.node.data, this.selected_periods)){
+      this.selected_periods.push($event.node.data);
+    }
+  };
+
 
   activateNode(nodeId:any, nodes){
     setTimeout(() => {
       let node = nodes.treeModel.getNodeById(nodeId);
       if (node)
-        node.toggleActivated();
+      // node.toggleActivated();
+        node.setIsActive(true,true);
     }, 0);
   }
 
+  // a method to activate the model
+  deActivateNode(nodeId:any, nodes, event){
+    setTimeout(() => {
+      let node = nodes.treeModel.getNodeById(nodeId);
+      if (node)
+        node.setIsActive(false, true);
+    }, 0);
+    if( event != null){
+      event.stopPropagation();
+    }
+  }
+
+  pushPeriodForward(){
+    this.year += 1;
+    this.periods = this.filterService.getPeriodArray(this.period_type,this.year);
+  }
+
+  pushPeriodBackward(){
+    this.year -= 1;
+    this.periods = this.filterService.getPeriodArray(this.period_type,this.year);
+  }
+
+  changePeriodType(){
+    this.periods = this.filterService.getPeriodArray(this.period_type,this.year);
+  }
+
+  // add user sharing settings
+  toogleGroup(type,group){
+    if(group.hasOwnProperty(type)){
+        group[type] = !group[type];
+    }else{
+      group[type] = true;
+    }
+    if(!this.checkItemAvailabilty(group,this.scorecard.data.user_groups)){
+      this.scorecard.data.user_groups.push(group)
+    }else{
+      this.scorecard.data.user_groups.forEach((value,index) => {
+        if( value.id == group.id ){
+          this.scorecard.data.user_groups[index] = group;
+        }
+      });
+    }
+    if(!group['see'] && !group['edit']){
+      this.scorecard.data.user_groups.forEach((value,index) => {
+        if( value.id == group.id ){
+          this.scorecard.data.user_groups.splice(index,1);
+        }
+      });
+    }
+
+  }
+
+  getGroupActiveState(type,group): boolean{
+    let checker = false;
+    this.scorecard.data.user_groups.forEach((value) => {
+      if( value.id == group.id && value.hasOwnProperty(type)){
+        checker = value[type];
+      }
+    });
+    return checker;
+  }
+
+
   // check if orgunit already exist in the orgunit display list
-  checkOrgunitAvailabilty(orgunit, array): boolean{
+  checkItemAvailabilty(item, array): boolean{
     let checker = false;
     array.forEach((value) => {
-      if( value.id == orgunit.id ){
+      if( value.id == item.id ){
         checker = true;
       }
     });
@@ -1606,7 +1724,168 @@ export class CreateComponent implements OnInit, AfterViewInit, OnDestroy {
     return name
   }
 
+  transferDataSuccess($event, drop_area:string, object:any){
+    if(drop_area == "group"){
+      // check if someone is trying to reorder items within the scorecard
 
+      if( $event.dragData.hasOwnProperty('holder_id') ){
+        let last_holder = ( object.indicator_holder_ids.length == 0 )?0:object.indicator_holder_ids.length - 1;
+        if(object.indicator_holder_ids.indexOf($event.dragData.holder_id) ==-1){
+          this.deleteHolder( $event.dragData );
+          this.insertHolder( $event.dragData, this.getHolderById(object.indicator_holder_ids[last_holder]), 1);
+          this.updateIndicator($event.dragData);
+        }else{ }
+        this.deleteEmptyGroups();
+      }
+      else if($event.dragData.hasOwnProperty('indicator_holder_ids')){
+        if($event.dragData.id != object.id){
+          this.scorecard.data.data_settings.indicator_holder_groups.forEach((group, group_index) => {
+            if( group.id == $event.dragData.id){
+              this.scorecard.data.data_settings.indicator_holder_groups.splice(group_index,1);
+            }
+          });
+          this.scorecard.data.data_settings.indicator_holder_groups.forEach((group, group_index) => {
+            if( group.id == object.id && this.getgroupById($event.dragData.id) == null){
+              this.scorecard.data.data_settings.indicator_holder_groups.splice(group_index,0,$event.dragData);
+            }
+          });
+        }
+
+      }
+      else{
+        let last_holder_position = ( object.indicator_holder_ids.length == 0 )?0:object.indicator_holder_ids.length - 1;
+        this.updateIndicator(this.getHolderById(object.indicator_holder_ids[last_holder_position]));
+        this.enableAddIndicator(this.current_indicator_holder.holder_id);
+        this.load_item($event.dragData)
+      }
+    }
+    else if(drop_area == "table_data"){
+      // check if someone is trying to reorder items within the scorecard
+      if( $event.dragData.hasOwnProperty('holder_id') ){
+        if( $event.dragData.holder_id == object.holder_id ){
+          console.log("cant move item to itself");
+        }
+        else{
+          let position = this.getHolderPosition($event.dragData,object);
+          this.deleteHolder( $event.dragData );
+          this.insertHolder( $event.dragData, object, position);
+          this.updateIndicator($event.dragData);
+        }
+        this.deleteEmptyGroups();
+      }
+      else if($event.dragData.hasOwnProperty('indicator_holder_ids')){ }
+      else{
+        this.updateIndicator(object);
+        this.enableAddIndicatorFromDragNDrop(this.current_indicator_holder.holder_id);
+        this.load_itemFromDragNDrop($event.dragData)
+      }
+    }
+    else if(drop_area == "new-group"){
+      this.createGroup();
+      if( $event.dragData.hasOwnProperty('holder_id') ){
+        let last_holder = ( this.getgroupById(this.current_holder_group_id).indicator_holder_ids.length == 0 )?0:this.getgroupById(this.current_holder_group_id).indicator_holder_ids.length - 1;
+        if(this.getgroupById(this.current_holder_group_id).indicator_holder_ids.indexOf($event.dragData.holder_id) ==-1){
+          this.deleteHolder( $event.dragData );
+          this.insertHolder( $event.dragData, this.getHolderById(this.getgroupById(this.current_holder_group_id).indicator_holder_ids[last_holder]), 1);
+          this.updateIndicator($event.dragData);
+        }else{ }
+      }else if($event.dragData.hasOwnProperty('indicator_holder_ids')){}
+      else{
+        this.enableAddIndicator(this.current_indicator_holder.holder_id);
+        this.load_item($event.dragData)
+      }
+    }
+    else{
+      if( $event.dragData.hasOwnProperty('holder_id') ){ }
+      else if($event.dragData.hasOwnProperty('indicator_holder_ids')){ }
+      else{
+        this.enableAddIndicator(this.current_indicator_holder.holder_id);
+        this.load_item($event.dragData)
+      }
+    }
+  }
+
+  getgroupById(group_id){
+    let return_id = null;
+    for ( let group of this.scorecard.data.data_settings.indicator_holder_groups ){
+      if( group.id == group_id ){
+        return_id = group;
+        break;
+      }
+    }
+    return return_id;
+  }
+
+  getHolderById( holder_id ){
+    let return_id = null;
+    for ( let holder of this.scorecard.data.data_settings.indicator_holders ){
+      if( holder.holder_id == holder_id ){
+        return_id = holder;
+        break;
+      }
+    }
+    return return_id;
+  }
+
+  deleteHolder( holder_to_delete ){
+    this.scorecard.data.data_settings.indicator_holder_groups.forEach((group, holder_index) => {
+      group.indicator_holder_ids.forEach((holder, indicator_index) => {
+        if( holder == holder_to_delete.holder_id){
+          group.indicator_holder_ids.splice(indicator_index,1);
+        }
+      });
+    });
+  }
+
+  insertHolder( holder_to_insert, current_holder, num:number ){
+    this.scorecard.data.data_settings.indicator_holder_groups.forEach((group, holder_index) => {
+      group.indicator_holder_ids.forEach((holder, indicator_index) => {
+        console.log(holder +"=="+ current_holder.holder_id);
+        if( holder == current_holder.holder_id && group.indicator_holder_ids.indexOf(holder_to_insert.holder_id) == -1){
+          group.indicator_holder_ids.splice( indicator_index+num,0,holder_to_insert.holder_id );
+        }
+      });
+    });
+    this.cleanUpEmptyColumns();
+  }
+
+  // Dertimine if indicators are in the same group and say whether the first is larger of not
+  getHolderPosition(holder_to_check, current_holder){
+    let holders_in_same_group = false;
+    let holder_group = null;
+    let increment_number = 0;
+    this.scorecard.data.data_settings.indicator_holder_groups.forEach((group, holder_index) => {
+      if(group.indicator_holder_ids.indexOf(holder_to_check.holder_id) != -1 && group.indicator_holder_ids.indexOf(current_holder.holder_id) != -1){
+        holders_in_same_group = true;
+        holder_group = group.indicator_holder_ids;
+      }
+    });
+    if(holders_in_same_group){
+      if( holder_group.indexOf(holder_to_check.holder_id) > holder_group.indexOf(current_holder.holder_id)){
+        increment_number = 0;
+      }else{
+        increment_number = 1;
+      }
+    }
+    return increment_number;
+  }
+
+  //helper function to dynamical provide colspan attribute for a group
+  getGroupColspan(group_holders){
+    let colspan= 0;
+    for (let holder of this.scorecard.data.data_settings.indicator_holders ){
+      if(group_holders.indexOf(holder.holder_id) != -1){
+        if(this.selected_periods.length == 0){
+          colspan++
+        }else{
+          for (let per of this.selected_periods){
+            colspan++
+          }
+        }
+      }
+    }
+    return colspan;
+  }
   ngOnDestroy() {
     tinymce.remove(this.editor);
   }

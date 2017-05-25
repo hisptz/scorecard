@@ -1,1 +1,7 @@
 /* You can add global styles to this file, and also import other style files */
+.removeorgunit{
+  cursor:pointer;
+  border: 1px solid rgba(95, 158, 160, 0.26);
+  padding-left: 2px;
+  padding-right: 2px;
+}

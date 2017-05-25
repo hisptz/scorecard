@@ -7,6 +7,8 @@ import { FilterByNamePipe } from './filter-by-name.pipe';
 import { TinymceEditorDirective } from "./text-editor/tinymice-editor-directive.directive";
 import { SafeHtmlPipe } from './safe-html.pipe';
 import { ColorPickerModule } from "ngx-color-picker";
+import { FilterIndicatorByNamePipe } from './filter-indicator-by-name.pipe';
+import {DndModule} from "ng2-dnd";
 import {ClickOutsideDirective} from "./click-outside.directive";
 // import {FilterPipe} from "./filter.pipe";
 
@@ -14,10 +16,11 @@ import {ClickOutsideDirective} from "./click-outside.directive";
   imports: [
     CommonModule,
     TreeModule,
-    ColorPickerModule
+    ColorPickerModule,
+    DndModule.forRoot()
 
   ],
-  declarations: [ FilterByNamePipe, TinymceEditorDirective, SafeHtmlPipe, ClickOutsideDirective],
+  declarations: [ FilterByNamePipe, TinymceEditorDirective, SafeHtmlPipe, FilterIndicatorByNamePipe,ClickOutsideDirective],
   exports: [
     TreeModule,
     FormsModule,
@@ -26,7 +29,9 @@ import {ClickOutsideDirective} from "./click-outside.directive";
     ColorPickerModule,
     FilterByNamePipe,
     TinymceEditorDirective,
+    FilterIndicatorByNamePipe,
     SafeHtmlPipe,
+    DndModule,
     ClickOutsideDirective
   ]
 })
