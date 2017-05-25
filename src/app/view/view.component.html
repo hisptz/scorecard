@@ -11,7 +11,7 @@
 </div>
 
 <!--filters-->
-<div class="container-fluid no-print" id="filters" style="padding: 0px">
+<div class="container-fluid no-print" id="filters" style="padding: 0px"d>
   <div class="col-sm-4" style="padding-left: 5px">
     <label>Organisation Units</label>
     <div class="tree-input" appClickOutside (clickOutside)="showOrgTree = true" >
@@ -20,7 +20,7 @@
           <span>
               {{ getProperPreOrgunitName() }}
           </span>
-          <span *ngIf="orgunit_model.selected_orgunits.length > 4 && orgunit_model.selection_mode != 'Usr_orgUnit'">
+          <span *ngIf="orgunit_model.selected_orgunits.length > 4">
             <span class="selected-item">
               {{ orgunit_model.selected_orgunits[0].name }}
               <a (click)="deActivateNode(orgunit_model.selected_orgunits[0].id,orgtree,$event)" class="removeorgunit">x</a>
@@ -33,7 +33,7 @@
               &nbsp; and {{ orgunit_model.selected_orgunits.length - 2 }} more
             </span>
           </span>
-          <span *ngIf="orgunit_model.selected_orgunits.length <= 4 && orgunit_model.selection_mode != 'Usr_orgUnit'">
+          <span *ngIf="orgunit_model.selected_orgunits.length <= 4">
              <span *ngFor="let item of orgunit_model.selected_orgunits" class="selected-item ng-binding ng-scope">
               {{ item.name }}
                <a (click)="deActivateNode(item.id,orgtree,$event)" class="removeorgunit">x</a>
@@ -46,7 +46,7 @@
         <div class="tree-view" [ngClass]="{'hiddenTree':showOrgTree}" id="tree_view">
           <div class="col-sm-6" style="padding-left: 0px; margin-bottom: 5px">
             <label>Selection Mode</label>
-            <select id="selectionMode" [(ngModel)]="orgunit_model.selection_mode" class="form-control" style="height: 30px ">
+            <select id="selectionMode" [(ngModel)]="orgunit_model.selection_mode" (click)="swithType(orgunit_model.selection_mode)" class="form-control" style="height: 30px ">
               <option value="Usr_orgUnit">User orgUnit</option>
               <option value="orgUnit">Select Organisation Unit</option>
               <option value="Level">Select Level</option>
@@ -84,7 +84,7 @@
             </form>
           </div>
           <div *ngIf="orgunit_tree_config.loading">{{ orgunit_tree_config.loading_message }}</div>
-          <div class="tree-area" [ngClass]="{'hiddenTree': orgunit_model.selection_mode == 'Usr_orgUnit'}">
+          <div class="tree-area">
             <Tree
               #orgtree
               [nodes]="organisationunits"
@@ -102,7 +102,7 @@
             <button class="btn btn-default pull-right" style="height: 30px"  (click)="displayOrgTree()">
               <span class="glyphicon glyphicon-remove"></span> Close
             </button>
-            <button type="button" class="btn btn-default pull-right"  style="height: 30px" (click)="loadScoreCard()">
+            <button type="button" class="btn btn-default pull-right"  style="height: 30px" (click)="loadScoreCard()" *ngIf="checkSelectionCompletion()">
               <span class="glyphicon glyphicon-refresh"></span>  Update
             </button>
           </div>
@@ -191,7 +191,7 @@
                 <button class="btn btn-default pull-right" style="height: 30px"  (click)="displayPerTree()">
                   <span class="glyphicon glyphicon-remove"></span> Close
                 </button>
-                <button type="button" class="btn btn-default pull-right"  style="height: 30px" (click)="loadScoreCard()">
+                <button type="button" class="btn btn-default pull-right"  style="height: 30px" (click)="loadScoreCard()"  *ngIf="checkSelectionCompletion()">
                   <span class="glyphicon glyphicon-refresh"></span>  Update
                 </button>
               </div>
@@ -205,7 +205,7 @@
   <div class="col-sm-4">
     <label>&nbsp;&nbsp;</label>
     <div>
-      <button type="button" class="btn btn-default pull-right"  style="height: 38px" (click)="loadScoreCard()" title="Update Scorecard">
+      <button type="button" class="btn btn-default pull-right"  style="height: 38px" (click)="loadScoreCard()" title="Update Scorecard" *ngIf="checkSelectionCompletion()">
         <span class="glyphicon glyphicon-refresh"></span>  Update
       </button>
       <button type="button" class="btn btn-default pull-right"  style="height: 38px" (click)="downloadCSV(orgUnit.id)" title="download CSV version of scorecard">
@@ -266,7 +266,7 @@
 
       </div>
       <!--end of additional configuration-->
-      <button *ngIf="have_authorities" class="btn btn btn-default pull-right" [routerLink]="['../../create','edit',scorecard.id]" style="height: 38px" title="Update score card">
+      <button *ngIf="canEditScoreCard()" class="btn btn btn-default pull-right" [routerLink]="['../../create','edit',scorecard.id]" style="height: 38px" title="Update score card">
         <span class="glyphicon glyphicon-pencil"></span>
       </button>
     </div>
@@ -296,6 +296,8 @@
   [level]="'top'"
   [orgunit_model]="orgunit_model"
   (show_details) = "loadPreview($event)"
+  (updatedScorecard)="getUpdatedScorecard($event)"
+
 ></app-scorecard>
 
 

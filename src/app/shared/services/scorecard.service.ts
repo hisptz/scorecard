@@ -196,7 +196,9 @@ export class ScorecardService {
           "description": null,
           "template": null
         },
-        "indicator_dataElement_reporting_rate_selection": "Indicators"
+        "indicator_dataElement_reporting_rate_selection": "Indicators",
+        "user":{},
+        "user_groups":[]
       }
     }
   }

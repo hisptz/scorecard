@@ -9,6 +9,7 @@ import {Constants} from "../../shared/costants";
 import {subscribeOn} from "rxjs/operator/subscribeOn";
 import {TreeComponent} from "angular2-tree-component";
 import {forEach} from "@angular/router/src/utils/collection";
+import {Angular2Csv} from "angular2-csv";
 
 @Component({
   selector: 'app-scorecard',
@@ -38,6 +39,7 @@ export class ScorecardComponent implements OnInit, AfterViewInit, OnDestroy {
   @Input() level: string = "top";
 
   @Output() show_details = new EventEmitter<any>();
+  @Output() updatedScorecard = new EventEmitter<any>();
 
   searchQuery: string = "";
   orgunits: any[] = [];
@@ -75,7 +77,7 @@ export class ScorecardComponent implements OnInit, AfterViewInit, OnDestroy {
     // if the selected orgunit is user org unit
     if(orgunit_model.selection_mode == "Usr_orgUnit"){
       if(orgunit_model.user_orgunits.length == 1 || orgunit_model.user_orgunits.length == 0){
-        let user_orgunit = this.orgtree.treeModel.getNodeById(orgunit_model.user_orgunits[0]);
+        let user_orgunit = this.orgtree.treeModel.getNodeById(orgunit_model.user_orgunits[0].id);
         orgUnits.push(user_orgunit.id);
         if(user_orgunit.hasOwnProperty('children')){
           for( let orgunit of user_orgunit.children ){
@@ -180,7 +182,6 @@ export class ScorecardComponent implements OnInit, AfterViewInit, OnDestroy {
   old_proccessed_percent = 0;
   proccesed_indicators = 0;
   loadScoreCard( orgunit: any = null ){
-    console.log(this.scorecard)
     this.showSubScorecard = [];
     this.periods_list = [];
     this.indicator_done_loading = [];
@@ -284,7 +285,9 @@ export class ScorecardComponent implements OnInit, AfterViewInit, OnDestroy {
                         this.period_done_loading[current_period.id] = true;
                         old_proccesed_indicators++;
                         this.old_proccessed_percent = (old_proccesed_indicators / indicator_list.length) * 100;
-
+                        if(this.old_proccessed_percent == 100){
+                          this.updatedScorecard.emit(this.scorecard);
+                        }
                       })
                   )},
                 error => {
@@ -400,6 +403,37 @@ export class ScorecardComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
   }
+
+  // prepare scorecard data and download them as csv
+  downloadCSV(){
+    let data = [];
+    for ( let current_orgunit of this.orgunits ){
+      let dataobject = {};
+      dataobject['orgunit'] = current_orgunit.name;
+      for ( let holder of this.scorecard.data.data_settings.indicator_holders ){
+        for( let indicator of holder.indicators ){
+          for ( let current_period of this.periods_list ){
+            let value_key = current_orgunit.id+'.'+current_period.id;
+            let name = ( this.periods_list.length > 1) ? indicator.title +" "+ current_period.name : indicator.title;
+            dataobject[name] = indicator.values[value_key];
+          }
+        }
+
+      }
+      data.push( dataobject  );
+    }
+
+    let options = {
+      fieldSeparator: ',',
+      quoteStrings: '"',
+      decimalseparator: '.',
+      showLabels: true,
+      showTitle: false
+    };
+
+    new Angular2Csv(data, 'My Report', options);
+  }
+
 
   //get number of visible indicators from a holder
   getVisibleIndicators(holder){

@@ -14,6 +14,7 @@
   <link rel="icon" type="image/x-icon" href="src/favicon.ico">
 </head>
 <body>
+<div id="header"></div>
 <div style="margin-top:50px;margin-left: 10px; margin-right: 10px; height: 100%">
   <app-root>
     <div class="text-center">
@@ -24,5 +25,23 @@
   </app-root>
 
 </div>
+<script type="text/javascript" src="../../../dhis-web-core-resource/react-15/react-15.min.js"></script>
+<script type="text/javascript" src="../../../dhis-web-core-resource/rxjs/4.1.0/rx.lite.min.js"></script>
+<script type="text/javascript" src="../../../dhis-web-core-resource/lodash/4.15.0/lodash.min.js"></script>
+<script type="text/javascript" src="../../../dhis-web-core-resource/lodash-functional/lodash-functional.js"></script>
+
+<script type="text/javascript" src="../../../dhis-web-commons/javascripts/header-bar/babel-polyfill.js?_rev=0.1.7"></script>
+<script type="text/javascript" src="../../../dhis-web-commons/javascripts/header-bar/header-bar.js?_rev=0.1.7"></script>
+<script>
+  try {
+    if ('Dhis2HeaderBar' in window) {
+      Dhis2HeaderBar.initHeaderBar(document.querySelector('#header'), '../../../api', { noLoadingIndicator: true });
+    }
+  } catch (e) {
+    if ('console' in window) {
+      console.error(e);
+    }
+  }
+</script>
 </body>
 </html>

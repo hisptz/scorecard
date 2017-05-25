@@ -44,4 +44,8 @@ a:hover{
   right: 10px;
 }
 
+.hidden{
+  display: none;
+}
+
 

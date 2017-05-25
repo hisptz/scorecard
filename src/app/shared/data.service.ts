@@ -12,7 +12,50 @@ export class DataService {
 
   // Get current user information
   getUserInformation () {
-    return this.http.get(this.constant.root_dir + 'api/me.json?fields=userCredentials[userRoles[authorities]]')
+    return this.http.get(this.constant.root_dir + 'api/me.json?fields=id,name,userGroups,userCredentials[userRoles[authorities]]')
+      .map((response: Response) => response.json())
+      .catch( this.handleError );
+  }
+
+  /**
+   *
+   * @param scorecard_groups
+   * @param user_groups
+   * @returns {{see: boolean, edit: boolean}}
+   */
+  checkForUserGroupInScorecard(scorecard,user): any{
+    let checker_see:boolean = false;
+    let checker_edit:boolean = false;
+    if(scorecard.hasOwnProperty('user')){
+      if(user.id == scorecard.user.id ){
+        checker_see = true;
+        checker_edit = true;
+      }
+    }else{
+      checker_see = true;
+      checker_edit = true;
+    }
+    if(scorecard.hasOwnProperty('user_groups')){
+      for ( let group of scorecard.user_groups){
+        for ( let user_group of user.userGroups){
+          if( user_group.id == group.id ){
+            if(group.see){
+              checker_see = true;
+            }
+            if(group.edit){
+              checker_see = true;
+              checker_edit = true;
+            }
+          }
+        }
+      }
+    }
+    return { see:checker_see, edit:checker_edit };
+  }
+
+  // Get current user information
+  getUserGroupInformation () {
+    return this.http.get(this.constant.root_dir + 'api/userGroups.json?fields=id,name&paging=false')
       .map((response: Response) => response.json())
       .catch( this.handleError );
   }

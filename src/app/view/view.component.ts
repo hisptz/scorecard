@@ -130,7 +130,7 @@ export class ViewComponent implements OnInit, AfterViewInit, OnDestroy {
   average_selection:string = "all";
   show_rank: boolean = false;
   metadata_ready = false;
-  have_authorities:boolean = false;
+  have_authorities:boolean = true;
   orgUnitlength:number = 0;
 
   orgunit_model: any = {
@@ -143,6 +143,7 @@ export class ViewComponent implements OnInit, AfterViewInit, OnDestroy {
     user_orgunits: [],
     selected_user_orgunit: "USER_ORGUNIT"
   };
+  userInfo:any = {};
 
   constructor(private scorecardService: ScorecardService,
               private dataService: DataService,
@@ -159,6 +160,7 @@ export class ViewComponent implements OnInit, AfterViewInit, OnDestroy {
       });
     this.dataService.getUserInformation().subscribe(
       userInfo => {
+        this.userInfo = userInfo;
         //noinspection TypeScriptUnresolvedVariable
         userInfo.userCredentials.userRoles.forEach( (role) => {
           role.authorities.forEach( (ath) => {
@@ -171,6 +173,21 @@ export class ViewComponent implements OnInit, AfterViewInit, OnDestroy {
       }
     )
 
+  }
+
+  // check if user can edit scorecard
+  canEditScoreCard(): boolean{
+
+    let checker = false;
+    if(this.userInfo.hasOwnProperty('id') && this.scorecard.data.hasOwnProperty('user_groups'))
+    if (this.userInfo.id == this.scorecard.data.user.id){
+      checker = true
+    }else {
+      if( this.dataService.checkForUserGroupInScorecard(this.scorecard.data,this.userInfo).edit ){
+        checker = true
+      }
+    }
+    return checker;
   }
 
   pushPeriodForward(){
@@ -269,6 +286,12 @@ export class ViewComponent implements OnInit, AfterViewInit, OnDestroy {
                     let level = this.orgunitService.getUserHighestOrgUnitlevel( userOrgunit );
                     this.orgunit_model.user_orgunits = this.orgunitService.getUserOrgUnits( userOrgunit );
                     this.orgunitService.user_orgunits = this.orgunitService.getUserOrgUnits( userOrgunit );
+                    if(this.orgunit_model.selection_mode == "Usr_orgUnit"){
+                      this.orgunit_model.selected_orgunits = [];
+                      for ( let item of this.orgunit_model.user_orgunits ){
+                        this.orgunit_model.selected_orgunits.push(item)
+                      }
+                    }
                     let all_levels = data.pager.total;
                     let orgunits = this.orgunitService.getuserOrganisationUnitsWithHighestlevel( level, userOrgunit );
                     let use_level = parseInt(all_levels) - (parseInt(level) - 1);
@@ -335,6 +358,9 @@ export class ViewComponent implements OnInit, AfterViewInit, OnDestroy {
           this.orgunit_model.user_orgunits = this.orgunitService.user_orgunits;
           this.orgunit_model.orgunit_groups = this.orgunitService.orgunit_groups;
           //activate organisation units
+          if(this.orgunit_model.selection_mode == "Usr_orgUnit"){
+            this.orgunit_model.selected_orgunits = this.orgunit_model.user_orgunits;
+          }
           for( let active_orgunit of this.orgunit_model.selected_orgunits ){
             this.activateNode(active_orgunit.id, this.orgtree);
           }
@@ -403,9 +429,8 @@ export class ViewComponent implements OnInit, AfterViewInit, OnDestroy {
         }
       }
     }else if( this.orgunit_model.selection_mode == "Usr_orgUnit" ){
-      if( this.orgunit_model.selected_user_orgunit == "USER_ORGUNIT") name = "User org unit";
-      if( this.orgunit_model.selected_user_orgunit == "USER_ORGUNIT_CHILDREN") name = "User sub-units";
-      if( this.orgunit_model.selected_user_orgunit == "USER_ORGUNIT_GRANDCHILDREN") name = "User sub-x2-units";
+      if( this.orgunit_model.selected_user_orgunit == "USER_ORGUNIT_CHILDREN") name = "Children of ";
+      if( this.orgunit_model.selected_user_orgunit == "USER_ORGUNIT_GRANDCHILDREN") name = "Grand Children of";
     }else if( this.orgunit_model.selection_mode == "Level" ){
       let use_level = this.orgunit_model.selected_level.split("-");
       for( let single_level of this.orgunit_model.orgunit_levels ){
@@ -461,30 +486,13 @@ export class ViewComponent implements OnInit, AfterViewInit, OnDestroy {
     }
   }
 
+  // get updated scorecard from scorecard component
+  getUpdatedScorecard(scorecard){
+    console.log("inakuja",scorecard);
+  }
   // prepare scorecard data and download them as csv
   downloadCSV(orgunitId){
-    let data = [];
-    let use_orgunit = this.orgtree.treeModel.getNodeById(orgunitId)
-    for ( let current_orgunit of use_orgunit.data.children ){
-      let dataobject = {};
-      dataobject['orgunit'] = current_orgunit.name;
-      for ( let holder of this.scorecard.data.data_settings.indicator_holders ){
-        for( let indicator of holder.indicators ){
-          dataobject[indicator.title] = indicator.values[current_orgunit.id];
-        }
-      }
-      data.push( dataobject  );
-    }
-
-    let options = {
-      fieldSeparator: ',',
-      quoteStrings: '"',
-      decimalseparator: '.',
-      showLabels: true,
-      showTitle: false
-    };
-
-    new Angular2Csv(data, 'My Report', options);
+    this.childScoreCard.downloadCSV();
   }
 
   // invoke a default browser print function
@@ -537,6 +545,15 @@ export class ViewComponent implements OnInit, AfterViewInit, OnDestroy {
       }
     }
     return indicators;
+  }
+
+  // a function to check if selections are fine and one can update a scorecard
+  checkSelectionCompletion():boolean{
+    let checker = false;
+    if(this.selected_periods.length >= 1 && this.orgunit_model.selected_orgunits.length >= 1){
+      checker = true;
+    }
+    return checker
   }
 
   // Define default scorecard sample
@@ -655,15 +672,36 @@ export class ViewComponent implements OnInit, AfterViewInit, OnDestroy {
 
   // add item to array of selected items when item is selected
   activateOrg = ($event) => {
-    this.selected_orgunits = [$event.node.data];
+    if(this.orgunit_model.selection_mode == "Usr_orgUnit"){
+      this.orgunit_model.selection_mode = "orgUnit";
+    }
     if(!this.checkItemAvailabilty($event.node.data, this.orgunit_model.selected_orgunits)){
       this.orgunit_model.selected_orgunits.push($event.node.data);
     }
     this.orgUnit = $event.node.data;
   };
 
+  //force user orgunit selection
+  swithType(orgunit){
+    if( this.orgunit_model.selection_mode == "Usr_orgUnit" ){
+      for( let active_orgunit of this.orgunit_model.selected_orgunits ){
+        this.deActivateNode(active_orgunit.id, this.orgtree);
+      }
+      this.orgunit_model.selected_orgunits = [];
+      for ( let item of this.orgunit_model.user_orgunits ){
+        this.orgunit_model.selected_orgunits.push(item)
+      }
+      for( let active_orgunit of this.orgunit_model.selected_orgunits ){
+        this.activateNode(active_orgunit.id, this.orgtree);
+      }
+    }
+  }
+
   // action to be called when a tree item is deselected(Remove item in array of selected items
   deactivatePer ( $event ) {
+    if(this.orgunit_model.selection_mode == "Usr_orgUnit"){
+      this.orgunit_model.selection_mode = "orgUnit";
+    }
     this.selected_periods.forEach((item,index) => {
       if( $event.node.data.id == item.id ) {
         this.selected_periods.splice(index, 1);
@@ -678,6 +716,8 @@ export class ViewComponent implements OnInit, AfterViewInit, OnDestroy {
     }
   };
 
+
+
   // a method to activate the model
   activateNode(nodeId:any, nodes){
     setTimeout(() => {
@@ -688,7 +728,7 @@ export class ViewComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   // a method to activate the model
-  deActivateNode(nodeId:any, nodes, event){
+  deActivateNode(nodeId:any, nodes, event = null){
     setTimeout(() => {
       let node = nodes.treeModel.getNodeById(nodeId);
       if (node)

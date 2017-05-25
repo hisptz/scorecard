@@ -108,6 +108,7 @@ export class CreateComponent implements OnInit, AfterViewInit, OnDestroy {
   have_authorities:boolean = false;
   showOrgTree:boolean = true;
   showPerTree:boolean = true;
+  showShareTree:boolean = true;
   showAdditionalOptions:boolean = true;
   orgunit_tree_config: any = {
     show_search : true,
@@ -134,6 +135,12 @@ export class CreateComponent implements OnInit, AfterViewInit, OnDestroy {
     isExpandedField: 'expanded',
     actionMapping
   };
+
+  user:any = {};
+  userGroups: any = [];
+  group_loading = true;
+  selected_groups: any = [];
+  share_filter: string = "";
 
   constructor(private http: Http,
               private indicatorService: IndicatorGroupService,
@@ -162,6 +169,8 @@ export class CreateComponent implements OnInit, AfterViewInit, OnDestroy {
     this.dataService.getUserInformation().subscribe(
       userInfo => {
         //noinspection TypeScriptUnresolvedVariable
+        this.user.name = userInfo.name;
+        this.user.id = userInfo.id;
         userInfo.userCredentials.userRoles.forEach( (role) => {
           role.authorities.forEach( (ath) => {
             if( ath == "ALL"){
@@ -188,6 +197,10 @@ export class CreateComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngOnInit() {
+    this.dataService.getUserGroupInformation().subscribe( userGroups => {
+      this.group_loading = false;
+      this.userGroups = userGroups.userGroups;
+    });
     this.subscription = this.activatedRouter.params.subscribe(
       (params: any) => {
         let id = params['scorecardid'];
@@ -197,6 +210,7 @@ export class CreateComponent implements OnInit, AfterViewInit, OnDestroy {
           this.periods = this.filterService.getPeriodArray( this.period_type, this.year );
           // this.activateNode(this.filterService.getPeriodArray( this.period_type, this.year )[0].id, this.pertree);
           this.current_action = 'new';
+          this.scorecard.data.user = this.user;
         }else{
           this.current_action = 'update';
           this.need_for_group = true;
@@ -214,6 +228,12 @@ export class CreateComponent implements OnInit, AfterViewInit, OnDestroy {
               }
               if(!this.scorecard.data.hasOwnProperty('selected_periods')){
                 this.scorecard.data.selected_periods = [];
+              }
+              if(!this.scorecard.data.hasOwnProperty('user')){
+                this.scorecard.data.user = this.user;
+              }
+              if(!this.scorecard.data.hasOwnProperty('user_groups')){
+                this.scorecard.data.user_groups = [];
               }
               // attach organisation unit if none is defined
               if(!this.scorecard.data.orgunit_settings.hasOwnProperty("selected_orgunits")){
@@ -1550,6 +1570,11 @@ export class CreateComponent implements OnInit, AfterViewInit, OnDestroy {
     this.showPerTree = !this.showPerTree;
   }
 
+  // display sharing Tree
+  displayShareTree(){
+    this.showShareTree = !this.showShareTree;
+  }
+
   // action to be called when a tree item is deselected(Remove item in array of selected items
   deactivateOrg ( $event ) {
     this.scorecard.data.orgunit_settings.selected_orgunits.forEach((item,index) => {
@@ -1617,6 +1642,42 @@ export class CreateComponent implements OnInit, AfterViewInit, OnDestroy {
 
   changePeriodType(){
     this.periods = this.filterService.getPeriodArray(this.period_type,this.year);
+  }
+
+  // add user sharing settings
+  toogleGroup(type,group){
+    if(group.hasOwnProperty(type)){
+        group[type] = !group[type];
+    }else{
+      group[type] = true;
+    }
+    if(!this.checkItemAvailabilty(group,this.scorecard.data.user_groups)){
+      this.scorecard.data.user_groups.push(group)
+    }else{
+      this.scorecard.data.user_groups.forEach((value,index) => {
+        if( value.id == group.id ){
+          this.scorecard.data.user_groups[index] = group;
+        }
+      });
+    }
+    if(!group['see'] && !group['edit']){
+      this.scorecard.data.user_groups.forEach((value,index) => {
+        if( value.id == group.id ){
+          this.scorecard.data.user_groups.splice(index,1);
+        }
+      });
+    }
+
+  }
+
+  getGroupActiveState(type,group): boolean{
+    let checker = false;
+    this.scorecard.data.user_groups.forEach((value) => {
+      if( value.id == group.id && value.hasOwnProperty(type)){
+        checker = value[type];
+      }
+    });
+    return checker;
   }
 
 

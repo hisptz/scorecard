@@ -42,7 +42,7 @@
 
 
 <div class="container-fluid" style="padding-left: 0px; border-top: 1px solid blanchedalmond; margin-top: 20px; padding-top: 23px" *ngIf="scorecards.length != 0 && !scorecards_loading" >
-  <div [@visibilityChanged] class="col-sm-4" *ngFor="let scorecard of scorecards | scoreCardFilter:queryterm | paginate: config " style="padding-left: 0px">
+  <div [@visibilityChanged] class="col-sm-4" *ngFor="let scorecard of scorecards | scoreCardFilter:queryterm | paginate: config " style="padding-left: 0px" [ngClass]="{'hidden': !scorecard.can_see}">
     <div class="thumbnail scorecard_details" [routerLink]="['view',scorecard.id]">
 
       <div style="height:270px; padding-top: 50px" [routerLink]="['view',scorecard.id]">
@@ -54,10 +54,10 @@
         <a  class="btn btn-primary sans-pro" role="button" title="Open {{ scorecard.data.header.title }}">
           View
         </a>
-        <a  *ngIf="have_authorities" title="edit {{ scorecard.data.header.title }}" (click)="openscorecard(scorecard.id,$event)" class="btn btn-default sans-pro" role="button">
+        <a  *ngIf="scorecard.can_edit" title="edit {{ scorecard.data.header.title }}" (click)="openscorecard(scorecard.id,$event)" class="btn btn-default sans-pro" role="button">
           <span class="glyphicon glyphicon-pencil text-primary"></span>
         </a>
-        <button *ngIf="have_authorities" title="delete {{ scorecard.data.header.title }}" (click)="confirm_deleting[scorecard.id] = true; $event.stopPropagation()" class="btn btn-default sans-pro" role="button">
+        <button *ngIf="scorecard.can_edit" title="delete {{ scorecard.data.header.title }}" (click)="confirm_deleting[scorecard.id] = true; $event.stopPropagation()" class="btn btn-default sans-pro" role="button">
           <span class="glyphicon glyphicon-trash text-danger"></span>
         </button>
       </h1>
