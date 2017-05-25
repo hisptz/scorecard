@@ -308,10 +308,11 @@ export class ViewComponent implements OnInit, AfterViewInit, OnDestroy {
                         };
                         // this.orgunit_model.selected_orgunits = [this.orgUnit];
                         this.orgUnitlength = this.orgUnit.children.length+1;
-                        this.metadata_ready = true;
+
                         //noinspection TypeScriptUnresolvedVariable
                         this.organisationunits = initial_data.organisationUnits;
                         this.orgunit_tree_config.loading = false;
+                        this.metadata_ready = true;
                         // after done loading initial organisation units now load all organisation units
                         let fields = this.orgunitService.generateUrlBasedOnLevels(use_level);
                         this.orgunitService.getAllOrgunitsForTree1(fields, orgunits).subscribe(

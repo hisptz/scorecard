@@ -114,6 +114,11 @@
                 <div *ngIf="group_loading">Loading Groups</div>
                 <div class="tree-area" *ngIf="!group_loading">
                   <ul class="list-unstyled">
+                    <li  style="padding: 5px" title="this will be accessible to everyone in the system accessing the scorecard">
+                      <button [ngClass]="{'btn-primary': getGroupActiveState('see',{id:'all',name:'Public'})}" class="btn btn-xs" (click)="toogleGroup('see',{id:'all',name:'Public'})"><span class="glyphicon glyphicon-eye-open"></span></button>
+                      <button [ngClass]="{'btn-primary': getGroupActiveState('edit',{id:'all',name:'Public'})}" class="btn btn-xs" (click)="toogleGroup('edit',{id:'all',name:'Public'})"><span class="glyphicon glyphicon-pencil"></span></button>
+                       Public
+                    </li>
                     <li *ngFor="let group of userGroups | filterByName:share_filter" style="padding: 5px">
                       <button [ngClass]="{'btn-primary': getGroupActiveState('see',group)}" class="btn btn-xs" (click)="toogleGroup('see',group)"><span class="glyphicon glyphicon-eye-open"></span></button>
                       <button [ngClass]="{'btn-primary': getGroupActiveState('edit',group)}" class="btn btn-xs" (click)="toogleGroup('edit',group)"><span class="glyphicon glyphicon-pencil"></span></button>

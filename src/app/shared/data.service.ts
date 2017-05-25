@@ -37,6 +37,15 @@ export class DataService {
     }
     if(scorecard.hasOwnProperty('user_groups')){
       for ( let group of scorecard.user_groups){
+        if( group.id == 'all' ){
+          if(group.see){
+            checker_see = true;
+          }
+          if(group.edit){
+            checker_see = true;
+            checker_edit = true;
+          }
+        }
         for ( let user_group of user.userGroups){
           if( user_group.id == group.id ){
             if(group.see){
