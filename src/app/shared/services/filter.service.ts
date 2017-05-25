@@ -329,6 +329,50 @@ export class FilterService {
     }
   }
 
+  deducePeriodType(period: any):any{
+    let period_length = period.length;
+    let period_type = "";
+    let period_object = {
+      "type":"",
+      "year":period.substr(0,4)
+    };
+    if( period_length == 4){
+      period_type = "Yearly";
+    }else if( period_length == 6 ){
+
+      if(period.substr(4,1) == "Q"){
+        period_type = "Quarterly";
+      }else if(period.substr(4,1) == "S"){
+        period_type = "SixMonthly";
+      }else{
+        period_type = "Monthly"
+      }
+
+    }else if( period_length == 7 ){
+
+      if(period.substr(6,1) == "B"){
+        period_type = "BiMonthly";
+      }else if(period.substr(4,3) == "Oct"){
+        period_type = "FinancialOct";
+      }
+
+    }else if( period_length == 8 ){
+      if(period.substr(4,4) == "July"){
+        period_type = "FinancialJuly";
+      }
+    }else if( period_length == 9 ){
+      if(period.substr(4,5) == "April"){
+        period_type = "FinancialApril";
+      }
+    }else if( period_length == 11 ){
+      if(period.substr(4,6) == "AprilS"){
+        period_type = "SixMonthlyApril";
+      }
+    }
+    period_object.type = period_type;
+    return period_object;
+  }
+
   // Handling error
   handleError (error: any) {
     return Observable.throw( error );

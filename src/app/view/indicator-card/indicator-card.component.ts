@@ -89,7 +89,7 @@ export class IndicatorCardComponent implements OnInit, AfterViewInit, OnDestroy 
 
   chartData: any = {};
   tableData: any = {};
-  visualizer_config = {
+  visualizer_config:any = {
     'type': 'table',
     'tableConfiguration': {
     'title': 'My chart',
@@ -158,15 +158,21 @@ export class IndicatorCardComponent implements OnInit, AfterViewInit, OnDestroy 
       this.orgunit_model.selected_orgunits = [this.default_orgunit];
     }
     this.card_periods = this.filterService.getPeriodArray( this.default_period_type, this.card_year );
+    this.card_selected_periods = this.default_period;
 
   }
 
   ngAfterViewInit(){
     console.log(this.default_orgunit);
-    this.updateIndicatorCard(this.indicator, "table", [this.default_period], this.orgunit_model, true);
-    this.activateNode( this.default_period.id, this.pertree );
-    this.activateNode( this.default_orgunit.id, this.orgtree );
 
+    this.updateIndicatorCard(this.indicator, "table", this.default_period, this.orgunit_model, false);
+    this.default_period.forEach((current_period) => {
+      this.activateNode( current_period.id, this.pertree );
+    });
+    //activate organisation units
+    for( let active_orgunit of this.orgunit_model.selected_orgunits ){
+      this.activateNode(active_orgunit.id, this.orgtree);
+    }
   }
 
   switchBottleneck(indicator){
@@ -197,17 +203,20 @@ export class IndicatorCardComponent implements OnInit, AfterViewInit, OnDestroy 
     let periodArray = [];
 
     // check first if your supposed to load bottleneck indicators too for analysis
-
+    let labels = null;
     if( this.showBottleneck ){
+      labels = [];
       for ( let holder of holders ){
         for ( let item of holder.indicators ){
           if( this.hidden_columns.indexOf( item.id ) == -1){
-            // indicatorsArray.push( item.id );
             if( item.hasOwnProperty("bottleneck_indicators") ){
               for( let bottleneck of item.bottleneck_indicators ){
                 indicatorsArray.push( bottleneck.id );
+                labels.push({'id':bottleneck.id, 'name':bottleneck.bottleneck_title })
               }
             }
+            indicatorsArray.push( item.id );
+            labels.push({'id':item.id, 'name':item.title })
           }
         }
       }
@@ -219,10 +228,12 @@ export class IndicatorCardComponent implements OnInit, AfterViewInit, OnDestroy 
         this.bottleneck_first_time = false;
       }
     }else{
+      labels = [];
       for ( let holder of holders ){
         for ( let item of holder.indicators ){
           if( this.hidden_columns.indexOf( item.id ) == -1){
             indicatorsArray.push( item.id );
+            labels.push({'id':item.id, 'name':item.title })
           }
         }
       }
@@ -235,14 +246,16 @@ export class IndicatorCardComponent implements OnInit, AfterViewInit, OnDestroy 
         'tableConfiguration': {
           'title': this.prepareCardTitle(this.indicator),
           'rows': ['ou'],
-          'columns': ['dx','pe']
+          'columns': ['dx','pe'],
+          'labels': labels
         },
         'chartConfiguration': {
           'type':type,
           'show_labels':show_labels,
           'title': this.prepareCardTitle( this.indicator ),
           'xAxisType': 'pe',
-          'yAxisType': 'ou'
+          'yAxisType': 'ou',
+          'labels': labels
         }
       }
     }
@@ -259,14 +272,16 @@ export class IndicatorCardComponent implements OnInit, AfterViewInit, OnDestroy 
         'tableConfiguration': {
           'title': this.prepareCardTitle( this.indicator ),
           'rows': ['ou'] ,
-          'columns': ['pe']
+          'columns': ['pe'],
+          'labels': labels
         },
         'chartConfiguration': {
           'type':type,
           'show_labels':show_labels,
           'title': this.prepareCardTitle( this.indicator ),
           'xAxisType': config_array[1],
-          'yAxisType': config_array[0]
+          'yAxisType': config_array[0],
+          'labels': labels
         }
       };
     }
@@ -313,9 +328,6 @@ export class IndicatorCardComponent implements OnInit, AfterViewInit, OnDestroy 
         )
       }
     }
-
-
-
   }
 
   checkIfParametersChanged(orgunits, periods, indicators): boolean{
@@ -485,7 +497,7 @@ export class IndicatorCardComponent implements OnInit, AfterViewInit, OnDestroy 
       if(orgunit_model.user_orgunits.length == 1){
         let user_orgunit = this.orgtree.treeModel.getNodeById(orgunit_model.user_orgunits[0]);
         orgUnits.push(user_orgunit.id);
-        if(user_orgunit.hasOwnProperty('children') && with_children){
+        if(user_orgunit.hasOwnProperty('children')){
           for( let orgunit of user_orgunit.children ){
             orgUnits.push(orgunit.id);
           }
@@ -502,6 +514,7 @@ export class IndicatorCardComponent implements OnInit, AfterViewInit, OnDestroy 
         orgUnits.push(detailed_orgunit.id);
         if(detailed_orgunit.hasOwnProperty('children') && with_children){
           for( let orgunit of detailed_orgunit.children ){
+            this.activateNode(orgunit.id, this.orgtree);
             orgUnits.push(orgunit.id);
           }
         }
@@ -527,6 +540,7 @@ export class IndicatorCardComponent implements OnInit, AfterViewInit, OnDestroy 
   }
 
 
+
 // action to be called when a tree item is deselected(Remove item in array of selected items
   deactivateOrg ( $event ) {
     this.orgunit_model.selected_orgunits.forEach((item,index) => {
@@ -538,18 +552,14 @@ export class IndicatorCardComponent implements OnInit, AfterViewInit, OnDestroy 
 
   // add item to array of selected items when item is selected
   activateOrg = ($event) => {
-    if(!this.checkOrgunitAvailabilty($event.node.data, this.orgunit_model.selected_orgunits)){
+    if(!this.checkItemAvailabilty($event.node.data, this.orgunit_model.selected_orgunits)){
       this.orgunit_model.selected_orgunits.push($event.node.data);
     }
   };
 
-  // add item to array of selected items when item is selected
-  removeOrg = (id) => {
-    this.deActivateNode( id, this.orgtree );
-  };
 
   // check if orgunit already exist in the orgunit display list
-  checkOrgunitAvailabilty(orgunit, array): boolean{
+  checkItemAvailabilty(orgunit, array): boolean{
     let checker = false;
     array.forEach((value) => {
       if( value.id == orgunit.id ){
@@ -569,9 +579,12 @@ export class IndicatorCardComponent implements OnInit, AfterViewInit, OnDestroy 
     });
   };
 
+
   // add item to array of selected items when period is selected
   activatePer = ($event) => {
-    this.card_selected_periods.push($event.node.data);
+    if(!this.checkItemAvailabilty($event.node.data, this.card_selected_periods)) {
+      this.card_selected_periods.push($event.node.data);
+    }
     this.card_period = $event.node.data;
   };
 
@@ -580,17 +593,20 @@ export class IndicatorCardComponent implements OnInit, AfterViewInit, OnDestroy 
       let node = nodes.treeModel.getNodeById(nodeId);
       if (node)
         // node.toggleActivated();
-        node.setIsActive(true);
+        node.setIsActive(true,true);
     }, 0);
   }
 
-  deActivateNode(nodeId:any, nodes){
+  // a method to activate the model
+  deActivateNode(nodeId:any, nodes, event){
     setTimeout(() => {
       let node = nodes.treeModel.getNodeById(nodeId);
       if (node)
-        // node.toggleActivated();
-        node.setIsActive(false);
+        node.setIsActive(false, true);
     }, 0);
+    if( event != null){
+      event.stopPropagation();
+    }
   }
 
   // function that is used to filter nodes

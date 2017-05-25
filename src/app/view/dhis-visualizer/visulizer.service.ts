@@ -85,7 +85,7 @@ export class VisualizerService {
     return index;
   }
 
-  _sanitizeIncomingAnalytics( analyticsObject:any ){
+  _sanitizeIncomingAnalytics( analyticsObject:any, nameConfiguration:any = null ){
     for(let header of analyticsObject.headers ){
       if(header.hasOwnProperty("optionSet")){
         if( analyticsObject.metaData[header.name].length == 0 ){
@@ -100,6 +100,10 @@ export class VisualizerService {
           }
         }
       }
+    }
+
+    if(nameConfiguration != null){
+      analyticsObject = this._updateAnalyticsForOptins(analyticsObject,nameConfiguration);
     }
 
     return analyticsObject;
@@ -158,6 +162,21 @@ export class VisualizerService {
   }
 
   /**
+   * Exchange the names of the analytics objects with custom names
+   * @param analyticsObject
+   * @param nameConfiguration eg { id:'HydhUd32', name:'Some custom name' }
+   */
+  _updateAnalyticsForOptins(analyticsObject,nameConfiguration){
+      for( let config of nameConfiguration ){
+        if( analyticsObject.metaData.names[config.id] ){
+          analyticsObject.metaData.names[config.id] = config.name;
+        }
+      }
+      return analyticsObject;
+
+  }
+
+  /**
    * return the meaningfull array of xAxis and yAxis Items
    * x axisItems and yAxisItems are specified if you want few data type array['uid1','uid2'], ie a subset of all available items
    * @param analyticsObject
@@ -167,8 +186,8 @@ export class VisualizerService {
    * @param yAxisItems : Array
    * @returns {{xAxisItems: Array, yAxisItems: Array}}
    */
-  prepareCategories ( analyticsObject, xAxis: string, yAxis: string, xAxisItems = [],  yAxisItems = []){
-    analyticsObject = this._sanitizeIncomingAnalytics(analyticsObject);
+  prepareCategories ( analyticsObject, xAxis: string, yAxis: string, xAxisItems = [],  yAxisItems = [], nameConfiguration:any = null ){
+    analyticsObject = this._sanitizeIncomingAnalytics(analyticsObject,nameConfiguration);
     let structure = {
       'xAxisItems':[],
       'yAxisItems':[]
@@ -200,8 +219,8 @@ export class VisualizerService {
    * @param xAxisItems
    * @returns {{xAxisItems: Array, yAxisItems: Array}}
    */
-  prepareSingleCategories ( analyticsObject, itemIdentifier , preDefinedItems = [] ){
-    analyticsObject = this._sanitizeIncomingAnalytics(analyticsObject);
+  prepareSingleCategories ( analyticsObject, itemIdentifier , nameConfiguration:any = null, preDefinedItems = [] ){
+    analyticsObject = this._sanitizeIncomingAnalytics(analyticsObject,nameConfiguration);
     let structure = [];
     if ( preDefinedItems.length === 0 ) {
       for ( let val of this.getMetadataArray(analyticsObject, itemIdentifier )){
@@ -267,7 +286,16 @@ export class VisualizerService {
 
     let chartObject = this.getChartConfigurationObject('pieChart',chartConfiguration.show_labels);
     chartObject.title.text = chartConfiguration.title;
-    let metaDataObject = this.prepareCategories(analyticsObject, chartConfiguration.xAxisType, chartConfiguration.yAxisType, chartConfiguration.xAxisItems, chartConfiguration.yAxisItems);
+    let metaDataObject:any;
+    let labels = (chartConfiguration.hasOwnProperty('labels'))?chartConfiguration.labels:null;
+    metaDataObject = this.prepareCategories(analyticsObject,
+      chartConfiguration.xAxisType,
+      chartConfiguration.yAxisType,
+      chartConfiguration.xAxisItems,
+      chartConfiguration.yAxisItems,
+      labels
+    );
+
     let serie = [];
     for ( let yAxis of metaDataObject.yAxisItems ){
       for ( let xAxis of metaDataObject.xAxisItems ){
@@ -300,11 +328,13 @@ export class VisualizerService {
     chartObject.title.text = chartConfiguration.title;
     chartObject.chart.type = "";
     let pieSeries = [];
+    let labels = (chartConfiguration.hasOwnProperty('labels'))?chartConfiguration.labels:null
     let metaDataObject = this.prepareCategories( analyticsObject,
       chartConfiguration.xAxisType,
       chartConfiguration.yAxisType,
       (chartConfiguration.hasOwnProperty('xAxisItems'))?chartConfiguration.xAxisItems:[],
-      (chartConfiguration.hasOwnProperty('yAxisItems'))?chartConfiguration.yAxisItems:[]
+      (chartConfiguration.hasOwnProperty('yAxisItems'))?chartConfiguration.yAxisItems:[],
+      labels
     );
     // set x-axis categories
     chartObject.xAxis.categories = [];
@@ -344,11 +374,13 @@ export class VisualizerService {
       chartObject.chart.type = ""
     }
     chartObject.title.text = chartConfiguration.title;
+    let labels = (chartConfiguration.hasOwnProperty('labels'))?chartConfiguration.labels:null
     let metaDataObject = this.prepareCategories(analyticsObject,
       chartConfiguration.xAxisType,
       chartConfiguration.yAxisType,
       (chartConfiguration.hasOwnProperty('xAxisItems'))?chartConfiguration.xAxisItems:[],
-      (chartConfiguration.hasOwnProperty('yAxisItems'))?chartConfiguration.yAxisItems:[]
+      (chartConfiguration.hasOwnProperty('yAxisItems'))?chartConfiguration.yAxisItems:[],
+      labels
     );
     chartObject.xAxis.categories = [];
     for ( let val of metaDataObject.xAxisItems ) {
@@ -405,11 +437,13 @@ export class VisualizerService {
       this.getChartConfigurationObject('stackedChartObject',chartConfiguration.show_labels);
 
     chartObject.title.text = chartConfiguration.title;
+    let labels = (chartConfiguration.hasOwnProperty('labels'))?chartConfiguration.labels:null
     let metaDataObject = this.prepareCategories(analyticsObject,
       chartConfiguration.xAxisType,
       chartConfiguration.yAxisType,
       (chartConfiguration.hasOwnProperty('xAxisItems')) ? chartConfiguration.xAxisItems : [],
-      (chartConfiguration.hasOwnProperty('yAxisItems')) ? chartConfiguration.yAxisItems : []
+      (chartConfiguration.hasOwnProperty('yAxisItems')) ? chartConfiguration.yAxisItems : [],
+      labels
     );
     chartObject.xAxis.categories = [];
     chartObject.series = [];
@@ -440,11 +474,13 @@ export class VisualizerService {
   drawGaugeChart ( analyticsObject, chartConfiguration ) {
     let chartObject = this.getChartConfigurationObject('gaugeObject',chartConfiguration.show_labels);
     chartObject.title.text = chartConfiguration.title;
+    let labels = (chartConfiguration.hasOwnProperty('labels'))?chartConfiguration.labels:null;
     let metaDataObject = this.prepareCategories(analyticsObject,
       chartConfiguration.xAxisType,
       chartConfiguration.yAxisType,
       (chartConfiguration.hasOwnProperty('xAxisItems')) ? chartConfiguration.xAxisItems : [],
-      (chartConfiguration.hasOwnProperty('yAxisItems')) ? chartConfiguration.yAxisItems : []
+      (chartConfiguration.hasOwnProperty('yAxisItems')) ? chartConfiguration.yAxisItems : [],
+      labels
     );
     let gaugeValue  = 0;
     for ( let yAxis of metaDataObject.yAxisItems ) {
@@ -475,11 +511,13 @@ export class VisualizerService {
    * @returns {{chart: {polar: boolean, type: string, events: {load: ((chart:any)=>undefined)}}, title: {text: any, x: number}, pane: {size: string}, xAxis: {categories: Array, tickmarkPlacement: string, lineWidth: number}, yAxis: {gridLineInterpolation: string, lineWidth: number, min: number}, tooltip: {shared: boolean}, legend: {align: string, verticalAlign: string, y: number, layout: string}, series: Array}}
    */
   drawSpiderChart ( analyticsObject, chartConfiguration ) {
+    let labels = (chartConfiguration.hasOwnProperty('labels'))?chartConfiguration.labels:null;
     let metaDataObject = this.prepareCategories(analyticsObject,
       chartConfiguration.xAxisType,
       chartConfiguration.yAxisType,
       (chartConfiguration.hasOwnProperty('xAxisItems')) ? chartConfiguration.xAxisItems : [],
-      (chartConfiguration.hasOwnProperty('yAxisItems')) ? chartConfiguration.yAxisItems : []
+      (chartConfiguration.hasOwnProperty('yAxisItems')) ? chartConfiguration.yAxisItems : [],
+      labels
     );
     let categories = [];
     for ( let val of metaDataObject.xAxisItems ) {
@@ -557,6 +595,7 @@ export class VisualizerService {
         'column': []
       }
     };
+    let labels = (tableConfiguration.hasOwnProperty("labels"))?tableConfiguration.labels:null;
     if (tableConfiguration.hasOwnProperty("display_list") && tableConfiguration.display_list) {
       table.headers[0] = {
         items: [],
@@ -601,7 +640,7 @@ export class VisualizerService {
       }
       for (let columnItem of tableConfiguration.columns) {
         let dimension = this.calculateColSpan(analyticsObject, tableConfiguration.columns, columnItem);
-        let currentColumnItems = this.prepareSingleCategories(analyticsObject, columnItem);
+        let currentColumnItems = this.prepareSingleCategories(analyticsObject, columnItem, labels);
         let headerItem = [];
         for (let i = 0; i < dimension.duplication; i++) {
           for (let currentItem of currentColumnItems) {
@@ -624,7 +663,7 @@ export class VisualizerService {
       let column_length = tableConfiguration.columns.length;
       let column_items_array = [];
       for (let i = 0; i < column_length; i++) {
-        let currentRowItems = this.prepareSingleCategories(analyticsObject, tableConfiguration.columns[i]);
+        let currentRowItems = this.prepareSingleCategories(analyticsObject, tableConfiguration.columns[i], labels);
         column_items_array.push(currentRowItems);
       }
       let table_columns_array = [];
@@ -655,7 +694,7 @@ export class VisualizerService {
       let row_items_array = [];
       for (let i = 0; i < rows_length; i++) {
         let dimension = this.calculateColSpan(analyticsObject, tableConfiguration.rows, tableConfiguration.rows[i]);
-        let currentRowItems = this.prepareSingleCategories(analyticsObject, tableConfiguration.rows[i]);
+        let currentRowItems = this.prepareSingleCategories(analyticsObject, tableConfiguration.rows[i], labels);
         row_items_array.push({'items': currentRowItems, 'dimensions': dimension});
       }
       let table_rows_array = [];

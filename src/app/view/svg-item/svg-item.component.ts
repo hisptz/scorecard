@@ -12,9 +12,14 @@ export class SvgItemComponent implements OnInit {
   @Input() indicator: any;
   @Input() scorecard: ScoreCard;
   @Input() indicator_list: any[] = [];
-  constructor() { }
+  @Input() period: string;
+  value_key: string;
+  constructor() {
+
+  }
 
   ngOnInit() {
+    this.value_key = this.current_orgunit.id+"."+this.period;
   }
 
   // assign a background color to area depending on the legend set details

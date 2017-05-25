@@ -15,7 +15,7 @@ export class OrgUnitService {
 
   // Get current user information
   getUserInformation () {
-    return this.http.get(this.constant.root_dir + 'api/me.json?fields=dataViewOrganisationUnits[id,level],organisationUnits[id,level]')
+    return this.http.get(this.constant.root_dir + 'api/me.json?fields=dataViewOrganisationUnits[id,name,level],organisationUnits[id,name,level]')
       .map((response: Response) => response.json())
       .catch( this.handleError );
   }
@@ -74,11 +74,11 @@ export class OrgUnitService {
     let orgunits = [];
     if(userOrgunits.dataViewOrganisationUnits.length == 0){
       userOrgunits.organisationUnits.forEach((orgunit) => {
-        orgunits.push(orgunit.id);
+        orgunits.push(orgunit);
       })
     }else{
       userOrgunits.dataViewOrganisationUnits.forEach((orgunit) => {
-        orgunits.push(orgunit.id);
+        orgunits.push(orgunit);
       })
     }
     return orgunits;

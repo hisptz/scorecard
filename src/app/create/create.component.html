@@ -3,7 +3,10 @@
     <img src="scorecard.svg" style="height: 58px; width: 48px"> <span style="font-size: 15px"> Score Card</span>
   </div>
   <div class="col-sm-8">
-      <h3 class="text-center" style="margin-top: 0px"><small>Create a new scorecard</small></h3>
+      <h3 class="text-center" style="margin-top: 0px">
+        <small *ngIf="scorecard.name == ''">Create a new scorecard</small>
+        <small *ngIf="scorecard.name != ''">{{ scorecard.name }}</small>
+      </h3>
   </div>
   <div class="col-sm-2" style="margin-top: 14px">
     <button class="btn btn-default btn-sm pull-right" [routerLink]="['']" style="height: 30px"><span class="glyphicon glyphicon-home"></span> home</button>
@@ -44,8 +47,9 @@
         </li>
         <li class="list-group-item">
           <div class="row">
-            <div class="col-sm-6"><label title="tick to show score"><input type="checkbox" [(ngModel)]="scorecard.data.show_score" > Score</label></div>
-            <div class="col-sm-6"><label title="tick to show arrows on scorecard"><input type="checkbox" [(ngModel)]="scorecard.data.header.show_arrows_definition" > Arrows</label></div>
+            <div class="col-sm-3"><label title="tick to show score"><input type="checkbox" [(ngModel)]="scorecard.data.show_score" > Score</label></div>
+            <div class="col-sm-3"><label title="tick to show arrows on scorecard"><input type="checkbox" [(ngModel)]="scorecard.data.header.show_arrows_definition" > Arrows</label></div>
+            <div class="col-sm-6"><label title="tick to show data in rows"><input type="checkbox" [(ngModel)]="scorecard.data.show_data_in_column" > show data in rows</label></div>
 
           </div>
         </li>
@@ -77,51 +81,191 @@
   <div class="scorecard_table">
     <table class="table table-bordered" style="margin-bottom: 3px">
       <tr>
-        <th></th>
+        <!--sharing settings-->
+        <th dnd-droppable (onDropSuccess)="transferDataSuccess($event,'new',null)">
+          <div class="tree-input" title="Select groups that will be able to view or edit your scorecard" appClickOutside (clickOutside)="showShareTree = true">
+            <div>
+              <div class="show_items" (click)="displayShareTree()">
+            <span *ngIf="scorecard.data.user_groups.length > 3">
+          <span class="selected-item">
+            {{ scorecard.data.user_groups[0].name }} selected
+          </span>
+              <span class="selected-item">
+            {{ scorecard.data.user_groups[1].name }} selected
+          </span><span class="selected-item">
+            and {{ scorecard.data.user_groups.length -2 }} more
+          </span>
+        </span>
+                <span *ngIf="scorecard.data.user_groups.length <= 3">
+              <span *ngFor="let item of scorecard.data.user_groups" class="selected-item ng-binding ng-scope">
+                {{ item.name }}
+              </span>
+            </span>
+                <span class="no-selection"*ngIf="scorecard.data.user_groups.length == 0 && !group_loading">Only You</span>
+                <span class="glyphicon glyphicon-triangle-bottom pull-right" *ngIf="!group_loading"></span>
+                <span *ngIf="group_loading">Loading user groups</span>
+              </div>
+              <div class="tree-view" [ngClass]="{'hiddenTree':showShareTree}">
+                <div class="search-area">
+                  <form *ngIf="!group_loading" style="border-bottom: solid 1px blanchedalmond;">
+                    <input [(ngModel)]="share_filter" placeholder="Search" name="share_search_field"/>
+                  </form>
+                </div>
+                <div *ngIf="group_loading">Loading Groups</div>
+                <div class="tree-area" *ngIf="!group_loading">
+                  <ul class="list-unstyled">
+                    <li  style="padding: 5px" title="this will be accessible to everyone in the system accessing the scorecard">
+                      <button [ngClass]="{'btn-primary': getGroupActiveState('see',{id:'all',name:'Public'})}" class="btn btn-xs" (click)="toogleGroup('see',{id:'all',name:'Public'})"><span class="glyphicon glyphicon-eye-open"></span></button>
+                      <button [ngClass]="{'btn-primary': getGroupActiveState('edit',{id:'all',name:'Public'})}" class="btn btn-xs" (click)="toogleGroup('edit',{id:'all',name:'Public'})"><span class="glyphicon glyphicon-pencil"></span></button>
+                       Public
+                    </li>
+                    <li *ngFor="let group of userGroups | filterByName:share_filter" style="padding: 5px">
+                      <button [ngClass]="{'btn-primary': getGroupActiveState('see',group)}" class="btn btn-xs" (click)="toogleGroup('see',group)"><span class="glyphicon glyphicon-eye-open"></span></button>
+                      <button [ngClass]="{'btn-primary': getGroupActiveState('edit',group)}" class="btn btn-xs" (click)="toogleGroup('edit',group)"><span class="glyphicon glyphicon-pencil"></span></button>
+                      {{ group.name }}
+                    </li>
+                  </ul>
+                </div>
+                <div class="close-area">
+                  <button class="btn btn-default pull-right" style="height: 30px"  (click)="displayShareTree()">
+                    <span class="glyphicon glyphicon-remove"></span> Close
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </th>
+        <!--holder groups stays here-->
         <th
           style="font-size: 9px; "
           *ngFor="let indicator_holder_group of scorecard.data.data_settings.indicator_holder_groups"
           [attr.colspan]="indicator_holder_group.indicator_holder_ids.length"
           class="sans-pro"
           [ngClass]="{'current':is_current_group(indicator_holder_group)}"
+          dnd-droppable (onDropSuccess)="transferDataSuccess($event,'group',indicator_holder_group)"
         >
-          <input type="text" [(ngModel)]="indicator_holder_group.name" class="group-text">
-          <span *ngIf="indicator_holder_group.id != 1 && !deleting[indicator_holder_group.id]"
-                class="glyphicon glyphicon-trash text-danger"
-                style="cursor: pointer; padding-left: 5px"
-                (click)="deleting[indicator_holder_group.id] = true"
-          ></span>
-          <p *ngIf="indicator_holder_group.id != 1 && deleting[indicator_holder_group.id]">
-            Please Confirm, indicators will be deleted too.<br>
-            <button class="btn btn-xs btn-warning" (click)="deleting[indicator_holder_group.id] = false">cancel</button>
-            <button class="btn btn-xs btn-danger" (click)="deleteGroup(indicator_holder_group)">delete</button>
-          </p>
+          <div dnd-draggable [dragEnabled]="true" [dragData]="indicator_holder_group">
+            <input type="text" [(ngModel)]="indicator_holder_group.name" class="group-text">
+            <span *ngIf="indicator_holder_group.id != 1 && !deleting[indicator_holder_group.id]"
+                  class="glyphicon glyphicon-trash text-danger"
+                  style="cursor: pointer; padding-left: 5px"
+                  (click)="deleting[indicator_holder_group.id] = true"
+            ></span>
+            <p *ngIf="indicator_holder_group.id != 1 && deleting[indicator_holder_group.id]">
+              Please Confirm, indicators will be deleted too.<br>
+              <button class="btn btn-xs btn-warning" (click)="deleting[indicator_holder_group.id] = false">cancel</button>
+              <button class="btn btn-xs btn-danger" (click)="deleteGroup(indicator_holder_group)">delete</button>
+            </p>
+          </div>
         </th>
-        <th style="width: 60px">
+        <!--add holder groups-->
+        <th style="width: 60px"  dnd-droppable (onDropSuccess)="transferDataSuccess($event,'new-group',null)">
           <button class="btn btn-xs" *ngIf="need_for_group" (click)="createGroup()">
             <span class="glyphicon-plus"></span> Add
           </button>
         </th>
       </tr>
       <tr>
-        <th style="vertical-align: bottom"></th>
-        <td *ngFor="let indicator of getItemsFromGroups()" style="font-size: 10px;width:90px;max-width: 90px;overflow-wrap: break-word;cursor: pointer;" class="sans-pro"
-            title="Click to update {{ getIndicatorTitle(indicator) }}"
-            [ngClass]="{'current':is_current_indicator(indicator)}"
-            (click)="updateIndicator(indicator)">
-          {{ getIndicatorTitle(indicator) }}
+        <td style="vertical-align: bottom" dnd-droppable (onDropSuccess)="transferDataSuccess($event,'new',null)">
+          <!--period configurations-->
+          <div class="tree-input" title="default starting period(s) hold control to multiselect" appClickOutside (clickOutside)="showPerTree = true">
+            <div>
+              <div class="show_items" (click)="displayPerTree()">
+              <span *ngIf="selected_periods.length > 3">
+            <span class="selected-item">
+              {{ selected_periods[0].name }} selected
+            </span>
+                <span class="selected-item">
+              {{ selected_periods[1].name }} selected
+            </span><span class="selected-item">
+              and {{ selected_periods.length -2 }} more
+            </span>
+          </span>
+                <span *ngIf="selected_periods.length <= 3">
+                <span *ngFor="let item of selected_periods" class="selected-item ng-binding ng-scope">
+                  {{ item.name }}
+                </span>
+              </span>
+                <span class="no-selection"*ngIf="selected_periods.length == 0 && !period_tree_config.loading">{{ period_tree_config.placeholder }}</span>
+                <span class="glyphicon glyphicon-triangle-bottom pull-right" *ngIf="!period_tree_config.loading"></span>
+                <span *ngIf="period_tree_config.loading">{{ period_tree_config.loading_message }}</span>
+              </div>
+              <div class="tree-view" [ngClass]="{'hiddenTree':showPerTree}">
+                <div class="col-sm-7" style="padding-left: 0px; margin-bottom: 5px">
+                  <label>Period Type</label>
+                  <select id="periodType" [(ngModel)]="scorecard.data.periodType" class="form-control" style="height: 30px " (change)="changePeriodType()">
+                    <option value="">[ Select period type ]</option>
+                    <option value="Monthly">Monthly</option>
+                    <option value="BiMonthly">Bimonthly</option>
+                    <option value="Quarterly">Quarterly</option>
+                    <option value="SixMonthly">Six-monthly</option>
+                    <option value="SixMonthlyApril">Six-monthly April</option>
+                    <option value="Yearly">Yearly</option>
+                    <option value="FinancialApril">Financial-April</option>
+                    <option value="FinancialJuly">Financial-July</option>
+                    <option value="FinancialOct">Financial-Oct</option>
+                  </select>
+                </div>
+                <div class="col-sm-5" style="padding-right: 0px; margin-bottom: 5px">
+                  <label>&nbsp;</label>
+                  <div class="btn-group" style="width: 100%">
+                    <button type="button" class="btn btn-default pull-right" style="height: 30px; font-size: 11px" (click)="pushPeriodForward()">>> year</button>
+                    <button type="button" class="btn btn-default pull-right" style="height: 30px; font-size: 11px;" (click)="pushPeriodBackward()"><< year</button>
+                  </div>
+                </div>
+
+                <div class="search-area">
+                  <form *ngIf="!period_tree_config.loading && period_tree_config.show_search" style="border-bottom: solid 1px blanchedalmond;">
+                    <input #filter (keyup)="filterNodes(filter.value, pertree)" placeholder="{{ period_tree_config.search_text }}" id="search_field"/>
+
+                  </form>
+                </div>
+                <div *ngIf="period_tree_config.loading">{{ period_tree_config.loading_message }}</div>
+                <div class="tree-area" *ngIf="!period_tree_config.loading">
+                  <Tree
+                    #pertree
+                    [nodes]="periods"
+                    [focused]="true"
+                    [options]="customTemplateStringOrgunitOptions"
+                    (onActivate)="activatePer($event)"
+                    (onDeactivate)="deactivatePer($event)"
+                  >
+                    <template #treeNodeTemplate let-node>
+                      <span>{{ node.data.name }}</span>
+                    </template>
+                  </Tree>
+                </div>
+                <div class="close-area">
+                  <button class="btn btn-default pull-right" style="height: 30px"  (click)="displayPerTree()">
+                    <span class="glyphicon glyphicon-remove"></span> Close
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
         </td>
+          <td *ngFor="let indicator of getItemsFromGroups()" style="font-size: 10px;width:90px;max-width: 90px;overflow-wrap: break-word;cursor: pointer;" class="sans-pro"
+              title="Click to update {{ getIndicatorTitle(indicator) }}"
+              [ngClass]="{'current':is_current_indicator(indicator)}"
+              (click)="updateIndicator(indicator)"
+              dnd-droppable (onDropSuccess)="transferDataSuccess($event,'table_data',indicator)"
+          >
+            <div dnd-draggable [dragEnabled]="true" [dragData]="indicator">
+            {{ getIndicatorTitle(indicator) }}
+            </div>
+          </td>
         <th style="width: 60px">
           <button title="Add new Indicator next to the current active indicator" class="btn btn-xs" *ngIf="need_for_indicator" (click)="enableAddIndicator(current_indicator_holder.holder_id)">
             <span class="glyphicon-plus"></span> Add</button>
         </th>
       </tr>
       <tr>
-        <td style="vertical-align: middle; padding: 0px">
+        <td style="vertical-align: middle; padding: 0px" dnd-droppable (onDropSuccess)="transferDataSuccess($event,'new',null)">
 
           <!--organisation unit tree-->
           <div style="padding-left: 5px; min-width: 420px">
-            <div class="tree-input" >
+            <div class="tree-input" appClickOutside (clickOutside)="showOrgTree = true">
               <div>
                 <div class="show_items" (click)="displayOrgTree()">
           <span>
@@ -130,9 +274,11 @@
                   <span *ngIf="scorecard.data.orgunit_settings.selected_orgunits.length > 4 && scorecard.data.orgunit_settings.selection_mode != 'Usr_orgUnit'">
             <span class="selected-item">
               {{ scorecard.data.orgunit_settings.selected_orgunits[0].name }}
+              <a (click)="deActivateNode(scorecard.data.orgunit_settings.selected_orgunits[0].id,orgtree,$event)" class="removeorgunit">x</a>
             </span>
             <span class="selected-item">
               {{ scorecard.data.orgunit_settings.selected_orgunits[1].name }}
+              <a (click)="deActivateNode(scorecard.data.orgunit_settings.selected_orgunits[1].id,orgtree,$event)" class="removeorgunit">x</a>
             </span>
             <span >
               &nbsp; and {{ scorecard.data.orgunit_settings.selected_orgunits.length - 2 }} more
@@ -141,6 +287,7 @@
                   <span *ngIf="scorecard.data.orgunit_settings.selected_orgunits.length <= 4 && scorecard.data.orgunit_settings.selection_mode != 'Usr_orgUnit'">
              <span *ngFor="let item of scorecard.data.orgunit_settings.selected_orgunits" class="selected-item ng-binding ng-scope">
               {{ item.name }}
+               <a (click)="deActivateNode(item.id,orgtree,$event)" class="removeorgunit">x</a>
             </span>
           </span>
                   <span class="no-selection"*ngIf="scorecard.data.orgunit_settings.selected_orgunits.length == 0 && !orgunit_tree_config.loading && scorecard.data.orgunit_settings.selection_mode != 'Usr_orgUnit'">{{ orgunit_tree_config.placeholder }}</span>
@@ -297,54 +444,6 @@
         <label for="description">Description  <span class="text-danger">*</span></label>
         <textarea class="form-control input-sm" #description id="description" placeholder="Scorecard description" [(ngModel)]="scorecard.data.header.description"></textarea>
       </div>
-      <div class="form-group" style="margin-top: 5px">
-        <label for="description">Starting period type  <span class="text-danger">*</span></label>
-        <select class="form-control input-sm" [(ngModel)]="scorecard.data.periodType">
-          <option value="Monthly">Monthly</option>
-          <option value="BiMonthly">Bimonthly</option>
-          <option value="Quarterly">Quarterly</option>
-          <option value="SixMonthly">Six-monthly</option>
-          <option value="SixMonthlyApril">Six-monthly April</option>
-          <option value="Yearly">Yearly</option>
-          <option value="FinancialApril">Financial-April</option>
-          <option value="FinancialJuly">Financial-July</option>
-          <option value="FinancialOct">Financial-Oct</option>
-        </select>
-      </div>
-      <div class="form-group">
-        <label>Show</label>
-        <div>
-          <div class="col-sm-6" style="padding-left: 0px">
-            <div class="checkbox">
-              <label title="Show legend definition">
-                <input type="checkbox" [(ngModel)]="scorecard.data.header.show_legend_definition"> Legend
-              </label>
-            </div>
-          </div>
-          <div class="col-sm-6">
-            <div class="checkbox">
-              <label title="show score for each organisation unit">
-                <input type="checkbox" [(ngModel)]="scorecard.data.show_score"> Score
-              </label>
-            </div>
-          </div>
-          <div class="col-sm-6"  style="padding-left: 0px">
-            <div class="checkbox">
-              <label title="Show rank of each organisation unit based on score">
-                <input type="checkbox" [(ngModel)]="scorecard.data.show_rank"> rank
-              </label>
-            </div>
-          </div>
-          <div class="col-sm-6">
-            <div class="checkbox">
-              <label title="show arrows to compare with last period">
-                <input type="checkbox" [(ngModel)]="scorecard.data.header.show_arrows_definition"> arrows
-              </label>
-            </div>
-          </div>
-        </div>
-
-      </div>
 
       <!--legend definition-->
       <div class="form-group">
@@ -390,6 +489,10 @@
             <span class="glyphicon glyphicon-trash"></span>
           </button> </div>
         </div>
+      </div>
+
+      <div class="form-group">
+        <label>Share with</label>
       </div>
     </div>
   </div>
@@ -442,6 +545,7 @@
             *ngFor="let item of current_listing | filterByName:listQuery | paginate: { id: 'list', itemsPerPage: 8, currentPage: r }"
             [ngClass]="{'already_selected': indicatorExist(scorecard.data.data_settings.indicator_holders, item)}"
             (click)="load_item(item)"
+            dnd-draggable [dragEnabled]="true" [dragData]="item"
           >
             <span class="glyphicon glyphicon-ok-circle text-success" *ngIf="indicatorExist(scorecard.data.data_settings.indicator_holders, item)"></span> {{ item.name }}
           </li>

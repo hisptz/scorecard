@@ -1,21 +1,34 @@
 import { Injectable } from '@angular/core';
 import {Http, Response} from "@angular/http";
 import {Observable, Subscription} from "rxjs";
+import {version} from "punycode";
 /**
  * Created by kelvin on 9/19/16.
  */
 @Injectable()
 export class Constants {
     root_dir: string = null;
-    root_api: string = null;
+    root_api: string = "../../../api/";
 
     constructor( private http: Http ){
       this.root_dir = '../../../';
-      this.root_api = '../../../api/25/';
+      this.loadVersion().subscribe(( system_info )=>{
+        if(system_info.version >= 2.25 ){
+          this.root_api = '../../../api/25/';
+        }else{
+          this.root_api = '../../../api/';
+        }
+      })
+
     }
 
   load() {
     return this.http.get("manifest.webapp")
+      .map((response: Response) => response.json())
+      .catch(this.handleError);
+  }
+  loadVersion() {
+    return this.http.get("../../../api/system/info.json")
       .map((response: Response) => response.json())
       .catch(this.handleError);
   }
