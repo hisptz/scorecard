@@ -1,0 +1,12 @@
+{
+  "/api": {
+    "target": "http://41.217.202.50:9002/dhis",
+    "secure": "false",
+    "auth":"vincentminde:StrongPasswordABC123"
+  },
+  "/": {
+    "target": "http://41.217.202.50:9002/dhis",
+    "secure": "false",
+    "auth":"vincentminde:StrongPasswordABC123"
+  }
+}
