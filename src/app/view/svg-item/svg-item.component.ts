@@ -4,7 +4,7 @@ import {ScoreCard} from "../../shared/services/scorecard.service";
 @Component({
   selector: 'svg-item',
   templateUrl: './svg-item.component.html',
-  styleUrls: []
+  //styleUrls: []
 })
 export class SvgItemComponent implements OnInit {
 
