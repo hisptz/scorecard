@@ -1,14 +1,12 @@
 {
   "/api": {
-    "target": "http://localhost:8080",
-    "target2": "http://139.162.241.220",
+    "target": "http://41.217.202.50:9002/dhis",
     "secure": "false",
-    "auth":"admin:district"
+    "auth":"vincentminde:StrongPasswordABC123"
   },
   "/": {
-    "target": "http://localhost:8080",
-    "target2": "http://139.162.241.220",
+    "target": "http://41.217.202.50:9002/dhis",
     "secure": "false",
-    "auth":"admin:district"
+    "auth":"vincentminde:StrongPasswordABC123"
   }
 }
