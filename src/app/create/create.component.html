@@ -502,12 +502,13 @@
     <div class="thumbnail scorecard_details">
       <!--<h4 style="margin-top: 0px;margin-bottom: 1px">Data Type</h4>-->
       <div class="form-group">
-        <select class="form-control input-sm" style="height: 25px"  #f (change)="switchType(f.value)">
+        <select [(ngModel)]="group_type" class="form-control input-sm" style="height: 25px"  #f (change)="switchType(f.value)">
           <option value="indicators">Indicators</option>
           <option value="dataElements">Data Elements</option>
           <option value="datasets">Data Sets</option>
           <option value="programs">Program Indicators</option>
           <option value="event">Event Data Items </option>
+          <option value="functions">Custom Functions</option>
         </select>
       </div>
       <img src="balls-4.svg" style="height: 70px; padding-top: 20px" *ngIf="!done_loading_groups">

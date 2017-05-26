@@ -103,6 +103,7 @@ export class DataService {
   }
 
 
+
   getIndicatorData ( orgunitId ,period, indicatorsObject) {
     let return_object: 0;
     for ( let row of indicatorsObject.rows ) {

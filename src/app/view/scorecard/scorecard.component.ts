@@ -10,6 +10,8 @@ import {subscribeOn} from "rxjs/operator/subscribeOn";
 import {TreeComponent} from "angular2-tree-component";
 import {forEach} from "@angular/router/src/utils/collection";
 import {Angular2Csv} from "angular2-csv";
+import {FunctionService} from "../../shared/services/function.service";
+import {VisualizerService} from "../dhis-visualizer/visulizer.service";
 
 @Component({
   selector: 'app-scorecard',
@@ -51,19 +53,31 @@ export class ScorecardComponent implements OnInit, AfterViewInit, OnDestroy {
   periods_list: any = [];
   keep_options_open:boolean = true;
   show_data_in_column: boolean = false;
+  functions: any = [];
   constructor(
     private dataService: DataService,
     private filterService: FilterService,
     private costant: Constants,
-    private scorecardService: ScorecardService
+    private scorecardService: ScorecardService,
+    private functionService: FunctionService,
+    private visualizerService: VisualizerService
   ) {
     this.base_url = this.costant.root_dir;
 
   }
 
   ngOnInit() {
+    // loading functions if any
+    this.functionService.getAll().subscribe(
+      (val) => {
+      this.functions = val;
+        this.loadScoreCard();
+    },(error) =>{
+        this.functions =[]
+        this.loadScoreCard();
+      });
     this.show_data_in_column = this.scorecard.data.show_data_in_column;
-    this.loadScoreCard();
+
   }
 
   ngAfterViewInit(){
@@ -174,6 +188,18 @@ export class ScorecardComponent implements OnInit, AfterViewInit, OnDestroy {
     return name.join(", ")+other_names;
   }
 
+  //get function details from id
+  getFunction(id){
+    let return_function  = null;
+    this.functions.forEach((funct) => {
+      if( id == funct.id ){
+        return_function = funct;
+      }
+    });
+    console.log(this.functions)
+    return return_function;
+  }
+
   // a function that will be used to load scorecard
   indicator_loading: boolean[] = [];
   indicator_done_loading: boolean[] = [];
@@ -211,12 +237,21 @@ export class ScorecardComponent implements OnInit, AfterViewInit, OnDestroy {
             indicator['showTopArrow'] = [];
             indicator['showBottomArrow'] = [];
           }
+
           indicator['loading'] = true;
           for ( let current_period of this.periods_list ){
             this.period_loading[current_period.id] = true;
-            this.indicatorCalls.push(this.dataService.getIndicatorsRequest(this.getOrgUnitsForAnalytics(this.orgunit_model),current_period.id, indicator.id)
-              .subscribe(
-                (data) => {
+
+            //check if the indicator is supposed to come from function
+            if(indicator.hasOwnProperty('calculation') && indicator.calculation == "custom_function" ){
+
+              let parameters = {
+                dx: indicator.id,
+                ou: this.getOrgUnitsForAnalytics(this.orgunit_model),
+                pe: current_period.id,
+                success: (data) => {
+                  // This will run on successfull function return, which will save the result to the data store for analytics
+                  console.log( "analytics:", JSON.stringify(data));
                   indicator.loading = false;
                   this.loading_message = " Done Fetching data for "+indicator.title+ " " +current_period.name;
                   this.proccesed_indicators++;
@@ -244,7 +279,58 @@ export class ScorecardComponent implements OnInit, AfterViewInit, OnDestroy {
                     }
 
                     let value_key = orgunit+'.'+current_period.id;
-                    indicator.values[value_key] = this.dataService.getIndicatorData(orgunit,current_period.id, data);
+                    let data_config = [{'type':'ou','value':orgunit},{'type': 'pe', 'value': current_period.id}];
+                    indicator.values[value_key] = this.visualizerService.getDataValue( data, data_config );
+                  }
+                  this.shown_records = this.orgunits.length;
+                  this.indicator_loading[indicator.id] = true;
+                },
+                error: (error) => {
+                  console.log('error');
+                },
+                progress: (progress) => {
+                  console.log('progress');
+                }
+              };
+              let use_function = this.getFunction( indicator.function_to_use );
+              let execute = Function('parameters', use_function['function']);
+              execute(parameters);
+            }else{
+
+            }
+            this.indicatorCalls.push(this.dataService.getIndicatorsRequest(this.getOrgUnitsForAnalytics(this.orgunit_model),current_period.id, indicator.id)
+              .subscribe(
+                (data) => {
+                  console.log( "analytics1:", JSON.stringify(data));
+                  indicator.loading = false;
+                  this.loading_message = " Done Fetching data for "+indicator.title+ " " +current_period.name;
+                  this.proccesed_indicators++;
+                  this.proccessed_percent = (this.proccesed_indicators / indicator_list.length) * 100;
+                  if(this.proccesed_indicators == indicator_list.length ){
+                    this.loading = false;
+                  }
+                  //noinspection TypeScriptUnresolvedVariable
+                  for ( let orgunit of data.metaData.ou ){
+                    if(!this.checkOrgunitAvailability(orgunit,this.orgunits)){
+                      if( this.scorecard.data.show_data_in_column ){
+                        //noinspection TypeScriptUnresolvedVariable
+                        this.orgunits.push({"id":orgunit,
+                          "name":data.metaData.names[orgunit],
+                          "is_parent":false
+                        })
+                      }else{
+                        //noinspection TypeScriptUnresolvedVariable
+                        this.orgunits.push({"id":orgunit,
+                          "name":data.metaData.names[orgunit],
+                          "is_parent":this.orgUnit.id == orgunit
+                        })
+                      }
+
+                    }
+
+                    let value_key = orgunit+'.'+current_period.id;
+                    let data_config = [{'type':'ou','value':orgunit},{'type': 'pe', 'value': current_period.id}];
+                    indicator.values[value_key] = this.visualizerService.getDataValue( data, data_config );
                   }
                   this.shown_records = this.orgunits.length;
                   this.indicator_loading[indicator.id] = true;
@@ -299,6 +385,7 @@ export class ScorecardComponent implements OnInit, AfterViewInit, OnDestroy {
         }
       }
   }
+
 
   // loading sub orgunit details
   sub_unit;

@@ -22,6 +22,8 @@ import { OrgUnitService } from "./shared/services/org-unit.service";
 import { ProgramIndicatorsService } from "./shared/services/program-indicators.service";
 import { EventDataService } from "./shared/services/event-data.service";
 import {VisualizerService} from "./view/dhis-visualizer/visulizer.service";
+import {FunctionService} from "./shared/services/function.service";
+import {HttpClientService} from "./shared/services/http-client.service";
 
 @NgModule({
   declarations: [
@@ -48,7 +50,9 @@ import {VisualizerService} from "./view/dhis-visualizer/visulizer.service";
     OrgUnitService,
     VisualizerService,
     ProgramIndicatorsService,
-    EventDataService
+    EventDataService,
+    FunctionService,
+    HttpClientService
   ],
   bootstrap: [AppComponent]
 })

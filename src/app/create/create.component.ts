@@ -15,6 +15,7 @@ import {DataService} from "../shared/data.service";
 import {OrgUnitService} from "../shared/services/org-unit.service";
 import {TreeNode, TREE_ACTIONS, IActionMapping, TreeComponent} from 'angular2-tree-component';
 import {FilterService} from "../shared/services/filter.service";
+import {FunctionService} from "../shared/services/function.service";
 
 const actionMapping:IActionMapping = {
   mouse: {
@@ -47,6 +48,7 @@ export class CreateComponent implements OnInit, AfterViewInit, OnDestroy {
   dataElementGroups: DataElementGroup[];
   programs: ProgramIndicatorGroups[];
   events: EventData[];
+  functions:any =  [];
   current_groups: any[];
   current_listing: any[];
   activeGroup: string = null;
@@ -141,7 +143,7 @@ export class CreateComponent implements OnInit, AfterViewInit, OnDestroy {
   group_loading = true;
   selected_groups: any = [];
   share_filter: string = "";
-
+  group_type: string = "indicators";
   constructor(private http: Http,
               private indicatorService: IndicatorGroupService,
               private datasetService: DatasetService,
@@ -155,6 +157,7 @@ export class CreateComponent implements OnInit, AfterViewInit, OnDestroy {
               private _location: Location,
               private orgunitService: OrgUnitService,
               private filterService: FilterService,
+              private functionService:FunctionService
   )
   {
     this.indicatorGroups = [];
@@ -396,7 +399,18 @@ export class CreateComponent implements OnInit, AfterViewInit, OnDestroy {
         this.error_loading_groups.message = "There was an error when loading Data sets";
       }
     );
-
+    // get functions
+    this.functionService.getAll().subscribe(
+      functions => {
+        //noinspection TypeScriptUnresolvedVariable
+        this.functions = functions;
+        console.log(functions)
+      },
+      error => {
+        this.error_loading_groups.occurred = true;
+        this.error_loading_groups.message = "There was an error when loading Data sets";
+      }
+    );
     //laod organisation units
     this.loadOrganisationUnit();
 
@@ -573,6 +587,11 @@ export class CreateComponent implements OnInit, AfterViewInit, OnDestroy {
       if(this.current_groups.length != 0){
         this.load_list(this.current_groups[0].id, current_type)
       }
+    }else if(current_type == "functions"){
+      this.current_groups = this.functions;
+      if(this.current_groups.length != 0){
+        this.load_list(this.current_groups[0].id, current_type)
+      }
     }else{
 
     }
@@ -731,7 +750,19 @@ export class CreateComponent implements OnInit, AfterViewInit, OnDestroy {
       }
 
     }
-    else{
+    else if( current_type == "functions" ){
+      for ( let group  of this.functions ){
+        if ( group.id == group_id ){
+          if (group.rules.length != 0){
+            this.current_listing = group.rules;
+            this.done_loading_list = true;
+          }else{
+            this.done_loading_list = true;
+            this.current_listing = [];
+          }
+        }
+      }
+    }else{
 
     }
   }
@@ -743,6 +774,10 @@ export class CreateComponent implements OnInit, AfterViewInit, OnDestroy {
       this.deleteIndicator(item);
     }else{
       let indicator = this.scorecardService.getIndicatorStructure(item.name, item.id,this.getIndicatorLegendSet());
+      if(this.group_type == "functions"){
+        indicator.calculation = "custom_function";
+        indicator.function_to_use = this.activeGroup;
+      }
       indicator.value = Math.floor(Math.random() * 60) + 40;
       let random = Math.floor(Math.random() * 6) + 1;
       if( random % 2 == 0){ indicator.showTopArrow = true}
@@ -767,7 +802,9 @@ export class CreateComponent implements OnInit, AfterViewInit, OnDestroy {
       this.addIndicatorHolder(this.current_indicator_holder);
       this.current_holder_group.id = this.current_holder_group_id;
       this.addHolderGroups(this.current_holder_group, this.current_indicator_holder);
+      console.log(indicator)
     }
+
 
   }
 
@@ -1559,7 +1596,6 @@ export class CreateComponent implements OnInit, AfterViewInit, OnDestroy {
     return checker;
   }
 
-
   // display Orgunit Tree
   displayOrgTree(){
     this.showOrgTree = !this.showOrgTree;
@@ -1886,6 +1922,8 @@ export class CreateComponent implements OnInit, AfterViewInit, OnDestroy {
     }
     return colspan;
   }
+
+
   ngOnDestroy() {
     tinymce.remove(this.editor);
   }

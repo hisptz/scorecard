@@ -211,6 +211,8 @@ export class ScorecardService {
     return {
       "name": name,
       "id": id,
+      "calculation":"analytics",
+      "function_to_use": "",
       "title": tittle,
       "high_is_good": true,
       "value": 0,
