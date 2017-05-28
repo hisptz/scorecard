@@ -92,7 +92,7 @@ export class ViewComponent implements OnInit, AfterViewInit, OnDestroy {
   selected_orgunits: any[] = [];
   selected_periods:any = [];
   period_type: string = "Quarterly";
-  year: number = 2016;
+  year: number = 2017;
   default_orgUnit: string[] = [];
   default_period: string[] = [];
   showOrgTree:boolean = true;
