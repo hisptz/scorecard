@@ -144,6 +144,7 @@ export class CreateComponent implements OnInit, AfterViewInit, OnDestroy {
   selected_groups: any = [];
   share_filter: string = "";
   group_type: string = "indicators";
+  bootleneck_group_type: string = "indicators";
   constructor(private http: Http,
               private indicatorService: IndicatorGroupService,
               private datasetService: DatasetService,
@@ -1269,6 +1270,11 @@ export class CreateComponent implements OnInit, AfterViewInit, OnDestroy {
       if(this.bottleneck_card.current_groups.length != 0){
         this.load_bottleneck_card_list(this.bottleneck_card.current_groups[0].id, current_type)
       }
+    }else if(current_type == "functions"){
+      this.bottleneck_card.current_groups = this.functions;
+      if(this.bottleneck_card.current_groups.length != 0){
+        this.load_list(this.bottleneck_card.current_groups[0].id, current_type)
+      }
     }else{
 
     }
@@ -1426,7 +1432,19 @@ export class CreateComponent implements OnInit, AfterViewInit, OnDestroy {
       }
 
     }
-    else{
+    else if( current_type == "functions" ){
+      for ( let group  of this.functions ){
+        if ( group.id == group_id ){
+          if (group.rules.length != 0){
+            this.bottleneck_card.current_listing = group.rules;
+            this.bottleneck_card.done_loading_list = true;
+          }else{
+            this.bottleneck_card.done_loading_list = true;
+            this.bottleneck_card.current_listing = [];
+          }
+        }
+      }
+    }else{
 
     }
   }
