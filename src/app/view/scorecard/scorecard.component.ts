@@ -196,7 +196,6 @@ export class ScorecardComponent implements OnInit, AfterViewInit, OnDestroy {
         return_function = funct;
       }
     });
-    console.log(this.functions)
     return return_function;
   }
 
@@ -251,7 +250,7 @@ export class ScorecardComponent implements OnInit, AfterViewInit, OnDestroy {
                 pe: current_period.id,
                 success: (data) => {
                   // This will run on successfull function return, which will save the result to the data store for analytics
-                  console.log( "analytics:", JSON.stringify(data));
+                  // console.log( "analytics:", JSON.stringify(data));
                   indicator.loading = false;
                   this.loading_message = " Done Fetching data for "+indicator.title+ " " +current_period.name;
                   this.proccesed_indicators++;
@@ -299,7 +298,6 @@ export class ScorecardComponent implements OnInit, AfterViewInit, OnDestroy {
               this.indicatorCalls.push(this.dataService.getIndicatorsRequest(this.getOrgUnitsForAnalytics(this.orgunit_model),current_period.id, indicator.id)
                 .subscribe(
                   (data) => {
-                    console.log( "analytics1:", JSON.stringify(data));
                     indicator.loading = false;
                     this.loading_message = " Done Fetching data for "+indicator.title+ " " +current_period.name;
                     this.proccesed_indicators++;
@@ -393,6 +391,7 @@ export class ScorecardComponent implements OnInit, AfterViewInit, OnDestroy {
   children_available:boolean[] = [];
   subscorecard: ScoreCard;
   loadChildrenData(selectedorgunit, indicator){
+    this.showSubScorecard = [];
     if( indicator == null ){
       if( selectedorgunit.is_parent || this.showSubScorecard[selectedorgunit.id]){
         this.showSubScorecard = [];
@@ -484,7 +483,7 @@ export class ScorecardComponent implements OnInit, AfterViewInit, OnDestroy {
             created_scorecard.data.name = "Bottleneck Indicators for "+ indicator.name;
             created_scorecard.data.header.title = "Bottleneck Indicators for "+ indicator.name;
             this.subscorecard = created_scorecard;
-
+            console.log(this.subscorecard);
             this.showSubScorecard[indicator.id] = true;
           }
 
