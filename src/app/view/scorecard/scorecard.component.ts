@@ -283,7 +283,7 @@ export class ScorecardComponent implements OnInit, AfterViewInit, OnDestroy {
                     indicator.values[value_key] = this.visualizerService.getDataValue( data, data_config );
                   }
                   this.shown_records = this.orgunits.length;
-                  this.indicator_loading[indicator.id] = true;
+                  this.indicator_loading[indicator.id] = false;
                 },
                 error: (error) => {
                   console.log('error');
@@ -296,90 +296,90 @@ export class ScorecardComponent implements OnInit, AfterViewInit, OnDestroy {
               let execute = Function('parameters', use_function['function']);
               execute(parameters);
             }else{
+              this.indicatorCalls.push(this.dataService.getIndicatorsRequest(this.getOrgUnitsForAnalytics(this.orgunit_model),current_period.id, indicator.id)
+                .subscribe(
+                  (data) => {
+                    console.log( "analytics1:", JSON.stringify(data));
+                    indicator.loading = false;
+                    this.loading_message = " Done Fetching data for "+indicator.title+ " " +current_period.name;
+                    this.proccesed_indicators++;
+                    this.proccessed_percent = (this.proccesed_indicators / indicator_list.length) * 100;
+                    if(this.proccesed_indicators == indicator_list.length ){
+                      this.loading = false;
+                    }
+                    //noinspection TypeScriptUnresolvedVariable
+                    for ( let orgunit of data.metaData.ou ){
+                      if(!this.checkOrgunitAvailability(orgunit,this.orgunits)){
+                        if( this.scorecard.data.show_data_in_column ){
+                          //noinspection TypeScriptUnresolvedVariable
+                          this.orgunits.push({"id":orgunit,
+                            "name":data.metaData.names[orgunit],
+                            "is_parent":false
+                          })
+                        }else{
+                          //noinspection TypeScriptUnresolvedVariable
+                          this.orgunits.push({"id":orgunit,
+                            "name":data.metaData.names[orgunit],
+                            "is_parent":this.orgUnit.id == orgunit
+                          })
+                        }
 
-            }
-            this.indicatorCalls.push(this.dataService.getIndicatorsRequest(this.getOrgUnitsForAnalytics(this.orgunit_model),current_period.id, indicator.id)
-              .subscribe(
-                (data) => {
-                  console.log( "analytics1:", JSON.stringify(data));
-                  indicator.loading = false;
-                  this.loading_message = " Done Fetching data for "+indicator.title+ " " +current_period.name;
-                  this.proccesed_indicators++;
-                  this.proccessed_percent = (this.proccesed_indicators / indicator_list.length) * 100;
-                  if(this.proccesed_indicators == indicator_list.length ){
-                    this.loading = false;
-                  }
-                  //noinspection TypeScriptUnresolvedVariable
-                  for ( let orgunit of data.metaData.ou ){
-                    if(!this.checkOrgunitAvailability(orgunit,this.orgunits)){
-                      if( this.scorecard.data.show_data_in_column ){
-                        //noinspection TypeScriptUnresolvedVariable
-                        this.orgunits.push({"id":orgunit,
-                          "name":data.metaData.names[orgunit],
-                          "is_parent":false
-                        })
-                      }else{
-                        //noinspection TypeScriptUnresolvedVariable
-                        this.orgunits.push({"id":orgunit,
-                          "name":data.metaData.names[orgunit],
-                          "is_parent":this.orgUnit.id == orgunit
-                        })
                       }
 
+                      let value_key = orgunit+'.'+current_period.id;
+                      let data_config = [{'type':'ou','value':orgunit},{'type': 'pe', 'value': current_period.id}];
+                      indicator.values[value_key] = this.visualizerService.getDataValue( data, data_config );
                     }
-
-                    let value_key = orgunit+'.'+current_period.id;
-                    let data_config = [{'type':'ou','value':orgunit},{'type': 'pe', 'value': current_period.id}];
-                    indicator.values[value_key] = this.visualizerService.getDataValue( data, data_config );
-                  }
-                  this.shown_records = this.orgunits.length;
-                  this.indicator_loading[indicator.id] = true;
-                  //load previous data
-                  let effective_gap = parseInt( indicator.arrow_settings.effective_gap );
-                  this.indicatorCalls.push(this.dataService.getIndicatorsRequest(this.getOrgUnitsForAnalytics(this.orgunit_model),this.filterService.getLastPeriod(current_period.id,this.period_type), indicator.id)
-                    .subscribe(
-                      ( olddata ) => {
-                        for( let prev_orgunit of this.orgunits ){
-                          let prev_key = prev_orgunit.id+'.'+current_period.id;
-                          indicator.previous_values[prev_key] = this.dataService.getIndicatorData(prev_orgunit.id,this.filterService.getLastPeriod(current_period.id,this.period_type), olddata);
-                        }
-                        if(indicator.hasOwnProperty("arrow_settings")){
-                          for( let key in indicator.values ) {
-                            let splited_key = key.split(".");
-                            if(parseInt(indicator.previous_values[key]) != 0){
-                              let check = parseInt( indicator.values[key] ) > (parseInt( indicator.previous_values[key] ) + effective_gap );
-                              let check1 = parseInt( indicator.values[key] ) < (parseInt( indicator.previous_values[key] ) - effective_gap );
-                              indicator.showTopArrow[key] = check;
-                              indicator.showBottomArrow[key] = check1;
-                              //noinspection TypeScriptUnresolvedVariable
-                              if(indicator.showTopArrow[key] && indicator.values[key] != null && indicator.previous_values[key] != null && olddata.metaData.names.hasOwnProperty(splited_key[0])){
-                                let  rise = indicator.values[key] - parseInt( indicator.previous_values[key]);
+                    this.shown_records = this.orgunits.length;
+                    this.indicator_loading[indicator.id] = true;
+                    //load previous data
+                    let effective_gap = parseInt( indicator.arrow_settings.effective_gap );
+                    this.indicatorCalls.push(this.dataService.getIndicatorsRequest(this.getOrgUnitsForAnalytics(this.orgunit_model),this.filterService.getLastPeriod(current_period.id,this.period_type), indicator.id)
+                      .subscribe(
+                        ( olddata ) => {
+                          for( let prev_orgunit of this.orgunits ){
+                            let prev_key = prev_orgunit.id+'.'+current_period.id;
+                            indicator.previous_values[prev_key] = this.dataService.getIndicatorData(prev_orgunit.id,this.filterService.getLastPeriod(current_period.id,this.period_type), olddata);
+                          }
+                          if(indicator.hasOwnProperty("arrow_settings")){
+                            for( let key in indicator.values ) {
+                              let splited_key = key.split(".");
+                              if(parseInt(indicator.previous_values[key]) != 0){
+                                let check = parseInt( indicator.values[key] ) > (parseInt( indicator.previous_values[key] ) + effective_gap );
+                                let check1 = parseInt( indicator.values[key] ) < (parseInt( indicator.previous_values[key] ) - effective_gap );
+                                indicator.showTopArrow[key] = check;
+                                indicator.showBottomArrow[key] = check1;
                                 //noinspection TypeScriptUnresolvedVariable
-                                indicator.tooltip[key] = indicator.title +" has raised by "+rise.toFixed(2)+" from "+this.getPeriodName(current_period.id)+ " for "+ data.metaData.names[splited_key[0]]+" (Minimum gap "+indicator.arrow_settings.effective_gap+")";
-                              }//noinspection TypeScriptUnresolvedVariable
-                              if(indicator.showBottomArrow[key] && indicator.values[key] != null && indicator.previous_values[key] != null && olddata.metaData.names.hasOwnProperty(splited_key[0])){
-                                let  rise = parseFloat( indicator.previous_values[key] ) - indicator.values[key];
-                                //noinspection TypeScriptUnresolvedVariable
-                                indicator.tooltip[key] = indicator.title +" has decreased by "+rise.toFixed(2)+" from "+this.getPeriodName(current_period.id)+ " for "+ data.metaData.names[splited_key[0]]+" (Minimum gap "+indicator.arrow_settings.effective_gap+")";
+                                if(indicator.showTopArrow[key] && indicator.values[key] != null && indicator.previous_values[key] != null && olddata.metaData.names.hasOwnProperty(splited_key[0])){
+                                  let  rise = indicator.values[key] - parseInt( indicator.previous_values[key]);
+                                  //noinspection TypeScriptUnresolvedVariable
+                                  indicator.tooltip[key] = indicator.title +" has raised by "+rise.toFixed(2)+" from "+this.getPeriodName(current_period.id)+ " for "+ data.metaData.names[splited_key[0]]+" (Minimum gap "+indicator.arrow_settings.effective_gap+")";
+                                }//noinspection TypeScriptUnresolvedVariable
+                                if(indicator.showBottomArrow[key] && indicator.values[key] != null && indicator.previous_values[key] != null && olddata.metaData.names.hasOwnProperty(splited_key[0])){
+                                  let  rise = parseFloat( indicator.previous_values[key] ) - indicator.values[key];
+                                  //noinspection TypeScriptUnresolvedVariable
+                                  indicator.tooltip[key] = indicator.title +" has decreased by "+rise.toFixed(2)+" from "+this.getPeriodName(current_period.id)+ " for "+ data.metaData.names[splited_key[0]]+" (Minimum gap "+indicator.arrow_settings.effective_gap+")";
+                                }
                               }
                             }
                           }
-                        }
-                        this.indicator_loading[indicator.id] = false;
-                        this.indicator_done_loading[indicator.id] = true;
-                        this.period_loading[current_period.id] = false;
-                        this.period_done_loading[current_period.id] = true;
-                        old_proccesed_indicators++;
-                        this.old_proccessed_percent = (old_proccesed_indicators / indicator_list.length) * 100;
-                        if(this.old_proccessed_percent == 100){
-                          this.updatedScorecard.emit(this.scorecard);
-                        }
-                      })
-                  )},
-                error => {
+                          this.indicator_loading[indicator.id] = false;
+                          this.indicator_done_loading[indicator.id] = true;
+                          this.period_loading[current_period.id] = false;
+                          this.period_done_loading[current_period.id] = true;
+                          old_proccesed_indicators++;
+                          this.old_proccessed_percent = (old_proccesed_indicators / indicator_list.length) * 100;
+                          if(this.old_proccessed_percent == 100){
+                            this.updatedScorecard.emit(this.scorecard);
+                          }
+                        })
+                    )},
+                  error => {
 
-                }
-              ))
+                  }
+                ))
+            }
+
           }
 
         }
