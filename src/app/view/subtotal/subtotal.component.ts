@@ -3,7 +3,7 @@ import {Component, OnInit, Input} from '@angular/core';
 @Component({
   selector: 'app-subtotal',
   templateUrl: './subtotal.component.html',
-  styleUrls: []
+  //styleUrls: []
 })
 export class SubtotalComponent implements OnInit {
 
