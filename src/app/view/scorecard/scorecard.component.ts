@@ -454,10 +454,18 @@ export class ScorecardComponent implements OnInit, AfterViewInit, OnDestroy {
             ];
             let holder_ids = [];
             data.forEach((item, item_index) => {
+              //check first if it is a function or not
+              let indicator_structure = this.scorecardService.getIndicatorStructure(item.name, item.id, legendSet, item.bottleneck_title);
+              if(item.hasOwnProperty('function')){
+                indicator_structure.calculation = "custom_function";
+                indicator_structure.function_to_use = item.function;
+              }else{
+                indicator_structure.calculation = "analytics";
+              }
               let indicator_holder = {
                 "holder_id": item_index+1,
                 "indicators": [
-                  this.scorecardService.getIndicatorStructure(item.name, item.id, legendSet, item.bottleneck_title)
+                  indicator_structure
                 ]
               };
               holder_ids.push(item_index+1);

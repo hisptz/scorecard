@@ -27,6 +27,8 @@ export class Constants {
       .map((response: Response) => response.json())
       .catch(this.handleError);
   }
+
+  //load system version
   loadVersion() {
     return this.http.get("../../../api/system/info.json")
       .map((response: Response) => response.json())

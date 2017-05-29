@@ -1467,9 +1467,16 @@ export class CreateComponent implements OnInit, AfterViewInit, OnDestroy {
     if(this.botteneckIndicatorExist(item)){
       this.removeBottleneckIndicator(item)
     }else{
-      item.bottleneck_title= item.name;
-      item.baseline = null;
-      item.target = null;
+      if(this.bootleneck_group_type == 'functions'){
+        item.bottleneck_title= item.name;
+        item.baseline = null;
+        item.target = null;
+        item.function = this.bottleneck_card.activeGroup
+      }else{
+        item.bottleneck_title= item.name;
+        item.baseline = null;
+        item.target = null;
+      }
       this.bottleneck_card.indicator.bottleneck_indicators.push(item);
     }
   }
