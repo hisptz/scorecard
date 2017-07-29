@@ -10,6 +10,8 @@ import { NgxPaginationModule } from 'ngx-pagination';
 import {StoreModule} from '@ngrx/store';
 import {reducers} from './store/reducers/reducers';
 import {getInitialState} from './store/application.state';
+import {EffectsModule} from '@ngrx/effects';
+import {DataStoreEffect} from './store/effects/dataStore.effect';
 
 @NgModule({
   declarations: [
@@ -24,7 +26,8 @@ import {getInitialState} from './store/application.state';
     NgxPaginationModule,
     StoreModule.forRoot(reducers, {
       initialState: getInitialState
-    })
+    }),
+    EffectsModule.forRoot([DataStoreEffect])
   ],
   providers: [],
   bootstrap: [AppComponent]
