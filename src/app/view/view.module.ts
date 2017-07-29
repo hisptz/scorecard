@@ -1,10 +1,15 @@
 import { NgModule } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { ViewComponent } from './view.component';
+import {SharedModule} from '../shared/shared.module';
+import {Ng2HighchartsModule} from 'ng2-highcharts';
+import {view_routing} from './view.routing';
 
 @NgModule({
   imports: [
-    CommonModule
+    SharedModule,
+    Ng2HighchartsModule,
+    view_routing
   ],
-  declarations: []
+  declarations: [ViewComponent]
 })
 export class ViewModule { }

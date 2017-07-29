@@ -1,10 +1,13 @@
 import { NgModule } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { CreateComponent } from './create.component';
+import {SharedModule} from '../shared/shared.module';
+import {create_routing} from './create.routing';
 
 @NgModule({
   imports: [
-    CommonModule
+    SharedModule,
+    create_routing
   ],
-  declarations: []
+  declarations: [CreateComponent]
 })
 export class CreateModule { }
