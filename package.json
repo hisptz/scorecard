@@ -36,6 +36,7 @@
     "ng2-dnd": "^4.2.0",
     "ngx-color-picker": "^4.0.0",
     "ngx-contextmenu": "^1.0.3",
+    "ngx-pagination": "^3.0.1",
     "rxjs": "^5.4.1",
     "zone.js": "^0.8.14"
   },
