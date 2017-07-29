@@ -7,6 +7,9 @@ import { ScoreCardRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { HomeComponent } from './home/home.component';
 import { NgxPaginationModule } from 'ngx-pagination';
+import {StoreModule} from '@ngrx/store';
+import {reducers} from './store/reducers/reducers';
+import {getInitialState} from './store/application.state';
 
 @NgModule({
   declarations: [
@@ -19,6 +22,9 @@ import { NgxPaginationModule } from 'ngx-pagination';
     FormsModule,
     ScoreCardRoutingModule,
     NgxPaginationModule,
+    StoreModule.forRoot(reducers, {
+      initialState: getInitialState
+    })
   ],
   providers: [],
   bootstrap: [AppComponent]
