@@ -12,6 +12,7 @@ import {reducers} from './store/reducers/reducers';
 import {getInitialState} from './store/application.state';
 import {EffectsModule} from '@ngrx/effects';
 import {DataStoreEffect} from './store/effects/dataStore.effect';
+import {StoreService} from './shared/services/store-service';
 
 @NgModule({
   declarations: [
@@ -29,7 +30,7 @@ import {DataStoreEffect} from './store/effects/dataStore.effect';
     }),
     EffectsModule.forRoot([DataStoreEffect])
   ],
-  providers: [],
+  providers: [StoreService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

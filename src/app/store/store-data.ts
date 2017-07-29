@@ -1,7 +1,7 @@
-import {Scorecard} from '../shared/models/scorecard';
+import {ScoreCard} from '../shared/models/scorecard';
 
 export interface StoreData {
-    scorecards: Scorecard[];
+    scorecards: ScoreCard[];
 }
 
 export const INITIAL_STORE_DATA: StoreData = {
