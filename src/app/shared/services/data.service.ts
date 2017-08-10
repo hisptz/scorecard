@@ -10,7 +10,7 @@ export class DataService {
   constructor(private http: Http) { }
 
   // Get current user information
-  getUserInformation () {
+  getUserInformation (): Observable<any> {
     return new Observable((observ) => {
       if ( this.user === null) {
         this.http.get('../../../api/me.json?fields=id,name,userGroups,userCredentials[userRoles[authorities]]')
