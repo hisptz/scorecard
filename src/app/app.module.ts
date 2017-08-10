@@ -17,6 +17,15 @@ import {StoreService} from './shared/services/store-service';
 import {ScoreCardFilterPipe} from './home/score-card-filter.pipe';
 import {ScorecardService} from './shared/services/scorecard.service';
 import {DataService} from './shared/services/data.service';
+import {IndicatorGroupService} from './shared/services/indicator-group.service';
+import {DataElementGroupService} from './shared/services/data-element-group.service';
+import {FilterService} from './shared/services/filter.service';
+import {FunctionService} from './shared/services/function.service';
+import {ProgramIndicatorsService} from './shared/services/program-indicators.service';
+import {DatasetService} from './shared/services/dataset.service';
+import {EventDataService} from './shared/services/event-data.service';
+import {HttpClientService} from './shared/services/http-client.service';
+import {OrgUnitService} from './shared/services/org-unit.service';
 
 @NgModule({
   declarations: [
@@ -40,7 +49,16 @@ import {DataService} from './shared/services/data.service';
   providers: [
     StoreService,
     ScorecardService,
-    DataService
+    DataService,
+    IndicatorGroupService,
+    DataElementGroupService,
+    FilterService,
+    FunctionService,
+    ProgramIndicatorsService,
+    DatasetService,
+    EventDataService,
+    HttpClientService,
+    OrgUnitService
   ],
   bootstrap: [AppComponent]
 })

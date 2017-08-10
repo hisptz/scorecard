@@ -1,0 +1,51 @@
+<div class="tree-input" title="Select groups that will be able to view or edit your scorecard" appClickOutside (clickOutside)="showShareTree = true">
+  <div>
+    <div class="show_items" (click)="displayShareTree()">
+            <span *ngIf="scorecard.data.user_groups.length > 3">
+          <span class="selected-item">
+            {{ scorecard.data.user_groups[0].name }} selected
+          </span>
+              <span class="selected-item">
+            {{ scorecard.data.user_groups[1].name }} selected
+          </span><span class="selected-item">
+            and {{ scorecard.data.user_groups.length -2 }} more
+          </span>
+        </span>
+      <span *ngIf="scorecard.data.user_groups.length <= 3">
+              <span *ngFor="let item of scorecard.data.user_groups" class="selected-item ng-binding ng-scope">
+                {{ item.name }}
+              </span>
+            </span>
+      <span class="no-selection"*ngIf="scorecard.data.user_groups.length == 0 && !group_loading">Only You</span>
+      <span class="glyphicon glyphicon-triangle-bottom pull-right" *ngIf="!group_loading"></span>
+      <span *ngIf="group_loading">Loading user groups</span>
+    </div>
+    <div class="tree-view" [ngClass]="{'hiddenTree':showShareTree}">
+      <div class="search-area">
+        <form *ngIf="!group_loading" style="border-bottom: solid 1px blanchedalmond;">
+          <input [(ngModel)]="share_filter" placeholder="Search" name="share_search_field"/>
+        </form>
+      </div>
+      <div *ngIf="group_loading">Loading Groups</div>
+      <div class="tree-area" *ngIf="!group_loading">
+        <ul class="list-unstyled">
+          <li  style="padding: 5px" title="this will be accessible to everyone in the system accessing the scorecard">
+            <button [ngClass]="{'btn-primary': getGroupActiveState('see',{id:'all',name:'Public'})}" class="btn btn-xs" (click)="toogleGroup('see',{id:'all',name:'Public'})"><span class="glyphicon glyphicon-eye-open"></span></button>
+            <button [ngClass]="{'btn-primary': getGroupActiveState('edit',{id:'all',name:'Public'})}" class="btn btn-xs" (click)="toogleGroup('edit',{id:'all',name:'Public'})"><span class="glyphicon glyphicon-pencil"></span></button>
+            Public
+          </li>
+          <li *ngFor="let group of userGroups | filterByName:share_filter" style="padding: 5px">
+            <button [ngClass]="{'btn-primary': getGroupActiveState('see',group)}" class="btn btn-xs" (click)="toogleGroup('see',group)"><span class="glyphicon glyphicon-eye-open"></span></button>
+            <button [ngClass]="{'btn-primary': getGroupActiveState('edit',group)}" class="btn btn-xs" (click)="toogleGroup('edit',group)"><span class="glyphicon glyphicon-pencil"></span></button>
+            {{ group.name }}
+          </li>
+        </ul>
+      </div>
+      <div class="close-area">
+        <button class="btn btn-default pull-right" style="height: 30px"  (click)="displayShareTree()">
+          <span class="glyphicon glyphicon-remove"></span> Close
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

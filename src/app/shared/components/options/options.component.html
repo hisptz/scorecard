@@ -1,0 +1,49 @@
+<button  type="button" class="btn btn-default pull-right"  style="height: 30px;padding-top: 0px;padding-bottom: 0px" title="Customize scorecard" (click)="showOptions()">
+  <span class="glyphicon glyphicon-cog"></span> Options
+</button>
+<div class="additional-options" [ngClass]="{'hiddenTree':showAdditionalOptions}" style="padding-top: 0px">
+  <ul class="list-group">
+    <li class="list-group-item pointer">
+      <div class="row">
+        <div class="col-sm-4"><label title="tick to show legend"><input type="checkbox" (change)="updateOption($event)" [(ngModel)]="options.show_legend_definition"> Legend</label></div>
+        <div class="col-sm-4"><label title="tick to show ranking"><input type="checkbox" (change)="updateOption($event)" [(ngModel)]="options.show_rank"> Rank</label></div>
+        <div class="col-sm-4"><label title="tick to show empty rows"><input type="checkbox" (change)="updateOption($event)" [(ngModel)]="options.empty_rows"> Empty Rows</label></div>
+      </div>
+    </li>
+    <li class="list-group-item pointer">
+      <div class="row">
+        <div class="col-sm-6"><label title="tick to show average column"><input type="checkbox" (change)="updateOption($event)" [(ngModel)]="options.show_average_in_column"> Average Column</label></div>
+        <div class="col-sm-6"><label title="tick to show average column"><input type="checkbox" (change)="updateOption($event)" [(ngModel)]="options.show_average_in_row"> Average Row</label></div>
+      </div>
+    </li>
+    <li class="list-group-item pointer">
+      <div class="row">
+        <div class="col-sm-2"><label title="show both above and bellow average"><input type="radio" (change)="updateOption($event)" value="all" [(ngModel)]="options.average_selection"> All</label></div>
+        <div class="col-sm-5"><label title="Show organisation units below average"><input type="radio" (change)="updateOption($event)" value="below" [(ngModel)]="options.average_selection" > Below Average</label></div>
+        <div class="col-sm-5"><label title="Show organisation units above average"><input type="radio" (change)="updateOption($event)" value="above" [(ngModel)]="options.average_selection" > Above Average</label></div>
+      </div>
+    </li>
+    <li class="list-group-item">
+      <div class="row">
+        <div class="col-sm-12" style="padding-top: 5px">
+          <label title="show all items"><input type="radio" [value]="'all'" [(ngModel)]="options.shown_records"> All</label>
+          <label title="show top three based on current selections"><input type="radio" (change)="updateOption($event)" value="3" [(ngModel)]="options.shown_records"> Top Three</label>
+          <label title="show top five based on current selections"><input type="radio" (change)="updateOption($event)" value="5" [(ngModel)]="options.shown_records"> Top Five</label>
+          <label title="show top ten based on current selections"><input type="radio" (change)="updateOption($event)" value="10" [(ngModel)]="options.shown_records"> Top Ten</label>
+        </div>
+      </div>
+    </li>
+    <li class="list-group-item">
+      <div class="row">
+        <div class="col-sm-3"><label title="tick to show score"><input type="checkbox" (change)="updateOption($event)" [(ngModel)]="options.show_score" > Score</label></div>
+        <div class="col-sm-3"><label title="tick to show arrows on scorecard"><input type="checkbox" (change)="updateOption($event)" [(ngModel)]="options.show_arrows_definition" > Arrows</label></div>
+        <div class="col-sm-6"><label title="tick to show data in rows"><input type="checkbox" (change)="updateOption($event)" [(ngModel)]="options.show_data_in_column" > show data in rows</label></div>
+
+      </div>
+    </li>
+  </ul>
+  <button class="btn btn-sm btn-warning pull-right" (click)="showOptions()" style="height: 35px">
+    <span class="glyphicon glyphicon-remove"></span> close
+  </button>
+
+</div>

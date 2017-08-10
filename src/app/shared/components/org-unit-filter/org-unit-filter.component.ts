@@ -56,7 +56,7 @@ export class OrgUnitFilterComponent implements OnInit {
   selected_orgunits: any[] = [];
 
   // this variable controls the visibility of of the tree
-  showOrgTree: boolean = false;
+  showOrgTree: boolean = true;
 
   customTemplateStringOrgunitOptions: any;
 
@@ -154,6 +154,7 @@ export class OrgUnitFilterComponent implements OnInit {
                   (initial_data) => {
                     this.organisationunits = initial_data;
                     this.orgunit_tree_config.loading = false;
+                    console.log(this.orgunit_tree_config)
                     // a hack to make sure the user orgunit is not triggered on the first time
                     this.initial_usr_orgunit = [{id: 'USER_ORGUNIT', name: 'User org unit'}];
                     // after done loading initial organisation units now load all organisation units
@@ -210,7 +211,7 @@ export class OrgUnitFilterComponent implements OnInit {
   }
   // display Orgunit Tree
   displayOrgTree() {
-    // this.showOrgTree = !this.showOrgTree;
+    this.showOrgTree = !this.showOrgTree;
   }
   filterNodes(value, tree) {
     tree.treeModel.filterNodes((node) => {
@@ -288,7 +289,6 @@ export class OrgUnitFilterComponent implements OnInit {
   }
 
   emit() {
-    console.log('This Model:', this.orgunit_model.selected_orgunits);
     const mapper = {};
     this.orgunit_model.selected_orgunits.forEach(function(orgUnit) {
       if (!mapper[orgUnit.level]) {

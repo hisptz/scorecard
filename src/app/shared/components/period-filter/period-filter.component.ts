@@ -41,8 +41,6 @@ export class PeriodFilterComponent implements OnInit {
     starting_year: null,
     placeholder: 'Select period'
   };
-  @Input() hideMonth: boolean = false;
-  @Input() hideQuarter: boolean = false;
   @Input() selected_periods: any[] = [];
   @Input() period_type: string = 'Monthly';
   @Input() starting_year: number = new Date().getFullYear();
@@ -51,7 +49,7 @@ export class PeriodFilterComponent implements OnInit {
   @Output() onTypeUpdate: EventEmitter<any> = new EventEmitter<any>();
   periods = [];
   period: any = {};
-  showPerTree: boolean = false;
+  showPerTree: boolean = true;
   year: number = new Date().getFullYear();
   period_type_config: Array<any>;
 
@@ -86,6 +84,10 @@ export class PeriodFilterComponent implements OnInit {
       this.changePeriodType();
     }
     // this.getRelativePeriodText('LAST_5_YEARS');
+  }
+
+  displayPerTree() {
+    this.showPerTree = !this.showPerTree;
   }
 
   transferDataSuccess(data, current) {
@@ -161,18 +163,18 @@ export class PeriodFilterComponent implements OnInit {
 
   pushPeriodForward() {
     this.year += 1;
-    this.periods = this.getFinencialPeriodArray(this.period_type, this.year);
+    this.periods = this.getPeriodArray(this.period_type, this.year);
     this.onYearUpdate.emit(this.year);
   }
 
   pushPeriodBackward() {
     this.year -= 1;
-    this.periods = this.getFinencialPeriodArray(this.period_type, this.year);
+    this.periods = this.getPeriodArray(this.period_type, this.year);
     this.onYearUpdate.emit(this.year);
   }
 
   changePeriodType() {
-    this.periods = this.getFinencialPeriodArray(this.period_type, this.year);
+    this.periods = this.getPeriodArray(this.period_type, this.year);
     this.onTypeUpdate.emit(this.period_type);
   }
 
@@ -189,7 +191,6 @@ export class PeriodFilterComponent implements OnInit {
   // action to be called when a tree item is deselected(Remove item in array of selected items
   deactivatePer ( $event ) {
     this.selected_periods.splice(this.selected_periods.indexOf($event), 1);
-    // TODO FIND BEST WAY TO EMIT SELECTED PERIOD
     this.onPeriodUpdate.emit({
       items: this.selected_periods,
       type: this.period_type,
@@ -202,7 +203,6 @@ export class PeriodFilterComponent implements OnInit {
   activatePer($event) {
     if (!this.checkPeriodAvailabilty($event, this.selected_periods)) {
       this.selected_periods.push($event);
-      // TODO FIND BEST WAY TO EMIT SELECTED PERIOD
       this.onPeriodUpdate.emit({
         items: this.selected_periods,
         type: this.period_type,

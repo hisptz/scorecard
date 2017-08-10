@@ -1,21 +1,35 @@
-<div class="panel panel-default" style="border-style: none; margin-bottom: 0px; margin-top: 0px; border-bottom: solid 1px #eee;">
-  <!--<div class="panel-heading" style="background-color: #ffffff;padding-bottom: 2px;padding-top: 5px">-->
-    <!--Period-->
-  <!--</div>-->
-  <div class="panel-body" style="margin: 3px; border: 1px solid rgba(0,0,0,0.1);padding: 0px" [ngClass]="{'hiddenTree':showPerTree}">
+<div class="tree-input" title="Select starting period for your scorecard" appClickOutside (clickOutside)="showPerTree = true">
+  <div>
+    <div class="show_items" (click)="displayPerTree()">
+            <span *ngIf="selected_periods.length > 3">
+          <span class="selected-item">
+            {{ selected_periods[0].name }}
+            <a (click)="deactivatePer(selected_periods[0]);$event.stopPropagation()" class="removeorgunit" >x</a>
+          </span>
+              <span class="selected-item">
+            {{ selected_periods[1].name }} selected
+            <a (click)="deactivatePer(selected_periods[1]);$event.stopPropagation()" class="removeorgunit" >x</a>
+          </span><span class="selected-item">
+            and {{ selected_periods.length -2 }} more
+          </span>
+        </span>
+      <span *ngIf="selected_periods.length <= 3">
+              <span *ngFor="let item of selected_periods" class="selected-item ng-binding ng-scope">
+                {{ item.name }}
+                <a (click)="deactivatePer(item);$event.stopPropagation()" class="removeorgunit" >x</a>
+              </span>
+            </span>
+      <span class="no-selection"*ngIf="selected_periods.length == 0">Select Period</span>
+      <span class="glyphicon glyphicon-triangle-bottom pull-right"></span>
+    </div>
+  <div class="tree-view" [ngClass]="{'hiddenTree':showPerTree}">
     <div style="padding: 3px">
       <div  class="container-fluid" style="border-bottom: 1px solid rgba(0,0,0,0.1); padding: 0px">
         <div class="col-sm-6" style="padding-left:3px; margin-bottom: 5px">
           <select id="periodType" [(ngModel)]="period_type" class="form-control input-sm" style="height: 25px; padding-left: 1px " (change)="changePeriodType()">
             <option value="" disabled="disabled" selected="selected">Select period type</option>
-            <option  [value]="'Monthly'" [hidden]="hideMonth">Monthly</option>
-            <option  [value]="'Quarterly'" [hidden]="hideQuarter">Quarterly</option>
-            <!--<option  [value]="'Yearly'" >Yearly</option>-->
-            <option  [value]="'FinancialJuly'" >Financial-July</option>
-            <option  [value]="'RelativeMonth'" [hidden]="hideMonth">Relative Month</option>
-            <option  [value]="'RelativeQuarter'" [hidden]="hideQuarter">Relative Quarter</option>
-            <!--<option  [value]="'RelativeQuarterYear'" >RelativeYearve Year</option>-->
-            <option  [value]="'RelativeFinancialYear'" >Relative Financial Year</option>
+            <option *ngFor="let period of period_type_config"  [value]="period.value">{{ period.name }}</option>
+
           </select>
         </div>
         <div class="col-sm-6" style="padding-right: 0px; padding-left:3px;margin-bottom: 5px">
@@ -24,12 +38,6 @@
           <button type="button" class="btn btn-default btn-sm" (click)="pushPeriodForward()" style="height: 25px;font-size: 10px">Pext Year</button>
         </div>
       </div>
-      </div>
-      <div class="search-area">
-        <form *ngIf="!period_tree_config.loading && period_tree_config.show_search" style="border-bottom: solid 1px #dddddd;">
-          <input #filter (keyup)="filterNodes(filter.value, pertree)" placeholder="{{ period_tree_config.search_text }}" id="search_field"/>
-
-        </form>
       </div>
       <div *ngIf="period_tree_config.loading">{{ period_tree_config.loading_message }}</div>
       <div class="" *ngIf="!period_tree_config.loading"  style="border-top: solid 0px blanchedalmond;">
@@ -61,7 +69,7 @@
         <div class="col-sm-6 tree-area1">
           <ul class="nav nav-pills nav-stacked">
             <li *ngFor="let period of selected_periods"
-                class="period" (click)="deactivatePer(period)"
+                class="period" (click)="deactivatePer(period);$event.stopPropagation()"
                 title="Click to deselect"
                 dnd-droppable (onDropSuccess)="transferDataSuccess($event,period)"
             >
@@ -72,5 +80,6 @@
       </div>
     </div>
   </div>
+</div>
 </div>
 

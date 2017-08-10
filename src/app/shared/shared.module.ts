@@ -13,6 +13,8 @@ import {OrderPipe} from './pipes/order-by.pipe';
 import {OrgUnitFilterComponent} from './components/org-unit-filter/org-unit-filter.component';
 import {MultiselectComponent} from './components/org-unit-filter/multiselect/multiselect.component';
 import {PeriodFilterComponent} from './components/period-filter/period-filter.component';
+import { SharingComponent } from './components/sharing/sharing.component';
+import { OptionsComponent } from './components/options/options.component';
 
 @NgModule({
   imports: [
@@ -31,7 +33,9 @@ import {PeriodFilterComponent} from './components/period-filter/period-filter.co
     OrderPipe,
     OrgUnitFilterComponent,
     PeriodFilterComponent,
-    MultiselectComponent
+    MultiselectComponent,
+    SharingComponent,
+    OptionsComponent
   ],
   exports: [
     TreeModule,
@@ -47,7 +51,9 @@ import {PeriodFilterComponent} from './components/period-filter/period-filter.co
     OrderPipe,
     OrgUnitFilterComponent,
     PeriodFilterComponent,
-    MultiselectComponent
+    MultiselectComponent,
+    SharingComponent,
+    OptionsComponent
   ]
 })
 export class SharedModule { }

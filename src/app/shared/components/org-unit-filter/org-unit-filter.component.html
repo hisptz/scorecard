@@ -1,107 +1,104 @@
-<div class="panel panel-default" style="border-style: none; margin-bottom: 0px; margin-top: 0px; border-bottom: solid 1px #eee;">
-  <div class="panel-heading" style="background-color: #ffffff;padding-bottom: 5px;padding-top: 5px;padding-left: 3px">
-    <div class="" (click)="displayOrgTree()">
-          <span *ngIf="!orgunit_tree_config.loading">
-              {{  getProperPreOrgunitName() }}
-          </span>
-      <span *ngIf="orgunit_model.selected_orgunits.length > 10 && orgunit_model.selected_user_orgunit.length == 0">
-            <span class="selected-item">
-              {{ orgunit_model.selected_orgunits[0].name }}
-              <a (click)="deActivateNode(orgunit_model.selected_orgunits[0].id,orgtree,$event)" class="removeorgunit" >x</a>
-            </span>
-            <span class="selected-item">
-              {{ orgunit_model.selected_orgunits[1].name }}
-              <a (click)="deActivateNode(orgunit_model.selected_orgunits[1].id,orgtree,$event)" class="removeorgunit">x</a>
-            </span>
-            <span class="selected-item">
-              &nbsp; and {{ orgunit_model.selected_orgunits.length - 2 }} more
-            </span>
-          </span>
-      <span *ngIf="orgunit_model.selected_orgunits.length <= 10 && orgunit_model.selected_user_orgunit.length == 0">
-             <span *ngFor="let item of orgunit_model.selected_orgunits" class="selected-item ng-binding ng-scope">
-              {{ item.name }}
-               <a (click)="deActivateNode(item.id,orgtree,$event)" class="removeorgunit">x</a>
-            </span>
-          </span>
-      <span class="no-selection"*ngIf="orgunit_model.selected_orgunits.length == 0 && !orgunit_tree_config.loading && orgunit_model.selection_mode != 'Usr_orgUnit'">{{ orgunit_tree_config.placeholder }}</span>
+<div class="tree-input" title="Select starting organisation unit for your scorecard" appClickOutside (clickOutside)="showOrgTree = true">
+    <div class="show_items" (click)="displayOrgTree()">
+              <span *ngIf="!orgunit_tree_config.loading">
+                  {{  getProperPreOrgunitName() }}
+              </span>
+        <span *ngIf="orgunit_model.selected_orgunits.length > 3 && orgunit_model.selected_user_orgunit.length == 0">
+                <span class="selected-item">
+                  {{ orgunit_model.selected_orgunits[0].name }}
+                  <a (click)="deActivateNode(orgunit_model.selected_orgunits[0].id,orgtree,$event)" class="removeorgunit" >x</a>
+                </span>
+                <span class="selected-item">
+                  {{ orgunit_model.selected_orgunits[1].name }}
+                  <a (click)="deActivateNode(orgunit_model.selected_orgunits[1].id,orgtree,$event)" class="removeorgunit">x</a>
+                </span>
+                <span class="selected-item">
+                  &nbsp; and {{ orgunit_model.selected_orgunits.length - 2 }} more
+                </span>
+              </span>
+        <span *ngIf="orgunit_model.selected_orgunits.length <= 3 && orgunit_model.selected_user_orgunit.length == 0">
+                 <span *ngFor="let item of orgunit_model.selected_orgunits" class="selected-item ng-binding ng-scope">
+                  {{ item.name }}
+                   <a (click)="deActivateNode(item.id,orgtree,$event)" class="removeorgunit">x</a>
+                </span>
+              </span>
+        <span class="no-selection"*ngIf="orgunit_model.selected_orgunits.length == 0 && !orgunit_tree_config.loading && orgunit_model.selection_mode != 'Usr_orgUnit'">{{ orgunit_tree_config.placeholder }}</span>
+
+      <span class="glyphicon glyphicon-triangle-bottom pull-right"></span>
       <span  *ngIf="orgunit_model.selected_orgunits.length > 0" class="pull-right">
-        <span class="selected-item" style="cursor: pointer" (click)="clearAll()" style="opacity: 0.7">X clear all</span>
-      </span>
+            <span class="selected-item" style="cursor: pointer" (click)="clearAll()" style="opacity: 0.7">X clear all</span>
+          </span>
       <span *ngIf="orgunit_tree_config.loading">{{ orgunit_tree_config.loading_message }}</span>
     </div>
-  </div>
-</div>
-<div class="panel-body" style="padding: 3px;" [ngClass]="{'hiddenTree':showOrgTree}">
-  <div class="" [ngClass]="{'hiddenTree':showOrgTree}" id="tree_view">
-    <div class="col-sm-3" style="padding-left: 0px; margin-bottom: 5px">
-      <div class="btn-group">
-        <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" title="Switch selection between: by Level, Group or Current selected">
-          <img *ngIf="orgunit_model.selection_mode == 'orgUnit'" src="../../../assets/img/icons8-Tree.png" class="group-image">
-          <img *ngIf="orgunit_model.selection_mode == 'Level'" src="../../../assets/img/icons8-Genealogy.png" class="group-image">
-          <img *ngIf="orgunit_model.selection_mode == 'Group'" src="../../../assets/img/icons8-Group.png" class="group-image">
-          <span class="caret"></span>
-        </button>
-        <ul class="dropdown-menu">
-          <li>
-            <a (click)="setType('orgUnit')">
-              <span *ngIf="orgunit_model.selection_mode == 'orgUnit'" class="glyphicon glyphicon-ok"></span>
-              <img src="assets/img/icons8-Tree.png" class="group-image">
-              Select Administrative Unit
-            </a>
-          </li>
-          <li>
-            <a (click)="setType('Level')">
-              <span *ngIf="orgunit_model.selection_mode == 'Level'" class="glyphicon glyphicon-ok"></span>
-              <img src="assets/img/icons8-Genealogy.png" class="group-image">
-              Select Level
-            </a>
-          </li>
-          <li>
-            <a (click)="setType('Group')">
-              <span *ngIf="orgunit_model.selection_mode == 'Group'" class="glyphicon glyphicon-ok"></span>
-              <img src="assets/img/icons8-Group.png" class="group-image">
-              Select Group
-            </a>
-          </li>
-        </ul>
+    <div class="tree-view" [ngClass]="{'hiddenTree':showOrgTree}" id="tree_view">
+      <div class="col-sm-3" style="padding-left: 0px; margin-bottom: 5px">
+        <div class="btn-group">
+          <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" title="Switch selection between: by Level, Group or Current selected">
+            <span class="glyphicon glyphicon-cog"></span>
+            <span class="caret"></span>
+            <img *ngIf="orgunit_model.selection_mode == 'orgUnit'" src="assets/img/icons8-Tree.png" class="group-image">
+            <img *ngIf="orgunit_model.selection_mode == 'Level'" src="assets/img/icons8-Genealogy.png" class="group-image">
+            <img *ngIf="orgunit_model.selection_mode == 'Group'" src="assets/img/icons8-Group.png" class="group-image">
+          </button>
+          <ul class="dropdown-menu">
+            <li>
+              <a (click)="setType('orgUnit')">
+                <!--<span *ngIf="orgunit_model.selection_mode == 'orgUnit'" class="glyphicon glyphicon-ok"></span>-->
+                <img src="assets/img/icons8-Tree.png" class="group-image">
+                Select Organisation Unit
+              </a>
+            </li>
+            <li>
+              <a (click)="setType('Level')">
+                <!--<span *ngIf="orgunit_model.selection_mode == 'Level'" class="glyphicon glyphicon-ok"></span>-->
+                <img src="assets/img/icons8-Genealogy.png" class="group-image">
+                Select Level
+              </a>
+            </li>
+            <li>
+              <a (click)="setType('Group')">
+                <!--<span *ngIf="orgunit_model.selection_mode == 'Group'" class="glyphicon glyphicon-ok"></span>-->
+                <img src="assets/img/icons8-Group.png" class="group-image">
+                Select Group
+              </a>
+            </li>
+          </ul>
+        </div>
       </div>
-    </div>
-    <!--org_unit_groups-->
-    <div class="col-sm-9" style="padding-right: 0px; margin-bottom: 5px" *ngIf="orgunit_model.selection_mode == 'Group'">
-      <app-multiselect [placeholder]="'Select Admin.units group'" [selected_items]="orgunit_model.selected_groups" [items]="orgunit_model.orgunit_groups" (onSelected)="setSelectedGroups($event)"></app-multiselect>
+      <!--org_unit_groups-->
+      <div class="col-sm-9" style="padding-right: 0px; margin-bottom: 5px" *ngIf="orgunit_model.selection_mode == 'Group'">
+        <app-multiselect [placeholder]="'Select Organisation units group'" [selected_items]="orgunit_model.selected_groups" [items]="orgunit_model.orgunit_groups" (onSelected)="setSelectedGroups($event)"></app-multiselect>
+      </div>
+      <!--user_org_unit-->
+      <div class="col-sm-9" style="padding-right: 0px; margin-bottom: 5px" [ngClass]="{'hiddenTree': orgunit_model.selection_mode != 'orgUnit'}">
+        <app-multiselect #period_selector [placeholder]="'Select Organisation Unit'" [items]="user_orgunits_types" (onSelected)="setSelectedUserOrg($event)"></app-multiselect>
 
-    </div>
-    <!--user_org_unit-->
-    <div class="col-sm-9" style="padding-right: 0px; margin-bottom: 5px" [ngClass]="{'hiddenTree': orgunit_model.selection_mode != 'orgUnit'}">
-      <app-multiselect #period_selector [placeholder]="'Select Administrative Unit'" [items]="user_orgunits_types" (onSelected)="setSelectedUserOrg($event)"></app-multiselect>
+      </div>
+      <!--org_unit_levels-->
+      <div class="col-sm-9" style="padding-right: 0px; margin-bottom: 5px" *ngIf="orgunit_model.selection_mode == 'Level'">
+        <app-multiselect [prefix]="'Level: '" [prefix_multiple]="'Levels: '" [placeholder]="'Select Organisation units levels'" [selected_items]="orgunit_model.selected_levels" [items]="orgunit_model.orgunit_levels | filterLevel:organisationunits[0]:orgunit_model.selected_orgunits" (onSelected)="setSelectedLevels($event)"></app-multiselect>
 
-    </div>
-    <!--org_unit_levels-->
-    <div class="col-sm-9" style="padding-right: 0px; margin-bottom: 5px" *ngIf="orgunit_model.selection_mode == 'Level'">
-      <app-multiselect [prefix]="'Level: '" [prefix_multiple]="'Levels: '" [placeholder]="'Select Admin.units levels'" [selected_items]="orgunit_model.selected_levels" [items]="orgunit_model.orgunit_levels | filterLevel:organisationunits[0]:orgunit_model.selected_orgunits" (onSelected)="setSelectedLevels($event)"></app-multiselect>
-
-    </div>
-    <!--<div class="search-area">-->
+      </div>
+      <!--<div class="search-area">-->
       <!--<form *ngIf="!orgunit_tree_config.loading && orgunit_tree_config.show_search && orgunit_model.selection_mode != 'Usr_orgUnit'" style="border-bottom: solid 1px blanchedalmond;">-->
-        <!--<input #filter (keyup)="filterNodes(filter.value, orgtree)" placeholder="{{ orgunit_tree_config.search_text }}" class="search_field"/>-->
+      <!--<input #filter (keyup)="filterNodes(filter.value, orgtree)" placeholder="{{ orgunit_tree_config.search_text }}" class="search_field"/>-->
       <!--</form>-->
-    <!--</div>-->
-    <div *ngIf="orgunit_tree_config.loading">{{ orgunit_tree_config.loading_message }}</div>
-    <div class="tree-area" [ngClass]="{'someclass': orgunit_model.selected_user_orgunit.length != 0}">
-      <tree-root
-        #orgtree
-        [nodes]="organisationunits"
-        [focused]="true"
-        [options]="customTemplateStringOrgunitOptions"
-        (onActivate)="activateOrg($event)"
-        (onDeactivate)="deactivateOrg($event)"
-      >
-        <ng-template #treeNodeTemplate let-node>
-          <span (click)="updateModelOnSelect(node.data)">{{ node.data.name }}</span>
-        </ng-template>
-      </tree-root>
+      <!--</div>-->
+      <div *ngIf="orgunit_tree_config.loading">{{ orgunit_tree_config.loading_message }}</div>
+      <div class="tree-area" [ngClass]="{'someclass': orgunit_model.selected_user_orgunit.length != 0}">
+        <tree-root
+          #orgtree
+          [nodes]="organisationunits"
+          [focused]="true"
+          [options]="customTemplateStringOrgunitOptions"
+          (onActivate)="activateOrg($event)"
+          (onDeactivate)="deactivateOrg($event)"
+        >
+          <ng-template #treeNodeTemplate let-node>
+            <span (click)="updateModelOnSelect(node.data)">{{ node.data.name }}</span>
+          </ng-template>
+        </tree-root>
+      </div>
+
     </div>
-
-  </div>
 </div>
-

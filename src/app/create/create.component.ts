@@ -71,6 +71,19 @@ export class CreateComponent implements OnInit, AfterViewInit, OnDestroy {
   k: number;
   r: number;
 
+  orgunit_model: any =  {
+    selection_mode: 'Usr_orgUnit',
+    selected_levels: [],
+    show_update_button: true,
+    selected_groups: [],
+    orgunit_levels: [],
+    orgunit_groups: [],
+    selected_orgunits: [],
+    user_orgunits: [],
+    type: 'report', // can be 'data_entry'
+    selected_user_orgunit: []
+  };
+
   @ViewChild('title')
   title_element: ElementRef;
 
@@ -110,8 +123,6 @@ export class CreateComponent implements OnInit, AfterViewInit, OnDestroy {
   have_authorities: boolean = false;
   showOrgTree: boolean = true;
   showPerTree: boolean = true;
-  showShareTree: boolean = true;
-  showAdditionalOptions: boolean = true;
   orgunit_tree_config: any = {
     show_search : true,
     search_text : 'Search',
@@ -139,7 +150,6 @@ export class CreateComponent implements OnInit, AfterViewInit, OnDestroy {
   userGroups: any = [];
   group_loading = true;
   selected_groups: any = [];
-  share_filter: string = '';
   group_type: string = 'indicators';
   bootleneck_group_type: string = 'indicators';
   constructor(private indicatorService: IndicatorGroupService,
@@ -193,6 +203,10 @@ export class CreateComponent implements OnInit, AfterViewInit, OnDestroy {
     };
   }
 
+  isArray(o) {
+  return Object.prototype.toString.call(o) === '[object Array]';
+}
+
   ngOnInit() {
     this.dataService.getUserGroupInformation().subscribe( userGroups => {
       this.group_loading = false;
@@ -232,17 +246,34 @@ export class CreateComponent implements OnInit, AfterViewInit, OnDestroy {
               if (!this.scorecard.data.hasOwnProperty('user_groups')) {
                 this.scorecard.data.user_groups = [];
               }
+              // replace selected user orgunit with correct configuration
+
               // attach organisation unit if none is defined
               if (!this.scorecard.data.orgunit_settings.hasOwnProperty('selected_orgunits')) {
                 this.scorecard.data.orgunit_settings = {
                   'selection_mode': 'Usr_orgUnit',
-                  'selected_level': '',
-                  'selected_group': '',
+                  'selected_levels': [],
+                  'show_update_button': true,
+                  'selected_groups': [],
                   'orgunit_levels': [],
                   'orgunit_groups': [],
                   'selected_orgunits': [],
                   'user_orgunits': [],
-                  'selected_user_orgunit': 'USER_ORGUNIT'
+                  'type': 'report',
+                  'selected_user_orgunit': []
+                };
+              }else if (!this.isArray(this.scorecard.data.orgunit_settings.selected_levels)) {
+                this.scorecard.data.orgunit_settings = {
+                  'selection_mode': 'Usr_orgUnit',
+                  'selected_levels': [],
+                  'show_update_button': true,
+                  'selected_groups': [],
+                  'orgunit_levels': [],
+                  'orgunit_groups': [],
+                  'selected_orgunits': [],
+                  'user_orgunits': [],
+                  'type': 'report',
+                  'selected_user_orgunit': []
                 };
               }
               // activate organisation units
@@ -412,112 +443,31 @@ export class CreateComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   loadOrganisationUnit() {
-    if (this.orgunitService.nodes === null) {
-      this.orgunitService.getOrgunitLevelsInformation()
-        .subscribe(
-          (data: any) => {
-            // assign urgunit levels and groups to variables
-            this.scorecard.data.orgunit_settings.orgunit_levels = data.organisationUnitLevels;
-            this.orgunitService.orgunit_levels = data.organisationUnitLevels;
-            this.orgunitService.getOrgunitGroups().subscribe( groups => {//noinspection TypeScriptUnresolvedVariable
-              this.scorecard.data.orgunit_settings.orgunit_groups = groups.organisationUnitGroups;
-              this.orgunitService.orgunit_groups = groups.organisationUnitGroups;
-            });
 
-            this.orgunitService.getUserInformation().subscribe(
-              userOrgunit => {
-                const level = this.orgunitService.getUserHighestOrgUnitlevel( userOrgunit );
-                this.scorecard.data.orgunit_settings.user_orgunits = this.orgunitService.getUserOrgUnits( userOrgunit );
-                this.orgunitService.user_orgunits = this.orgunitService.getUserOrgUnits( userOrgunit );
-                const all_levels = data.pager.total;
-                const orgunits = this.orgunitService.getuserOrganisationUnitsWithHighestlevel( level, userOrgunit );
-                const use_level = parseInt(all_levels) - (parseInt(level) - 1);
-
-                // load inital orgiunits to speed up loading speed
-                this.orgunitService.getInitialOrgunitsForTree(orgunits).subscribe(
-                  (initial_data) => {
-                    //noinspection TypeScriptUnresolvedVariable
-                    this.organisationunits = initial_data.organisationUnits;
-                    this.orgunit_tree_config.loading = false;
-                    // after done loading initial organisation units now load all organisation units
-                    const fields = this.orgunitService.generateUrlBasedOnLevels(use_level);
-                    this.orgunitService.getAllOrgunitsForTree1(fields, orgunits).subscribe(
-                      items => {
-                        //noinspection TypeScriptUnresolvedVariable
-                        this.organisationunits = items.organisationUnits;
-                        //noinspection TypeScriptUnresolvedVariable
-                        this.orgunitService.nodes = items.organisationUnits;
-                        this.prepareOrganisationUnitTree(this.organisationunits, 'parent');
-                      },
-                      error => {
-                        console.log('something went wrong while fetching Organisation units');
-                        this.orgunit_tree_config.loading = false;
-                      }
-                    );
-                  },
-                  error => {
-                    console.log('something went wrong while fetching Organisation units');
-                    this.orgunit_tree_config.loading = false;
-                  }
-                );
-
-              }
-            );
-          }
-        );
-    }else {
-      this.orgunit_tree_config.loading = false;
-      this.organisationunits = this.orgunitService.nodes;
-      this.scorecard.data.orgunit_settings.orgunit_levels = this.orgunitService.orgunit_levels;
-      this.scorecard.data.orgunit_settings.user_orgunits = this.orgunitService.user_orgunits;
-      this.scorecard.data.orgunit_settings.orgunit_groups = this.orgunitService.orgunit_groups;
-
-      this.prepareOrganisationUnitTree(this.organisationunits, 'parent');
-    }
   }
 
-  // this function is used to sort organisation unit
-  prepareOrganisationUnitTree(organisationUnit, type: string = 'top') {
-    if (type === 'top') {
-      if (organisationUnit.children) {
-        organisationUnit.children.sort((a, b) => {
-          if (a.name > b.name) {
-            return 1;
-          }
-          if (a.name < b.name) {
-            return -1;
-          }
-          // a must be equal to b
-          return 0;
-        });
-        organisationUnit.children.forEach((child) => {
-          this.prepareOrganisationUnitTree(child, 'top');
-        });
-      }
-    }else {
-      organisationUnit.forEach((orgunit) => {
-        console.log(orgunit);
-        if (orgunit.children) {
-          orgunit.children.sort((a, b) => {
-            if (a.name > b.name) {
-              return 1;
-            }
-            if (a.name < b.name) {
-              return -1;
-            }
-            // a must be equal to b
-            return 0;
-          });
-          orgunit.children.forEach((child) => {
-            this.prepareOrganisationUnitTree(child, 'top');
-          });
-        }
-      });
-    }
+  optionUpdated(options: any) {
+    this.scorecard.data.header.show_legend_definition = options.show_legend_definition;
+    this.scorecard.data.show_rank = options.show_rank;
+    this.scorecard.data.empty_rows = options.empty_rows;
+    this.scorecard.data.show_average_in_column = options.show_average_in_column;
+    this.scorecard.data.show_average_in_row = options.show_average_in_row;
+    this.scorecard.data.average_selection = options.average_selection;
+    this.scorecard.data.shown_records = options.shown_records;
+    this.scorecard.data.show_score = options.show_score;
+    this.scorecard.data.header.show_arrows_definition = options.show_arrows_definition;
+    this.scorecard.data.show_data_in_column = options.show_data_in_column;
+    console.log(this.scorecard.data.show_rank);
   }
 
-  showOptions() {
-    this.showAdditionalOptions = !this.showAdditionalOptions;
+  updateOrgUnitModel(ouModel) {
+    this.scorecard.data.orgunit_settings = ouModel;
+  }
+
+  updatePeriod (period) {
+    console.log(period);
+    this.scorecard.data.selected_periods = period.items;
+    this.scorecard.data.periodType = period.type;
   }
 
   ngAfterViewInit() {
@@ -1607,10 +1557,7 @@ export class CreateComponent implements OnInit, AfterViewInit, OnDestroy {
     this.showPerTree = !this.showPerTree;
   }
 
-  //  display sharing Tree
-  displayShareTree() {
-    this.showShareTree = !this.showShareTree;
-  }
+
 
   //  action to be called when a tree item is deselected(Remove item in array of selected items
   deactivateOrg ( $event ) {
@@ -1667,57 +1614,6 @@ export class CreateComponent implements OnInit, AfterViewInit, OnDestroy {
       event.stopPropagation();
     }
   }
-
-  pushPeriodForward() {
-    this.year += 1;
-    // this.periods = this.filterService.getPeriodArray(this.period_type, this.year);
-  }
-
-  pushPeriodBackward() {
-    this.year -= 1;
-    // this.periods = this.filterService.getPeriodArray(this.period_type, this.year);
-  }
-
-  changePeriodType() {
-    // this.periods = this.filterService.getPeriodArray(this.period_type, this.year);
-  }
-
-  //  add user sharing settings
-  toogleGroup(type, group) {
-    if (group.hasOwnProperty(type)) {
-      group[type] = !group[type];
-    }else {
-      group[type] = true;
-    }
-    if (!this.checkItemAvailabilty(group, this.scorecard.data.user_groups)) {
-      this.scorecard.data.user_groups.push(group);
-    }else {
-      this.scorecard.data.user_groups.forEach((value, index) => {
-        if ( value.id === group.id ) {
-          this.scorecard.data.user_groups[index] = group;
-        }
-      });
-    }
-    if (!group['see'] && !group['edit']) {
-      this.scorecard.data.user_groups.forEach((value, index) => {
-        if ( value.id === group.id ) {
-          this.scorecard.data.user_groups.splice(index, 1);
-        }
-      });
-    }
-
-  }
-
-  getGroupActiveState(type, group): boolean {
-    let checker = false;
-    this.scorecard.data.user_groups.forEach((value) => {
-      if ( value.id === group.id && value.hasOwnProperty(type)) {
-        checker = value[type];
-      }
-    });
-    return checker;
-  }
-
 
   //  check if orgunit already exist in the orgunit display list
   checkItemAvailabilty(item, array): boolean {

@@ -171,20 +171,25 @@ export class ScorecardService {
       data: {
         'orgunit_settings': {
           'selection_mode': 'Usr_orgUnit',
-          'selected_level': '',
-          'selected_group': '',
+          'selected_levels': [],
+          'show_update_button': true,
+          'selected_groups': [],
           'orgunit_levels': [],
           'orgunit_groups': [],
           'selected_orgunits': [],
           'user_orgunits': [],
-          'selected_user_orgunit': 'USER_ORGUNIT'
+          'type': 'report',
+          'selected_user_orgunit': []
         },
         'average_selection': 'all',
         'shown_records': 'all',
         'show_average_in_row': false,
         'show_average_in_column': false,
         'periodType': 'Quarterly',
-        'selected_periods': [],
+        'selected_periods': [{
+          id: '2017Q1',
+          name: 'January - March 2017'
+        }],
         'show_data_in_column': false,
         'show_score': false,
         'show_rank': false,
