@@ -479,6 +479,18 @@ export class CreateComponent implements OnInit, AfterViewInit, OnDestroy {
 
 
   }
+
+  onTitleChange(event) {
+    console.log('changed', event);
+  }
+
+  onTitleReady(event) {
+    console.log('ready', event);
+  }
+
+  onTitleBlur(event) {
+    console.log('blur', event);
+  }
   // cancel scorecard creation process
   cancelCreate() {
     // this._location.back();

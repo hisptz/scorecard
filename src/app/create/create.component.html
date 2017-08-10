@@ -452,7 +452,15 @@
     <div class="indicator-content">
       <span class="glyphicon glyphicon-remove pull-right" style="cursor: pointer" (click)="showTextEditor()"></span>
       <div style="padding: 15px">
-        <textarea id="my-editor-id"></textarea>
+        <ckeditor
+          [(ngModel)]="scorecard.data.header.template.content"
+          [config]="{uiColor: '#99000'}"
+          [readonly]="false"
+          (change)="onTitleChange($event)"
+          (ready)="onTitleReady($event)"
+          (blur)="onTitleBlur($event)"
+          debounce="300">
+        </ckeditor>
         <button class="btn btn-default pull-right" (click)="showTextEditor()"> <span class="glyphicon glyphicon-ok"></span> Done </button>
       </div>
     </div>
