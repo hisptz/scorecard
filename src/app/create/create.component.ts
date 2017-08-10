@@ -276,11 +276,6 @@ export class CreateComponent implements OnInit, AfterViewInit, OnDestroy {
                   'selected_user_orgunit': []
                 };
               }
-              // activate organisation units
-              for ( const active_orgunit of this.scorecard.data.orgunit_settings.selected_orgunits ) {
-                this.activateNode(active_orgunit.id, this.orgtree);
-
-              }
               // attach period type if none is defined
               if (!this.scorecard.data.hasOwnProperty('periodType')) {
                 this.scorecard.data.periodType = 'Quarterly';
@@ -328,18 +323,6 @@ export class CreateComponent implements OnInit, AfterViewInit, OnDestroy {
                 }else { continue; }
               }
 
-              if ( this.scorecard.data.selected_periods.length === 0 ) {
-                // this.periods = this.filterService.getPeriodArray( this.period_type, this.year );
-                // this.activateNode(this.filterService.getPeriodArray( this.period_type, this.year )[0].id, this.pertree);
-              }else {
-                this.periods = this.scorecard.data.selected_periods;
-                this.scorecard.data.selected_periods.forEach((period) => {
-                  this.selected_periods.push(period);
-                  // const use_period = this.filterService.deducePeriodType(period.id);
-                  // this.period_type = use_period.type;
-                  this.activateNode(period.id, this.pertree);
-                });
-              }
             });
 
         }
@@ -1547,52 +1530,6 @@ export class CreateComponent implements OnInit, AfterViewInit, OnDestroy {
     return checker;
   }
 
-  //  display Orgunit Tree
-  displayOrgTree() {
-    this.showOrgTree = !this.showOrgTree;
-  }
-
-  //  display period Tree
-  displayPerTree() {
-    this.showPerTree = !this.showPerTree;
-  }
-
-
-
-  //  action to be called when a tree item is deselected(Remove item in array of selected items
-  deactivateOrg ( $event ) {
-    this.scorecard.data.orgunit_settings.selected_orgunits.forEach((item, index) => {
-      if ( $event.node.data.id === item.id ) {
-        this.scorecard.data.orgunit_settings.selected_orgunits.splice(index, 1);
-      }
-    });
-  }
-
-  //  add item to array of selected items when item is selected
-  activateOrg = ($event) => {
-    if (!this.checkItemAvailabilty($event.node.data, this.scorecard.data.orgunit_settings.selected_orgunits)) {
-      this.scorecard.data.orgunit_settings.selected_orgunits.push($event.node.data);
-    }
-  }
-
-
-  //  action to be called when a tree item is deselected(Remove item in array of selected items
-  deactivatePer ( $event ) {
-    this.selected_periods.forEach((item, index) => {
-      if ( $event.node.data.id === item.id ) {
-        this.selected_periods.splice(index, 1);
-      }
-    });
-  }
-
-  // / add item to array of selected items when period is selected
-  activatePer = ($event) => {
-    if (!this.checkItemAvailabilty($event.node.data, this.selected_periods)) {
-      this.selected_periods.push($event.node.data);
-    }
-  }
-
-
   activateNode(nodeId: any, nodes) {
     setTimeout(() => {
       const node = nodes.treeModel.getNodeById(nodeId);
@@ -1600,62 +1537,6 @@ export class CreateComponent implements OnInit, AfterViewInit, OnDestroy {
         node.setIsActive(true, true);
       }
     }, 0);
-  }
-
-  //  a method to activate the model
-  deActivateNode(nodeId: any, nodes, event) {
-    setTimeout(() => {
-      const node = nodes.treeModel.getNodeById(nodeId);
-      if (node) {
-        node.setIsActive(false, true);
-      }
-    }, 0);
-    if ( event !== null) {
-      event.stopPropagation();
-    }
-  }
-
-  //  check if orgunit already exist in the orgunit display list
-  checkItemAvailabilty(item, array): boolean {
-    let checker = false;
-    array.forEach((value) => {
-      if ( value.id === item.id ) {
-        checker = true;
-      }
-    });
-    return checker;
-  }
-
-  //  function that is used to filter nodes
-  filterNodes(text, tree) {
-    tree.treeModel.filterNodes(text, true);
-  }
-
-  //  prepare a proper name for updating the organisation unit display area.
-  getProperPreOrgunitName(): string {
-    let name = '';
-    if ( this.scorecard.data.orgunit_settings.selection_mode === 'Group' ) {
-      const use_value = this.scorecard.data.orgunit_settings.selected_group.split('-');
-      for ( const single_group of this.scorecard.data.orgunit_settings.orgunit_groups ) {
-        if ( single_group.id === use_value[1] ) {
-          name = single_group.name + ' in';
-        }
-      }
-    }else if ( this.scorecard.data.orgunit_settings.selection_mode === 'Usr_orgUnit' ) {
-      if ( this.scorecard.data.orgunit_settings.selected_user_orgunit === 'USER_ORGUNIT') {name = 'User org unit'; }
-      if ( this.scorecard.data.orgunit_settings.selected_user_orgunit === 'USER_ORGUNIT_CHILDREN') {name = 'User sub-units'; }
-      if ( this.scorecard.data.orgunit_settings.selected_user_orgunit === 'USER_ORGUNIT_GRANDCHILDREN') {name = 'User sub-x2-units'; }
-    }else if ( this.scorecard.data.orgunit_settings.selection_mode === 'Level' ) {
-      const use_level = this.scorecard.data.orgunit_settings.selected_level.split('-');
-      for ( const single_level of this.scorecard.data.orgunit_settings.orgunit_levels ) {
-        if ( single_level.level === use_level[1] ) {
-          name = single_level.name + ' in';
-        }
-      }
-    }else {
-      name = '';
-    }
-    return name;
   }
 
   transferDataSuccess($event, drop_area: string, object: any) {
