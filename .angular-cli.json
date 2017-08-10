@@ -9,7 +9,14 @@
       "outDir": "dist",
       "assets": [
         "assets",
-        "favicon.ico"
+        "favicon.ico",
+        "icon.png",
+        "balls-3.svg",
+        "balls-4.svg",
+        "balls-5.svg",
+        "scorecard.svg",
+        "manifest.webapp",
+        "scorecard.appcache"
       ],
       "index": "index.html",
       "main": "main.ts",
@@ -19,9 +26,13 @@
       "testTsconfig": "tsconfig.spec.json",
       "prefix": "app",
       "styles": [
-        "styles.css"
+        "styles.css",
+        "../node_modules/bootstrap/dist/css/bootstrap.min.css"
       ],
-      "scripts": [],
+      "scripts": [
+        "../node_modules/jquery/dist/jquery.min.js",
+        "../node_modules/bootstrap/dist/js/bootstrap.min.js"
+      ],
       "environmentSource": "environments/environment.ts",
       "environments": {
         "dev": "environments/environment.ts",

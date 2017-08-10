@@ -1,6 +1,7 @@
 import { BrowserModule } from '@angular/platform-browser';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { NgModule } from '@angular/core';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpModule } from '@angular/http';
 import { ScoreCardRoutingModule } from './app-routing.module';
 
@@ -13,16 +14,22 @@ import {getInitialState} from './store/application.state';
 import {EffectsModule} from '@ngrx/effects';
 import {DataStoreEffect} from './store/effects/dataStore.effect';
 import {StoreService} from './shared/services/store-service';
+import {ScoreCardFilterPipe} from './home/score-card-filter.pipe';
+import {ScorecardService} from './shared/services/scorecard.service';
+import {DataService} from './shared/services/data.service';
 
 @NgModule({
   declarations: [
     AppComponent,
-    HomeComponent
+    HomeComponent,
+    ScoreCardFilterPipe
   ],
   imports: [
     BrowserModule,
+    BrowserAnimationsModule,
     HttpModule,
     FormsModule,
+    ReactiveFormsModule,
     ScoreCardRoutingModule,
     NgxPaginationModule,
     StoreModule.forRoot(reducers, {
@@ -30,7 +37,11 @@ import {StoreService} from './shared/services/store-service';
     }),
     EffectsModule.forRoot([DataStoreEffect])
   ],
-  providers: [StoreService],
+  providers: [
+    StoreService,
+    ScorecardService,
+    DataService
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

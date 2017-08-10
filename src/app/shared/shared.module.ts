@@ -1,5 +1,5 @@
-import { FormsModule } from '@angular/forms';
 import { NgModule } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { TreeModule } from 'angular-tree-component';
 import { ColorPickerModule } from 'ngx-color-picker';
@@ -10,6 +10,9 @@ import { SafeHtmlPipe } from './pipes/safe-html.pipe';
 import { NgxPaginationModule } from 'ngx-pagination';
 import {FilterLevelPipe} from './pipes/filter-level.pipe';
 import {OrderPipe} from './pipes/order-by.pipe';
+import {OrgUnitFilterComponent} from './components/org-unit-filter/org-unit-filter.component';
+import {MultiselectComponent} from './components/org-unit-filter/multiselect/multiselect.component';
+import {PeriodFilterComponent} from './components/period-filter/period-filter.component';
 
 @NgModule({
   imports: [
@@ -17,14 +20,18 @@ import {OrderPipe} from './pipes/order-by.pipe';
     TreeModule,
     ColorPickerModule,
     DndModule.forRoot(),
-    NgxPaginationModule
+    NgxPaginationModule,
+    FormsModule
   ],
   declarations: [
     ClickOutsideDirective,
     FilterByNamePipe,
     SafeHtmlPipe,
     FilterLevelPipe,
-    OrderPipe
+    OrderPipe,
+    OrgUnitFilterComponent,
+    PeriodFilterComponent,
+    MultiselectComponent
   ],
   exports: [
     TreeModule,
@@ -37,7 +44,10 @@ import {OrderPipe} from './pipes/order-by.pipe';
     DndModule,
     ClickOutsideDirective,
     FilterLevelPipe,
-    OrderPipe
+    OrderPipe,
+    OrgUnitFilterComponent,
+    PeriodFilterComponent,
+    MultiselectComponent
   ]
 })
 export class SharedModule { }
