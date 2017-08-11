@@ -141,25 +141,14 @@
 
 .tree-area{
   max-height: 270px;
-  overflow: hidden;
-  width: 100%;
-}
-.tree-area{
-  max-height: 210px;
-  overflow: hidden;
-  width: 100%;
-}
-.tree-area{
   overflow: auto;
+  width: 100%;
 }
 
 .tree-area1{
   max-height: 210px;
-  overflow: hidden;
-  width: 100%;
-}
-.tree-area1:hover{
   overflow: auto;
+  width: 100%;
 }
 .hiddenTree{
   display: none;
@@ -230,6 +219,7 @@ span.selected-item {
   font-size: 11px;
 
 }
+
 .selected-item-close {
   width: 20px;
   cursor: pointer;
@@ -366,4 +356,28 @@ table * {
 
 .list-group-item{
   padding: 5px 15px
+}
+.dnd-drag-start {
+  -moz-transform:scale(0.8);
+  -webkit-transform:scale(0.8);
+  transform:scale(0.8);
+  opacity:0.7;
+  border: 2px dashed #000;
+}
+
+.dnd-drag-enter {
+  opacity:0.7;
+  border: 2px dashed #000;
+}
+
+.dnd-drag-over {
+  border: 2px dashed #000;
+}
+
+.dnd-sortable-drag {
+  -moz-transform:scale(0.9);
+  -webkit-transform:scale(0.9);
+  transform:scale(0.9);
+  opacity:0.7;
+  border: 1px dashed #000;
 }

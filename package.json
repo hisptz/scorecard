@@ -27,6 +27,7 @@
     "@types/highcharts": "^5.0.1",
     "@types/lodash": "^4.14.52",
     "angular-tree-component": "^3.8.0",
+    "angular2-csv": "^0.2.5",
     "bootstrap": "^3.3.7",
     "core-js": "^2.4.1",
     "highcharts": "^4.2.7",

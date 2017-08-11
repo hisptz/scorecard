@@ -1,0 +1,34 @@
+<svg *ngIf="indicator_list.length == 2" viewbox="0 0 90 35" width="90" height="35">
+  <polygon points="0 0 90 0 90 0 0 35" [attr.fill]="assignBgColor(indicator.indicators[0],indicator.indicators[0].values[value_key])" style="stroke:#CAC0C0;stroke-width:0.4"/>
+  <text fill="#000" x="3" y="18" font-size="11" font-family="Source Sans Pro">
+    <tspan>{{ indicator_list[0].values[value_key] }}</tspan>
+  </text>
+  <!--top arrow-->
+  <path *ngIf="indicator_list[0].showTopArrow[value_key] && scorecard.data.header.show_arrows_definition" d="M2,10H12L7,4" style="fill:black;stroke:black;stroke-width:1"/>
+  <!--bottom arrow showing decrease-->
+  <path *ngIf="indicator_list[0].showBottomArrow[value_key] && scorecard.data.header.show_arrows_definition" d="M2,22H12L7,30" style="fill:black;stroke:black;stroke-width:1"/>
+
+  <!--second triangle-->
+  <polygon points="0 35 90 0 90 35 0 35" [attr.fill]="assignBgColor(indicator_list[1],indicator_list[1].values[value_key])" style="stroke:#CAC0C0;stroke-width:0.0"/>
+  <!--number for the second triangle-->
+  <text fill="#000" x="54" y="22" font-size="11" font-family="Source Sans Pro">
+    <tspan>{{ indicator_list[1].values[value_key] }}</tspan>
+  </text>
+  <!--top arrow for the right triagle-->
+  <path *ngIf="indicator_list[1].showTopArrow[value_key] && scorecard.data.header.show_arrows_definition" d="M75,10H85L80,4" style="fill:black;stroke:black;stroke-width:1"/>
+  <!--below arrow for the triangle-->
+  <path *ngIf="indicator_list[1].showBottomArrow[value_key] && scorecard.data.header.show_arrows_definition" d="M75,24H85L80,31" style="fill:black;stroke:black;stroke-width:1"/>
+</svg>
+<!--if there is only one indicator to display-->
+<svg *ngIf="indicator_list.length == 1" viewbox="0 0 90 35" width="90" height="35">
+  <!--full box to cover all area-->
+  <polygon points="0 0 90 0 90 35 0 35" [attr.fill]="assignBgColor(indicator_list[0],indicator_list[0].values[value_key])"/>
+  <text fill="#000" x="30" y="20" font-size="11" font-family="Source Sans Pro">
+    <tspan>{{ indicator_list[0].values[value_key] }}</tspan>
+  </text>
+  <!--top arrow-->
+  <path *ngIf="indicator_list[0].showTopArrow[value_key] && scorecard.data.header.show_arrows_definition" d="M2,10H12L7,4" style="fill:black;stroke:black;stroke-width:1"/>
+  <!--bottom arrow showing decrease-->
+  <path *ngIf="indicator_list[0].showBottomArrow[value_key] && scorecard.data.header.show_arrows_definition" d="M2,22H12L7,30" style="fill:black;stroke:black;stroke-width:1"/>
+
+</svg>

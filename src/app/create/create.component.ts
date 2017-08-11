@@ -95,10 +95,8 @@ export class CreateComponent implements OnInit, AfterViewInit, OnDestroy {
 
   @ViewChild('pertree')
   pertree: TreeComponent;
-  periods: any[] = [];
   selected_periods: any = [];
   period_type: string = 'Quarterly';
-  year: number = 2016;
   dataset_types = [
     {id: '', name: 'Reporting Rate'},
     {id: '.REPORTING_RATE_ON_TIME', name: 'Reporting Rate on time'},
@@ -121,30 +119,6 @@ export class CreateComponent implements OnInit, AfterViewInit, OnDestroy {
 
   current_action: string = 'new';
   have_authorities: boolean = false;
-  showOrgTree: boolean = true;
-  showPerTree: boolean = true;
-  orgunit_tree_config: any = {
-    show_search : true,
-    search_text : 'Search',
-    level: null,
-    loading: false,
-    loading_message: 'Loading Organisation units...',
-    multiple: true,
-    placeholder: 'Select Organisation Unit'
-  };
-
-  period_tree_config: any = {
-    show_search : true,
-    search_text : 'Search',
-    level: null,
-    loading: false,
-    loading_message: 'Loading Periods...',
-    multiple: true,
-    placeholder: 'Select period'
-  };
-  organisationunits: any[] = [];
-  // custom settings for tree
-
 
   user: any = {};
   userGroups: any = [];
@@ -204,8 +178,8 @@ export class CreateComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   isArray(o) {
-  return Object.prototype.toString.call(o) === '[object Array]';
-}
+    return Object.prototype.toString.call(o) === '[object Array]';
+  }
 
   ngOnInit() {
     this.dataService.getUserGroupInformation().subscribe( userGroups => {
