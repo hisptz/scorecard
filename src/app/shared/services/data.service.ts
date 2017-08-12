@@ -2,12 +2,14 @@ import { Injectable } from '@angular/core';
 import { Http, Response } from '@angular/http';
 import 'rxjs/Rx';
 import {Observable} from 'rxjs/Observable';
+import {Constants} from './costants';
 
 @Injectable()
 export class DataService {
 
   user: any = null;
-  constructor(private http: Http) { }
+  constructor(private http: Http,
+              private constant: Constants) { }
 
   // Get current user information
   getUserInformation (): Observable<any> {
@@ -110,7 +112,7 @@ export class DataService {
   }
 
   getIndicatorsRequest ( orgunits: string, period: string, indicator: string ) {
-    return this.http.get('../../../analytics.json?dimension=dx:' + indicator + '&dimension=ou:' + orgunits + '&dimension=pe:' + period + '&displayProperty=NAME')
+    return this.http.get(this.constant.root_api + 'analytics.json?dimension=dx:' + indicator + '&dimension=ou:' + orgunits + '&dimension=pe:' + period + '&displayProperty=NAME')
       .map((response: Response) => response.json())
       .catch( this.handleError );
   }

@@ -26,6 +26,7 @@ import {DatasetService} from './shared/services/dataset.service';
 import {EventDataService} from './shared/services/event-data.service';
 import {HttpClientService} from './shared/services/http-client.service';
 import {OrgUnitService} from './shared/services/org-unit.service';
+import {Constants} from './shared/services/costants';
 
 @NgModule({
   declarations: [
@@ -58,7 +59,8 @@ import {OrgUnitService} from './shared/services/org-unit.service';
     DatasetService,
     EventDataService,
     HttpClientService,
-    OrgUnitService
+    OrgUnitService,
+    Constants
   ],
   bootstrap: [AppComponent]
 })

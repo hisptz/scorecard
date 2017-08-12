@@ -256,26 +256,26 @@ export class ScorecardComponent implements OnInit, AfterViewInit, OnDestroy {
                     this.loading = false;
                   }
                   // noinspection TypeScriptUnresolvedVariable
-                  for ( const orgunit of data.metaData.ou ) {
-                    if (!this.checkOrgunitAvailability(orgunit, this.orgunits)) {
+                  for ( const orgunitId of data.metaData.ou ) {
+                    if (!this.checkOrgunitAvailability(orgunitId, this.orgunits)) {
                       if ( this.scorecard.data.show_data_in_column ) {
                         // noinspection TypeScriptUnresolvedVariable
-                        this.orgunits.push({'id': orgunit,
-                          'name': data.metaData.names[orgunit],
+                        this.orgunits.push({'id': orgunitId,
+                          'name': data.metaData.names[orgunitId],
                           'is_parent': false
                         });
                       }else {
                         // noinspection TypeScriptUnresolvedVariable
-                        this.orgunits.push({'id': orgunit,
-                          'name': data.metaData.names[orgunit],
-                          'is_parent': this.orgUnit.id === orgunit
+                        this.orgunits.push({'id': orgunitId,
+                          'name': data.metaData.names[orgunitId],
+                          'is_parent': this.orgUnit.id === orgunitId
                         });
                       }
 
                     }
 
-                    const value_key = orgunit + '.' + current_period.id;
-                    const data_config = [{'type': 'ou', 'value': orgunit}, {'type': 'pe', 'value': current_period.id}];
+                    const value_key = orgunitId + '.' + current_period.id;
+                    const data_config = [{'type': 'ou', 'value': orgunitId}, {'type': 'pe', 'value': current_period.id}];
                     indicator.values[value_key] = this.visualizerService.getDataValue( data, data_config );
                   }
                   this.shown_records = this.orgunits.length;
@@ -303,57 +303,58 @@ export class ScorecardComponent implements OnInit, AfterViewInit, OnDestroy {
                       this.loading = false;
                     }
                     // noinspection TypeScriptUnresolvedVariable
-                    for ( const orgunit of data.metaData.ou ) {
-                      if (!this.checkOrgunitAvailability(orgunit, this.orgunits)) {
+                    for ( const orgunitId of data.metaData.ou ) {
+                      if (!this.checkOrgunitAvailability(orgunitId, this.orgunits)) {
                         if ( this.scorecard.data.show_data_in_column ) {
                           //noinspection TypeScriptUnresolvedVariable
-                          this.orgunits.push({'id': orgunit,
-                            'name': data.metaData.names[orgunit],
+                          this.orgunits.push({'id': orgunitId,
+                            'name': data.metaData.names[orgunitId],
                             'is_parent': false
                           });
                         }else {
                           //noinspection TypeScriptUnresolvedVariable
-                          this.orgunits.push({'id': orgunit,
-                            'name': data.metaData.names[orgunit],
-                            'is_parent': this.orgUnit.id === orgunit
+                          this.orgunits.push({'id': orgunitId,
+                            'name': data.metaData.names[orgunitId],
+                            'is_parent': this.orgUnit.id === orgunitId
                           });
                         }
 
                       }
 
-                      const value_key = orgunit + '.' + current_period.id;
-                      const data_config = [{'type': 'ou', 'value': orgunit}, {'type': 'pe', 'value': current_period.id}];
+                      const value_key = orgunitId + '.' + current_period.id;
+                      const data_config = [{'type': 'ou', 'value': orgunitId}, {'type': 'pe', 'value': current_period.id}];
                       indicator.values[value_key] = this.visualizerService.getDataValue( data, data_config );
                     }
                     this.shown_records = this.orgunits.length;
                     this.indicator_loading[indicator.id] = true;
                     // load previous data
                     const effective_gap = parseInt( indicator.arrow_settings.effective_gap );
-                    this.indicatorCalls.push(this.dataService.getIndicatorsRequest(this.getOrgUnitsForAnalytics(this.orgunit_model), this.filterService.getLastPeriod(current_period.id, this.period_type), indicator.id)
+                    this.indicatorCalls.push(this.dataService.getIndicatorsRequest(this.getOrgUnitsForAnalytics(this.orgunit_model), '201606', indicator.id)
                       .subscribe(
                         ( olddata ) => {
                           for ( const prev_orgunit of this.orgunits ) {
                             const prev_key = prev_orgunit.id + '.' + current_period.id;
-                            indicator.previous_values[prev_key] = this.dataService.getIndicatorData(prev_orgunit.id, this.filterService.getLastPeriod(current_period.id, this.period_type), olddata);
+                            indicator.previous_values[prev_key] = this.dataService.getIndicatorData(prev_orgunit.id, '201605', olddata);
                           }
                           if (indicator.hasOwnProperty('arrow_settings')) {
                             for ( const key in indicator.values ) {
-                              const splited_key = key.split('.');
-                              if (parseInt(indicator.previous_values[key]) !== 0) {
-                                const check = parseInt( indicator.values[key] ) > (parseInt( indicator.previous_values[key] ) + effective_gap );
-                                const check1 = parseInt( indicator.values[key] ) < (parseInt( indicator.previous_values[key] ) - effective_gap );
-                                indicator.showTopArrow[key] = check;
-                                indicator.showBottomArrow[key] = check1;
-                                //noinspection TypeScriptUnresolvedVariable
-                                if (indicator.showTopArrow[key] && indicator.values[key] !== null && indicator.previous_values[key] !== null && olddata.metaData.names.hasOwnProperty(splited_key[0])) {
-                                  const rise = indicator.values[key] - parseInt( indicator.previous_values[key]);
-                                  //noinspection TypeScriptUnresolvedVariable
-                                  indicator.tooltip[key] = indicator.title + ' has raised by ' + rise.toFixed(2) + ' from ' + this.getPeriodName(current_period.id) + ' for ' + data.metaData.names[splited_key[0]] + ' (Minimum gap ' + indicator.arrow_settings.effective_gap + ')';
-                                }//noinspection TypeScriptUnresolvedVariable
-                                if (indicator.showBottomArrow[key] && indicator.values[key] !== null && indicator.previous_values[key] !== null && olddata.metaData.names.hasOwnProperty(splited_key[0])) {
-                                  const rise = parseFloat( indicator.previous_values[key] ) - indicator.values[key];
-                                  //noinspection TypeScriptUnresolvedVariable
-                                  indicator.tooltip[key] = indicator.title + ' has decreased by ' + rise.toFixed(2) + ' from ' + this.getPeriodName(current_period.id) + ' for ' + data.metaData.names[splited_key[0]] + ' (Minimum gap ' + indicator.arrow_settings.effective_gap + ')';
+                              if (key) {
+                                const splited_key = key.split('.');
+                                if (parseInt(indicator.previous_values[key]) !== 0) {
+                                  const check = parseInt( indicator.values[key] ) > (parseInt( indicator.previous_values[key] ) + effective_gap );
+                                  const check1 = parseInt( indicator.values[key] ) < (parseInt( indicator.previous_values[key] ) - effective_gap );
+                                  indicator.showTopArrow[key] = check;
+                                  indicator.showBottomArrow[key] = check1;
+                                  if (indicator.showTopArrow[key] && indicator.values[key] !== null && indicator.previous_values[key] !== null && olddata.metaData.names.hasOwnProperty(splited_key[0])) {
+                                    const rise = indicator.values[key] - parseInt( indicator.previous_values[key]);
+                                    //noinspection TypeScriptUnresolvedVariable
+                                    indicator.tooltip[key] = indicator.title + ' has raised by ' + rise.toFixed(2) + ' from ' + this.getPeriodName(current_period.id) + ' for ' + data.metaData.names[splited_key[0]] + ' (Minimum gap ' + indicator.arrow_settings.effective_gap + ')';
+                                  }//noinspection TypeScriptUnresolvedVariable
+                                  if (indicator.showBottomArrow[key] && indicator.values[key] !== null && indicator.previous_values[key] !== null && olddata.metaData.names.hasOwnProperty(splited_key[0])) {
+                                    const rise = parseFloat( indicator.previous_values[key] ) - indicator.values[key];
+                                    //noinspection TypeScriptUnresolvedVariable
+                                    indicator.tooltip[key] = indicator.title + ' has decreased by ' + rise.toFixed(2) + ' from ' + this.getPeriodName(current_period.id) + ' for ' + data.metaData.names[splited_key[0]] + ' (Minimum gap ' + indicator.arrow_settings.effective_gap + ')';
+                                  }
                                 }
                               }
                             }
@@ -517,7 +518,7 @@ export class ScorecardComponent implements OnInit, AfterViewInit, OnDestroy {
       showTitle: false
     };
 
-    new Angular2Csv(data, 'My Report', options);
+    const csv = new Angular2Csv(data, 'My Report', options);
   }
 
 

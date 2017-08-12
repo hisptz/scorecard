@@ -1,0 +1,211 @@
+<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/TR/REC-html40"><head><!--[if gte mso 9]><xml><x:ExcelWorkbook><x:ExcelWorksheets><x:ExcelWorksheet><x:Name>Sheet 1</x:Name><x:WorksheetOptions><x:DisplayGridlines/></x:WorksheetOptions></x:ExcelWorksheet></x:ExcelWorksheets></x:ExcelWorkbook></xml><![endif]--></head><body><table border="1">
+    <thead _ngcontent-c7="">
+    
+    <!--bindings={
+  "ng-reflect-ng-if": "true"
+}--><tr _ngcontent-c7="" class="table-title">
+      <th _ngcontent-c7="" colspan="16">
+        <h4 _ngcontent-c7="" class="text-center" style="margin: 0px">  </h4>
+      </th>
+    </tr>
+    
+    <!--bindings={
+  "ng-reflect-ng-for-of": "[object Object]"
+}--><tr _ngcontent-c7="" class="header-column">
+      <!--bindings={
+  "ng-reflect-ng-if": "false"
+}-->
+      <!--bindings={
+  "ng-reflect-ng-for-of": "ou,pe"
+}--><th _ngcontent-c7="" style="text-align: center">
+        <!--bindings={
+  "ng-reflect-ng-if": "false"
+}-->
+        <!--bindings={
+  "ng-reflect-ng-if": "true"
+}--><span _ngcontent-c7=""></span>
+        <!--bindings={
+  "ng-reflect-ng-if": "false"
+}-->
+      </th><th _ngcontent-c7="" style="text-align: center">
+        <!--bindings={
+  "ng-reflect-ng-if": "false"
+}-->
+        <!--bindings={
+  "ng-reflect-ng-if": "false"
+}-->
+        <!--bindings={
+  "ng-reflect-ng-if": "false"
+}-->
+      </th>
+      <!--bindings={
+  "ng-reflect-ng-for-of": "[object Object],[object Object"
+}--><th _ngcontent-c7="" style="text-align: center" colspan="1">
+        WF02 1 Idadi ya kaya  zenye chakula cha kutosha
+        <!--bindings={}-->
+        <!--bindings={}-->
+      </th><th _ngcontent-c7="" style="text-align: center" colspan="1">
+        WF02 1 Idadi ya kaya  zenye chakula cha ziada
+        <!--bindings={}-->
+        <!--bindings={}-->
+      </th><th _ngcontent-c7="" style="text-align: center" colspan="1">
+        WF02 1 Idadi ya kaya  zenye chakula pungufu
+        <!--bindings={}-->
+        <!--bindings={}-->
+      </th><th _ngcontent-c7="" style="text-align: center" colspan="1">
+        WF02 1 Idadi ya kaya  zisizokuwa na chakula
+        <!--bindings={}-->
+        <!--bindings={}-->
+      </th><th _ngcontent-c7="" style="text-align: center" colspan="1">
+        WF02 2.1 Idadi ya SACCOs
+        <!--bindings={}-->
+        <!--bindings={}-->
+      </th><th _ngcontent-c7="" style="text-align: center" colspan="1">
+        WF02 2.1 Jumla ya wanachama
+        <!--bindings={}-->
+        <!--bindings={}-->
+      </th><th _ngcontent-c7="" style="text-align: center" colspan="1">
+        WF02 2.1 Kiasi cha mkopo(Tsh) Jumla
+        <!--bindings={}-->
+        <!--bindings={}-->
+      </th><th _ngcontent-c7="" style="text-align: center" colspan="1">
+        WF02 2.1 Kiasi cha mkopo(Tsh) Mazao
+        <!--bindings={}-->
+        <!--bindings={}-->
+      </th><th _ngcontent-c7="" style="text-align: center" colspan="1">
+        WF02 2.1 Kiasi cha mkopo(Tsh) Ufugaji
+        <!--bindings={}-->
+        <!--bindings={}-->
+      </th><th _ngcontent-c7="" style="text-align: center" colspan="1">
+        WF02 2.1 Kiasi cha mkopo(Tsh) Uvuvi
+        <!--bindings={}-->
+        <!--bindings={}-->
+      </th><th _ngcontent-c7="" style="text-align: center" colspan="1">
+        WF02 2.1 Wanachama Mmoja mmoja
+        <!--bindings={}-->
+        <!--bindings={}-->
+      </th><th _ngcontent-c7="" style="text-align: center" colspan="1">
+        WF02 2.1 Wanachama Mmoja mmoja Wanaume
+        <!--bindings={}-->
+        <!--bindings={}-->
+      </th><th _ngcontent-c7="" style="text-align: center" colspan="1">
+        WF02 2.1 Wanachama Mmoja mmoja Wanawake
+        <!--bindings={}-->
+        <!--bindings={}-->
+      </th><th _ngcontent-c7="" style="text-align: center" colspan="1">
+        WF02 2.1 Wanachama Ndani ya vikundi vya SACCOS
+        <!--bindings={}-->
+        <!--bindings={}-->
+      </th>
+    </tr>
+    </thead>
+    <tbody _ngcontent-c7="" id="myPivotTable">
+    <!--bindings={
+  "ng-reflect-ng-for-of": "[object Object],[object Object"
+}--><tr _ngcontent-c7="" ng-reflect-ng-class="[object Object]">
+      <!--bindings={
+  "ng-reflect-ng-for-of": "[object Object],[object Object"
+}--><td _ngcontent-c7="" style="vertical-align: middle" class="header-column" ng-reflect-ng-class="header-column" rowspan="3">
+        Mara
+      </td><td _ngcontent-c7="" style="vertical-align: middle" class="header-column" ng-reflect-ng-class="header-column" rowspan="1">
+        April - June 2016
+      </td><td _ngcontent-c7="" style="vertical-align: middle" class="header-item" ng-reflect-ng-class="header-item" rowspan="1">
+        10
+      </td><td _ngcontent-c7="" style="vertical-align: middle" class="header-item" ng-reflect-ng-class="header-item" rowspan="1">
+        3
+      </td><td _ngcontent-c7="" style="vertical-align: middle" class="header-item" ng-reflect-ng-class="header-item" rowspan="1">
+        6
+      </td><td _ngcontent-c7="" style="vertical-align: middle" class="header-item" ng-reflect-ng-class="header-item" rowspan="1">
+        8
+      </td><td _ngcontent-c7="" style="vertical-align: middle" class="header-item" ng-reflect-ng-class="header-item" rowspan="1">
+        6
+      </td><td _ngcontent-c7="" style="vertical-align: middle" class="header-item" ng-reflect-ng-class="header-item" rowspan="1">
+        21
+      </td><td _ngcontent-c7="" style="vertical-align: middle" class="header-item" ng-reflect-ng-class="header-item" rowspan="1">
+        3
+      </td><td _ngcontent-c7="" style="vertical-align: middle" class="header-item" ng-reflect-ng-class="header-item" rowspan="1">
+        7
+      </td><td _ngcontent-c7="" style="vertical-align: middle" class="header-item" ng-reflect-ng-class="header-item" rowspan="1">
+        8
+      </td><td _ngcontent-c7="" style="vertical-align: middle" class="header-item" ng-reflect-ng-class="header-item" rowspan="1">
+        4
+      </td><td _ngcontent-c7="" style="vertical-align: middle" class="header-item" ng-reflect-ng-class="header-item" rowspan="1">
+        12
+      </td><td _ngcontent-c7="" style="vertical-align: middle" class="header-item" ng-reflect-ng-class="header-item" rowspan="1">
+        6
+      </td><td _ngcontent-c7="" style="vertical-align: middle" class="header-item" ng-reflect-ng-class="header-item" rowspan="1">
+        6
+      </td><td _ngcontent-c7="" style="vertical-align: middle" class="header-item" ng-reflect-ng-class="header-item" rowspan="1">
+        9
+      </td>
+    </tr><tr _ngcontent-c7="" ng-reflect-ng-class="[object Object]">
+      <!--bindings={
+  "ng-reflect-ng-for-of": "[object Object],[object Object"
+}--><td _ngcontent-c7="" style="vertical-align: middle" class="header-column" ng-reflect-ng-class="header-column" rowspan="1">
+        January - March 2016
+      </td><td _ngcontent-c7="" style="vertical-align: middle" class="header-item" ng-reflect-ng-class="header-item" rowspan="1">
+        3
+      </td><td _ngcontent-c7="" style="vertical-align: middle" class="header-item" ng-reflect-ng-class="header-item" rowspan="1">
+        5
+      </td><td _ngcontent-c7="" style="vertical-align: middle" class="header-item" ng-reflect-ng-class="header-item" rowspan="1">
+        5
+      </td><td _ngcontent-c7="" style="vertical-align: middle" class="header-item" ng-reflect-ng-class="header-item" rowspan="1">
+        8
+      </td><td _ngcontent-c7="" style="vertical-align: middle" class="header-item" ng-reflect-ng-class="header-item" rowspan="1">
+        3
+      </td><td _ngcontent-c7="" style="vertical-align: middle" class="header-item" ng-reflect-ng-class="header-item" rowspan="1">
+        13
+      </td><td _ngcontent-c7="" style="vertical-align: middle" class="header-item" ng-reflect-ng-class="header-item" rowspan="1">
+        7
+      </td><td _ngcontent-c7="" style="vertical-align: middle" class="header-item" ng-reflect-ng-class="header-item" rowspan="1">
+        5
+      </td><td _ngcontent-c7="" style="vertical-align: middle" class="header-item" ng-reflect-ng-class="header-item" rowspan="1">
+        6
+      </td><td _ngcontent-c7="" style="vertical-align: middle" class="header-item" ng-reflect-ng-class="header-item" rowspan="1">
+        7
+      </td><td _ngcontent-c7="" style="vertical-align: middle" class="header-item" ng-reflect-ng-class="header-item" rowspan="1">
+        9
+      </td><td _ngcontent-c7="" style="vertical-align: middle" class="header-item" ng-reflect-ng-class="header-item" rowspan="1">
+        3
+      </td><td _ngcontent-c7="" style="vertical-align: middle" class="header-item" ng-reflect-ng-class="header-item" rowspan="1">
+        6
+      </td><td _ngcontent-c7="" style="vertical-align: middle" class="header-item" ng-reflect-ng-class="header-item" rowspan="1">
+        4
+      </td>
+    </tr><tr _ngcontent-c7="" ng-reflect-ng-class="[object Object]">
+      <!--bindings={
+  "ng-reflect-ng-for-of": "[object Object],[object Object"
+}--><td _ngcontent-c7="" style="vertical-align: middle" class="header-column" ng-reflect-ng-class="header-column" rowspan="1">
+        October - December 2015
+      </td><td _ngcontent-c7="" style="vertical-align: middle" class="header-item" ng-reflect-ng-class="header-item" rowspan="1">
+        4
+      </td><td _ngcontent-c7="" style="vertical-align: middle" class="header-item" ng-reflect-ng-class="header-item" rowspan="1">
+        4
+      </td><td _ngcontent-c7="" style="vertical-align: middle" class="header-item" ng-reflect-ng-class="header-item" rowspan="1">
+        2
+      </td><td _ngcontent-c7="" style="vertical-align: middle" class="header-item" ng-reflect-ng-class="header-item" rowspan="1">
+        3
+      </td><td _ngcontent-c7="" style="vertical-align: middle" class="header-item" ng-reflect-ng-class="header-item" rowspan="1">
+        4
+      </td><td _ngcontent-c7="" style="vertical-align: middle" class="header-item" ng-reflect-ng-class="header-item" rowspan="1">
+        10
+      </td><td _ngcontent-c7="" style="vertical-align: middle" class="header-item" ng-reflect-ng-class="header-item" rowspan="1">
+        4
+      </td><td _ngcontent-c7="" style="vertical-align: middle" class="header-item" ng-reflect-ng-class="header-item" rowspan="1">
+        4
+      </td><td _ngcontent-c7="" style="vertical-align: middle" class="header-item" ng-reflect-ng-class="header-item" rowspan="1">
+        2
+      </td><td _ngcontent-c7="" style="vertical-align: middle" class="header-item" ng-reflect-ng-class="header-item" rowspan="1">
+        3
+      </td><td _ngcontent-c7="" style="vertical-align: middle" class="header-item" ng-reflect-ng-class="header-item" rowspan="1">
+        6
+      </td><td _ngcontent-c7="" style="vertical-align: middle" class="header-item" ng-reflect-ng-class="header-item" rowspan="1">
+        2
+      </td><td _ngcontent-c7="" style="vertical-align: middle" class="header-item" ng-reflect-ng-class="header-item" rowspan="1">
+        4
+      </td><td _ngcontent-c7="" style="vertical-align: middle" class="header-item" ng-reflect-ng-class="header-item" rowspan="1">
+        4
+      </td>
+    </tr>
+    </tbody>
+  </table><br /></body></html>

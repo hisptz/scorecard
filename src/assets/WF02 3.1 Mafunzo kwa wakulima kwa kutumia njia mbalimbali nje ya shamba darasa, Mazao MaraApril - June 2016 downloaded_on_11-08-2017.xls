@@ -1,0 +1,411 @@
+<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/TR/REC-html40"><head><!--[if gte mso 9]><xml><x:ExcelWorkbook><x:ExcelWorksheets><x:ExcelWorksheet><x:Name>Sheet 1</x:Name><x:WorksheetOptions><x:DisplayGridlines/></x:WorksheetOptions></x:ExcelWorksheet></x:ExcelWorksheets></x:ExcelWorkbook></xml><![endif]--></head><body><table border="1">
+    <thead _ngcontent-c10="">
+    <tr _ngcontent-c10="" class="table-title">
+      <th _ngcontent-c10="" colspan="9">
+        <h4 _ngcontent-c10="" class="text-center" style="margin: 0px">
+          WF02 3.1 Mafunzo kwa wakulima kwa kutumia njia mbalimbali nje ya shamba darasa, Mazao
+        </h4>
+      </th>
+    </tr>
+    <tr _ngcontent-c10="" class="table-title">
+      <th _ngcontent-c10="" colspan="9">
+        <h4 _ngcontent-c10="" class="text-center" style="margin: 0px">
+        <!--bindings={
+  "ng-reflect-ng-for-of": "m3YxzMftDAw"
+}--><span _ngcontent-c10="">
+          <!--bindings={
+  "ng-reflect-ng-if": "Mara"
+}--><span _ngcontent-c10=""><!--bindings={
+  "ng-reflect-ng-if": "false"
+}-->Mara</span>
+        </span>
+       <!--bindings={
+  "ng-reflect-ng-if": "true"
+}--><span _ngcontent-c10="">
+         <!--bindings={
+  "ng-reflect-ng-for-of": "2016Q2"
+}--><span _ngcontent-c10="">
+           <!--bindings={
+  "ng-reflect-ng-if": "April - June 2016"
+}--><span _ngcontent-c10="">,April - June 2016</span>
+         </span>
+       </span>
+        </h4>
+      </th>
+    </tr><tr _ngcontent-c10="" class="header-column">
+      <!--bindings={
+  "ng-reflect-ng-for-of": "[object Object],[object Object"
+}--><th _ngcontent-c10="" style="text-align: center">
+        Organisation unit name
+      </th><th _ngcontent-c10="" style="text-align: center">
+        Period
+      </th><th _ngcontent-c10="" style="text-align: center">
+        Mazao, Mada ya mafunzo
+      </th><th _ngcontent-c10="" style="text-align: center">
+        Mazao, Idadi ya wakulima waliopata mafunzo, Wanaume
+      </th><th _ngcontent-c10="" style="text-align: center">
+        Mazao, Idadi ya wakulima waliopata mafunzo, Wanawake
+      </th><th _ngcontent-c10="" style="text-align: center">
+        WF02 3.1-jumla ya wakulima waliopata mafunzo
+      </th><th _ngcontent-c10="" style="text-align: center">
+        Mazao, Idadi ya wakulima waliopata mafunzo kwa mda, Sawa au pungufu ya wiki moja
+      </th><th _ngcontent-c10="" style="text-align: center">
+        Mazao, Idadi ya wakulima waliopata mafunzo kwa mda, Zaidi ya wiki moja
+      </th><th _ngcontent-c10="" style="text-align: center">
+        Mazao, Njia iliyotumika kutoa mafunzo
+      </th>
+    </tr>
+    </thead>
+    <!--bindings={
+  "ng-reflect-ng-if": "false"
+}-->
+    <!--bindings={
+  "ng-reflect-ng-if": "ouname,eventdate,aXFhtSHjjJl,t"
+}--><tbody _ngcontent-c10="" style="background-color: white;">
+    <!--bindings={
+  "ng-reflect-ng-for-of": "[object Object],[object Object"
+}-->
+    <tr _ngcontent-c10="">
+      <!--bindings={
+  "ng-reflect-ng-for-of": "[object Object],[object Object"
+}-->
+        <!--bindings={
+  "ng-reflect-ng-if": "true"
+}--><td _ngcontent-c10="" style="border:1px solid lightgrey" class="right" ng-reflect-ng-class="[object Object]" rowspan="8">Mara
+        </td>
+      
+        <!--bindings={
+  "ng-reflect-ng-if": "true"
+}--><td _ngcontent-c10="" style="border:1px solid lightgrey" class="right" ng-reflect-ng-class="[object Object]" rowspan="8">April - June 2016
+        </td>
+      
+        <!--bindings={
+  "ng-reflect-ng-if": "true"
+}--><td _ngcontent-c10="" style="border:1px solid lightgrey" class="right" ng-reflect-ng-class="[object Object]" rowspan="4">Maharage
+        </td>
+      
+        <!--bindings={
+  "ng-reflect-ng-if": "true"
+}--><td _ngcontent-c10="" style="border:1px solid lightgrey" class="right" ng-reflect-ng-class="[object Object]" rowspan="4">20.0</td>
+      
+        <!--bindings={
+  "ng-reflect-ng-if": "true"
+}--><td _ngcontent-c10="" style="border:1px solid lightgrey" class="right" ng-reflect-ng-class="[object Object]" rowspan="4">16.0</td>
+      
+        <!--bindings={
+  "ng-reflect-ng-if": "true"
+}--><td _ngcontent-c10="" style="border:1px solid lightgrey" class="right" ng-reflect-ng-class="[object Object]" rowspan="4">36.0</td>
+      
+        <!--bindings={
+  "ng-reflect-ng-if": "true"
+}--><td _ngcontent-c10="" style="border:1px solid lightgrey" class="right" ng-reflect-ng-class="[object Object]" rowspan="4">12.0</td>
+      
+        <!--bindings={
+  "ng-reflect-ng-if": "true"
+}--><td _ngcontent-c10="" style="border:1px solid lightgrey" class="right" ng-reflect-ng-class="[object Object]" rowspan="4">16.0</td>
+      
+        <!--bindings={
+  "ng-reflect-ng-if": "true"
+}--><td _ngcontent-c10="" style="border:1px solid lightgrey" class="right" ng-reflect-ng-class="[object Object]" rowspan="4">Test
+        </td>
+      
+      <!--bindings={}-->
+      <!--bindings={}-->
+    </tr><tr _ngcontent-c10="">
+      <!--bindings={
+  "ng-reflect-ng-for-of": "[object Object],[object Object"
+}-->
+        <!--bindings={
+  "ng-reflect-ng-if": "true"
+}-->
+      
+        <!--bindings={
+  "ng-reflect-ng-if": "true"
+}-->
+      
+        <!--bindings={
+  "ng-reflect-ng-if": "true"
+}-->
+      
+        <!--bindings={
+  "ng-reflect-ng-if": "true"
+}-->
+      
+        <!--bindings={
+  "ng-reflect-ng-if": "true"
+}-->
+      
+        <!--bindings={
+  "ng-reflect-ng-if": "true"
+}-->
+      
+        <!--bindings={
+  "ng-reflect-ng-if": "true"
+}-->
+      
+        <!--bindings={
+  "ng-reflect-ng-if": "true"
+}-->
+      
+        <!--bindings={
+  "ng-reflect-ng-if": "true"
+}-->
+      
+      <!--bindings={}-->
+      <!--bindings={}-->
+    </tr><tr _ngcontent-c10="">
+      <!--bindings={
+  "ng-reflect-ng-for-of": "[object Object],[object Object"
+}-->
+        <!--bindings={
+  "ng-reflect-ng-if": "true"
+}-->
+      
+        <!--bindings={
+  "ng-reflect-ng-if": "true"
+}-->
+      
+        <!--bindings={
+  "ng-reflect-ng-if": "true"
+}-->
+      
+        <!--bindings={
+  "ng-reflect-ng-if": "true"
+}-->
+      
+        <!--bindings={
+  "ng-reflect-ng-if": "true"
+}-->
+      
+        <!--bindings={
+  "ng-reflect-ng-if": "true"
+}-->
+      
+        <!--bindings={
+  "ng-reflect-ng-if": "true"
+}-->
+      
+        <!--bindings={
+  "ng-reflect-ng-if": "true"
+}-->
+      
+        <!--bindings={
+  "ng-reflect-ng-if": "true"
+}-->
+      
+      <!--bindings={}-->
+      <!--bindings={}-->
+    </tr><tr _ngcontent-c10="">
+      <!--bindings={
+  "ng-reflect-ng-for-of": "[object Object],[object Object"
+}-->
+        <!--bindings={
+  "ng-reflect-ng-if": "true"
+}-->
+      
+        <!--bindings={
+  "ng-reflect-ng-if": "true"
+}-->
+      
+        <!--bindings={
+  "ng-reflect-ng-if": "true"
+}-->
+      
+        <!--bindings={
+  "ng-reflect-ng-if": "true"
+}-->
+      
+        <!--bindings={
+  "ng-reflect-ng-if": "true"
+}-->
+      
+        <!--bindings={
+  "ng-reflect-ng-if": "true"
+}-->
+      
+        <!--bindings={
+  "ng-reflect-ng-if": "true"
+}-->
+      
+        <!--bindings={
+  "ng-reflect-ng-if": "true"
+}-->
+      
+        <!--bindings={
+  "ng-reflect-ng-if": "true"
+}-->
+      
+      <!--bindings={}-->
+      <!--bindings={}-->
+    </tr><tr _ngcontent-c10="">
+      <!--bindings={
+  "ng-reflect-ng-for-of": "[object Object],[object Object"
+}-->
+        <!--bindings={
+  "ng-reflect-ng-if": "true"
+}-->
+      
+        <!--bindings={
+  "ng-reflect-ng-if": "true"
+}-->
+      
+        <!--bindings={
+  "ng-reflect-ng-if": "true"
+}--><td _ngcontent-c10="" style="border:1px solid lightgrey" class="right" ng-reflect-ng-class="[object Object]" rowspan="4">Mahindi
+        </td>
+      
+        <!--bindings={
+  "ng-reflect-ng-if": "true"
+}--><td _ngcontent-c10="" style="border:1px solid lightgrey" class="right" ng-reflect-ng-class="[object Object]" rowspan="4">16.0</td>
+      
+        <!--bindings={
+  "ng-reflect-ng-if": "true"
+}--><td _ngcontent-c10="" style="border:1px solid lightgrey" class="right" ng-reflect-ng-class="[object Object]" rowspan="4">8.0</td>
+      
+        <!--bindings={
+  "ng-reflect-ng-if": "true"
+}--><td _ngcontent-c10="" style="border:1px solid lightgrey" class="right" ng-reflect-ng-class="[object Object]" rowspan="4">24.0</td>
+      
+        <!--bindings={
+  "ng-reflect-ng-if": "true"
+}--><td _ngcontent-c10="" style="border:1px solid lightgrey" class="right" ng-reflect-ng-class="[object Object]" rowspan="4">4.0</td>
+      
+        <!--bindings={
+  "ng-reflect-ng-if": "true"
+}--><td _ngcontent-c10="" style="border:1px solid lightgrey" class="right" ng-reflect-ng-class="[object Object]" rowspan="4">8.0</td>
+      
+        <!--bindings={
+  "ng-reflect-ng-if": "true"
+}--><td _ngcontent-c10="" style="border:1px solid lightgrey" class="right" ng-reflect-ng-class="[object Object]" rowspan="4">Test
+        </td>
+      
+      <!--bindings={}-->
+      <!--bindings={}-->
+    </tr><tr _ngcontent-c10="">
+      <!--bindings={
+  "ng-reflect-ng-for-of": "[object Object],[object Object"
+}-->
+        <!--bindings={
+  "ng-reflect-ng-if": "true"
+}-->
+      
+        <!--bindings={
+  "ng-reflect-ng-if": "true"
+}-->
+      
+        <!--bindings={
+  "ng-reflect-ng-if": "true"
+}-->
+      
+        <!--bindings={
+  "ng-reflect-ng-if": "true"
+}-->
+      
+        <!--bindings={
+  "ng-reflect-ng-if": "true"
+}-->
+      
+        <!--bindings={
+  "ng-reflect-ng-if": "true"
+}-->
+      
+        <!--bindings={
+  "ng-reflect-ng-if": "true"
+}-->
+      
+        <!--bindings={
+  "ng-reflect-ng-if": "true"
+}-->
+      
+        <!--bindings={
+  "ng-reflect-ng-if": "true"
+}-->
+      
+      <!--bindings={}-->
+      <!--bindings={}-->
+    </tr><tr _ngcontent-c10="">
+      <!--bindings={
+  "ng-reflect-ng-for-of": "[object Object],[object Object"
+}-->
+        <!--bindings={
+  "ng-reflect-ng-if": "true"
+}-->
+      
+        <!--bindings={
+  "ng-reflect-ng-if": "true"
+}-->
+      
+        <!--bindings={
+  "ng-reflect-ng-if": "true"
+}-->
+      
+        <!--bindings={
+  "ng-reflect-ng-if": "true"
+}-->
+      
+        <!--bindings={
+  "ng-reflect-ng-if": "true"
+}-->
+      
+        <!--bindings={
+  "ng-reflect-ng-if": "true"
+}-->
+      
+        <!--bindings={
+  "ng-reflect-ng-if": "true"
+}-->
+      
+        <!--bindings={
+  "ng-reflect-ng-if": "true"
+}-->
+      
+        <!--bindings={
+  "ng-reflect-ng-if": "true"
+}-->
+      
+      <!--bindings={}-->
+      <!--bindings={}-->
+    </tr><tr _ngcontent-c10="">
+      <!--bindings={
+  "ng-reflect-ng-for-of": "[object Object],[object Object"
+}-->
+        <!--bindings={
+  "ng-reflect-ng-if": "true"
+}-->
+      
+        <!--bindings={
+  "ng-reflect-ng-if": "true"
+}-->
+      
+        <!--bindings={
+  "ng-reflect-ng-if": "true"
+}-->
+      
+        <!--bindings={
+  "ng-reflect-ng-if": "true"
+}-->
+      
+        <!--bindings={
+  "ng-reflect-ng-if": "true"
+}-->
+      
+        <!--bindings={
+  "ng-reflect-ng-if": "true"
+}-->
+      
+        <!--bindings={
+  "ng-reflect-ng-if": "true"
+}-->
+      
+        <!--bindings={
+  "ng-reflect-ng-if": "true"
+}-->
+      
+        <!--bindings={
+  "ng-reflect-ng-if": "true"
+}-->
+      
+      <!--bindings={}-->
+      <!--bindings={}-->
+    </tr></tbody>
+  </table><br /></body></html>

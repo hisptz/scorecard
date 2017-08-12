@@ -2,8 +2,7 @@ import {Component, OnInit, Input} from '@angular/core';
 
 @Component({
   selector: 'app-subtotal',
-  templateUrl: './subtotal.component.html',
-  //styleUrls: []
+  templateUrl: './subtotal.component.html'
 })
 export class SubtotalComponent implements OnInit {
 
@@ -21,12 +20,12 @@ export class SubtotalComponent implements OnInit {
 
   }
 
-  findValue(type,orgunits, indicator_id,scorecard){
-    if(type == "avg"){
-      return parseFloat(this.findColumnAverage(orgunits, indicator_id,scorecard))
+  findValue(type, orgunits, indicator_id, scorecard) {
+    if (type === 'avg') {
+      return parseFloat(this.findColumnAverage(orgunits, indicator_id, scorecard));
     }
-    if(type == "sum"){
-      return this.findColumnSum(orgunits, indicator_id,scorecard)
+    if (type === 'sum') {
+      return this.findColumnSum(orgunits, indicator_id, scorecard);
     }
   }
 
@@ -34,35 +33,35 @@ export class SubtotalComponent implements OnInit {
    * Finding avarage for the column
    * @param orgunits, indicator_id
    */
-  findColumnAverage(orgunits, indicator_id,scorecard){
+  findColumnAverage(orgunits, indicator_id, scorecard) {
     let sum = 0;
     let counter = 0;
-    for ( let orgunit of orgunits ){
-      let use_key = orgunit.id+"."+this.period;
-      for ( let holder of scorecard.data.data_settings.indicator_holders ){
-        for( let indicator of holder.indicators ){
-          if(use_key in indicator.values && indicator.id == indicator_id && indicator.values[use_key] != null){
+    for ( const orgunit of orgunits ) {
+      const use_key = orgunit.id + '.' + this.period;
+      for ( const holder of scorecard.data.data_settings.indicator_holders ) {
+        for ( const indicator of holder.indicators ) {
+          if (use_key in indicator.values && indicator.id === indicator_id && indicator.values[use_key] != null) {
             counter++;
-            sum = sum + parseFloat(indicator.values[use_key])
+            sum = sum + parseFloat(indicator.values[use_key]);
           }
         }
       }
     }
-    return (sum/ counter).toFixed(2);
+    return (sum / counter).toFixed(2);
   }
 
   /**
    * Finding avarage for the column
    * @param orgunits, indicator_id
    */
-  findColumnSum(orgunits, indicator_id, scorecard){
+  findColumnSum(orgunits, indicator_id, scorecard) {
     let sum = 0;
-    for ( let orgunit of orgunits ){
-      let use_key = orgunit.id+"."+this.period;
-      for ( let holder of scorecard.data.data_settings.indicator_holders ){
-        for( let indicator of holder.indicators ){
-          if(use_key in indicator.values && indicator.id == indicator_id && indicator.values[use_key] != null){
-            sum = sum + parseFloat(indicator.values[use_key])
+    for ( const orgunit of orgunits ) {
+      const use_key = orgunit.id + '.' + this.period;
+      for ( const holder of scorecard.data.data_settings.indicator_holders ) {
+        for ( const indicator of holder.indicators ) {
+          if (use_key in indicator.values && indicator.id === indicator_id && indicator.values[use_key] != null) {
+            sum = sum + parseFloat(indicator.values[use_key]);
           }
         }
       }
@@ -71,10 +70,10 @@ export class SubtotalComponent implements OnInit {
   }
 
   // a function to prepare a list of indicators to pass into a table
-  getIndicatorsList(scorecard): string[]{
-    let indicators = [];
-    for( let holder of scorecard.data.data_settings.indicator_holders ){
-      for( let indicator of holder.indicators ){
+  getIndicatorsList(scorecard): string[] {
+    const indicators = [];
+    for ( const holder of scorecard.data.data_settings.indicator_holders ) {
+      for ( const indicator of holder.indicators ) {
         indicators.push(indicator);
       }
     }
@@ -82,20 +81,20 @@ export class SubtotalComponent implements OnInit {
   }
 
   // assign a background color to area depending on the legend set details
-  assignBgColor(object,value): string{
-    var color = "#BBBBBB";
-    for( let data of object.legendset ){
-      if(data.max == "-"){
+  assignBgColor(object, value): string {
+    let color = '#BBBBBB';
+    for ( const data of object.legendset ) {
+      if (data.max === '-') {
 
-        if(parseInt(value) >= parseInt(data.min) ){
+        if (parseInt(value) >= parseInt(data.min) ) {
           color = data.color;
         }
-      }else{
-        if(parseInt(value) >= parseInt(data.min) && parseInt(value) <= parseInt(data.max)){
+      }else {
+        if (parseInt(value) >= parseInt(data.min) && parseInt(value) <= parseInt(data.max)) {
           color = data.color;
         }
       }
-    };
+    }
     return color;
   }
 
