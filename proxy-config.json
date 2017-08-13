@@ -1,12 +1,14 @@
 {
   "/api": {
-    "target": "http://41.217.202.50:9002/dhis",
+    "target": "https://scorecard-dev.dhis2.org/demo",
     "secure": "false",
-    "auth":"vincentminde:StrongPasswordABC123"
+    "auth":"scorecard:Scorecard1234",
+    "changeOrigin":true
   },
   "/": {
-    "target": "http://41.217.202.50:9002/dhis",
+    "target": "https://scorecard-dev.dhis2.org/demo",
     "secure": "false",
-    "auth":"vincentminde:StrongPasswordABC123"
+    "auth":"scorecard:Scorecard1234",
+    "changeOrigin":true
   }
 }

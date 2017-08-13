@@ -59,8 +59,8 @@ const WINDOW_PROVIDER: ValueProvider = {
 })
 export class ViewComponent implements OnInit, AfterViewInit, OnDestroy {
 
-  private subscription: Subscription;
-  private indicatorCalls: Subscription[] = [];
+  subscription: Subscription;
+  indicatorCalls: Subscription[] = [];
   scorecard: ScoreCard;
   scorecardId: string;
   orgUnit: any = {};
@@ -108,7 +108,7 @@ export class ViewComponent implements OnInit, AfterViewInit, OnDestroy {
   pertree: TreeComponent;
 
   @ViewChild(ScorecardComponent)
-  private childScoreCard: ScorecardComponent;
+  childScoreCard: ScorecardComponent;
 
   selected_indicator: any = [];
   orgunit_for_model:any = [];
