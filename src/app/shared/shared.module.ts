@@ -15,6 +15,7 @@ import {MultiselectComponent} from './components/org-unit-filter/multiselect/mul
 import {PeriodFilterComponent} from './components/period-filter/period-filter.component';
 import { SharingComponent } from './components/sharing/sharing.component';
 import { OptionsComponent } from './components/options/options.component';
+import {FilterIndicatorByNamePipe} from './pipes/filter-indicator-by-name.pipe';
 
 @NgModule({
   imports: [
@@ -35,7 +36,8 @@ import { OptionsComponent } from './components/options/options.component';
     PeriodFilterComponent,
     MultiselectComponent,
     SharingComponent,
-    OptionsComponent
+    OptionsComponent,
+    FilterIndicatorByNamePipe
   ],
   exports: [
     TreeModule,
@@ -53,7 +55,8 @@ import { OptionsComponent } from './components/options/options.component';
     PeriodFilterComponent,
     MultiselectComponent,
     SharingComponent,
-    OptionsComponent
+    OptionsComponent,
+    FilterIndicatorByNamePipe
   ]
 })
 export class SharedModule { }
