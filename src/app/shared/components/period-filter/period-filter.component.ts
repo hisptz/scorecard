@@ -44,6 +44,7 @@ export class PeriodFilterComponent implements OnInit {
   @Input() selected_periods: any[] = [];
   @Input() period_type: string = 'Monthly';
   @Input() starting_year: number = new Date().getFullYear();
+  @Input() showUpdate: boolean = false;
   @Output() onPeriodUpdate: EventEmitter<any> = new EventEmitter<any>();
   @Output() onYearUpdate: EventEmitter<any> = new EventEmitter<any>();
   @Output() onTypeUpdate: EventEmitter<any> = new EventEmitter<any>();
@@ -96,12 +97,9 @@ export class PeriodFilterComponent implements OnInit {
       const number = (this.getPeriodPosition(data.dragData.id) > this.getPeriodPosition(current.id)) ? 0 : 1;
       this.deletePeriod( data.dragData );
       this.insertPeriod( data.dragData, current, number);
-      this.onPeriodUpdate.emit({
-        items: this.selected_periods,
-        type: this.period_type,
-        starting_year: this.starting_year,
-        name: 'pe',
-        value: this.getPeriodsForAnalytics(this.selected_periods)});
+      if (!this.showUpdate) {
+        this.emitPeriod();
+      }
     }
   }
 
@@ -112,24 +110,16 @@ export class PeriodFilterComponent implements OnInit {
         this.selected_periods.push(item);
       }
     });
-    this.onPeriodUpdate.emit({
-      items: this.selected_periods,
-      type: this.period_type,
-      starting_year: this.starting_year,
-      name: 'pe',
-      value: this.getPeriodsForAnalytics(this.selected_periods)
-    });
+    if (!this.showUpdate) {
+      this.emitPeriod();
+    }
   }
 
   deselectAllItems() {
     this.selected_periods = [];
-    this.onPeriodUpdate.emit({
-      items: this.selected_periods,
-      type: this.period_type,
-      starting_year: this.starting_year,
-      name: 'pe',
-      value: this.getPeriodsForAnalytics(this.selected_periods)
-    });
+    if (!this.showUpdate) {
+      this.emitPeriod();
+    }
   }
 
   // helper method to find the index of dragged item
@@ -141,6 +131,11 @@ export class PeriodFilterComponent implements OnInit {
       }
     });
     return period_index;
+  }
+
+  updatePeriods() {
+    this.emitPeriod();
+    this.showPerTree = true;
   }
 
   // help method to delete the selected period in list before inserting it in another position
@@ -191,26 +186,29 @@ export class PeriodFilterComponent implements OnInit {
   // action to be called when a tree item is deselected(Remove item in array of selected items
   deactivatePer ( $event ) {
     this.selected_periods.splice(this.selected_periods.indexOf($event), 1);
-    this.onPeriodUpdate.emit({
-      items: this.selected_periods,
-      type: this.period_type,
-      starting_year: this.starting_year,
-      name: 'pe',
-      value: this.getPeriodsForAnalytics(this.selected_periods)});
+    if (!this.showUpdate) {
+      this.emitPeriod();
+    }
   }
 
   // add item to array of selected items when item is selected
   activatePer($event) {
     if (!this.checkPeriodAvailabilty($event, this.selected_periods)) {
       this.selected_periods.push($event);
-      this.onPeriodUpdate.emit({
-        items: this.selected_periods,
-        type: this.period_type,
-        starting_year: this.starting_year,
-        name: 'pe',
-        value: this.getPeriodsForAnalytics(this.selected_periods)
-      });
+      if (!this.showUpdate) {
+        this.emitPeriod();
+      }
     }
+  }
+
+  emitPeriod() {
+    this.onPeriodUpdate.emit({
+      items: this.selected_periods,
+      type: this.period_type,
+      starting_year: this.starting_year,
+      name: 'pe',
+      value: this.getPeriodsForAnalytics(this.selected_periods)
+    });
   }
 
 

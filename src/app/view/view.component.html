@@ -14,12 +14,21 @@
 <div class="container-fluid no-print" id="filters" style="padding: 0px"d>
   <div class="col-sm-4" style="padding-left: 5px">
     <label>Organisation Units</label>
-    <app-org-unit-filter></app-org-unit-filter>
-
+    <app-org-unit-filter
+      [orgunit_model]="orgunit_model"
+      [showUpdate] = "true"
+      (onOrgUnitUpdate) = "updateOrgUnits($event)"
+    >
+    </app-org-unit-filter>
   </div>
   <div class="col-sm-4">
     <label>Selected Period</label>
-    <app-period-filter></app-period-filter>
+    <app-period-filter
+      [selected_periods]="scorecard.data.selected_periods"
+      [period_type]="period_type"
+      (onPeriodUpdate) = "updatePeriod($event)"
+      [showUpdate] = "true"
+    ></app-period-filter>
 
   </div>
   <!--options-->

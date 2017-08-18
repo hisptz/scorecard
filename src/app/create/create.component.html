@@ -78,8 +78,9 @@
       <tr>
         <td style="vertical-align: bottom" dnd-droppable (onDropSuccess)="transferDataSuccess($event,'new',null)">
           <!--period configurations-->
+
           <app-period-filter
-            [selected_periods]="this.scorecard.data.selected_periods"
+            [selected_periods]="scorecard.data.selected_periods"
             [period_type]="period_type"
             (onPeriodUpdate) = "updatePeriod($event)"
           ></app-period-filter>
@@ -101,7 +102,7 @@
         </th>
       </tr>
       <tr>
-        <td style="vertical-align: middle;" dnd-droppable (onDropSuccess)="transferDataSuccess($event,'new',null)">
+        <td style="vertical-align: middle; padding: 0px" dnd-droppable (onDropSuccess)="transferDataSuccess($event,'new',null)">
 
           <!--organisation unit tree-->
           <app-org-unit-filter

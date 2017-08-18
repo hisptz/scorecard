@@ -38,6 +38,8 @@ export class OrgUnitFilterComponent implements OnInit {
     placeholder: 'Select Organisation Unit'
   };
 
+  @Input() showUpdate: false;
+
   @Output() onOrgUnitUpdate: EventEmitter<any> = new EventEmitter<any>();
   @Output() onOrgUnitInit: EventEmitter<any> = new EventEmitter<any>();
   @Output() onOrgUnitModelUpdate: EventEmitter<any> = new EventEmitter<any>();
@@ -191,6 +193,11 @@ export class OrgUnitFilterComponent implements OnInit {
         );
   }
 
+  updateOrgunits() {
+    this.displayOrgTree();
+    this.emit();
+  }
+
   clearAll() {
     for (const active_orgunit of this.orgunit_model.selected_orgunits) {
       this.deActivateNode(active_orgunit.id, this.orgtree, null);
@@ -285,8 +292,10 @@ export class OrgUnitFilterComponent implements OnInit {
       this.orgunit_model.selected_orgunits.push($event.node.data);
     }
     this.orgUnit = $event.node.data;
-    this.emit();
-  }
+    if (!this.showUpdate) {
+      this.emit();
+    }
+  };
 
   emit() {
     const mapper = {};
@@ -312,13 +321,17 @@ export class OrgUnitFilterComponent implements OnInit {
   // set selected groups
   setSelectedUserOrg( selected_user_orgunit ) {
     this.orgunit_model.selected_user_orgunit = selected_user_orgunit;
-    this.emit();
+    if (!this.showUpdate) {
+      this.emit();
+    }
   }
 
   // set selected groups
   setSelectedLevels( selected_levels ) {
     this.orgunit_model.selected_levels = selected_levels;
-    this.emit();
+    if (!this.showUpdate) {
+      this.emit();
+    }
   }
 
   prepareOrganisationUnitTree(organisationUnit, type: string = 'top') {
@@ -361,7 +374,9 @@ export class OrgUnitFilterComponent implements OnInit {
 
   updateOrgUnitModel() {
     this.displayOrgTree();
-    this.emit();
+    if (!this.showUpdate) {
+      this.emit();
+    }
   }
 
   // prepare a proper name for updating the organisation unit display area.

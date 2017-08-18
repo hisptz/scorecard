@@ -148,6 +148,16 @@ export class ViewComponent implements OnInit, AfterViewInit, OnDestroy {
 
   }
 
+  // listen to changes in period
+  updatePeriod( period ) {
+    console.log( period );
+  }
+
+  // listen to changes in period
+  updateOrgUnits( orgunits ) {
+    console.log( orgunits );
+  }
+
   // check if user can edit scorecard
   canEditScoreCard(): boolean {
 
@@ -162,17 +172,6 @@ export class ViewComponent implements OnInit, AfterViewInit, OnDestroy {
       }
     }
     return checker;
-  }
-
-  pushPeriodForward() {
-    this.year += 1;
-  }
-
-  pushPeriodBackward() {
-    this.year -= 1;
-  }
-
-  changePeriodType() {
   }
 
   isArray(o) {
@@ -246,103 +245,6 @@ export class ViewComponent implements OnInit, AfterViewInit, OnDestroy {
         if (!this.scorecard.data.hasOwnProperty('show_data_in_column')) {
           this.scorecard.data.show_data_in_column = false;
         }
-
-        // if (this.orgunitService.nodes === null) {
-        //   this.orgunitService.getOrgunitLevelsInformation()
-        //     .subscribe(
-        //       (data: any) => {
-        //         // assign urgunit levels and groups to variables
-        //         this.orgunit_model.orgunit_levels = data.organisationUnitLevels;
-        //         this.orgunitService.orgunit_levels = data.organisationUnitLevels;
-        //         this.orgunitService.getOrgunitGroups().subscribe( groups => {//noinspection TypeScriptUnresolvedVariable
-        //           this.orgunit_model.orgunit_groups = groups.organisationUnitGroups;
-        //           this.orgunitService.orgunit_groups = groups.organisationUnitGroups;
-        //         });
-        //
-        //         this.orgunitService.getUserInformation().subscribe(
-        //           userOrgunit => {
-        //             const level = this.orgunitService.getUserHighestOrgUnitlevel( userOrgunit );
-        //             this.orgunit_model.user_orgunits = this.orgunitService.getUserOrgUnits( userOrgunit );
-        //             this.orgunitService.user_orgunits = this.orgunitService.getUserOrgUnits( userOrgunit );
-        //             if (this.orgunit_model.selection_mode === 'Usr_orgUnit') {
-        //               this.orgunit_model.selected_orgunits = [];
-        //               for ( const item of this.orgunit_model.user_orgunits ) {
-        //                 this.orgunit_model.selected_orgunits.push(item);
-        //               }
-        //             }
-        //             const all_levels = data.pager.total;
-        //             const orgunits = this.orgunitService.getuserOrganisationUnitsWithHighestlevel( level, userOrgunit );
-        //             const use_level = parseInt(all_levels) - (parseInt(level) - 1);
-        //             // this.orgunit_model.user_orgunits = orgunits;
-        //
-        //             // load inital orgiunits to speed up loading speed
-        //             this.orgunitService.getInitialOrgunitsForTree(orgunits).subscribe(
-        //               (initial_data) => {
-        //                 //noinspection TypeScriptUnresolvedVariable
-        //                 this.orgUnit = {
-        //                   id: initial_data.organisationUnits[0].id,
-        //                   name: initial_data.organisationUnits[0].name,
-        //                   children: initial_data.organisationUnits[0].children
-        //                 };
-        //                 // this.orgunit_model.selected_orgunits = [this.orgUnit];
-        //                 this.orgUnitlength = this.orgUnit.children.length + 1;
-        //
-        //                 //noinspection TypeScriptUnresolvedVariable
-        //                 this.organisationunits = initial_data.organisationUnits;
-        //                 this.orgunit_tree_config.loading = false;
-        //                 this.metadata_ready = true;
-        //                 // after done loading initial organisation units now load all organisation units
-        //                 const fields = this.orgunitService.generateUrlBasedOnLevels(use_level);
-        //                 this.orgunitService.getAllOrgunitsForTree1(fields, orgunits).subscribe(
-        //                   items => {
-        //                     //noinspection TypeScriptUnresolvedVariable
-        //                     this.organisationunits = items.organisationUnits;
-        //                     //noinspection TypeScriptUnresolvedVariable
-        //                     this.orgunitService.nodes = items.organisationUnits;
-        //                     // activate organisation units
-        //                     for ( const active_orgunit of this.orgunit_model.selected_orgunits ) {
-        //                       this.activateNode(active_orgunit.id, this.orgtree);
-        //                     }
-        //                     this.prepareOrganisationUnitTree(this.organisationunits, 'parent');
-        //                   },
-        //                   error => {
-        //                     console.log('something went wrong while fetching Organisation units');
-        //                     this.orgunit_tree_config.loading = false;
-        //                   }
-        //                 );
-        //               },
-        //               error => {
-        //                 console.log('something went wrong while fetching Organisation units');
-        //                 this.orgunit_tree_config.loading = false;
-        //               }
-        //             );
-        //
-        //           }
-        //         );
-        //       }
-        //     );
-        // }else {
-        //   this.orgunit_tree_config.loading = false;
-        //   this.default_orgUnit = [this.orgunitService.nodes[0].id];
-        //   this.orgUnit = {
-        //     id: this.orgunitService.nodes[0].id,
-        //     name: this.orgunitService.nodes[0].name,
-        //     children: this.orgunitService.nodes[0].children
-        //   };
-        //   // this.orgunit_model.selected_orgunits = [this.orgUnit];
-        //   this.orgUnitlength = this.orgUnit.children.length + 1;
-        //   this.organisationunits = this.orgunitService.nodes;
-        //   this.orgunit_model.orgunit_levels = this.orgunitService.orgunit_levels;
-        //   this.orgunit_model.user_orgunits = this.orgunitService.user_orgunits;
-        //   this.orgunit_model.orgunit_groups = this.orgunitService.orgunit_groups;
-        //   // activate organisation units
-        //   if (this.orgunit_model.selection_mode === 'Usr_orgUnit') {
-        //     this.orgunit_model.selected_orgunits = this.orgunit_model.user_orgunits;
-        //   }
-        //
-        //   this.prepareOrganisationUnitTree(this.organisationunits, 'parent');
-        //   // TODO: make a sort level information dynamic
-        //   this.metadata_ready = true;
         //   // this.loadScoreCard();
         // }
       });
@@ -353,72 +255,6 @@ export class ViewComponent implements OnInit, AfterViewInit, OnDestroy {
 
   }
 
-
-  // this function is used to sort organisation unit
-  prepareOrganisationUnitTree(organisationUnit, type: string = 'top') {
-    if (type === 'top') {
-      if (organisationUnit.children) {
-        organisationUnit.children.sort((a, b) => {
-          if (a.name > b.name) {
-            return 1;
-          }
-          if (a.name < b.name) {
-            return -1;
-          }
-          // a must be equal to b
-          return 0;
-        });
-        organisationUnit.children.forEach((child) => {
-          this.prepareOrganisationUnitTree(child, 'top' );
-        });
-      }
-    }else {
-      organisationUnit.forEach((orgunit) => {
-        console.log(orgunit);
-        if (orgunit.children) {
-          orgunit.children.sort((a, b) => {
-            if (a.name > b.name) {
-              return 1;
-            }
-            if (a.name < b.name) {
-              return -1;
-            }
-            // a must be equal to b
-            return 0;
-          });
-          orgunit.children.forEach((child) => {
-            this.prepareOrganisationUnitTree(child, 'top');
-          });
-        }
-      });
-    }
-  }
-
-  // prepare a proper name for updating the organisation unit display area.
-  getProperPreOrgunitName(): string {
-    let name = '';
-    if ( this.orgunit_model.selection_mode === 'Group' ) {
-      const use_value = this.orgunit_model.selected_group.split('-');
-      for ( const single_group of this.orgunit_model.orgunit_groups ) {
-        if ( single_group.id === use_value[1] ) {
-          name = single_group.name + ' in';
-        }
-      }
-    }else if ( this.orgunit_model.selection_mode === 'Usr_orgUnit' ) {
-      if ( this.orgunit_model.selected_user_orgunit === 'USER_ORGUNIT_CHILDREN') { name = 'Children of '; }
-      if ( this.orgunit_model.selected_user_orgunit === 'USER_ORGUNIT_GRANDCHILDREN') { name = 'Grand Children of'; }
-    }else if ( this.orgunit_model.selection_mode === 'Level' ) {
-      const use_level = this.orgunit_model.selected_level.split('-');
-      for ( const single_level of this.orgunit_model.orgunit_levels ) {
-        if ( single_level.level === use_level[1] ) {
-          name = single_level.name + ' in';
-        }
-      }
-    }else {
-      name = '';
-    }
-    return name;
-  }
 
   // a function that will be used to load scorecard
   loadScoreCard( orgunit: any = null ) {

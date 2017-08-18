@@ -1,7 +1,7 @@
 <div class="tree-input" title="Select starting period for your scorecard" appClickOutside (clickOutside)="showPerTree = true">
   <div>
     <div class="show_items" (click)="displayPerTree()">
-            <span *ngIf="selected_periods.length > 3">
+            <span *ngIf="selected_periods.length > 2">
           <span class="selected-item">
             {{ selected_periods[0].name }}
             <a (click)="deactivatePer(selected_periods[0]);$event.stopPropagation()" class="removeorgunit" >x</a>
@@ -13,7 +13,7 @@
             and {{ selected_periods.length -2 }} more
           </span>
         </span>
-      <span *ngIf="selected_periods.length <= 3">
+      <span *ngIf="selected_periods.length <= 2">
               <span *ngFor="let item of selected_periods" class="selected-item ng-binding ng-scope">
                 {{ item.name }}
                 <a (click)="deactivatePer(item);$event.stopPropagation()" class="removeorgunit" >x</a>
@@ -77,6 +77,9 @@
             </li>
           </ul>
         </div>
+      </div>
+      <div class="col-sm-12" style="padding:0px;margin-top: 5px;border-top:1px solid rgba(0,0,0,0.3)" *ngIf="showUpdate">
+        <button class="btn btn-default btn-sm pull-right" style="margin-top: 5px" (click)="updatePeriods()">Update</button>
       </div>
     </div>
   </div>
