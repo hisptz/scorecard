@@ -206,7 +206,7 @@ export class ScorecardComponent implements OnInit, AfterViewInit, OnDestroy {
     rules.forEach((funct) => {
       if (id === funct.id) {
         return_rule = funct;
-        if (typeof return_rule.json === 'string'){
+        if (typeof return_rule.json === 'string') {
           return_rule.json = JSON.parse(return_rule.json);
         }
       }
