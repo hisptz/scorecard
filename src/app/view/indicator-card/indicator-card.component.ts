@@ -180,9 +180,9 @@ export class IndicatorCardComponent implements OnInit, AfterViewInit, OnDestroy 
     console.log(this.default_orgunit);
 
     this.updateIndicatorCard(this.indicator, 'table', this.default_period, this.orgunit_model, false);
-    this.default_period.forEach((current_period) => {
-      this.activateNode(current_period.id, this.pertree);
-    });
+    // this.default_period.forEach((current_period) => {
+    //   this.activateNode(current_period.id, this.pertree);
+    // });
     // activate organisation units
     for (const active_orgunit of this.orgunit_model.selected_orgunits) {
       this.activateNode(active_orgunit.id, this.orgtree);
@@ -718,23 +718,53 @@ export class IndicatorCardComponent implements OnInit, AfterViewInit, OnDestroy 
   }
 
 
-  // action to be called when a tree item is deselected(Remove item in array of selected items
-  deactivatePer($event) {
-    this.card_selected_periods.forEach((item, index) => {
-      if ($event.node.data.id === item.id) {
-        this.card_selected_periods.splice(index, 1);
+  getSelectedItemsToRemove() {
+    let count = 0;
+    this.card_selected_periods.forEach(period => {
+      if (_.includes(_.map(this.card_periods, 'id'), period.id)) {
+        count++;
+      }
+    });
+    return count;
+
+  }
+
+  // transfer all period to selected section
+  selectAllItems() {
+    this.card_periods.forEach((item) => {
+      if (!this.checkPeriodAvailabilty(item, this.card_selected_periods)) {
+        this.card_selected_periods.push(item);
       }
     });
   }
 
-
-  // add item to array of selected items when period is selected
-  activatePer = ($event) => {
-    if (!this.checkItemAvailabilty($event.node.data, this.card_selected_periods)) {
-      this.card_selected_periods.push($event.node.data);
-    }
-    this.card_period = $event.node.data;
+  deselectAllItems() {
+    this.card_selected_periods = [];
   }
+
+  // check if orgunit already exist in the orgunit display list
+  checkPeriodAvailabilty(period, array): boolean {
+    let checker = false;
+    for (const per of array) {
+      if (per.id === period.id) {
+        checker = true;
+      }
+    }
+    return checker;
+  }
+
+  // action to be called when a tree item is deselected(Remove item in array of selected items
+  deactivatePer($event) {
+    this.card_selected_periods.splice(this.card_selected_periods.indexOf($event), 1);
+  }
+
+  // add item to array of selected items when item is selected
+  activatePer($event) {
+    if (!this.checkPeriodAvailabilty($event, this.card_selected_periods)) {
+      this.card_selected_periods.push($event);
+    }
+  }
+
 
   activateNode(nodeId: any, nodes) {
     setTimeout(() => {
