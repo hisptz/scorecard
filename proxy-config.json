@@ -1,18 +1,22 @@
 {
   "/api": {
-    "target": "http://localhost:8080",
-    "target1": "https://scorecard-dev.dhis2.org/demo",
+    "target1": "http://localhost:8080",
+    "target": "https://hmis10.health.go.ug/training",
+    "target2": "https://scorecard-dev.dhis2.org/demo",
     "secure": "false",
-    "auth":"admin:district",
-    "auth1":"scorecard:Scorecard1234",
+    "auth1":"admin:district",
+    "auth":"Jeric:SeraPkp8FA!2015",
+    "auth2":"scorecard:Scorecard1234",
     "changeOrigin":true
   },
   "/": {
-    "target": "http://localhost:8080",
-    "target1": "https://scorecard-dev.dhis2.org/demo",
+    "target1": "http://localhost:8080",
+    "target": "https://hmis10.health.go.ug/training",
+    "target2": "https://scorecard-dev.dhis2.org/demo",
     "secure": "false",
-    "auth":"admin:district",
-    "auth1":"scorecard:Scorecard1234",
+    "auth1":"admin:district",
+    "auth":"Jeric:SeraPkp8FA!2015",
+    "auth2":"scorecard:Scorecard1234",
     "changeOrigin":true
   }
 }

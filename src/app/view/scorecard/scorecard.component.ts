@@ -269,6 +269,7 @@ export class ScorecardComponent implements OnInit, AfterViewInit, OnDestroy {
                 pe: current_period.id,
                 rule: this.getFunctionRule(use_function['rules'], indicator.id),
                 success: (data) => {
+                  console.log(data)
                   // This will run on successfull function return, which will save the result to the data store for analytics
                   // console.log( 'analytics:', JSON.stringify(data));
                   indicator.loading = false;

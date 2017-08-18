@@ -28,6 +28,7 @@ import {TreeNode, TREE_ACTIONS, IActionMapping, TreeComponent} from 'angular2-tr
 import {FilterService} from '../shared/services/filter.service';
 import {FunctionService} from '../shared/services/function.service';
 
+import * as _ from 'lodash';
 const actionMapping: IActionMapping = {
   mouse: {
     dblClick: TREE_ACTIONS.TOGGLE_EXPANDED,
@@ -324,15 +325,13 @@ export class CreateComponent implements OnInit, AfterViewInit, OnDestroy {
 
               if (this.scorecard.data.selected_periods.length === 0) {
                 this.periods = this.filterService.getPeriodArray(this.period_type, this.year);
-                this.activateNode(this.filterService.getPeriodArray(this.period_type, this.year)[0].id, this.pertree);
               } else {
                 this.periods = this.scorecard.data.selected_periods;
                 this.scorecard.data.selected_periods.forEach((period) => {
                   this.selected_periods.push(period);
-                  let use_period = this.filterService.deducePeriodType(period.id);
+                  const use_period = this.filterService.deducePeriodType(period.id);
                   this.period_type = use_period.type;
-                  this.activateNode(period.id, this.pertree);
-                })
+                });
               }
             });
 
@@ -568,7 +567,7 @@ export class CreateComponent implements OnInit, AfterViewInit, OnDestroy {
 
     });
     if (this.current_action === 'new') {
-      this.activateNode(this.filterService.getPeriodArray(this.period_type, this.year)[0].id, this.pertree);
+      this.selected_periods.push(this.filterService.getPeriodArray(this.period_type, this.year)[0]);
     }
 
 
@@ -1695,24 +1694,54 @@ export class CreateComponent implements OnInit, AfterViewInit, OnDestroy {
     if (!this.checkItemAvailabilty($event.node.data, this.scorecard.data.orgunit_settings.selected_orgunits)) {
       this.scorecard.data.orgunit_settings.selected_orgunits.push($event.node.data);
     }
-  };
+  }
 
-
-  // action to be called when a tree item is deselected(Remove item in array of selected items
-  deactivatePer($event) {
-    this.selected_periods.forEach((item, index) => {
-      if ($event.node.data.id === item.id) {
-        this.selected_periods.splice(index, 1);
+  getSelectedItemsToRemove() {
+    let count = 0;
+    this.selected_periods.forEach(period => {
+      if (_.includes(_.map(this.periods, 'id'), period.id)) {
+        count++;
       }
     });
-  };
+    return count;
 
-  // / add item to array of selected items when period is selected
-  activatePer = ($event) => {
-    if (!this.checkItemAvailabilty($event.node.data, this.selected_periods)) {
-      this.selected_periods.push($event.node.data);
+  }
+
+  // transfer all period to selected section
+  selectAllItems() {
+    this.periods.forEach((item) => {
+      if (!this.checkPeriodAvailabilty(item, this.selected_periods )) {
+        this.selected_periods.push(item);
+      }
+    });
+  }
+
+  deselectAllItems() {
+    this.selected_periods = [];
+  }
+
+  // check if orgunit already exist in the orgunit display list
+  checkPeriodAvailabilty(period, array): boolean {
+    let checker = false;
+    for ( const per of array ) {
+      if ( per.id === period.id) {
+        checker = true;
+      }
     }
-  };
+    return checker;
+  }
+
+  // action to be called when a tree item is deselected(Remove item in array of selected items
+  deactivatePer ( $event ) {
+    this.selected_periods.splice(this.selected_periods.indexOf($event), 1);
+  }
+
+  // add item to array of selected items when item is selected
+  activatePer($event) {
+    if (!this.checkPeriodAvailabilty($event, this.selected_periods)) {
+      this.selected_periods.push($event);
+    }
+  }
 
 
   activateNode(nodeId: any, nodes) {

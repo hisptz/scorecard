@@ -2,7 +2,6 @@ import {
   Component, OnInit, AfterViewInit, ViewChild, ValueProvider, style, state, animate, transition, trigger,
   OnDestroy
 } from '@angular/core';
-import {Http} from "@angular/http";
 import {ScoreCard, ScorecardService} from "../shared/services/scorecard.service";
 import {ActivatedRoute} from "@angular/router";
 import {Subscription} from "rxjs";
@@ -11,15 +10,11 @@ import {FilterService} from "../shared/services/filter.service";
 import {Constants} from "../shared/costants";
 import {OrgUnitService} from "../shared/services/org-unit.service";
 import {TreeNode, TREE_ACTIONS, IActionMapping, TreeComponent} from 'angular2-tree-component';
-import {Angular2Csv} from "angular2-csv";
-import {forEach} from "@angular/router/src/utils/collection";
-// import Key = webdriver.Key;
-import {isUndefined} from "util";
-import {initDomAdapter} from "@angular/platform-browser/src/browser";
 import {ScorecardComponent} from "./scorecard/scorecard.component";
 
+import * as _ from 'lodash';
 
-const actionMapping:IActionMapping = {
+const actionMapping: IActionMapping = {
   mouse: {
     click: (node, tree, $event) => {
       $event.ctrlKey
@@ -29,7 +24,7 @@ const actionMapping:IActionMapping = {
   }
 };
 
-const actionMapping1:IActionMapping = {
+const actionMapping1: IActionMapping = {
   mouse: {
     dblClick: TREE_ACTIONS.TOGGLE_EXPANDED,
     click: (node, tree, $event) => TREE_ACTIONS.TOGGLE_SELECTED_MULTI(node, tree, $event)
@@ -48,11 +43,11 @@ const WINDOW_PROVIDER: ValueProvider = {
   animations: [
     trigger('fadeInOut', [
       transition(':enter', [   // :enter is alias to 'void => *'
-        style({opacity:0}),
-        animate(600, style({opacity:1}))
+        style({opacity: 0}),
+        animate(600, style({opacity: 1}))
       ]),
       transition(':leave', [   // :leave is alias to '* => void'
-        animate(500, style({opacity:0}))
+        animate(500, style({opacity: 0}))
       ])
     ])
   ]
@@ -69,8 +64,8 @@ export class ViewComponent implements OnInit, AfterViewInit, OnDestroy {
   loading: boolean = true;
   base_url: string;
   orgunit_tree_config: any = {
-    show_search : true,
-    search_text : 'Search',
+    show_search: true,
+    search_text: 'Search',
     level: null,
     loading: false,
     loading_message: 'Loading Organisation units...',
@@ -79,8 +74,8 @@ export class ViewComponent implements OnInit, AfterViewInit, OnDestroy {
   };
 
   period_tree_config: any = {
-    show_search : true,
-    search_text : 'Search',
+    show_search: true,
+    search_text: 'Search',
     level: null,
     loading: false,
     loading_message: 'Loading Periods...',
@@ -90,16 +85,16 @@ export class ViewComponent implements OnInit, AfterViewInit, OnDestroy {
   organisationunits: any[] = [];
   periods: any[] = [];
   selected_orgunits: any[] = [];
-  selected_periods:any = [];
+  selected_periods: any = [];
   period_type: string = "Quarterly";
   year: number = 2017;
   default_orgUnit: string[] = [];
   default_period: string[] = [];
-  showOrgTree:boolean = true;
-  showPerTree:boolean = true;
-  showAdditionalOptions:boolean = true;
+  showOrgTree: boolean = true;
+  showPerTree: boolean = true;
+  showAdditionalOptions: boolean = true;
 
-  show_details:boolean = false;
+  show_details: boolean = false;
 
   @ViewChild('orgtree')
   orgtree: TreeComponent;
@@ -111,9 +106,9 @@ export class ViewComponent implements OnInit, AfterViewInit, OnDestroy {
   childScoreCard: ScorecardComponent;
 
   selected_indicator: any = [];
-  orgunit_for_model:any = [];
+  orgunit_for_model: any = [];
 
-  keep_options_open:boolean = true;
+  keep_options_open: boolean = true;
 
   show_sum_in_row: boolean = false;
   show_sum_in_column: boolean = false;
@@ -126,12 +121,12 @@ export class ViewComponent implements OnInit, AfterViewInit, OnDestroy {
   sorting_column: any = "none";
   hidenColums: any[] = [];
 
-  shown_records:number = 0;
-  average_selection:string = "all";
+  shown_records: number = 0;
+  average_selection: string = "all";
   show_rank: boolean = false;
   metadata_ready = false;
-  have_authorities:boolean = true;
-  orgUnitlength:number = 0;
+  have_authorities: boolean = true;
+  orgUnitlength: number = 0;
 
   orgunit_model: any = {
     selection_mode: "orgUnit",
@@ -143,15 +138,14 @@ export class ViewComponent implements OnInit, AfterViewInit, OnDestroy {
     user_orgunits: [],
     selected_user_orgunit: "USER_ORGUNIT"
   };
-  userInfo:any = {};
+  userInfo: any = {};
 
   constructor(private scorecardService: ScorecardService,
               private dataService: DataService,
               private activatedRouter: ActivatedRoute,
               private filterService: FilterService,
               private costant: Constants,
-              private orgunitService: OrgUnitService
-  ) {
+              private orgunitService: OrgUnitService) {
     this.base_url = this.costant.root_dir;
     this.subscription = this.activatedRouter.params.subscribe(
       (params: any) => {
@@ -162,12 +156,12 @@ export class ViewComponent implements OnInit, AfterViewInit, OnDestroy {
       userInfo => {
         this.userInfo = userInfo;
         //noinspection TypeScriptUnresolvedVariable
-        userInfo.userCredentials.userRoles.forEach( (role) => {
-          role.authorities.forEach( (ath) => {
-            if( ath == "ALL"){
+        userInfo.userCredentials.userRoles.forEach((role) => {
+          role.authorities.forEach((ath) => {
+            if (ath == "ALL") {
               this.have_authorities = true;
             }
-          } );
+          });
 
         })
       }
@@ -176,32 +170,32 @@ export class ViewComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   // check if user can edit scorecard
-  canEditScoreCard(): boolean{
+  canEditScoreCard(): boolean {
 
     let checker = false;
-    if(this.userInfo.hasOwnProperty('id') && this.scorecard.data.hasOwnProperty('user_groups'))
-    if (this.userInfo.id == this.scorecard.data.user.id){
-      checker = true
-    }else {
-      if( this.dataService.checkForUserGroupInScorecard(this.scorecard.data,this.userInfo).edit ){
+    if (this.userInfo.hasOwnProperty('id') && this.scorecard.data.hasOwnProperty('user_groups'))
+      if (this.userInfo.id == this.scorecard.data.user.id) {
         checker = true
+      } else {
+        if (this.dataService.checkForUserGroupInScorecard(this.scorecard.data, this.userInfo).edit) {
+          checker = true
+        }
       }
-    }
     return checker;
   }
 
-  pushPeriodForward(){
+  pushPeriodForward() {
     this.year += 1;
-    this.periods = this.filterService.getPeriodArray(this.period_type,this.year);
+    this.periods = this.filterService.getPeriodArray(this.period_type, this.year);
   }
 
-  pushPeriodBackward(){
+  pushPeriodBackward() {
     this.year -= 1;
-    this.periods = this.filterService.getPeriodArray(this.period_type,this.year);
+    this.periods = this.filterService.getPeriodArray(this.period_type, this.year);
   }
 
-  changePeriodType(){
-    this.periods = this.filterService.getPeriodArray(this.period_type,this.year);
+  changePeriodType() {
+    this.periods = this.filterService.getPeriodArray(this.period_type, this.year);
   }
 
   ngOnInit() {
@@ -215,7 +209,7 @@ export class ViewComponent implements OnInit, AfterViewInit, OnDestroy {
           data: scorecard_details
         };
         // attach organisation unit if none is defined
-        if(!this.scorecard.data.orgunit_settings.hasOwnProperty("selected_orgunits")){
+        if (!this.scorecard.data.orgunit_settings.hasOwnProperty("selected_orgunits")) {
           this.scorecard.data.orgunit_settings = {
             "selection_mode": "Usr_orgUnit",
             "selected_level": "",
@@ -231,43 +225,42 @@ export class ViewComponent implements OnInit, AfterViewInit, OnDestroy {
         this.orgunit_model = this.scorecard.data.orgunit_settings;
 
         // attach average_selection if none is defined
-        if(!this.scorecard.data.hasOwnProperty("average_selection")){
+        if (!this.scorecard.data.hasOwnProperty("average_selection")) {
           this.scorecard.data.average_selection = "all";
         }
         // attach shown_records if none is defined
-        if(!this.scorecard.data.hasOwnProperty("shown_records")){
+        if (!this.scorecard.data.hasOwnProperty("shown_records")) {
           this.scorecard.data.shown_records = "all";
         }
         // attach show_average_in_row if none is defined
-        if(!this.scorecard.data.hasOwnProperty("show_average_in_row")){
+        if (!this.scorecard.data.hasOwnProperty("show_average_in_row")) {
           this.scorecard.data.show_average_in_row = false;
         }
         // attach show_average_in_column if none is defined
-        if(!this.scorecard.data.hasOwnProperty("show_average_in_column")){
+        if (!this.scorecard.data.hasOwnProperty("show_average_in_column")) {
           this.scorecard.data.show_average_in_column = false;
         }
         //attach a property empty row if none is defined
-        if(!this.scorecard.data.hasOwnProperty("empty_rows")){
+        if (!this.scorecard.data.hasOwnProperty("empty_rows")) {
           this.scorecard.data.empty_rows = true;
         }
-        if(this.scorecard.data.hasOwnProperty("periodType")){
+        if (this.scorecard.data.hasOwnProperty("periodType")) {
           this.period_type = this.scorecard.data.periodType
         }
-        if(!this.scorecard.data.hasOwnProperty("show_data_in_column")){
+        if (!this.scorecard.data.hasOwnProperty("show_data_in_column")) {
           this.scorecard.data.show_data_in_column = false;
         }
 
-        if( this.scorecard.data.selected_periods.length == 0 ){
-          this.periods = this.filterService.getPeriodArray( this.period_type, this.year );
-          this.activateNode(this.filterService.getPeriodArray( this.period_type, this.year )[0].id, this.pertree);
-        }else{
+        if (this.scorecard.data.selected_periods.length === 0) {
+          this.periods = this.filterService.getPeriodArray(this.period_type, this.year);
+          this.selected_periods.push(this.filterService.getPeriodArray(this.period_type, this.year)[0]);
+        } else {
           this.periods = this.scorecard.data.selected_periods;
-          this.scorecard.data.selected_periods.forEach((period) =>{
+          this.scorecard.data.selected_periods.forEach((period) => {
             this.selected_periods.push(period);
-            let use_period = this.filterService.deducePeriodType(period.id);
+            const use_period = this.filterService.deducePeriodType(period.id);
             this.period_type = use_period.type;
-            this.activateNode(period.id, this.pertree);
-          })
+          });
         }
         if (this.orgunitService.nodes == null) {
           this.orgunitService.getOrgunitLevelsInformation()
@@ -276,24 +269,24 @@ export class ViewComponent implements OnInit, AfterViewInit, OnDestroy {
                 // assign urgunit levels and groups to variables
                 this.orgunit_model.orgunit_levels = data.organisationUnitLevels;
                 this.orgunitService.orgunit_levels = data.organisationUnitLevels;
-                this.orgunitService.getOrgunitGroups().subscribe( groups => {//noinspection TypeScriptUnresolvedVariable
+                this.orgunitService.getOrgunitGroups().subscribe(groups => {//noinspection TypeScriptUnresolvedVariable
                   this.orgunit_model.orgunit_groups = groups.organisationUnitGroups
                   this.orgunitService.orgunit_groups = groups.organisationUnitGroups
                 });
 
                 this.orgunitService.getUserInformation().subscribe(
                   userOrgunit => {
-                    let level = this.orgunitService.getUserHighestOrgUnitlevel( userOrgunit );
-                    this.orgunit_model.user_orgunits = this.orgunitService.getUserOrgUnits( userOrgunit );
-                    this.orgunitService.user_orgunits = this.orgunitService.getUserOrgUnits( userOrgunit );
-                    if(this.orgunit_model.selection_mode == "Usr_orgUnit"){
+                    let level = this.orgunitService.getUserHighestOrgUnitlevel(userOrgunit);
+                    this.orgunit_model.user_orgunits = this.orgunitService.getUserOrgUnits(userOrgunit);
+                    this.orgunitService.user_orgunits = this.orgunitService.getUserOrgUnits(userOrgunit);
+                    if (this.orgunit_model.selection_mode == "Usr_orgUnit") {
                       this.orgunit_model.selected_orgunits = [];
-                      for ( let item of this.orgunit_model.user_orgunits ){
+                      for (let item of this.orgunit_model.user_orgunits) {
                         this.orgunit_model.selected_orgunits.push(item)
                       }
                     }
                     let all_levels = data.pager.total;
-                    let orgunits = this.orgunitService.getuserOrganisationUnitsWithHighestlevel( level, userOrgunit );
+                    let orgunits = this.orgunitService.getuserOrganisationUnitsWithHighestlevel(level, userOrgunit);
                     let use_level = parseInt(all_levels) - (parseInt(level) - 1);
                     // this.orgunit_model.user_orgunits = orgunits;
 
@@ -307,7 +300,7 @@ export class ViewComponent implements OnInit, AfterViewInit, OnDestroy {
                           children: initial_data.organisationUnits[0].children
                         };
                         // this.orgunit_model.selected_orgunits = [this.orgUnit];
-                        this.orgUnitlength = this.orgUnit.children.length+1;
+                        this.orgUnitlength = this.orgUnit.children.length + 1;
 
                         //noinspection TypeScriptUnresolvedVariable
                         this.organisationunits = initial_data.organisationUnits;
@@ -322,7 +315,7 @@ export class ViewComponent implements OnInit, AfterViewInit, OnDestroy {
                             //noinspection TypeScriptUnresolvedVariable
                             this.orgunitService.nodes = items.organisationUnits;
                             //activate organisation units
-                            for( let active_orgunit of this.orgunit_model.selected_orgunits ){
+                            for (let active_orgunit of this.orgunit_model.selected_orgunits) {
                               this.activateNode(active_orgunit.id, this.orgtree);
                             }
                             this.prepareOrganisationUnitTree(this.organisationunits, 'parent');
@@ -353,16 +346,16 @@ export class ViewComponent implements OnInit, AfterViewInit, OnDestroy {
             children: this.orgunitService.nodes[0].children
           };
           // this.orgunit_model.selected_orgunits = [this.orgUnit];
-          this.orgUnitlength = this.orgUnit.children.length+1;
+          this.orgUnitlength = this.orgUnit.children.length + 1;
           this.organisationunits = this.orgunitService.nodes;
           this.orgunit_model.orgunit_levels = this.orgunitService.orgunit_levels;
           this.orgunit_model.user_orgunits = this.orgunitService.user_orgunits;
           this.orgunit_model.orgunit_groups = this.orgunitService.orgunit_groups;
           //activate organisation units
-          if(this.orgunit_model.selection_mode == "Usr_orgUnit"){
+          if (this.orgunit_model.selection_mode == "Usr_orgUnit") {
             this.orgunit_model.selected_orgunits = this.orgunit_model.user_orgunits;
           }
-          for( let active_orgunit of this.orgunit_model.selected_orgunits ){
+          for (let active_orgunit of this.orgunit_model.selected_orgunits) {
             this.activateNode(active_orgunit.id, this.orgtree);
           }
           this.prepareOrganisationUnitTree(this.organisationunits, 'parent');
@@ -374,14 +367,14 @@ export class ViewComponent implements OnInit, AfterViewInit, OnDestroy {
 
   }
 
-  ngAfterViewInit(){
+  ngAfterViewInit() {
 
   }
 
 
   // this function is used to sort organisation unit
-  prepareOrganisationUnitTree(organisationUnit,type:string='top') {
-    if (type == "top"){
+  prepareOrganisationUnitTree(organisationUnit, type: string = 'top') {
+    if (type == "top") {
       if (organisationUnit.children) {
         organisationUnit.children.sort((a, b) => {
           if (a.name > b.name) {
@@ -394,10 +387,10 @@ export class ViewComponent implements OnInit, AfterViewInit, OnDestroy {
           return 0;
         });
         organisationUnit.children.forEach((child) => {
-          this.prepareOrganisationUnitTree(child,'top');
+          this.prepareOrganisationUnitTree(child, 'top');
         })
       }
-    }else{
+    } else {
       organisationUnit.forEach((orgunit) => {
         console.log(orgunit);
         if (orgunit.children) {
@@ -412,7 +405,7 @@ export class ViewComponent implements OnInit, AfterViewInit, OnDestroy {
             return 0;
           });
           orgunit.children.forEach((child) => {
-            this.prepareOrganisationUnitTree(child,'top');
+            this.prepareOrganisationUnitTree(child, 'top');
           })
         }
       });
@@ -420,57 +413,57 @@ export class ViewComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   // prepare a proper name for updating the organisation unit display area.
-  getProperPreOrgunitName() : string{
+  getProperPreOrgunitName(): string {
     let name = "";
-    if( this.orgunit_model.selection_mode == "Group" ){
+    if (this.orgunit_model.selection_mode == "Group") {
       let use_value = this.orgunit_model.selected_group.split("-");
-      for( let single_group of this.orgunit_model.orgunit_groups ){
-        if ( single_group.id == use_value[1] ){
+      for (let single_group of this.orgunit_model.orgunit_groups) {
+        if (single_group.id == use_value[1]) {
           name = single_group.name + " in";
         }
       }
-    }else if( this.orgunit_model.selection_mode == "Usr_orgUnit" ){
-      if( this.orgunit_model.selected_user_orgunit == "USER_ORGUNIT_CHILDREN") name = "Children of ";
-      if( this.orgunit_model.selected_user_orgunit == "USER_ORGUNIT_GRANDCHILDREN") name = "Grand Children of";
-    }else if( this.orgunit_model.selection_mode == "Level" ){
+    } else if (this.orgunit_model.selection_mode == "Usr_orgUnit") {
+      if (this.orgunit_model.selected_user_orgunit == "USER_ORGUNIT_CHILDREN") name = "Children of ";
+      if (this.orgunit_model.selected_user_orgunit == "USER_ORGUNIT_GRANDCHILDREN") name = "Grand Children of";
+    } else if (this.orgunit_model.selection_mode == "Level") {
       let use_level = this.orgunit_model.selected_level.split("-");
-      for( let single_level of this.orgunit_model.orgunit_levels ){
-        if ( single_level.level == use_level[1] ){
+      for (let single_level of this.orgunit_model.orgunit_levels) {
+        if (single_level.level == use_level[1]) {
           name = single_level.name + " in";
         }
       }
-    }else{
+    } else {
       name = "";
     }
     return name
   }
 
   // a function that will be used to load scorecard
-  loadScoreCard( orgunit: any = null ){
+  loadScoreCard(orgunit: any = null) {
     this.showOrgTree = true;
     this.showPerTree = true;
-    this.orgUnitlength = (this.orgUnit.children)?this.orgUnit.children.length+1:1;
+    this.orgUnitlength = (this.orgUnit.children) ? this.orgUnit.children.length + 1 : 1;
     this.childScoreCard.loadScoreCard();
   }
 
   //setting the period to next or previous
-  setPeriod(type,selected_periods){
+  setPeriod(type, selected_periods) {
     this.selected_periods = [];
-    if(type == "down"){
-      this.periods = this.filterService.getPeriodArray(this.period_type, this.filterService.getLastPeriod(selected_periods,this.period_type).substr(0,4));
-      this.activateNode(this.filterService.getLastPeriod(selected_periods,this.period_type), this.pertree);
+    if (type == "down") {
+      this.periods = this.filterService.getPeriodArray(this.period_type, this.filterService.getLastPeriod(selected_periods, this.period_type).substr(0, 4));
+      this.activateNode(this.filterService.getLastPeriod(selected_periods, this.period_type), this.pertree);
       this.period = [{
-        id:this.filterService.getLastPeriod(selected_periods,this.period_type),
-        name:this.getPeriodName(this.filterService.getLastPeriod(selected_periods,this.period_type))
+        id: this.filterService.getLastPeriod(selected_periods, this.period_type),
+        name: this.getPeriodName(this.filterService.getLastPeriod(selected_periods, this.period_type))
       }];
 
     }
-    if(type == "up"){
-      this.periods = this.filterService.getPeriodArray(this.period_type, this.filterService.getNextPeriod(selected_periods,this.period_type).substr(0,4));
-      this.activateNode(this.filterService.getNextPeriod(selected_periods,this.period_type), this.pertree);
+    if (type == "up") {
+      this.periods = this.filterService.getPeriodArray(this.period_type, this.filterService.getNextPeriod(selected_periods, this.period_type).substr(0, 4));
+      this.activateNode(this.filterService.getNextPeriod(selected_periods, this.period_type), this.pertree);
       this.period = [{
-        id:this.filterService.getNextPeriod(selected_periods,this.period_type),
-        name:this.getPeriodName(this.filterService.getNextPeriod(selected_periods,this.period_type))
+        id: this.filterService.getNextPeriod(selected_periods, this.period_type),
+        name: this.getPeriodName(this.filterService.getNextPeriod(selected_periods, this.period_type))
       }];
     }
     setTimeout(() => {
@@ -479,44 +472,46 @@ export class ViewComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   // get the name of period to be used in a tittle
-  getPeriodName(id){
-    for ( let period of this.filterService.getPeriodArray(this.period_type, this.filterService.getLastPeriod(id,this.period_type).substr(0,4))){
-      if( this.filterService.getLastPeriod(id,this.period_type) == period.id){
+  getPeriodName(id) {
+    for (let period of this.filterService.getPeriodArray(this.period_type, this.filterService.getLastPeriod(id, this.period_type).substr(0, 4))) {
+      if (this.filterService.getLastPeriod(id, this.period_type) == period.id) {
         return period.name;
       }
     }
   }
 
   // get updated scorecard from scorecard component
-  getUpdatedScorecard(scorecard){
-    console.log("inakuja",scorecard);
+  getUpdatedScorecard(scorecard) {
+    console.log("inakuja", scorecard);
   }
+
   // prepare scorecard data and download them as csv
-  downloadCSV(orgunitId){
+  downloadCSV(orgunitId) {
     this.childScoreCard.downloadCSV();
   }
 
   // invoke a default browser print function
-  browserPrint(){
+  browserPrint() {
     window.print();
   }
 
   // load a preview function
   default_selected_periods: any = [];
-  loadPreview($event){
+
+  loadPreview($event) {
     this.selected_indicator = [];
     // prepare indicators
-    if($event.period == null){
+    if ($event.period == null) {
       this.default_selected_periods = this.selected_periods;
-    }else{
+    } else {
       this.default_selected_periods = [$event.period];
     }
-    if($event.holderGroup == null){
+    if ($event.holderGroup == null) {
       this.selected_indicator = [$event.indicator];
-    }else{
-      for( let holderid of $event.holderGroup.indicator_holder_ids ){
-        for ( let holder of this.scorecard.data.data_settings.indicator_holders ){
-          if( holder.holder_id == holderid ){
+    } else {
+      for (let holderid of $event.holderGroup.indicator_holder_ids) {
+        for (let holder of this.scorecard.data.data_settings.indicator_holders) {
+          if (holder.holder_id == holderid) {
             this.selected_indicator.push(holder);
           }
         }
@@ -524,24 +519,24 @@ export class ViewComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
     //prepare organisation units
-    if($event.ou == null){
+    if ($event.ou == null) {
       this.orgunit_for_model = this.orgunit_model;
-    }else{
+    } else {
       let node = this.orgtree.treeModel.getNodeById($event.ou);
       this.orgunit_for_model = node.data;
     }
     this.show_details = true;
   }
 
-  removeModel(){
+  removeModel() {
     this.show_details = false;
   }
 
   // a function to prepare a list of indicators to pass into a table
-  getIndicatorsList(scorecard): string[]{
+  getIndicatorsList(scorecard): string[] {
     let indicators = [];
-    for( let holder of scorecard.data.data_settings.indicator_holders ){
-      for( let indicator of holder.indicators ){
+    for (let holder of scorecard.data.data_settings.indicator_holders) {
+      for (let indicator of holder.indicators) {
         indicators.push(indicator);
       }
     }
@@ -549,16 +544,16 @@ export class ViewComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   // a function to check if selections are fine and one can update a scorecard
-  checkSelectionCompletion():boolean{
+  checkSelectionCompletion(): boolean {
     let checker = false;
-    if(this.selected_periods.length >= 1 && this.orgunit_model.selected_orgunits.length >= 1){
+    if (this.selected_periods.length >= 1 && this.orgunit_model.selected_orgunits.length >= 1) {
       checker = true;
     }
     return checker
   }
 
   // Define default scorecard sample
-  getEmptyScoreCard():ScoreCard{
+  getEmptyScoreCard(): ScoreCard {
     return {
       id: "",
       name: "",
@@ -573,19 +568,19 @@ export class ViewComponent implements OnInit, AfterViewInit, OnDestroy {
           "user_orgunits": [],
           "selected_user_orgunit": "USER_ORGUNIT"
         },
-        "average_selection":"all",
-        "shown_records":"all",
-        "show_average_in_row":false,
-        "show_average_in_column":false,
+        "average_selection": "all",
+        "shown_records": "all",
+        "show_average_in_row": false,
+        "show_average_in_column": false,
         "periodType": "Quarterly",
-        "selected_periods":[],
-        "show_data_in_column":false,
+        "selected_periods": [],
+        "show_data_in_column": false,
         "show_score": false,
         "show_rank": false,
         "rank_position_last": true,
         "header": {
           "title": "",
-          "sub_title":"",
+          "sub_title": "",
           "description": "",
           "show_arrows_definition": true,
           "show_legend_definition": false,
@@ -651,21 +646,21 @@ export class ViewComponent implements OnInit, AfterViewInit, OnDestroy {
   };
 
   // display Orgunit Tree
-  displayOrgTree(){
+  displayOrgTree() {
     this.showPerTree = false;
     this.showOrgTree = !this.showOrgTree;
   }
 
   // display period Tree
-  displayPerTree(){
+  displayPerTree() {
     this.showOrgTree = false;
     this.showPerTree = !this.showPerTree;
   }
 
   // action to be called when a tree item is deselected(Remove item in array of selected items
-  deactivateOrg ( $event ) {
-    this.orgunit_model.selected_orgunits.forEach((item,index) => {
-      if( $event.node.data.id == item.id ) {
+  deactivateOrg($event) {
+    this.orgunit_model.selected_orgunits.forEach((item, index) => {
+      if ($event.node.data.id == item.id) {
         this.orgunit_model.selected_orgunits.splice(index, 1);
       }
     });
@@ -673,54 +668,81 @@ export class ViewComponent implements OnInit, AfterViewInit, OnDestroy {
 
   // add item to array of selected items when item is selected
   activateOrg = ($event) => {
-    if(this.orgunit_model.selection_mode == "Usr_orgUnit"){
+    if (this.orgunit_model.selection_mode == "Usr_orgUnit") {
       this.orgunit_model.selection_mode = "orgUnit";
     }
-    if(!this.checkItemAvailabilty($event.node.data, this.orgunit_model.selected_orgunits)){
+    if (!this.checkItemAvailabilty($event.node.data, this.orgunit_model.selected_orgunits)) {
       this.orgunit_model.selected_orgunits.push($event.node.data);
     }
     this.orgUnit = $event.node.data;
   };
 
   //force user orgunit selection
-  swithType(orgunit){
-    if( this.orgunit_model.selection_mode == "Usr_orgUnit" ){
-      for( let active_orgunit of this.orgunit_model.selected_orgunits ){
+  swithType(orgunit) {
+    if (this.orgunit_model.selection_mode == "Usr_orgUnit") {
+      for (let active_orgunit of this.orgunit_model.selected_orgunits) {
         this.deActivateNode(active_orgunit.id, this.orgtree);
       }
       this.orgunit_model.selected_orgunits = [];
-      for ( let item of this.orgunit_model.user_orgunits ){
+      for (let item of this.orgunit_model.user_orgunits) {
         this.orgunit_model.selected_orgunits.push(item)
       }
-      for( let active_orgunit of this.orgunit_model.selected_orgunits ){
+      for (let active_orgunit of this.orgunit_model.selected_orgunits) {
         this.activateNode(active_orgunit.id, this.orgtree);
       }
     }
   }
 
-  // action to be called when a tree item is deselected(Remove item in array of selected items
-  deactivatePer ( $event ) {
-    if(this.orgunit_model.selection_mode == "Usr_orgUnit"){
-      this.orgunit_model.selection_mode = "orgUnit";
-    }
-    this.selected_periods.forEach((item,index) => {
-      if( $event.node.data.id == item.id ) {
-        this.selected_periods.splice(index, 1);
+  getSelectedItemsToRemove() {
+    let count = 0;
+    this.selected_periods.forEach(period => {
+      if (_.includes(_.map(this.periods, 'id'), period.id)) {
+        count++;
       }
     });
-  };
+    return count;
 
-  /// add item to array of selected items when period is selected
-  activatePer = ($event) => {
-    if(!this.checkItemAvailabilty($event.node.data, this.selected_periods)){
-      this.selected_periods.push($event.node.data);
+  }
+
+  // transfer all period to selected section
+  selectAllItems() {
+    this.periods.forEach((item) => {
+      if (!this.checkPeriodAvailabilty(item, this.selected_periods)) {
+        this.selected_periods.push(item);
+      }
+    });
+  }
+
+  deselectAllItems() {
+    this.selected_periods = [];
+  }
+
+  // check if orgunit already exist in the orgunit display list
+  checkPeriodAvailabilty(period, array): boolean {
+    let checker = false;
+    for (const per of array) {
+      if (per.id === period.id) {
+        checker = true;
+      }
     }
-  };
+    return checker;
+  }
 
+  // action to be called when a tree item is deselected(Remove item in array of selected items
+  deactivatePer($event) {
+    this.selected_periods.splice(this.selected_periods.indexOf($event), 1);
+  }
+
+  // add item to array of selected items when item is selected
+  activatePer($event) {
+    if (!this.checkPeriodAvailabilty($event, this.selected_periods)) {
+      this.selected_periods.push($event);
+    }
+  }
 
 
   // a method to activate the model
-  activateNode(nodeId:any, nodes){
+  activateNode(nodeId: any, nodes) {
     setTimeout(() => {
       let node = nodes.treeModel.getNodeById(nodeId);
       if (node)
@@ -729,22 +751,22 @@ export class ViewComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   // a method to activate the model
-  deActivateNode(nodeId:any, nodes, event = null){
+  deActivateNode(nodeId: any, nodes, event = null) {
     setTimeout(() => {
       let node = nodes.treeModel.getNodeById(nodeId);
       if (node)
         node.setIsActive(false, true);
     }, 0);
-    if( event != null){
+    if (event != null) {
       event.stopPropagation();
     }
   }
 
   // check if orgunit already exist in the orgunit display list
-  checkItemAvailabilty(item, array): boolean{
+  checkItemAvailabilty(item, array): boolean {
     let checker = false;
     array.forEach((value) => {
-      if( value.id == item.id ){
+      if (value.id == item.id) {
         checker = true;
       }
     });
@@ -757,11 +779,11 @@ export class ViewComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   // help function to help on closing the indicator modal popup
-  getDetails($event){
+  getDetails($event) {
     this.show_details = $event
   }
 
-  showOptions(){
+  showOptions() {
     this.showAdditionalOptions = !this.showAdditionalOptions;
   }
 
@@ -769,12 +791,12 @@ export class ViewComponent implements OnInit, AfterViewInit, OnDestroy {
    * finding the row average
    * @param orgunit_id
    */
-  findRowAverage(orgunit_id){
+  findRowAverage(orgunit_id) {
     let sum = 0;
     let counter = 0;
-    for ( let holder of this.scorecard.data.data_settings.indicator_holders ){
-      for( let indicator of holder.indicators ){
-        if( this.hidenColums.indexOf(indicator.id) == -1) {
+    for (let holder of this.scorecard.data.data_settings.indicator_holders) {
+      for (let indicator of holder.indicators) {
+        if (this.hidenColums.indexOf(indicator.id) == -1) {
           counter++;
           sum = sum + parseFloat(indicator.values[orgunit_id]);
         }
@@ -782,18 +804,19 @@ export class ViewComponent implements OnInit, AfterViewInit, OnDestroy {
     }
     return (sum / counter).toFixed(2);
   }
+
   /**
    * finding the row average
    * @param orgunit_id
    */
-  findRowTotalAverage(orgunits){
+  findRowTotalAverage(orgunits) {
     let sum = 0;
     let n = 0;
-    for ( let holder of this.scorecard.data.data_settings.indicator_holders ){
-      for( let indicator of holder.indicators ){
-        if( this.hidenColums.indexOf(indicator.id) == -1 ){
-          for ( let orgunit of orgunits ){
-            if(orgunit.id in indicator.values && indicator.values[orgunit.id] != null){
+    for (let holder of this.scorecard.data.data_settings.indicator_holders) {
+      for (let indicator of holder.indicators) {
+        if (this.hidenColums.indexOf(indicator.id) == -1) {
+          for (let orgunit of orgunits) {
+            if (orgunit.id in indicator.values && indicator.values[orgunit.id] != null) {
               n++;
               sum = sum + parseFloat(indicator.values[orgunit.id])
             }
@@ -808,14 +831,14 @@ export class ViewComponent implements OnInit, AfterViewInit, OnDestroy {
    * finding the row average
    * @param orgunit_id
    */
-  findRowTotalSum(orgunits){
+  findRowTotalSum(orgunits) {
     let sum = 0;
     let n = 0;
-    for ( let holder of this.scorecard.data.data_settings.indicator_holders ){
-      for( let indicator of holder.indicators ){
-        if( this.hidenColums.indexOf(indicator.id) == -1 ){
-          for ( let orgunit of orgunits ){
-            if(orgunit.id in indicator.values && indicator.values[orgunit.id] != null){
+    for (let holder of this.scorecard.data.data_settings.indicator_holders) {
+      for (let indicator of holder.indicators) {
+        if (this.hidenColums.indexOf(indicator.id) == -1) {
+          for (let orgunit of orgunits) {
+            if (orgunit.id in indicator.values && indicator.values[orgunit.id] != null) {
               n++;
               sum = sum + parseFloat(indicator.values[orgunit.id])
             }
@@ -830,30 +853,30 @@ export class ViewComponent implements OnInit, AfterViewInit, OnDestroy {
    * Finding avarage for the column
    * @param orgunits, indicator_id
    */
-  findColumnAverage(orgunits, indicator_id,scorecard){
+  findColumnAverage(orgunits, indicator_id, scorecard) {
     let sum = 0;
-    for ( let orgunit of orgunits ){
-      for ( let holder of scorecard.data.data_settings.indicator_holders ){
-        for( let indicator of holder.indicators ){
-          if(orgunit.id in indicator.values && indicator.id == indicator_id){
+    for (let orgunit of orgunits) {
+      for (let holder of scorecard.data.data_settings.indicator_holders) {
+        for (let indicator of holder.indicators) {
+          if (orgunit.id in indicator.values && indicator.id == indicator_id) {
             sum = sum + parseFloat(indicator.values[orgunit.id])
           }
         }
       }
     }
-    return (sum/ this.getIndicatorsList(this.scorecard).length).toFixed(2);
+    return (sum / this.getIndicatorsList(this.scorecard).length).toFixed(2);
   }
 
   /**
    * Finding avarage for the column
    * @param orgunits, indicator_id
    */
-  findColumnSum(orgunits, indicator_id, scorecard){
+  findColumnSum(orgunits, indicator_id, scorecard) {
     let sum = 0;
-    for ( let orgunit of orgunits ){
-      for ( let holder of scorecard.data.data_settings.indicator_holders ){
-        for( let indicator of holder.indicators ){
-          if(orgunit.id in indicator.values && indicator.id == indicator_id){
+    for (let orgunit of orgunits) {
+      for (let holder of scorecard.data.data_settings.indicator_holders) {
+        for (let indicator of holder.indicators) {
+          if (orgunit.id in indicator.values && indicator.id == indicator_id) {
             sum = sum + parseFloat(indicator.values[orgunit.id])
           }
         }
@@ -866,12 +889,12 @@ export class ViewComponent implements OnInit, AfterViewInit, OnDestroy {
    * finding the row average
    * @param orgunit_id
    */
-  findRowSum(orgunit_id){
+  findRowSum(orgunit_id) {
     let sum = 0;
-    for ( let holder of this.scorecard.data.data_settings.indicator_holders ){
-      for( let indicator of holder.indicators ){
-        if(orgunit_id in indicator.values && indicator.values[orgunit_id] != null ){
-          if( this.hidenColums.indexOf(indicator.id) == -1) {
+    for (let holder of this.scorecard.data.data_settings.indicator_holders) {
+      for (let indicator of holder.indicators) {
+        if (orgunit_id in indicator.values && indicator.values[orgunit_id] != null) {
+          if (this.hidenColums.indexOf(indicator.id) == -1) {
             sum = sum + parseFloat(indicator.values[orgunit_id])
           }
         }
@@ -881,64 +904,64 @@ export class ViewComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   // dealing with showing sum
-  enableLegend(e){
+  enableLegend(e) {
     this.scorecard.data.header.show_legend_definition = e.target.checked;
-    let close = (this.keep_options_open)?'':this.showOptions();
+    let close = (this.keep_options_open) ? '' : this.showOptions();
   }
 
   // dealing with showing average
-  showAverageInRow(e){
+  showAverageInRow(e) {
     this.show_average_in_row = e.target.checked;
-    let close = (this.keep_options_open)?'':this.showOptions();
+    let close = (this.keep_options_open) ? '' : this.showOptions();
   }
 
   // dealing with showing average
-  showAverageInColumn(e){
+  showAverageInColumn(e) {
     this.show_average_in_column = e.target.checked;
-    let close = (this.keep_options_open)?'':this.showOptions();
+    let close = (this.keep_options_open) ? '' : this.showOptions();
   }
 
   // dealing with showing average
-  hideEmptyColumn(e){
+  hideEmptyColumn(e) {
     this.hide_empty_column = e.target.checked;
-    let close = (this.keep_options_open)?'':this.showOptions();
+    let close = (this.keep_options_open) ? '' : this.showOptions();
   }
 
   // hiding columns
-  hideColums(){
+  hideColums() {
     console.log(this.hidenColums);
   }
 
-  sortScoreCard(sortingColumn, sortAscending){
-    if( sortingColumn == "none" ){
+  sortScoreCard(sortingColumn, sortAscending) {
+    if (sortingColumn == "none") {
       this.dataService.sortArrOfObjectsByParam(this.orgunits, "name", sortAscending)
     }
-    else if( sortingColumn == 'avg' ){
-      for ( let orgunit of this.orgunits ){
+    else if (sortingColumn == 'avg') {
+      for (let orgunit of this.orgunits) {
         orgunit['avg'] = parseFloat(this.findRowAverage(orgunit.id));
       }
       this.dataService.sortArrOfObjectsByParam(this.orgunits, sortingColumn, sortAscending)
     }
-    else if( sortingColumn == 'sum' ){
-      for ( let orgunit of this.orgunits ){
+    else if (sortingColumn == 'sum') {
+      for (let orgunit of this.orgunits) {
         orgunit['sum'] = this.findRowSum(orgunit.id);
       }
       this.dataService.sortArrOfObjectsByParam(this.orgunits, sortingColumn, sortAscending)
     }
-    else{
-      for ( let orgunit of this.orgunits ){
-        orgunit[sortingColumn] = this.findOrgunitIndicatorValue(orgunit.id, sortingColumn );
+    else {
+      for (let orgunit of this.orgunits) {
+        orgunit[sortingColumn] = this.findOrgunitIndicatorValue(orgunit.id, sortingColumn);
       }
       this.dataService.sortArrOfObjectsByParam(this.orgunits, sortingColumn, sortAscending)
     }
-    let close = (this.keep_options_open)?'':this.showOptions();
+    let close = (this.keep_options_open) ? '' : this.showOptions();
   }
 
-  private findOrgunitIndicatorValue(orgunit_id: string, indicator_id:string){
-    let val:number = 0;
-    for ( let holder of this.scorecard.data.data_settings.indicator_holders ){
-      for( let indicator of holder.indicators ){
-        if(orgunit_id in indicator.values && indicator.values[orgunit_id] != null && indicator.id == indicator_id){
+  private findOrgunitIndicatorValue(orgunit_id: string, indicator_id: string) {
+    let val: number = 0;
+    for (let holder of this.scorecard.data.data_settings.indicator_holders) {
+      for (let indicator of holder.indicators) {
+        if (orgunit_id in indicator.values && indicator.values[orgunit_id] != null && indicator.id == indicator_id) {
           val = parseFloat(indicator.values[orgunit_id])
         }
       }
@@ -946,13 +969,13 @@ export class ViewComponent implements OnInit, AfterViewInit, OnDestroy {
     return val;
   }
 
-  ngOnDestroy (){
-    if( this.subscription ){
+  ngOnDestroy() {
+    if (this.subscription) {
       this.subscription.unsubscribe();
     }
 
-    for( let subscr of this.indicatorCalls ){
-      if( subscr ){
+    for (let subscr of this.indicatorCalls) {
+      if (subscr) {
         subscr.unsubscribe();
       }
     }
