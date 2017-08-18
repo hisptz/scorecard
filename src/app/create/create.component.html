@@ -18,7 +18,7 @@
         <li class="list-group-item pointer">
           <div class="row">
             <div class="col-sm-4"><label title="tick to show legend"><input type="checkbox" [(ngModel)]="scorecard.data.header.show_legend_definition"> Legend</label></div>
-            <div class="col-sm-4"><label title="tick to show ranking"><input type="checkbox" [(ngModel)]="scorecard.data.show_rank"> Rank</label></div>
+            <div class="col-sm-4"><label title="tick to show ranking"><input type="checkbox" [(ngModel)]="scorecard.data.show_rank"> Item Number</label></div>
             <div class="col-sm-4"><label title="tick to show empty rows"><input type="checkbox" [(ngModel)]="scorecard.data.empty_rows"> Empty Rows</label></div>
           </div>
         </li>
@@ -702,7 +702,15 @@
     <div class="indicator-content">
       <span class="glyphicon glyphicon-remove pull-right" style="cursor: pointer" (click)="showTextEditor()"></span>
       <div style="padding: 15px">
-        <textarea id="my-editor-id"></textarea>
+        <ckeditor
+          [(ngModel)]="scorecard.data.header.template.content"
+          [config]="{uiColor: '#99000'}"
+          [readonly]="false"
+          (change)="onTitleChange($event)"
+          (ready)="onTitleReady($event)"
+          (blur)="onTitleBlur($event)"
+          debounce="300">
+        </ckeditor>
         <button class="btn btn-default pull-right" (click)="showTextEditor()"> <span class="glyphicon glyphicon-ok"></span> Done </button>
       </div>
     </div>

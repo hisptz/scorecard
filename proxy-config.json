@@ -1,14 +1,18 @@
 {
   "/api": {
-    "target": "https://scorecard-dev.dhis2.org/demo",
+    "target": "http://localhost:8080",
+    "target1": "https://scorecard-dev.dhis2.org/demo",
     "secure": "false",
-    "auth":"scorecard:Scorecard1234",
+    "auth":"admin:district",
+    "auth1":"scorecard:Scorecard1234",
     "changeOrigin":true
   },
   "/": {
-    "target": "https://scorecard-dev.dhis2.org/demo",
+    "target": "http://localhost:8080",
+    "target1": "https://scorecard-dev.dhis2.org/demo",
     "secure": "false",
-    "auth":"scorecard:Scorecard1234",
+    "auth":"admin:district",
+    "auth1":"scorecard:Scorecard1234",
     "changeOrigin":true
   }
 }
