@@ -1,5 +1,5 @@
 <div class="container-fluid" id="filters" style="padding: 0px">
-  <div class="col-sm-4" style="padding-left: 5px">
+  <div class="col-sm-5" style="padding-left: 5px">
     <label>Organisation Units</label>
     <div class="tree-input" appClickOutside (clickOutside)="showOrgTree = true" >
       <div>
@@ -98,7 +98,7 @@
     </div>
 
   </div>
-  <div class="col-sm-3">
+  <div class="col-sm-4">
         <label>Selected Period</label>
         <div class="tree-input" appClickOutside (clickOutside)="showPerTree = true">
           <div>
@@ -186,14 +186,14 @@
           </div>
         </div>
   </div>
-  <div class="col-sm-2">
-    <label>Show</label>
-    <select class="form-control" [(ngModel)]="chart_settings" style="height: 38px">
-      <option value="ou-pe">period vs orgunit</option>
-      <option value="dx-pe">period vs data</option>
-      <option value="dx-ou">data vs orgunit</option>
-    </select>
-  </div>
+  <!--<div class="col-sm-2">-->
+    <!--<label>Show</label>-->
+    <!--<select class="form-control" [(ngModel)]="chart_settings" style="height: 38px">-->
+      <!--<option value="ou-pe">period vs orgunit</option>-->
+      <!--<option value="dx-pe">period vs data</option>-->
+      <!--<option value="dx-ou">data vs orgunit</option>-->
+    <!--</select>-->
+  <!--</div>-->
   <div class="col-sm-3">
     <label>&nbsp;&nbsp;</label>
     <div>
