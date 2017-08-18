@@ -161,7 +161,6 @@ export class CreateComponent implements OnInit, AfterViewInit, OnDestroy {
   share_filter: string = '';
   group_type: string = 'indicators';
   bootleneck_group_type: string = 'indicators';
-
   constructor(private http: Http,
               private indicatorService: IndicatorGroupService,
               private datasetService: DatasetService,
@@ -435,6 +434,7 @@ export class CreateComponent implements OnInit, AfterViewInit, OnDestroy {
     // period configuration
     this.periods = this.filterService.getPeriodArray(this.period_type, this.year);
   }
+
 
   loadOrganisationUnit() {
     if (this.orgunitService.nodes === null) {

@@ -24,6 +24,7 @@ import { EventDataService } from './shared/services/event-data.service';
 import {VisualizerService} from './view/dhis-visualizer/visulizer.service';
 import {FunctionService} from './shared/services/function.service';
 import {HttpClientService} from './shared/services/http-client.service';
+import {CanDeactivateGuard} from "./shared/guards/cad-deactivate-guard";
 
 @NgModule({
   declarations: [
@@ -52,7 +53,8 @@ import {HttpClientService} from './shared/services/http-client.service';
     ProgramIndicatorsService,
     EventDataService,
     FunctionService,
-    HttpClientService
+    HttpClientService,
+    CanDeactivateGuard
   ],
   bootstrap: [AppComponent]
 })
