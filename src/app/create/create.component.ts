@@ -1155,6 +1155,18 @@ export class CreateComponent implements OnInit, AfterViewInit, OnDestroy {
     this.show_editor = !this.show_editor;
   }
 
+  onTitleChange(event) {
+    console.log('changed', event);
+  }
+
+  onTitleReady(event) {
+    console.log('ready', event);
+  }
+
+  onTitleBlur(event) {
+    console.log('blur', event);
+  }
+
   addAditionalLabel() {
     if (this.newLabel !== '') {
       this.scorecard.data.additional_labels.push(this.newLabel);
