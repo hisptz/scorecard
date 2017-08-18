@@ -5,3 +5,12 @@
   padding-left: 2px;
   padding-right: 2px;
 }
+
+@media print {
+  #header{
+    display: none;
+  }
+  #header *{
+    display: none;
+  }
+}
