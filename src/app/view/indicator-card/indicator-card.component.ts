@@ -1,13 +1,13 @@
 import {Component, OnInit, Input, ViewChild, AfterViewInit, OnDestroy, Output, EventEmitter} from '@angular/core';
-import {FilterService} from "../../shared/services/filter.service";
+import {FilterService} from '../../shared/services/filter.service';
 import {TreeNode, TREE_ACTIONS, IActionMapping, TreeComponent} from 'angular2-tree-component';
-import {Constants} from "../../shared/costants";
+import {Constants} from '../../shared/costants';
 import {Http, Response} from '@angular/http';
 import 'rxjs/Rx';
 import {Observable} from 'rxjs';
 import {Subscription} from 'rxjs/Rx';
-import {Angular2Csv} from "angular2-csv";
-import {VisualizerService} from "../dhis-visualizer/visulizer.service";
+import {Angular2Csv} from 'angular2-csv';
+import {VisualizerService} from '../dhis-visualizer/visulizer.service';
 
 const actionMapping1: IActionMapping = {
   mouse: {
@@ -50,7 +50,7 @@ export class IndicatorCardComponent implements OnInit, AfterViewInit, OnDestroy 
     loading: false,
     loading_message: 'Loading Organisation units...',
     multiple: true,
-    placeholder: "Select Organisation Unit"
+    placeholder: 'Select Organisation Unit'
   };
 
   card_period_tree_config: any = {
@@ -60,20 +60,20 @@ export class IndicatorCardComponent implements OnInit, AfterViewInit, OnDestroy 
     loading: false,
     loading_message: 'Loading Periods...',
     multiple: true,
-    placeholder: "Select period"
+    placeholder: 'Select period'
   };
   card_organisationunits: any[] = [];
   card_periods: any[] = [];
   card_selected_orgunits: any[] = [];
   card_selected_periods: any[] = [];
-  card_period_type: string = "Quarterly";
+  card_period_type: string = 'Quarterly';
   card_year: any;
   showOrgTree: boolean = true;
   showPerTree: boolean = true;
 
   card_orgUnit: any;
   card_period: any;
-  current_visualisation: string = "table";
+  current_visualisation: string = 'table';
   current_analytics_data: any = null;
   current_parameters: string[] = [];
 
@@ -120,19 +120,19 @@ export class IndicatorCardComponent implements OnInit, AfterViewInit, OnDestroy 
     {name: 'gauge', image: 'gauge.jpg'}
   ];
 
-  chart_settings: string = "ou-pe";
+  chart_settings: string = 'ou-pe';
   showBottleneck: boolean = false;
   error_occured: boolean = false;
 
   orgunit_model: any = {
-    selection_mode: "orgUnit",
-    selected_level: "",
-    selected_group: "",
+    selection_mode: 'orgUnit',
+    selected_level: '',
+    selected_group: '',
     orgunit_levels: [],
     orgunit_groups: [],
     selected_orgunits: [],
     user_orgunits: [],
-    selected_user_orgunit: "USER_ORGUNIT"
+    selected_user_orgunit: 'USER_ORGUNIT'
   };
 
   bottleneck_first_time: boolean = false;
@@ -164,7 +164,7 @@ export class IndicatorCardComponent implements OnInit, AfterViewInit, OnDestroy 
   ngAfterViewInit() {
     console.log(this.default_orgunit);
 
-    this.updateIndicatorCard(this.indicator, "table", this.default_period, this.orgunit_model, false);
+    this.updateIndicatorCard(this.indicator, 'table', this.default_period, this.orgunit_model, false);
     this.default_period.forEach((current_period) => {
       this.activateNode(current_period.id, this.pertree);
     });
@@ -198,21 +198,27 @@ export class IndicatorCardComponent implements OnInit, AfterViewInit, OnDestroy 
     this.showOrgTree = true;
     this.showPerTree = true;
     // construct metadata array
-    let indicatorsArray = [];
-    let orgUnitsArray = [];
-    let periodArray = [];
+    const indicatorsArray = [];
+    const function_indicatorsArray = [];
+    const orgUnitsArray = [];
+    const periodArray = [];
 
     // check first if your supposed to load bottleneck indicators too for analysis
     let labels = null;
     if (this.showBottleneck) {
       labels = [];
-      for (let holder of holders) {
-        for (let item of holder.indicators) {
-          if (this.hidden_columns.indexOf(item.id) == -1) {
-            if (item.hasOwnProperty("bottleneck_indicators")) {
-              for (let bottleneck of item.bottleneck_indicators) {
-                indicatorsArray.push(bottleneck.id);
-                labels.push({'id': bottleneck.id, 'name': bottleneck.bottleneck_title})
+      for (const holder of holders) {
+        for (const item of holder.indicators) {
+          if (this.hidden_columns.indexOf(item.id) === -1) {
+            if (item.hasOwnProperty('bottleneck_indicators')) {
+              for (const bottleneck of item.bottleneck_indicators) {
+                if (bottleneck.hasOwnProperty('function')) {
+                  function_indicatorsArray.push(bottleneck);
+                  labels.push({'id': bottleneck.id, 'name': bottleneck.bottleneck_title});
+                }else {
+                  indicatorsArray.push(bottleneck.id);
+                  labels.push({'id': bottleneck.id, 'name': bottleneck.bottleneck_title});
+                }
               }
             }
             // indicatorsArray.push(item.id);
@@ -221,26 +227,26 @@ export class IndicatorCardComponent implements OnInit, AfterViewInit, OnDestroy 
         }
       }
       if (this.bottleneck_first_time) {
-        type = "column";
-        this.current_visualisation = "column";
-        this.chart_settings = "ou-dx";
+        type = 'column';
+        this.current_visualisation = 'column';
+        this.chart_settings = 'ou-dx';
         this.visualizer_config.type = 'chart';
         this.bottleneck_first_time = false;
       }
     } else {
       labels = [];
-      for (let holder of holders) {
-        for (let item of holder.indicators) {
-          if (this.hidden_columns.indexOf(item.id) == -1) {
+      for (const holder of holders) {
+        for (const item of holder.indicators) {
+          if (this.hidden_columns.indexOf(item.id) === -1) {
             indicatorsArray.push(item.id);
-            labels.push({'id': item.id, 'name': item.title})
+            labels.push({'id': item.id, 'name': item.title});
           }
         }
       }
     }
 
-    let config_array = this.chart_settings.split("-");
-    if (type == "table") {
+    const config_array = this.chart_settings.split('-');
+    if (type === 'table') {
       this.visualizer_config = {
         'type': 'table',
         'tableConfiguration': {
@@ -257,16 +263,14 @@ export class IndicatorCardComponent implements OnInit, AfterViewInit, OnDestroy 
           'yAxisType': 'ou',
           'labels': labels
         }
-      }
-    }
-    else if (type == "csv") {
+      };
+    }else if (type === 'csv') {
 
-    } else if (type == "info") {
-      this.details_indicators = indicatorsArray.join(";");
-      this.visualizer_config.type = "info"
+    } else if (type === 'info') {
+      this.details_indicators = indicatorsArray.join(';');
+      this.visualizer_config.type = 'info'
 
-    }
-    else {
+    }else {
       this.visualizer_config = {
         'type': 'chart',
         'tableConfiguration': {
@@ -285,35 +289,34 @@ export class IndicatorCardComponent implements OnInit, AfterViewInit, OnDestroy 
         }
       };
     }
-    //if there is no change of parameters from last request dont go to server
-    if (type == "info") {
+    // if there is no change of parameters from last request dont go to server
+    if (type === 'info') {
 
       this.loading = false;
     } else {
       if (this.checkIfParametersChanged(orgunits, periods, indicatorsArray)) {
         this.error_occured = false;
         this.loading = false;
-        if (type == "csv") {
+        if (type === 'csv') {
           this.downloadCSV(this.current_analytics_data);
         } else {
           this.chartData = this.visulizationService.drawChart(this.current_analytics_data, this.visualizer_config.chartConfiguration);
           this.tableData = this.visulizationService.drawTable(this.current_analytics_data, this.visualizer_config.tableConfiguration);
         }
-      }
-      else {
+      }else {
         this.current_parameters = [];
         for (let item of periods) {
           periodArray.push(item.id);
           this.current_parameters.push(item.id);
         }
         // create an api analytics call
-        let url = this.constant.root_api + "analytics.json?dimension=dx:" + indicatorsArray.join(";") + "&dimension=ou:" + this.getOrgUnitsForAnalytics(orgunits, with_children) + "&dimension=pe:" + periodArray.join(";") + "&displayProperty=NAME";
+        let url = this.constant.root_api + 'analytics.json?dimension=dx:' + indicatorsArray.join(';') + '&dimension=ou:' + this.getOrgUnitsForAnalytics(orgunits, with_children) + '&dimension=pe:' + periodArray.join(';') + '&displayProperty=NAME';
 
         this.subscription = this.loadAnalytics(url).subscribe(
           (data) => {
             this.current_analytics_data = data;
             this.loading = false;
-            if (type == "csv") {
+            if (type === 'csv') {
               this.downloadCSV(data);
             } else {
               this.chartData = this.visulizationService.drawChart(data, this.visualizer_config.chartConfiguration);
@@ -342,8 +345,8 @@ export class IndicatorCardComponent implements OnInit, AfterViewInit, OnDestroy 
     for (let indicator of indicators) {
       temp_arr.push(indicator);
     }
-    if (this.current_parameters.length != 0 && temp_arr.length == this.current_parameters.length) {
-      checker = temp_arr.sort().join(",") == this.current_parameters.sort().join(",")
+    if (this.current_parameters.length != 0 && temp_arr.length === this.current_parameters.length) {
+      checker = temp_arr.sort().join(',') === this.current_parameters.sort().join(',')
     } else {
       checker = false;
     }
@@ -352,8 +355,8 @@ export class IndicatorCardComponent implements OnInit, AfterViewInit, OnDestroy 
 
   // a function to reverse the content of X axis and Y axis
   switchXandY(type, show_labels: boolean = false) {
-    if (type == "table") {
-      if (this.visualizer_config.tableConfiguration.rows[0] == "ou") {
+    if (type === 'table') {
+      if (this.visualizer_config.tableConfiguration.rows[0] === 'ou') {
         this.visualizer_config = {
           'type': 'table',
           'tableConfiguration': {
@@ -369,7 +372,7 @@ export class IndicatorCardComponent implements OnInit, AfterViewInit, OnDestroy 
             'yAxisType': 'pe'
           }
         }
-      } else if (this.visualizer_config.tableConfiguration.rows[0] == "pe") {
+      } else if (this.visualizer_config.tableConfiguration.rows[0] === 'pe') {
         this.visualizer_config = {
           'type': 'table',
           'tableConfiguration': {
@@ -388,13 +391,13 @@ export class IndicatorCardComponent implements OnInit, AfterViewInit, OnDestroy 
       }
 
     }
-    else if (type == "csv") {
+    else if (type === 'csv') {
 
-    } else if (type == "info") {
+    } else if (type === 'info') {
     }
     else {
-      let config_array = this.chart_settings.split("-");
-      if (this.visualizer_config.chartConfiguration.xAxisType == config_array[0]) {
+      let config_array = this.chart_settings.split('-');
+      if (this.visualizer_config.chartConfiguration.xAxisType === config_array[0]) {
         this.visualizer_config = {
           'type': 'chart',
           'tableConfiguration': {
@@ -411,7 +414,7 @@ export class IndicatorCardComponent implements OnInit, AfterViewInit, OnDestroy 
           }
         }
       }
-      else if (this.visualizer_config.chartConfiguration.xAxisType == config_array[1]) {
+      else if (this.visualizer_config.chartConfiguration.xAxisType === config_array[1]) {
         this.visualizer_config = {
           'type': 'chart',
           'tableConfiguration': {
@@ -463,27 +466,27 @@ export class IndicatorCardComponent implements OnInit, AfterViewInit, OnDestroy 
 
   // prepare a proper name for updating the organisation unit display area.
   getProperPreOrgunitName(): string {
-    let name = "";
-    if (this.orgunit_model.selection_mode == "Group") {
-      let use_value = this.orgunit_model.selected_group.split("-");
+    let name = '';
+    if (this.orgunit_model.selection_mode === 'Group') {
+      let use_value = this.orgunit_model.selected_group.split('-');
       for (let single_group of this.orgunit_model.orgunit_groups) {
-        if (single_group.id == use_value[1]) {
-          name = single_group.name + " in";
+        if (single_group.id === use_value[1]) {
+          name = single_group.name + ' in';
         }
       }
-    } else if (this.orgunit_model.selection_mode == "Usr_orgUnit") {
-      if (this.orgunit_model.selected_user_orgunit == "USER_ORGUNIT") name = "User org unit";
-      if (this.orgunit_model.selected_user_orgunit == "USER_ORGUNIT_CHILDREN") name = "User sub-units";
-      if (this.orgunit_model.selected_user_orgunit == "USER_ORGUNIT_GRANDCHILDREN") name = "User sub-x2-units";
-    } else if (this.orgunit_model.selection_mode == "Level") {
-      let use_level = this.orgunit_model.selected_level.split("-");
+    } else if (this.orgunit_model.selection_mode === 'Usr_orgUnit') {
+      if (this.orgunit_model.selected_user_orgunit === 'USER_ORGUNIT') name = 'User org unit';
+      if (this.orgunit_model.selected_user_orgunit === 'USER_ORGUNIT_CHILDREN') name = 'User sub-units';
+      if (this.orgunit_model.selected_user_orgunit === 'USER_ORGUNIT_GRANDCHILDREN') name = 'User sub-x2-units';
+    } else if (this.orgunit_model.selection_mode === 'Level') {
+      let use_level = this.orgunit_model.selected_level.split('-');
       for (let single_level of this.orgunit_model.orgunit_levels) {
-        if (single_level.level == use_level[1]) {
-          name = single_level.name + " in";
+        if (single_level.level === use_level[1]) {
+          name = single_level.name + ' in';
         }
       }
     } else {
-      name = "";
+      name = '';
     }
     return name
   }
@@ -491,10 +494,10 @@ export class IndicatorCardComponent implements OnInit, AfterViewInit, OnDestroy 
   // a function to prepare a list of organisation units for analytics
   getOrgUnitsForAnalytics(orgunit_model: any, with_children: boolean): string {
     let orgUnits = [];
-    let organisation_unit_analytics_string = "";
+    let organisation_unit_analytics_string = '';
     // if the selected orgunit is user org unit
-    if (orgunit_model.selection_mode == "Usr_orgUnit") {
-      if (orgunit_model.user_orgunits.length == 1) {
+    if (orgunit_model.selection_mode === 'Usr_orgUnit') {
+      if (orgunit_model.user_orgunits.length === 1) {
         let user_orgunit = this.orgtree.treeModel.getNodeById(orgunit_model.user_orgunits[0]);
         orgUnits.push(user_orgunit.id);
         if (user_orgunit.hasOwnProperty('children')) {
@@ -509,7 +512,7 @@ export class IndicatorCardComponent implements OnInit, AfterViewInit, OnDestroy 
 
     else {
       // if there is only one organisation unit selected
-      if (orgunit_model.selected_orgunits.length == 1) {
+      if (orgunit_model.selected_orgunits.length === 1) {
         let detailed_orgunit = this.orgtree.treeModel.getNodeById(orgunit_model.selected_orgunits[0].id);
         orgUnits.push(detailed_orgunit.id);
         if (detailed_orgunit.hasOwnProperty('children') && with_children) {
@@ -526,26 +529,26 @@ export class IndicatorCardComponent implements OnInit, AfterViewInit, OnDestroy 
           orgUnits.push(orgunit.id);
         })
       }
-      if (orgunit_model.selection_mode == "orgUnit") {
+      if (orgunit_model.selection_mode === 'orgUnit') {
 
       }
-      if (orgunit_model.selection_mode == "Level") {
-        organisation_unit_analytics_string += orgunit_model.selected_level + ";";
+      if (orgunit_model.selection_mode === 'Level') {
+        organisation_unit_analytics_string += orgunit_model.selected_level + ';';
       }
-      if (orgunit_model.selection_mode == "Group") {
-        organisation_unit_analytics_string += orgunit_model.selected_group + ";";
+      if (orgunit_model.selection_mode === 'Group') {
+        organisation_unit_analytics_string += orgunit_model.selected_group + ';';
       }
     }
 
 
-    return organisation_unit_analytics_string + orgUnits.join(";");
+    return organisation_unit_analytics_string + orgUnits.join(';');
   }
 
 
 // action to be called when a tree item is deselected(Remove item in array of selected items
   deactivateOrg($event) {
     this.orgunit_model.selected_orgunits.forEach((item, index) => {
-      if ($event.node.data.id == item.id) {
+      if ($event.node.data.id === item.id) {
         this.orgunit_model.selected_orgunits.splice(index, 1);
       }
     });
@@ -563,7 +566,7 @@ export class IndicatorCardComponent implements OnInit, AfterViewInit, OnDestroy 
   checkItemAvailabilty(orgunit, array): boolean {
     let checker = false;
     array.forEach((value) => {
-      if (value.id == orgunit.id) {
+      if (value.id === orgunit.id) {
         checker = true;
       }
     });
@@ -574,7 +577,7 @@ export class IndicatorCardComponent implements OnInit, AfterViewInit, OnDestroy 
   // action to be called when a tree item is deselected(Remove item in array of selected items
   deactivatePer($event) {
     this.card_selected_periods.forEach((item, index) => {
-      if ($event.node.data.id == item.id) {
+      if ($event.node.data.id === item.id) {
         this.card_selected_periods.splice(index, 1);
       }
     });
@@ -612,10 +615,10 @@ export class IndicatorCardComponent implements OnInit, AfterViewInit, OnDestroy 
 
   // function that is used to filter nodes
   filterNodes(text, tree, type: string = null) {
-    if (type == "orgunit") {
+    if (type === 'orgunit') {
       if (text.length >= 3) {
         tree.treeModel.filterNodes(text, true);
-      } else if (text.length == 0) {
+      } else if (text.length === 0) {
         tree.treeModel.filterNodes('', false);
       }
     } else {
@@ -669,7 +672,7 @@ export class IndicatorCardComponent implements OnInit, AfterViewInit, OnDestroy 
 
     let options = {
       fieldSeparator: ',',
-      quoteStrings: '"',
+      quoteStrings: '\'',
       decimalseparator: '.',
       showLabels: true,
       showTitle: false
@@ -682,12 +685,12 @@ export class IndicatorCardComponent implements OnInit, AfterViewInit, OnDestroy 
     let indicators_title = [];
     for (let holder of holders_array) {
       for (let indicator of holder.indicators) {
-        if (this.hidden_columns.indexOf(indicator.id) == -1) {
+        if (this.hidden_columns.indexOf(indicator.id) === -1) {
           indicators_title.push(indicator.name);
         }
       }
     }
-    return (this.showBottleneck) ? indicators_title.join(", ") + " Bottleneck Indicators " : indicators_title.join(", ");
+    return (this.showBottleneck) ? indicators_title.join(', ') + ' Bottleneck Indicators ' : indicators_title.join(', ');
 
   }
 
@@ -712,13 +715,13 @@ export class IndicatorCardComponent implements OnInit, AfterViewInit, OnDestroy 
     let check = false;
     let indicators = [];
     for (let indicator of holder.indicators) {
-      if (this.hidden_columns.indexOf(indicator.id) == -1) {
+      if (this.hidden_columns.indexOf(indicator.id) === -1) {
         counter++;
         indicators.push(indicator);
       }
     }
-    if (counter == 1) {
-      if (indicators[0].hasOwnProperty("bottleneck_indicators")) {
+    if (counter === 1) {
+      if (indicators[0].hasOwnProperty('bottleneck_indicators')) {
         if (indicators[0].bottleneck_indicators.length != 0) {
           check = true
         }
@@ -728,10 +731,10 @@ export class IndicatorCardComponent implements OnInit, AfterViewInit, OnDestroy 
   }
 
   getBackgroundStyle(visualization_type: string): string {
-    if (visualization_type == this.current_visualisation) {
-      return "#5BC0DE";
+    if (visualization_type === this.current_visualisation) {
+      return '#5BC0DE';
     } else {
-      return "#DDD";
+      return '#DDD';
     }
   }
 

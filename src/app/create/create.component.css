@@ -265,6 +265,10 @@ a:hover{
   height: 34px;
 }
 
+.period{
+  cursor: pointer
+}
+
 .show_tops{
   position: relative;
   float: left;

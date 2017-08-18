@@ -72,13 +72,13 @@ export class HomeComponent implements OnInit {
               };
               if (scorecard_item.can_see) {
                 this.scorecards.push(scorecard_item);
+                scorecard_count++;
               }
               this.dataService.sortArrOfObjectsByParam(this.scorecards, 'name', true);
               this.deleting[scorecard] = false;
               this.confirm_deleting[scorecard] = false;
               this.deleted[scorecard] = false;
               this.error_deleting[scorecard] = false;
-              scorecard_count++;
               // set loading equal to false when all scorecards are loaded
               if (scorecard_count === this.scorecards.length) {
                 this.loading_message = 'Done loading all score cards';
