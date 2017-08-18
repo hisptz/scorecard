@@ -2,15 +2,15 @@ import {
   Component, OnInit, AfterViewInit, ViewChild, ValueProvider, style, state, animate, transition, trigger,
   OnDestroy
 } from '@angular/core';
-import {ScoreCard, ScorecardService} from "../shared/services/scorecard.service";
-import {ActivatedRoute} from "@angular/router";
-import {Subscription} from "rxjs";
-import {DataService} from "../shared/data.service";
-import {FilterService} from "../shared/services/filter.service";
-import {Constants} from "../shared/costants";
-import {OrgUnitService} from "../shared/services/org-unit.service";
+import {ScoreCard, ScorecardService} from '../shared/services/scorecard.service';
+import {ActivatedRoute} from '@angular/router';
+import {Subscription} from 'rxjs';
+import {DataService} from '../shared/data.service';
+import {FilterService} from '../shared/services/filter.service';
+import {Constants} from '../shared/costants';
+import {OrgUnitService} from '../shared/services/org-unit.service';
 import {TreeNode, TREE_ACTIONS, IActionMapping, TreeComponent} from 'angular2-tree-component';
-import {ScorecardComponent} from "./scorecard/scorecard.component";
+import {ScorecardComponent} from './scorecard/scorecard.component';
 
 import * as _ from 'lodash';
 
@@ -70,7 +70,7 @@ export class ViewComponent implements OnInit, AfterViewInit, OnDestroy {
     loading: false,
     loading_message: 'Loading Organisation units...',
     multiple: true,
-    placeholder: "Select Organisation Unit"
+    placeholder: 'Select Organisation Unit'
   };
 
   period_tree_config: any = {
@@ -80,13 +80,13 @@ export class ViewComponent implements OnInit, AfterViewInit, OnDestroy {
     loading: false,
     loading_message: 'Loading Periods...',
     multiple: true,
-    placeholder: "Select period"
+    placeholder: 'Select period'
   };
   organisationunits: any[] = [];
   periods: any[] = [];
   selected_orgunits: any[] = [];
   selected_periods: any = [];
-  period_type: string = "Quarterly";
+  period_type: string = 'Quarterly';
   year: number = 2017;
   default_orgUnit: string[] = [];
   default_period: string[] = [];
@@ -118,25 +118,25 @@ export class ViewComponent implements OnInit, AfterViewInit, OnDestroy {
   hide_empty_rows: boolean = false;
 
   sortAscending: boolean = true;
-  sorting_column: any = "none";
+  sorting_column: any = 'none';
   hidenColums: any[] = [];
 
   shown_records: number = 0;
-  average_selection: string = "all";
+  average_selection: string = 'all';
   show_rank: boolean = false;
   metadata_ready = false;
   have_authorities: boolean = true;
   orgUnitlength: number = 0;
 
   orgunit_model: any = {
-    selection_mode: "orgUnit",
-    selected_level: "",
-    selected_group: "",
+    selection_mode: 'orgUnit',
+    selected_level: '',
+    selected_group: '',
     orgunit_levels: [],
     orgunit_groups: [],
     selected_orgunits: [],
     user_orgunits: [],
-    selected_user_orgunit: "USER_ORGUNIT"
+    selected_user_orgunit: 'USER_ORGUNIT'
   };
   userInfo: any = {};
 
@@ -158,7 +158,7 @@ export class ViewComponent implements OnInit, AfterViewInit, OnDestroy {
         //noinspection TypeScriptUnresolvedVariable
         userInfo.userCredentials.userRoles.forEach((role) => {
           role.authorities.forEach((ath) => {
-            if (ath == "ALL") {
+            if (ath == 'ALL') {
               this.have_authorities = true;
             }
           });
@@ -209,45 +209,45 @@ export class ViewComponent implements OnInit, AfterViewInit, OnDestroy {
           data: scorecard_details
         };
         // attach organisation unit if none is defined
-        if (!this.scorecard.data.orgunit_settings.hasOwnProperty("selected_orgunits")) {
+        if (!this.scorecard.data.orgunit_settings.hasOwnProperty('selected_orgunits')) {
           this.scorecard.data.orgunit_settings = {
-            "selection_mode": "Usr_orgUnit",
-            "selected_level": "",
-            "selected_group": "",
-            "orgunit_levels": [],
-            "orgunit_groups": [],
-            "selected_orgunits": [],
-            "user_orgunits": [],
-            "selected_user_orgunit": "USER_ORGUNIT"
+            'selection_mode': 'Usr_orgUnit',
+            'selected_level': '',
+            'selected_group': '',
+            'orgunit_levels': [],
+            'orgunit_groups': [],
+            'selected_orgunits': [],
+            'user_orgunits': [],
+            'selected_user_orgunit': 'USER_ORGUNIT'
           };
         }
 
         this.orgunit_model = this.scorecard.data.orgunit_settings;
 
         // attach average_selection if none is defined
-        if (!this.scorecard.data.hasOwnProperty("average_selection")) {
-          this.scorecard.data.average_selection = "all";
+        if (!this.scorecard.data.hasOwnProperty('average_selection')) {
+          this.scorecard.data.average_selection = 'all';
         }
         // attach shown_records if none is defined
-        if (!this.scorecard.data.hasOwnProperty("shown_records")) {
-          this.scorecard.data.shown_records = "all";
+        if (!this.scorecard.data.hasOwnProperty('shown_records')) {
+          this.scorecard.data.shown_records = 'all';
         }
         // attach show_average_in_row if none is defined
-        if (!this.scorecard.data.hasOwnProperty("show_average_in_row")) {
+        if (!this.scorecard.data.hasOwnProperty('show_average_in_row')) {
           this.scorecard.data.show_average_in_row = false;
         }
         // attach show_average_in_column if none is defined
-        if (!this.scorecard.data.hasOwnProperty("show_average_in_column")) {
+        if (!this.scorecard.data.hasOwnProperty('show_average_in_column')) {
           this.scorecard.data.show_average_in_column = false;
         }
         //attach a property empty row if none is defined
-        if (!this.scorecard.data.hasOwnProperty("empty_rows")) {
+        if (!this.scorecard.data.hasOwnProperty('empty_rows')) {
           this.scorecard.data.empty_rows = true;
         }
-        if (this.scorecard.data.hasOwnProperty("periodType")) {
+        if (this.scorecard.data.hasOwnProperty('periodType')) {
           this.period_type = this.scorecard.data.periodType
         }
-        if (!this.scorecard.data.hasOwnProperty("show_data_in_column")) {
+        if (!this.scorecard.data.hasOwnProperty('show_data_in_column')) {
           this.scorecard.data.show_data_in_column = false;
         }
 
@@ -255,7 +255,7 @@ export class ViewComponent implements OnInit, AfterViewInit, OnDestroy {
           this.periods = this.filterService.getPeriodArray(this.period_type, this.year);
           this.selected_periods.push(this.filterService.getPeriodArray(this.period_type, this.year)[0]);
         } else {
-          this.periods = this.scorecard.data.selected_periods;
+          this.periods = this.filterService.getPeriodArray(this.period_type, this.year);
           this.scorecard.data.selected_periods.forEach((period) => {
             this.selected_periods.push(period);
             const use_period = this.filterService.deducePeriodType(period.id);
@@ -279,7 +279,7 @@ export class ViewComponent implements OnInit, AfterViewInit, OnDestroy {
                     let level = this.orgunitService.getUserHighestOrgUnitlevel(userOrgunit);
                     this.orgunit_model.user_orgunits = this.orgunitService.getUserOrgUnits(userOrgunit);
                     this.orgunitService.user_orgunits = this.orgunitService.getUserOrgUnits(userOrgunit);
-                    if (this.orgunit_model.selection_mode == "Usr_orgUnit") {
+                    if (this.orgunit_model.selection_mode == 'Usr_orgUnit') {
                       this.orgunit_model.selected_orgunits = [];
                       for (let item of this.orgunit_model.user_orgunits) {
                         this.orgunit_model.selected_orgunits.push(item)
@@ -352,7 +352,7 @@ export class ViewComponent implements OnInit, AfterViewInit, OnDestroy {
           this.orgunit_model.user_orgunits = this.orgunitService.user_orgunits;
           this.orgunit_model.orgunit_groups = this.orgunitService.orgunit_groups;
           //activate organisation units
-          if (this.orgunit_model.selection_mode == "Usr_orgUnit") {
+          if (this.orgunit_model.selection_mode == 'Usr_orgUnit') {
             this.orgunit_model.selected_orgunits = this.orgunit_model.user_orgunits;
           }
           for (let active_orgunit of this.orgunit_model.selected_orgunits) {
@@ -374,7 +374,7 @@ export class ViewComponent implements OnInit, AfterViewInit, OnDestroy {
 
   // this function is used to sort organisation unit
   prepareOrganisationUnitTree(organisationUnit, type: string = 'top') {
-    if (type == "top") {
+    if (type == 'top') {
       if (organisationUnit.children) {
         organisationUnit.children.sort((a, b) => {
           if (a.name > b.name) {
@@ -414,26 +414,26 @@ export class ViewComponent implements OnInit, AfterViewInit, OnDestroy {
 
   // prepare a proper name for updating the organisation unit display area.
   getProperPreOrgunitName(): string {
-    let name = "";
-    if (this.orgunit_model.selection_mode == "Group") {
-      let use_value = this.orgunit_model.selected_group.split("-");
+    let name = '';
+    if (this.orgunit_model.selection_mode == 'Group') {
+      let use_value = this.orgunit_model.selected_group.split('-');
       for (let single_group of this.orgunit_model.orgunit_groups) {
         if (single_group.id == use_value[1]) {
-          name = single_group.name + " in";
+          name = single_group.name + ' in';
         }
       }
-    } else if (this.orgunit_model.selection_mode == "Usr_orgUnit") {
-      if (this.orgunit_model.selected_user_orgunit == "USER_ORGUNIT_CHILDREN") name = "Children of ";
-      if (this.orgunit_model.selected_user_orgunit == "USER_ORGUNIT_GRANDCHILDREN") name = "Grand Children of";
-    } else if (this.orgunit_model.selection_mode == "Level") {
-      let use_level = this.orgunit_model.selected_level.split("-");
+    } else if (this.orgunit_model.selection_mode == 'Usr_orgUnit') {
+      if (this.orgunit_model.selected_user_orgunit == 'USER_ORGUNIT_CHILDREN') name = 'Children of ';
+      if (this.orgunit_model.selected_user_orgunit == 'USER_ORGUNIT_GRANDCHILDREN') name = 'Grand Children of';
+    } else if (this.orgunit_model.selection_mode == 'Level') {
+      let use_level = this.orgunit_model.selected_level.split('-');
       for (let single_level of this.orgunit_model.orgunit_levels) {
         if (single_level.level == use_level[1]) {
-          name = single_level.name + " in";
+          name = single_level.name + ' in';
         }
       }
     } else {
-      name = "";
+      name = '';
     }
     return name
   }
@@ -446,28 +446,30 @@ export class ViewComponent implements OnInit, AfterViewInit, OnDestroy {
     this.childScoreCard.loadScoreCard();
   }
 
-  //setting the period to next or previous
-  setPeriod(type, selected_periods) {
+  // setting the period to next or previous
+   setPeriod(type, selected_periods) {
     this.selected_periods = [];
-    if (type == "down") {
+    if (type === 'down') {
       this.periods = this.filterService.getPeriodArray(this.period_type, this.filterService.getLastPeriod(selected_periods, this.period_type).substr(0, 4));
-      this.activateNode(this.filterService.getLastPeriod(selected_periods, this.period_type), this.pertree);
+      // this.activateNode(this.filterService.getLastPeriod(selected_periods, this.period_type), this.pertree);
       this.period = [{
         id: this.filterService.getLastPeriod(selected_periods, this.period_type),
         name: this.getPeriodName(this.filterService.getLastPeriod(selected_periods, this.period_type))
       }];
+      this.selected_periods = this.period;
 
     }
-    if (type == "up") {
+    if (type === 'up') {
       this.periods = this.filterService.getPeriodArray(this.period_type, this.filterService.getNextPeriod(selected_periods, this.period_type).substr(0, 4));
-      this.activateNode(this.filterService.getNextPeriod(selected_periods, this.period_type), this.pertree);
+      // this.activateNode(this.filterService.getNextPeriod(selected_periods, this.period_type), this.pertree);
       this.period = [{
         id: this.filterService.getNextPeriod(selected_periods, this.period_type),
         name: this.getPeriodName(this.filterService.getNextPeriod(selected_periods, this.period_type))
       }];
+      this.selected_periods = this.period;
     }
     setTimeout(() => {
-      this.loadScoreCard()
+      this.loadScoreCard();
     }, 5);
   }
 
@@ -482,7 +484,7 @@ export class ViewComponent implements OnInit, AfterViewInit, OnDestroy {
 
   // get updated scorecard from scorecard component
   getUpdatedScorecard(scorecard) {
-    console.log("inakuja", scorecard);
+    console.log('inakuja', scorecard);
   }
 
   // prepare scorecard data and download them as csv
@@ -497,7 +499,7 @@ export class ViewComponent implements OnInit, AfterViewInit, OnDestroy {
 
   // load a preview function
   default_selected_periods: any = [];
-
+  functions: any[] = []
   loadPreview($event) {
     this.selected_indicator = [];
     // prepare indicators
@@ -506,6 +508,7 @@ export class ViewComponent implements OnInit, AfterViewInit, OnDestroy {
     } else {
       this.default_selected_periods = [$event.period];
     }
+    this.functions = $event.functions;
     if ($event.holderGroup == null) {
       this.selected_indicator = [$event.indicator];
     } else {
@@ -555,81 +558,81 @@ export class ViewComponent implements OnInit, AfterViewInit, OnDestroy {
   // Define default scorecard sample
   getEmptyScoreCard(): ScoreCard {
     return {
-      id: "",
-      name: "",
+      id: '',
+      name: '',
       data: {
-        "orgunit_settings": {
-          "selection_mode": "Usr_orgUnit",
-          "selected_level": "",
-          "selected_group": "",
-          "orgunit_levels": [],
-          "orgunit_groups": [],
-          "selected_orgunits": [],
-          "user_orgunits": [],
-          "selected_user_orgunit": "USER_ORGUNIT"
+        'orgunit_settings': {
+          'selection_mode': 'Usr_orgUnit',
+          'selected_level': '',
+          'selected_group': '',
+          'orgunit_levels': [],
+          'orgunit_groups': [],
+          'selected_orgunits': [],
+          'user_orgunits': [],
+          'selected_user_orgunit': 'USER_ORGUNIT'
         },
-        "average_selection": "all",
-        "shown_records": "all",
-        "show_average_in_row": false,
-        "show_average_in_column": false,
-        "periodType": "Quarterly",
-        "selected_periods": [],
-        "show_data_in_column": false,
-        "show_score": false,
-        "show_rank": false,
-        "rank_position_last": true,
-        "header": {
-          "title": "",
-          "sub_title": "",
-          "description": "",
-          "show_arrows_definition": true,
-          "show_legend_definition": false,
-          "template": {
-            "display": false,
-            "content": ""
+        'average_selection': 'all',
+        'shown_records': 'all',
+        'show_average_in_row': false,
+        'show_average_in_column': false,
+        'periodType': 'Quarterly',
+        'selected_periods': [],
+        'show_data_in_column': false,
+        'show_score': false,
+        'show_rank': false,
+        'rank_position_last': true,
+        'header': {
+          'title': '',
+          'sub_title': '',
+          'description': '',
+          'show_arrows_definition': true,
+          'show_legend_definition': false,
+          'template': {
+            'display': false,
+            'content': ''
           }
         },
-        "legendset_definitions": [
+        'legendset_definitions': [
           {
-            "color": "#008000",
-            "definition": "Target achieved / on track"
+            'color': '#008000',
+            'definition': 'Target achieved / on track'
           },
           {
-            "color": "#FFFF00",
-            "definition": "Progress, but more effort required"
+            'color': '#FFFF00',
+            'definition': 'Progress, but more effort required'
           },
           {
-            "color": "#FF0000",
-            "definition": "Not on track"
+            'color': '#FF0000',
+            'definition': 'Not on track'
           },
           {
-            "color": "#D3D3D3",
-            "definition": "N/A",
-            "default": true
+            'color': '#D3D3D3',
+            'definition': 'N/A',
+            'default': true
           },
           {
-            "color": "#FFFFFF",
-            "definition": "No data",
-            "default": true
+            'color': '#FFFFFF',
+            'definition': 'No data',
+            'default': true
           }
         ],
-        "highlighted_indicators": {
-          "display": false,
-          "definitions": []
+        'highlighted_indicators': {
+          'display': false,
+          'definitions': []
         },
-        "data_settings": {
-          "indicator_holders": [],
-          "indicator_holder_groups": []
+        'data_settings': {
+          'indicator_holders': [],
+          'indicator_holder_groups': []
         },
-        "additional_labels": [],
-        "footer": {
-          "display_generated_date": false,
-          "display_title": false,
-          "sub_title": null,
-          "description": null,
-          "template": null
+        'additional_labels': [],
+        'footer': {
+          'display_generated_date': false,
+          'display_title': false,
+          'sub_title': null,
+          'description': null,
+          'template': null
         },
-        "indicator_dataElement_reporting_rate_selection": "Indicators"
+        'indicator_dataElement_reporting_rate_selection': 'Indicators'
       }
     }
   }
@@ -668,8 +671,8 @@ export class ViewComponent implements OnInit, AfterViewInit, OnDestroy {
 
   // add item to array of selected items when item is selected
   activateOrg = ($event) => {
-    if (this.orgunit_model.selection_mode == "Usr_orgUnit") {
-      this.orgunit_model.selection_mode = "orgUnit";
+    if (this.orgunit_model.selection_mode == 'Usr_orgUnit') {
+      this.orgunit_model.selection_mode = 'orgUnit';
     }
     if (!this.checkItemAvailabilty($event.node.data, this.orgunit_model.selected_orgunits)) {
       this.orgunit_model.selected_orgunits.push($event.node.data);
@@ -679,7 +682,7 @@ export class ViewComponent implements OnInit, AfterViewInit, OnDestroy {
 
   //force user orgunit selection
   swithType(orgunit) {
-    if (this.orgunit_model.selection_mode == "Usr_orgUnit") {
+    if (this.orgunit_model.selection_mode == 'Usr_orgUnit') {
       for (let active_orgunit of this.orgunit_model.selected_orgunits) {
         this.deActivateNode(active_orgunit.id, this.orgtree);
       }
@@ -780,7 +783,7 @@ export class ViewComponent implements OnInit, AfterViewInit, OnDestroy {
 
   // help function to help on closing the indicator modal popup
   getDetails($event) {
-    this.show_details = $event
+    this.show_details = $event;
   }
 
   showOptions() {
@@ -933,8 +936,8 @@ export class ViewComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   sortScoreCard(sortingColumn, sortAscending) {
-    if (sortingColumn == "none") {
-      this.dataService.sortArrOfObjectsByParam(this.orgunits, "name", sortAscending)
+    if (sortingColumn == 'none') {
+      this.dataService.sortArrOfObjectsByParam(this.orgunits, 'name', sortAscending)
     }
     else if (sortingColumn == 'avg') {
       for (let orgunit of this.orgunits) {

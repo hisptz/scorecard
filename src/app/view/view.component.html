@@ -119,11 +119,11 @@
               <span *ngIf="selected_periods.length > 4">
             <span class="selected-item">
               {{ selected_periods[0].name }}
-              <a (click)="deActivateNode(selected_periods[0].id,pertree,$event)" class="removeorgunit">x</a>
+              <a (click)="deactivatePer(selected_periods[0]);$event.stopPropagation()" class="removeorgunit">x</a>
             </span>
                 <span class="selected-item">
               {{ selected_periods[1].name }}
-                  <a (click)="deActivateNode(selected_periods[1].id,pertree,$event)" class="removeorgunit">x</a>
+                  <a (click)="deactivatePer(selected_periods[1]);$event.stopPropagation()" class="removeorgunit">x</a>
             </span><span class="selected-item">
               and {{ selected_periods.length -2 }} more
             </span>
@@ -131,7 +131,7 @@
                 <span *ngIf="selected_periods.length <= 4">
                 <span *ngFor="let item of selected_periods" class="selected-item ng-binding ng-scope">
                   {{ item.name }}
-                  <a (click)="deActivateNode(item.id,pertree,$event)" class="removeorgunit">x</a>
+                  <a (click)="deactivatePer(item.id);$event.stopPropagation()" class="removeorgunit">x</a>
                 </span>
               </span>
               <span class="no-selection"*ngIf="selected_periods.length == 0 && !period_tree_config.loading">{{ period_tree_config.placeholder }}</span>
@@ -182,7 +182,7 @@
                       </ul>
                     </div>
                   </div>
-                  <div class="col-sm-6 tree-area1" style=" border-right: 1px solid rgba(0,0,0,0.1)">
+                  <div class="col-sm-6" style=" border-right: 1px solid rgba(0,0,0,0.1)">
                     <ul class="nav nav-pills nav-stacked">
                       <li *ngFor="let period of periods"
                           class="period" (click)="activatePer(period)"
@@ -193,7 +193,7 @@
                       </li>
                     </ul>
                   </div>
-                  <div class="col-sm-6 tree-area1">
+                  <div class="col-sm-6">
                     <ul class="nav nav-pills nav-stacked">
                       <li *ngFor="let period of selected_periods"
                           class="period" (click)="deactivatePer(period);$event.stopPropagation()"
@@ -325,11 +325,12 @@
     <div class="indicator-content">
         <span class="glyphicon glyphicon-remove pull-right" style="cursor: pointer" (click)="removeModel()"></span>
       <div style="padding: 15px">
-        <indicator-card
+        <app-indicator-card
           [orgunit_nodes]="organisationunits"
           [current_period_type]="period_type"
           [current_year]="year"
           [indicator]="selected_indicator"
+          [functions]="functions"
           [default_period]="default_selected_periods"
           [default_period_type]="period_type"
           [default_orgunit] = "orgunit_for_model"
@@ -337,7 +338,7 @@
           [default_orgunit_model] = "orgunit_model"
           (show_details) = "getDetails($event)"
         >Loading ....
-        </indicator-card>
+        </app-indicator-card>
       </div>
     </div>
   </div>

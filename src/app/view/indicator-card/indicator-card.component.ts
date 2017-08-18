@@ -4,17 +4,18 @@ import {TreeNode, TREE_ACTIONS, IActionMapping, TreeComponent} from 'angular2-tr
 import {Constants} from '../../shared/costants';
 import {Http, Response} from '@angular/http';
 import 'rxjs/Rx';
-import {Observable} from 'rxjs';
+import {Observable} from 'rxjs/Observable';
 import {Subscription} from 'rxjs/Rx';
 import {Angular2Csv} from 'angular2-csv';
 import {VisualizerService} from '../dhis-visualizer/visulizer.service';
+import * as _ from 'lodash';
 
 const actionMapping1: IActionMapping = {
   mouse: {
     click: (node, tree, $event) => {
       $event.ctrlKey
         ? TREE_ACTIONS.TOGGLE_SELECTED_MULTI(node, tree, $event)
-        : TREE_ACTIONS.TOGGLE_SELECTED(node, tree, $event)
+        : TREE_ACTIONS.TOGGLE_SELECTED(node, tree, $event);
     }
   }
 };
@@ -27,7 +28,7 @@ const actionMapping: IActionMapping = {
 };
 
 @Component({
-  selector: 'indicator-card',
+  selector: 'app-indicator-card',
   templateUrl: './indicator-card.component.html',
   styleUrls: ['./indicator-card.component.css']
 })
@@ -37,6 +38,7 @@ export class IndicatorCardComponent implements OnInit, AfterViewInit, OnDestroy 
   @Input() current_year: any;
   @Input() current_period_type: any;
   @Input() indicator: any;
+  @Input() functions: any[] = [];
   @Input() default_period: any;
   @Input() default_period_type: any;
   @Input() default_orgunit: any;
@@ -137,6 +139,19 @@ export class IndicatorCardComponent implements OnInit, AfterViewInit, OnDestroy 
 
   bottleneck_first_time: boolean = false;
 
+  // custom settings for tree
+  customTemplateStringOptions: any = {
+    isExpandedField: 'expanded',
+    actionMapping
+  };
+
+  // custom settings for tree
+  customTemplateStringOrgunitOptions: any = {
+    isExpandedField: 'expanded',
+    actionMapping
+  };
+
+  details_indicators: string = '';
   constructor(private filterService: FilterService,
               private visulizationService: VisualizerService,
               private constant: Constants,
@@ -149,7 +164,7 @@ export class IndicatorCardComponent implements OnInit, AfterViewInit, OnDestroy 
     this.card_period_type = this.current_period_type;
     this.card_year = this.current_year;
     if (this.default_orgunit.hasOwnProperty('orgunit_groups')) {
-      this.orgunit_model = this.default_orgunit
+      this.orgunit_model = this.default_orgunit;
     } else {
       this.orgunit_model.orgunit_groups = this.default_orgunit_model.orgunit_groups;
       this.orgunit_model.orgunit_levels = this.default_orgunit_model.orgunit_levels;
@@ -168,8 +183,8 @@ export class IndicatorCardComponent implements OnInit, AfterViewInit, OnDestroy 
     this.default_period.forEach((current_period) => {
       this.activateNode(current_period.id, this.pertree);
     });
-    //vactivate organisation units
-    for (let active_orgunit of this.orgunit_model.selected_orgunits) {
+    // activate organisation units
+    for (const active_orgunit of this.orgunit_model.selected_orgunits) {
       this.activateNode(active_orgunit.id, this.orgtree);
     }
   }
@@ -177,23 +192,22 @@ export class IndicatorCardComponent implements OnInit, AfterViewInit, OnDestroy 
   switchBottleneck(indicator) {
     if (this.showBottleneck) {
       this.bottleneck_first_time = true;
-      this.updateIndicatorCard(indicator, this.current_visualisation, this.card_selected_periods, this.orgunit_model)
+      this.updateIndicatorCard(indicator, this.current_visualisation, this.card_selected_periods, this.orgunit_model);
     } else {
-      this.updateIndicatorCard(indicator, this.current_visualisation, this.card_selected_periods, this.orgunit_model)
+      this.updateIndicatorCard(indicator, this.current_visualisation, this.card_selected_periods, this.orgunit_model);
     }
   }
 
   // a call that will change the view type
-  details_indicators: string = '';
-
   updateIndicatorCard(holders: any[], type: string, periods: any[], orgunits: {}, with_children: boolean = false, show_labels: boolean = false) {
+    const analytics_calls = [];
     // cancel the current call if still in progress when switching between charts
     if (this.subscription) {
       this.subscription.unsubscribe();
     }
     this.loading = true;
     this.chartData = {};
-    this.current_visualisation = (type != 'csv') ? type : this.current_visualisation;
+    this.current_visualisation = (type !== 'csv') ? type : this.current_visualisation;
     // make sure that orgunit and period selections are closed
     this.showOrgTree = true;
     this.showPerTree = true;
@@ -268,7 +282,7 @@ export class IndicatorCardComponent implements OnInit, AfterViewInit, OnDestroy 
 
     } else if (type === 'info') {
       this.details_indicators = indicatorsArray.join(';');
-      this.visualizer_config.type = 'info'
+      this.visualizer_config.type = 'info';
 
     }else {
       this.visualizer_config = {
@@ -305,52 +319,189 @@ export class IndicatorCardComponent implements OnInit, AfterViewInit, OnDestroy 
         }
       }else {
         this.current_parameters = [];
-        for (let item of periods) {
+        for (const item of periods) {
           periodArray.push(item.id);
           this.current_parameters.push(item.id);
         }
         // create an api analytics call
-        let url = this.constant.root_api + 'analytics.json?dimension=dx:' + indicatorsArray.join(';') + '&dimension=ou:' + this.getOrgUnitsForAnalytics(orgunits, with_children) + '&dimension=pe:' + periodArray.join(';') + '&displayProperty=NAME';
-
-        this.subscription = this.loadAnalytics(url).subscribe(
-          (data) => {
-            this.current_analytics_data = data;
-            this.loading = false;
-            if (type === 'csv') {
-              this.downloadCSV(data);
-            } else {
-              this.chartData = this.visulizationService.drawChart(data, this.visualizer_config.chartConfiguration);
-              this.tableData = this.visulizationService.drawTable(data, this.visualizer_config.tableConfiguration);
+        if (indicatorsArray.length === labels.length ) {
+          const url = this.constant.root_api + 'analytics.json?dimension=dx:' + indicatorsArray.join(';') + '&dimension=ou:' + this.getOrgUnitsForAnalytics(orgunits, with_children) + '&dimension=pe:' + periodArray.join(';') + '&displayProperty=NAME';
+          this.subscription = this.loadAnalytics(url).subscribe(
+            (data) => {
+              this.current_analytics_data = data;
+              this.loading = false;
+              if (type === 'csv') {
+                this.downloadCSV(data);
+              } else {
+                this.chartData = this.visulizationService.drawChart(data, this.visualizer_config.chartConfiguration);
+                this.tableData = this.visulizationService.drawTable(data, this.visualizer_config.tableConfiguration);
+              }
+              this.error_occured = false;
+            },
+            error => {
+              this.error_occured = true;
+              console.log(error);
             }
-            this.error_occured = false;
-          },
-          error => {
-            this.error_occured = true;
-            console.log(error)
+          );
+        }else {
+          console.warn('You can imagine we are here we need to use functions now');
+          if (indicatorsArray.length !== 0) {
+            let completed_functions = 0;
+            const url = this.constant.root_api + 'analytics.json?dimension=dx:' + indicatorsArray.join(';') + '&dimension=pe:' + periodArray.join(';') + '&dimension=ou:' + this.getOrgUnitsForAnalytics(orgunits, with_children) + '&displayProperty=NAME';
+            this.subscription = this.loadAnalytics(url).subscribe(
+              (data) => {
+                analytics_calls.push(data);
+                if (function_indicatorsArray.length !== 0) {
+                  function_indicatorsArray.forEach( (indicator_item) => {
+                    const use_function = this.getFunction(indicator_item.function);
+                    const parameters = {
+                      dx: indicator_item.id,
+                      ou: this.getOrgUnitsForAnalytics(orgunits, with_children),
+                      pe: periodArray.join(';'),
+                      rule: this.getFunctionRule(use_function['rules'], indicator_item.id),
+                      success: (function_data) => {
+                        completed_functions++;
+                        analytics_calls.push(function_data);
+                        if (completed_functions === function_indicatorsArray.length ) {
+                          this.current_analytics_data = this.mergeAnalyticsCalls(analytics_calls, labels);
+                          this.loading = false;
+                          if (type === 'csv') {
+                            this.downloadCSV(data);
+                          } else {
+                            this.chartData = this.visulizationService.drawChart(this.current_analytics_data, this.visualizer_config.chartConfiguration);
+                            this.tableData = this.visulizationService.drawTable(this.current_analytics_data, this.visualizer_config.tableConfiguration);
+                          }
+                          this.error_occured = false;
+                        }
+                      },
+                      error: (error) => {
+                        completed_functions++;
+                        this.error_occured = true;
+                        console.log('error');
+                      },
+                      progress: (progress) => {
+                        console.log('progress');
+                      }
+                    };
+                    const execute = Function('parameters', use_function['function']);
+                    execute(parameters);
+                  });
+                }
+
+              },
+              error => {
+                this.error_occured = true;
+                console.log(error);
+              }
+            );
           }
-        )
+        }
       }
     }
   }
+  // get function details from id
+  getFunction(id) {
+    let return_function = null;
+    this.functions.forEach((funct) => {
+      if (id === funct.id) {
+        return_function = funct;
+      }
+    });
+    return return_function;
+  }
+
+  // get rule from a function details from id
+  getFunctionRule(rules, id) {
+    let return_rule = null;
+    rules.forEach((funct) => {
+      if (id === funct.id) {
+        return_rule = funct;
+        if (typeof return_rule.json === 'string') {
+          return_rule.json = JSON.parse(return_rule.json);
+        }
+      }
+    });
+    return return_rule;
+  }
+  // Merge analytics calls before displaying them
+  // merge analytics calls
+  mergeAnalyticsCalls( analytics: any[], itemList: any ) {
+    const combined_analytics: any = {
+      headers: [],
+      metaData: {
+        names: {},
+        dx: [],
+        pe: [],
+        ou: [],
+        co: []
+      },
+      rows: [],
+      width: 0,
+      height: 0
+    };
+
+    analytics.forEach( (analytic) => {
+      combined_analytics.headers = analytic.headers;
+      const namesArray = this._getArrayFromObject(analytic.metaData.names);
+      namesArray.forEach((name) => {
+        if (!combined_analytics.metaData.names[name.id]) {
+          combined_analytics.metaData.names[name.id] =  name.value;
+        }
+      });
+      analytic.metaData.dx.forEach((val) => {
+        if (!_.includes(combined_analytics.metaData.dx, val)) {
+          combined_analytics.metaData.dx.push( val );
+        }
+      });
+      analytic.metaData.ou.forEach((val) => {
+        if (!_.includes(combined_analytics.metaData.ou, val)) {
+          combined_analytics.metaData.ou.push( val );
+        }
+      });
+      analytic.metaData.pe.forEach((val) => {
+        if (!_.includes(combined_analytics.metaData.pe, val)) {
+          combined_analytics.metaData.pe.push( val );
+        }
+      });
+      const newDxOrder = [];
+      itemList.forEach((listItem) => {
+          newDxOrder.push(listItem.id);
+      });
+      combined_analytics.metaData.dx = newDxOrder;
+      analytic.rows.forEach( (row) => {
+        combined_analytics.rows.push(row);
+      });
+    });
+
+    return combined_analytics;
+
+  }
+
+  private _getArrayFromObject(object) {
+    return _.map(object, function(value, prop) {
+      return { id: prop, value: value };
+    });
+  }
+
 
   checkIfParametersChanged(orgunits, periods, indicators): boolean {
     let checker = false;
-    let temp_arr = [];
-    for (let per of periods) {
+    const temp_arr = [];
+    for (const per of periods) {
       temp_arr.push(per.id);
     }
-    for (let org of orgunits) {
+    for (const org of orgunits) {
       temp_arr.push(org.id);
     }
-    for (let indicator of indicators) {
+    for (const indicator of indicators) {
       temp_arr.push(indicator);
     }
-    if (this.current_parameters.length != 0 && temp_arr.length === this.current_parameters.length) {
-      checker = temp_arr.sort().join(',') === this.current_parameters.sort().join(',')
+    if (this.current_parameters.length !== 0 && temp_arr.length === this.current_parameters.length) {
+      checker = temp_arr.sort().join(',') === this.current_parameters.sort().join(',');
     } else {
       checker = false;
     }
-    return checker
+    return checker;
   }
 
   // a function to reverse the content of X axis and Y axis
@@ -371,7 +522,7 @@ export class IndicatorCardComponent implements OnInit, AfterViewInit, OnDestroy 
             'xAxisType': 'ou',
             'yAxisType': 'pe'
           }
-        }
+        };
       } else if (this.visualizer_config.tableConfiguration.rows[0] === 'pe') {
         this.visualizer_config = {
           'type': 'table',
@@ -387,16 +538,14 @@ export class IndicatorCardComponent implements OnInit, AfterViewInit, OnDestroy 
             'xAxisType': 'pe',
             'yAxisType': 'ou'
           }
-        }
+        };
       }
 
-    }
-    else if (type === 'csv') {
+    } else if (type === 'csv') {
 
     } else if (type === 'info') {
-    }
-    else {
-      let config_array = this.chart_settings.split('-');
+    } else {
+      const config_array = this.chart_settings.split('-');
       if (this.visualizer_config.chartConfiguration.xAxisType === config_array[0]) {
         this.visualizer_config = {
           'type': 'chart',
@@ -412,9 +561,8 @@ export class IndicatorCardComponent implements OnInit, AfterViewInit, OnDestroy 
             'xAxisType': config_array[1],
             'yAxisType': config_array[0]
           }
-        }
-      }
-      else if (this.visualizer_config.chartConfiguration.xAxisType === config_array[1]) {
+        };
+      } else if (this.visualizer_config.chartConfiguration.xAxisType === config_array[1]) {
         this.visualizer_config = {
           'type': 'chart',
           'tableConfiguration': {
@@ -429,7 +577,7 @@ export class IndicatorCardComponent implements OnInit, AfterViewInit, OnDestroy 
             'xAxisType': config_array[0],
             'yAxisType': config_array[1]
           }
-        }
+        };
       }
     }
     this.chartData = this.visulizationService.drawChart(this.current_analytics_data, this.visualizer_config.chartConfiguration);
@@ -468,19 +616,19 @@ export class IndicatorCardComponent implements OnInit, AfterViewInit, OnDestroy 
   getProperPreOrgunitName(): string {
     let name = '';
     if (this.orgunit_model.selection_mode === 'Group') {
-      let use_value = this.orgunit_model.selected_group.split('-');
-      for (let single_group of this.orgunit_model.orgunit_groups) {
+      const use_value = this.orgunit_model.selected_group.split('-');
+      for (const single_group of this.orgunit_model.orgunit_groups) {
         if (single_group.id === use_value[1]) {
           name = single_group.name + ' in';
         }
       }
     } else if (this.orgunit_model.selection_mode === 'Usr_orgUnit') {
-      if (this.orgunit_model.selected_user_orgunit === 'USER_ORGUNIT') name = 'User org unit';
-      if (this.orgunit_model.selected_user_orgunit === 'USER_ORGUNIT_CHILDREN') name = 'User sub-units';
-      if (this.orgunit_model.selected_user_orgunit === 'USER_ORGUNIT_GRANDCHILDREN') name = 'User sub-x2-units';
+      if (this.orgunit_model.selected_user_orgunit === 'USER_ORGUNIT') { name = 'User org unit '; }
+      if (this.orgunit_model.selected_user_orgunit === 'USER_ORGUNIT_CHILDREN') { name = 'User sub-units'; }
+      if (this.orgunit_model.selected_user_orgunit === 'USER_ORGUNIT_GRANDCHILDREN') { name = 'User sub-x2-units'; }
     } else if (this.orgunit_model.selection_mode === 'Level') {
-      let use_level = this.orgunit_model.selected_level.split('-');
-      for (let single_level of this.orgunit_model.orgunit_levels) {
+      const use_level = this.orgunit_model.selected_level.split('-');
+      for (const single_level of this.orgunit_model.orgunit_levels) {
         if (single_level.level === use_level[1]) {
           name = single_level.name + ' in';
         }
@@ -488,46 +636,42 @@ export class IndicatorCardComponent implements OnInit, AfterViewInit, OnDestroy 
     } else {
       name = '';
     }
-    return name
+    return name;
   }
 
   // a function to prepare a list of organisation units for analytics
   getOrgUnitsForAnalytics(orgunit_model: any, with_children: boolean): string {
-    let orgUnits = [];
+    const orgUnits = [];
     let organisation_unit_analytics_string = '';
     // if the selected orgunit is user org unit
     if (orgunit_model.selection_mode === 'Usr_orgUnit') {
       if (orgunit_model.user_orgunits.length === 1) {
-        let user_orgunit = this.orgtree.treeModel.getNodeById(orgunit_model.user_orgunits[0]);
+        const user_orgunit = this.orgtree.treeModel.getNodeById(orgunit_model.user_orgunits[0]);
         orgUnits.push(user_orgunit.id);
         if (user_orgunit.hasOwnProperty('children')) {
-          for (let orgunit of user_orgunit.children) {
+          for (const orgunit of user_orgunit.children) {
             orgUnits.push(orgunit.id);
           }
         }
       } else {
-        organisation_unit_analytics_string += orgunit_model.selected_user_orgunit
+        organisation_unit_analytics_string += orgunit_model.selected_user_orgunit;
       }
-    }
-
-    else {
+    } else {
       // if there is only one organisation unit selected
       if (orgunit_model.selected_orgunits.length === 1) {
-        let detailed_orgunit = this.orgtree.treeModel.getNodeById(orgunit_model.selected_orgunits[0].id);
+        const detailed_orgunit = this.orgtree.treeModel.getNodeById(orgunit_model.selected_orgunits[0].id);
         orgUnits.push(detailed_orgunit.id);
         if (detailed_orgunit.hasOwnProperty('children') && with_children) {
-          for (let orgunit of detailed_orgunit.children) {
+          for (const orgunit of detailed_orgunit.children) {
             this.activateNode(orgunit.id, this.orgtree);
             orgUnits.push(orgunit.id);
           }
         }
 
-      }
-      // If there is more than one organisation unit selected
-      else {
+      } else { // If there is more than one organisation unit selected
         orgunit_model.selected_orgunits.forEach((orgunit) => {
           orgUnits.push(orgunit.id);
-        })
+        });
       }
       if (orgunit_model.selection_mode === 'orgUnit') {
 
@@ -559,7 +703,7 @@ export class IndicatorCardComponent implements OnInit, AfterViewInit, OnDestroy 
     if (!this.checkItemAvailabilty($event.node.data, this.orgunit_model.selected_orgunits)) {
       this.orgunit_model.selected_orgunits.push($event.node.data);
     }
-  };
+  }
 
 
   // check if orgunit already exist in the orgunit display list
@@ -581,7 +725,7 @@ export class IndicatorCardComponent implements OnInit, AfterViewInit, OnDestroy 
         this.card_selected_periods.splice(index, 1);
       }
     });
-  };
+  }
 
 
   // add item to array of selected items when period is selected
@@ -590,25 +734,27 @@ export class IndicatorCardComponent implements OnInit, AfterViewInit, OnDestroy 
       this.card_selected_periods.push($event.node.data);
     }
     this.card_period = $event.node.data;
-  };
+  }
 
   activateNode(nodeId: any, nodes) {
     setTimeout(() => {
-      let node = nodes.treeModel.getNodeById(nodeId);
-      if (node)
+      const node = nodes.treeModel.getNodeById(nodeId);
+      if (node) {
       // node.toggleActivated();
         node.setIsActive(true, true);
+      }
     }, 0);
   }
 
   // a method to activate the model
   deActivateNode(nodeId: any, nodes, event) {
     setTimeout(() => {
-      let node = nodes.treeModel.getNodeById(nodeId);
-      if (node)
+      const node = nodes.treeModel.getNodeById(nodeId);
+      if (node) {
         node.setIsActive(false, true);
+      }
     }, 0);
-    if (event != null) {
+    if (event !== null) {
       event.stopPropagation();
     }
   }
@@ -626,18 +772,6 @@ export class IndicatorCardComponent implements OnInit, AfterViewInit, OnDestroy 
     }
   }
 
-  // custom settings for tree
-  customTemplateStringOptions: any = {
-    isExpandedField: 'expanded',
-    actionMapping
-  };
-
-  // custom settings for tree
-  customTemplateStringOrgunitOptions: any = {
-    isExpandedField: 'expanded',
-    actionMapping
-  };
-
 
   // a function to simplify loading of analytics data
   loadAnalytics(url) {
@@ -654,7 +788,7 @@ export class IndicatorCardComponent implements OnInit, AfterViewInit, OnDestroy 
   // prepare scorecard data and download them as csv
   downloadCSV(analytics_data) {
     let data = [];
-    let some_config = {
+    const some_config = {
       'type': 'chart',
       'tableConfiguration': {
         'title': this.prepareCardTitle(this.indicator),
@@ -670,7 +804,7 @@ export class IndicatorCardComponent implements OnInit, AfterViewInit, OnDestroy 
     };
     data = this.visulizationService.getCsvData(analytics_data, some_config.chartConfiguration);
 
-    let options = {
+    const options = {
       fieldSeparator: ',',
       quoteStrings: '\'',
       decimalseparator: '.',
@@ -682,9 +816,9 @@ export class IndicatorCardComponent implements OnInit, AfterViewInit, OnDestroy 
   }
 
   prepareCardTitle(holders_array: any[]): string {
-    let indicators_title = [];
-    for (let holder of holders_array) {
-      for (let indicator of holder.indicators) {
+    const indicators_title = [];
+    for (const holder of holders_array) {
+      for (const indicator of holder.indicators) {
         if (this.hidden_columns.indexOf(indicator.id) === -1) {
           indicators_title.push(indicator.name);
         }
@@ -713,8 +847,8 @@ export class IndicatorCardComponent implements OnInit, AfterViewInit, OnDestroy 
   getIndicatorLength(holder) {
     let counter = 0;
     let check = false;
-    let indicators = [];
-    for (let indicator of holder.indicators) {
+    const indicators = [];
+    for (const indicator of holder.indicators) {
       if (this.hidden_columns.indexOf(indicator.id) === -1) {
         counter++;
         indicators.push(indicator);
@@ -722,8 +856,8 @@ export class IndicatorCardComponent implements OnInit, AfterViewInit, OnDestroy 
     }
     if (counter === 1) {
       if (indicators[0].hasOwnProperty('bottleneck_indicators')) {
-        if (indicators[0].bottleneck_indicators.length != 0) {
-          check = true
+        if (indicators[0].bottleneck_indicators.length !== 0) {
+          check = true;
         }
       }
     }
