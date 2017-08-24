@@ -612,7 +612,7 @@ export class ScorecardComponent implements OnInit, AfterViewInit, OnDestroy {
 
   // Get the name of the last period for a tooltip display
   getPeriodName(id: string) {
-    for (let period of this.filterService.getPeriodArray(this.period_type, this.filterService.getLastPeriod(id, this.period_type).substr(0, 4))) {
+    for (const period of this.filterService.getPeriodArray(this.period_type, this.filterService.getLastPeriod(id, this.period_type).substr(0, 4))) {
       if (this.filterService.getLastPeriod(id, this.period_type) === period.id) {
         return period.name;
       }
