@@ -36,7 +36,7 @@ import {Router} from '@angular/router';
 })
 export class HomeComponent implements OnInit {
   scorecards: any = [];
-  scorecards_loading: boolean;
+  scorecards_loading: boolean = true;
   complete_percent: number;
   total = 0;
   loading_message: string;
@@ -67,12 +67,7 @@ export class HomeComponent implements OnInit {
     this.scorecards_loading = true;
     this.complete_percent = 0;
     this.loading_message = 'Loading Score cards...';
-    this.dataService.getUserInformation().subscribe(
-      userInfo => {
-        this.userInfo = userInfo;
 
-      }
-    );
   }
 
   ngOnInit() {

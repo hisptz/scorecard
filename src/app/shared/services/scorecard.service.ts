@@ -46,7 +46,6 @@ export class ScorecardService {
         this.loadAll().subscribe(
           scorecards => {
             let scorecard_count = 0;
-            const allScorecards = []
             scorecards.forEach((scorecard) => {
               // loading scorecard details
               this.load(scorecard).subscribe(
@@ -58,14 +57,13 @@ export class ScorecardService {
                     can_see: this.dataService.checkForUserGroupInScorecard(scorecard_details, userInfo).see,
                     can_edit: this.dataService.checkForUserGroupInScorecard(scorecard_details, userInfo).edit,
                   };
-                  allScorecards.push(scorecard_item);
                   if ( scorecard_item.can_see ) {
                     this._scorecards.push(scorecard_item);
                   }
                   this.dataService.sortArrOfObjectsByParam(this._scorecards, 'name', true);
                   scorecard_count++;
                   // set loading equal to false when all scorecards are loaded
-                  if (scorecard_count === allScorecards.length) {
+                  if (scorecard_count === scorecards.length) {
                     observ.next(this._scorecards);
                     observ.complete();
                   }
