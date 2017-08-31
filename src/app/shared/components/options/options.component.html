@@ -1,5 +1,5 @@
-<button  type="button" class="btn btn-default pull-right"  style="height: 30px;padding-top: 0px;padding-bottom: 0px" title="Customize scorecard" (click)="showOptions()">
-  <span class="glyphicon glyphicon-cog"></span> Options
+<button  type="button" class="btn btn-outline-secondary pull-right cursor"  style="height: 30px;padding-top: 0px;padding-bottom: 0px" title="Customize scorecard" (click)="showOptions()">
+  <i class="fa fa-cog"></i> Options
 </button>
 <div class="additional-options" [ngClass]="{'hiddenTree':showAdditionalOptions}" style="padding-top: 0px">
   <ul class="list-group">
@@ -42,8 +42,8 @@
       </div>
     </li>
   </ul>
-  <button class="btn btn-sm btn-warning pull-right" (click)="showOptions()" style="height: 35px">
-    <span class="glyphicon glyphicon-remove"></span> close
+  <button class="btn btn-sm btn-outline-warning cursor pull-right" (click)="showOptions()" style="height: 35px">
+    <i class="fa fa-close"></i> close
   </button>
 
 </div>

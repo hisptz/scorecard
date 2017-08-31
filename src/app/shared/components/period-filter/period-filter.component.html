@@ -6,11 +6,12 @@
             {{ selected_periods[0].name }}
             <a (click)="deactivatePer(selected_periods[0]);$event.stopPropagation()" class="removeorgunit" >x</a>
           </span>
+              <!--<span class="selected-item">-->
+            <!--{{ selected_periods[1].name }} selected-->
+            <!--<a (click)="deactivatePer(selected_periods[1]);$event.stopPropagation()" class="removeorgunit" >x</a>-->
+          <!--</span>-->
               <span class="selected-item">
-            {{ selected_periods[1].name }} selected
-            <a (click)="deactivatePer(selected_periods[1]);$event.stopPropagation()" class="removeorgunit" >x</a>
-          </span><span class="selected-item">
-            and {{ selected_periods.length -2 }} more
+            and {{ selected_periods.length -1 }} more
           </span>
         </span>
       <span *ngIf="selected_periods.length <= 2">
@@ -20,7 +21,10 @@
               </span>
             </span>
       <span class="no-selection"*ngIf="selected_periods.length == 0">Select Period</span>
-      <span class="glyphicon glyphicon-triangle-bottom pull-right"></span>
+      <i class="fa fa-caret-down pull-right"></i>
+      <span  *ngIf="selected_periods.length > 2 " class="pull-right">
+            <span class="selected-item" style="cursor: pointer" (click)="deselectAllItems()" style="opacity: 0.7">X clear all</span>
+          </span>
     </div>
   <div class="tree-view" [ngClass]="{'hiddenTree':showPerTree}">
     <div style="padding: 3px">

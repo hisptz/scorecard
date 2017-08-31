@@ -1,20 +1,23 @@
-<div class="container-fluid" style="padding-left: 5px">
-  <div class="col-sm-2" style="padding-left: 0px; cursor: pointer;" [routerLink]="['']">
-    <img src="scorecard.svg" style="height: 58px; width: 48px"> <span style="font-size: 15px"> Score Card</span>
-  </div>
-  <div class="col-sm-8">
-    <h3 class="text-center" style="margin-top: 0px">
-      <small *ngIf="scorecard.name == ''">Create a new scorecard</small>
-      <small *ngIf="scorecard.name != ''">{{ scorecard.name }}</small>
-    </h3>
-  </div>
-  <div class="col-sm-2" style="margin-top: 14px">
-    <button class="btn btn-default btn-sm pull-right" [routerLink]="['']" style="height: 30px"><span class="glyphicon glyphicon-home"></span> home</button>
-    <app-options
-      *ngIf="scorecard"
-      [scorecard]="scorecard"
-      (onOptionUpdate) = "optionUpdated($event)"
-    ></app-options>
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-md-2 col-xs-12" style="padding-left: 0px; cursor: pointer;" [routerLink]="['']">
+      <img src="scorecard.svg" style="height: 58px; width: 48px"> <span style="font-size: 20px"> Score Card</span>
+    </div>
+    <div  class="col-md-8 col-xs-12">
+      <h3 class="text-center" style="margin-top: 14px">
+        <small *ngIf="scorecard.name == ''">Create a new scorecard</small>
+        <small *ngIf="scorecard.name != ''">{{ scorecard.name }}</small>
+      </h3>
+    </div>
+    <div class="col-md-2 col-xs-12" style="margin-top: 14px">
+      <button class="btn btn-outline-secondary btn-sm pull-right cursor" [routerLink]="['']" style="height: 30px;margin-left: 5px">
+        <i class="fa fa-home"></i> home</button>
+      <app-options
+        *ngIf="scorecard"
+        [scorecard]="scorecard"
+        (onOptionUpdate) = "optionUpdated($event)"
+      ></app-options>
+    </div>
   </div>
 </div>
 <!--sample score card-->
@@ -102,7 +105,7 @@
         </th>
       </tr>
       <tr>
-        <td style="vertical-align: middle; padding: 0px" dnd-droppable (onDropSuccess)="transferDataSuccess($event,'new',null)">
+        <td style="vertical-align: middle;" dnd-droppable (onDropSuccess)="transferDataSuccess($event,'new',null)">
 
           <!--organisation unit tree-->
           <app-org-unit-filter

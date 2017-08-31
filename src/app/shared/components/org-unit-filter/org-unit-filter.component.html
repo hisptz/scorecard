@@ -24,8 +24,8 @@
               </span>
         <span class="no-selection"*ngIf="orgunit_model.selected_orgunits.length == 0 && !orgunit_tree_config.loading && orgunit_model.selection_mode != 'Usr_orgUnit'">{{ orgunit_tree_config.placeholder }}</span>
 
-      <span class="glyphicon glyphicon-triangle-bottom pull-right"></span>
-      <span  *ngIf="orgunit_model.selected_orgunits.length > 0" class="pull-right">
+      <i class="fa fa-caret-down pull-right"></i>
+      <span  *ngIf="orgunit_model.selected_orgunits.length > 3" class="pull-right">
             <span class="selected-item" style="cursor: pointer" (click)="clearAll()" style="opacity: 0.7">X clear all</span>
           </span>
       <span *ngIf="orgunit_tree_config.loading">{{ orgunit_tree_config.loading_message }}</span>
