@@ -427,6 +427,7 @@ export class ScorecardComponent implements OnInit, AfterViewInit, OnDestroy {
       if (selectedorgunit.is_parent || this.showSubScorecard[selectedorgunit.id]) {
         this.showSubScorecard = [];
       }else {
+        this.showSubScorecard = [];
         const orgunit_with_children = this.orgtree.treeModel.getNodeById(selectedorgunit.id);
         this.sub_unit = orgunit_with_children.data;
         this.sub_model = {
@@ -454,6 +455,7 @@ export class ScorecardComponent implements OnInit, AfterViewInit, OnDestroy {
       if (this.showSubScorecard[indicator.id]) {
         this.showSubScorecard = [];
       }else {
+        this.showSubScorecard = [];
         this.scorecardService.getRelatedIndicators(indicator.id).subscribe(
           (data) => {
             if (data.length === 0) {
