@@ -30,11 +30,13 @@ import {Constants} from './shared/services/costants';
 import {StoreRouterConnectingModule} from '@ngrx/router-store';
 import {StoreDevtoolsModule} from '@ngrx/store-devtools';
 import {environment} from '../environments/environment';
+import { PlaceholderComponent } from './home/placeholder/placeholder.component';
 @NgModule({
   declarations: [
     AppComponent,
     HomeComponent,
-    ScoreCardFilterPipe
+    ScoreCardFilterPipe,
+    PlaceholderComponent
   ],
   imports: [
     BrowserModule,
