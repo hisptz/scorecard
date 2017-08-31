@@ -39,4 +39,3 @@ testem.log
 .DS_Store
 Thumbs.db
 proxy-config.json
-/proxy-config.json
