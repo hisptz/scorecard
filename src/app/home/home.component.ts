@@ -16,10 +16,21 @@ import {Router} from '@angular/router';
   styleUrls: ['./home.component.css'],
   animations: [
     trigger('visibilityChanged', [
-      state('shown' , style({ opacity: 1 })),
-      state('hidden', style({ opacity: 0 })),
-      transition('shown => hidden', animate('600ms')),
-      transition('hidden => shown', animate('300ms')),
+      state('notHovered' , style({
+        'transform': 'scale(1, 1)',
+        '-webkit-box-shadow': '0 0 0px rgba(0,0,0,0.1)',
+        'box-shadow': '0 0 0px rgba(0,0,0,0.2)',
+        'background-color': 'rgba(0,0,0,0.0)',
+        'border': '0px solid #ddd'
+      })),
+      state('hoovered', style({
+        'transform': 'scale(1.04, 1.04)',
+        '-webkit-box-shadow': '0 0 10px rgba(0,0,0,0.2)',
+        'box-shadow': '0 0 10px rgba(0,0,0,0.2)',
+        'background-color': 'rgba(0,0,0,0.03)',
+        'border': '1px solid #ddd'
+      })),
+      transition('notHovered <=> hoovered', animate('400ms'))
     ])
   ]
 })
@@ -42,6 +53,8 @@ export class HomeComponent implements OnInit {
     itemsPerPage: 3,
     currentPage: 1
   };
+
+  hoverState: string[] = [];
   constructor(
     private store: Store<ApplicationState>,
     private scoreCardService: ScorecardService,
@@ -73,6 +86,7 @@ export class HomeComponent implements OnInit {
             this.dataService.sortArrOfObjectsByParam(this.scorecards, 'name', true);
             this.scorecards.forEach((scorecard) => {
               this.deleting[scorecard.id] = false;
+              this.hoverState[scorecard.id] = 'notHovered';
               this.confirm_deleting[scorecard.id] = false;
               this.deleted[scorecard.id] = false;
               this.error_deleting[scorecard.id] = false;
@@ -137,11 +151,13 @@ export class HomeComponent implements OnInit {
   }
 
   mouseEnter(id) {
+    this.hoverState[id] = 'hoovered';
     this.showDetails[id] = true;
   }
 
   mouseLeave(id) {
     this.showDetails[id] = false;
+    this.hoverState[id] = 'notHovered';
   }
 
 }

@@ -1,21 +1,25 @@
-<div class="container-fluid" style="padding-left: 0px">
-  <div class="col-sm-2" style="padding-left: 0px; cursor: pointer;" [routerLink]="['']">
-    <img src="scorecard.svg" style="height: 58px; width: 48px"> <span style="font-size: 15px"> Score Card</span>
-  </div>
-  <div class="col-sm-8" style="margin-top: 14px">
-    <input type="search" class="form-control input-sm" placeholder="Search score card by name" [(ngModel)]="queryterm">
-  </div>
-  <div class="col-sm-2" style="margin-top: 14px">
-    <button class="btn btn-default btn-sm pull-right" [routerLink]="['create','new','0']"> Create</button>
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-md-2 col-xs-12" style="padding-left: 0px; cursor: pointer;" [routerLink]="['']">
+      <img src="scorecard.svg" style="height: 58px; width: 48px"> <span style="font-size: 20px"> Score Card</span>
+    </div>
+    <div class="col-md-8 col-xs-12" style="margin-top: 14px">
+      <input type="search" class="form-control input-sm" placeholder="Search score card by name" [(ngModel)]="queryterm">
+    </div>
+    <div class="col-md-2 col-xs-12 hidden-sm" style="margin-top: 14px">
+      <button style="height: 34px" class="btn btn-outline-dark btn-sm float-md-right" [routerLink]="['create','new','0']">
+        <i class="fa fa-plus" aria-hidden="true"></i> Create</button>
+    </div>
   </div>
 </div>
 <!--if there is no scorecard created-->
 <!--<div class="container-fluid" style="padding-left: 0px; border-top: 1px solid blanchedalmond; margin-top: 20px; padding-top: 23px">-->
-<div class="container-fluid" style="padding-left: 0px; border-top: 1px solid blanchedalmond; margin-top: 20px; padding-top: 23px" *ngIf="scorecards.length == 0 && !scorecards_loading">
-  <div class="jumbotron" >
-    <h1>Welcome to Scorecard App!</h1>
-    <p>Create a score card instantly, over tea break...</p>
-    <ol style="margin-left:20px; font-size: 12px">
+<div class="container-fluid" style="padding-left: 0px; border-top: 1px solid blanchedalmond;margin-top: 15px" *ngIf="scorecards.length == 0 && !scorecards_loading">
+  <div class="jumbotron" style="background-color: transparent" >
+    <h1 class="display-3">Welcome to Scorecard App!</h1>
+    <p class="lead">Create a score card instantly, over tea break...</p>
+    <hr class="my-4">
+    <ol style="margin-left:20px;">
       <li style="padding:2px;">Click create new, Write your score card a title and description</li>
       <li style="padding:2px;">Write group header name for indicators you will create in next step</li>
       <li style="padding:2px;">Select indicator group and click indicator to add to the group
@@ -29,7 +33,7 @@
       <li style="padding:2px;">Select the second indicator to add indicator in the same group</li>
       <li style="padding:2px;">Click "Add another" in Group row to add next group</li>
     </ol>
-    <p><a class="btn btn-primary btn-lg" href="#" role="button" [routerLink]="['create','new','0']" *ngIf="have_authorities">New Scorecard</a></p>
+    <p><a class="btn btn-outline-primary btn-lg" href="#" role="button" [routerLink]="['create','new','0']" *ngIf="have_authorities">New Scorecard</a></p>
   </div>
 </div>
 
@@ -41,69 +45,90 @@
 </div>
 
 
-<div class="container-fluid" style="padding-left: 0px; border-top: 1px solid blanchedalmond; margin-top: 20px; padding-top: 23px" *ngIf="scorecards.length != 0 && !scorecards_loading" >
-  <div [@visibilityChanged]
-       class="col-sm-4"
-       *ngFor="let scorecard of scorecards | scoreCardFilter:queryterm | paginate: config "
-       style="padding-left: 0px"
-       [ngClass]="{'hidden': !scorecard.can_see}"
-       (mouseenter) ="mouseEnter(scorecard.id) "
-       (mouseleave) ="mouseLeave(scorecard.id)"
-  >
-    <div class="thumbnail scorecard_details" [routerLink]="['view',scorecard.id]">
-
-      <div style="height:270px; padding-top: 50px" [routerLink]="['view',scorecard.id]">
+<div class="container-fluid" style="padding-top: 20px;padding-left: 0px; border-top: 1px solid blanchedalmond; margin-top: 20px; padding-top: 23px" *ngIf="scorecards.length != 0 && !scorecards_loading" >
+    <div class="card-deck">
+      <div
+        class="card scorecard_details col-sm-12 col-md-4 text-center cursor"
+        *ngFor="let scorecard of scorecards | scoreCardFilter: queryterm | paginate: config "
+        [@visibilityChanged]="hoverState[scorecard.id] || 'notHovered'"
+        (mouseenter) ="mouseEnter(scorecard.id)"
+        (mouseleave) ="mouseLeave(scorecard.id)"
+        [routerLink]="['view',scorecard.id]"
+      >
         <h1 class="text-center text-muted"><img src="assets/img/scorecardplaceholder.jpg" style="height: 120px"> </h1>
-        <h3 class="text-center">{{ scorecard.data.header.title }}</h3>
-        <h5 class="text-center">{{ scorecard.data.header.description }}</h5>
-        <span class="text-center help-block" *ngIf="scorecard.data.user && showDetails[scorecard.id]">Created By: <b>{{ scorecard.data.user?.name }}</b></span>
-      </div>
-      <h1 class="text-center" *ngIf="!confirm_deleting[scorecard.id] && !deleting[scorecard.id] && !error_deleting[scorecard.id]">
-        <a  class="btn btn-primary sans-pro" role="button" title="Open {{ scorecard.data.header.title }}">
-          View
-        </a>
-        <a  *ngIf="scorecard.can_edit" title="edit {{ scorecard.data.header.title }}" (click)="openscorecard(scorecard.id,$event)" class="btn btn-default sans-pro" role="button">
-          <span class="glyphicon glyphicon-pencil text-primary"></span>
-        </a>
-        <button *ngIf="scorecard.can_edit" title="delete {{ scorecard.data.header.title }}" (click)="confirm_deleting[scorecard.id] = true; $event.stopPropagation()" class="btn btn-default sans-pro" role="button">
-          <span class="glyphicon glyphicon-trash text-danger"></span>
-        </button>
-      </h1>
-      <p class="icons" *ngIf="confirm_deleting[scorecard.id]" style="padding: 5px; font-size: 12px"> Are you sure you want to delete this score card?
-        <button class="btn btn-sm btn-danger" (click)="deleteScoreCard(scorecard,$event)">Delete</button>
-        <button class="btn btn-sm btn-success" (click)="confirm_deleting[scorecard.id] = false; $event.stopPropagation()">Cancel</button>
-      </p>
+        <!--<img class="card-img-top" src="assets/img/scorecardplaceholder.jpg" style="height: 160px; width: 280px;margin-right: 20%" alt="{{ scorecard.data.header.title }}">-->
+        <div class="card-body">
+          <h4 class="card-title text-center">{{ scorecard.data.header.title }}</h4>
+          <p class="lead text-center">{{ scorecard.data.header.description }}</p>
 
-      <p class="icons" *ngIf="deleting[scorecard.id]" style="padding: 5px; font-size: 12px">
-        <img src="balls-5.svg" style="height: 50px;"> Deleting Scorecard...
-      </p>
-      <p class="icons text-danger" *ngIf="error_deleting[scorecard.id]" style="padding: 5px; font-size: 12px">
-        Something went wrong, Scorecard was not deleted
-      </p>
+
+        </div>
+        <div class="card-footer" style="border-top: 0px;background-color: rgba(0,0,0,0.0)">
+          <h1 class="text-center" *ngIf="!confirm_deleting[scorecard.id] && !deleting[scorecard.id] && !error_deleting[scorecard.id]">
+            <a
+              style="cursor: pointer"
+              class="btn btn-outline-primary sans-pro"
+              role="button"
+              title="Open {{ scorecard.data.header.title }}">
+              View
+            </a>
+            <a  *ngIf="scorecard.can_edit" title="edit {{ scorecard.data.header.title }}"
+                (click)="openscorecard(scorecard.id,$event)"
+                class="btn btn-outline-info sans-pro"
+                role="button"
+                style="cursor: pointer"
+            >
+              <i class="fa fa-pencil text-primary"></i>
+            </a>
+            <button
+              *ngIf="scorecard.can_edit"
+              title="delete {{ scorecard.data.header.title }}"
+              (click)="confirm_deleting[scorecard.id] = true; $event.stopPropagation()"
+              class="btn btn-outline-dark sans-pro"
+              role="button"
+              style="cursor: pointer"
+            >
+              <i class="fa fa-trash-o text-danger"></i>
+            </button>
+          </h1>
+          <p class="icons" *ngIf="confirm_deleting[scorecard.id]" style="padding: 5px; font-size: 12px"> Are you sure you want to delete this score card?
+            <button class="btn btn-sm btn-outline-danger cursor" (click)="deleteScoreCard(scorecard,$event)">Delete</button>
+            <button class="btn btn-sm btn-outline-success cursor" (click)="confirm_deleting[scorecard.id] = false; $event.stopPropagation()">Cancel</button>
+          </p>
+
+          <p class="icons" *ngIf="deleting[scorecard.id]" style="padding: 5px; font-size: 12px">
+            <img src="balls-5.svg" style="height: 50px;"> Deleting Scorecard...
+          </p>
+          <p class="icons text-danger" *ngIf="error_deleting[scorecard.id]" style="padding: 5px; font-size: 12px">
+            Something went wrong, Scorecard was not deleted
+          </p>
+        </div>
+      </div>
     </div>
   </div>
-</div>
 
 
-<div class="row text-center" style="margin-right: 25px">
+<div class="row justify-content-center" style="margin-top: 25px">
   <pagination-template #nm="paginationApi" [id]="config.id" (pageChange)="config.currentPage = $event">
-    <nav aria-label="">
-      <ul class="custom-pagination pagination pull-right">
-        <li class="pagination-previous" [class.disabled]="nm.isFirstPage()">
-          <a (click)="nm.previous()"> <span class="glyphicon glyphicon-chevron-left"></span> </a>
-        </li>
-
-        <li *ngFor="let page of nm.pages" [class.active]="nm.getCurrent() === page.value">
-          <a (click)="nm.setCurrent(page.value)" *ngIf="nm.getCurrent() !== page.value">
-            <span>{{ page.label }}</span>
-          </a>
-          <a *ngIf="nm.getCurrent() === page.value">
-            <span>{{ page.label }}</span>
+    <nav aria-label="Page navigation example">
+      <ul class="pagination ">
+        <li class="page-item" [class.disabled]="nm.isFirstPage()">
+          <a class="page-link" style="cursor: pointer" (click)="nm.previous()" aria-label="Previous">
+            <span aria-hidden="true">&laquo;</span>
+            <span class="sr-only">Previous</span>
           </a>
         </li>
-
-        <li class="pagination-next" [class.disabled]="nm.isLastPage()">
-          <a (click)="nm.next()"> <span class="glyphicon glyphicon-chevron-right"></span> </a>
+        <li class="page-item"
+            *ngFor="let page of nm.pages"
+            [class.active]="nm.getCurrent() === page.value"
+        ><a class="page-link" style="cursor: pointer" (click)="nm.setCurrent(page.value)">
+          {{ page.label }}
+        </a></li>
+        <li class="page-item" [class.disabled]="nm.isLastPage()">
+          <a class="page-link" style="cursor: pointer" (click)="nm.next()" aria-label="Next">
+            <span aria-hidden="true">&raquo;</span>
+            <span class="sr-only">Next</span>
+          </a>
         </li>
       </ul>
     </nav>
