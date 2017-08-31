@@ -1,6 +1,7 @@
 .period{
   font-size: 11px;
-  cursor: pointer
+  cursor: pointer;
+  padding-bottom: 3px;
 }
 
 .direction-arrows:hover{
@@ -30,7 +31,7 @@
   background-color: #fff;
   position: absolute;
   z-index: 999;
-  border: 1px solid rgba(0, 0, 0, .15);
+  /*border: 1px solid rgba(0, 0, 0, .15);*/
   border-radius: 4px;
   -webkit-box-shadow: 0 6px 12px rgba(0, 0, 0, .175);
   box-shadow: 0 6px 12px rgba(0, 0, 0, .175);
@@ -38,7 +39,7 @@
   margin-right: 30px;
   min-height: 200px;
   overflow: auto;
-  padding: 10px 5px 10px 0px;
+  padding: 10px 5px 0px 0px;
   margin-top: 38px;
 }
 
@@ -80,7 +81,6 @@ span.selected-item {
   margin-right: 2px;
   cursor: text;
   font-size: 11px;
-
 }
 
 .selected-item-close {
