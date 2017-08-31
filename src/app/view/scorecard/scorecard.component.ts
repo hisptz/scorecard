@@ -259,7 +259,6 @@ export class ScorecardComponent implements OnInit, AfterViewInit, OnDestroy {
 
           // check if the indicator is supposed to come from function
           if (indicator.hasOwnProperty('calculation') && indicator.calculation === 'custom_function') {
-            console.log('Indicator', indicator);
             const use_function = this.getFunction(indicator.function_to_use);
             // Check first if the function still exist in maintenance
             if (use_function) {
@@ -313,7 +312,6 @@ export class ScorecardComponent implements OnInit, AfterViewInit, OnDestroy {
                   console.log('progress');
                 }
               };
-              console.log('Function to use:', use_function);
               const execute = Function('parameters', use_function['function']);
               execute(parameters);
             }else {
@@ -424,15 +422,12 @@ export class ScorecardComponent implements OnInit, AfterViewInit, OnDestroy {
   sub_model: any;
   children_available: boolean[] = [];
   subscorecard: ScoreCard;
-
   loadChildrenData(selectedorgunit, indicator) {
-    this.showSubScorecard = [];
     if (indicator === null) {
       if (selectedorgunit.is_parent || this.showSubScorecard[selectedorgunit.id]) {
         this.showSubScorecard = [];
-      }
-      else {
-        let orgunit_with_children = this.orgtree.treeModel.getNodeById(selectedorgunit.id);
+      }else {
+        const orgunit_with_children = this.orgtree.treeModel.getNodeById(selectedorgunit.id);
         this.sub_unit = orgunit_with_children.data;
         this.sub_model = {
           selection_mode: 'orgUnit',
@@ -458,79 +453,76 @@ export class ScorecardComponent implements OnInit, AfterViewInit, OnDestroy {
 
       if (this.showSubScorecard[indicator.id]) {
         this.showSubScorecard = [];
-      }
-      this.scorecardService.getRelatedIndicators(indicator.id).subscribe(
-        (data) => {
-          console.log(data);
-          if (data.length === 0) {
+      }else {
+        this.scorecardService.getRelatedIndicators(indicator.id).subscribe(
+          (data) => {
+            if (data.length === 0) {
+              this.children_available[indicator.id] = false;
+              this.showSubScorecard[indicator.id] = true;
+            } else {
+              this.children_available[indicator.id] = true;
+              // this.subscorecard = this.createScorecardByIndicators(indicator,indicator.bottleneck_indicators);
+              const created_scorecard = this.scorecardService.getEmptyScoreCard();
+              const legendSet = [
+                {
+                  color: '#008000',
+                  min: '80',
+                  max: '-'
+                },
+                {
+                  color: '#FFFF00',
+                  min: '60',
+                  max: '80'
+                },
+                {
+                  color: '#FF0000',
+                  min: '0',
+                  max: '60'
+                }
+              ];
+              const holder_ids = [];
+              data.forEach((item, item_index) => {
+                // check first if it is a function or not
+                const indicator_structure = this.scorecardService.getIndicatorStructure(item.name, item.id, legendSet, item.bottleneck_title);
+                if (item.hasOwnProperty('function')) {
+                  indicator_structure.calculation = 'custom_function';
+                  indicator_structure.function_to_use = item.function;
+                } else {
+                  indicator_structure.calculation = 'analytics';
+                }
+                const indicator_holder = {
+                  'holder_id': item_index + 1,
+                  'indicators': [
+                    indicator_structure
+                  ]
+                };
+                holder_ids.push(item_index + 1);
+                created_scorecard.data.data_settings.indicator_holders.push(indicator_holder);
+              });
+
+              created_scorecard.data.data_settings.indicator_holder_groups = [{
+                'id': '1',
+                'name': 'New Group',
+                'indicator_holder_ids': holder_ids,
+                'background_color': '#ffffff',
+                'holder_style': null
+              }];
+              created_scorecard.data.show_data_in_column = true;
+              created_scorecard.data.is_bottleck = true;
+              created_scorecard.data.name = 'Related Indicators for ' + indicator.name;
+              created_scorecard.data.header.title = 'Related Indicators for ' + indicator.name;
+              this.subscorecard = created_scorecard;
+              this.showSubScorecard[indicator.id] = true;
+            }
+
+          },
+          (error) => {
             this.children_available[indicator.id] = false;
             this.showSubScorecard[indicator.id] = true;
-          } else {
-            this.children_available[indicator.id] = true;
-            // this.subscorecard = this.createScorecardByIndicators(indicator,indicator.bottleneck_indicators);
-            let created_scorecard = this.scorecardService.getEmptyScoreCard();
-            let legendSet = [
-              {
-                color: '#008000',
-                min: '80',
-                max: '-'
-              },
-              {
-                color: '#FFFF00',
-                min: '60',
-                max: '80'
-              },
-              {
-                color: '#FF0000',
-                min: '0',
-                max: '60'
-              }
-            ];
-            let holder_ids = [];
-            data.forEach((item, item_index) => {
-              //check first if it is a function or not
-              let indicator_structure = this.scorecardService.getIndicatorStructure(item.name, item.id, legendSet, item.bottleneck_title);
-              if (item.hasOwnProperty('function')) {
-                indicator_structure.calculation = 'custom_function';
-                indicator_structure.function_to_use = item.function;
-              } else {
-                indicator_structure.calculation = 'analytics';
-              }
-              let indicator_holder = {
-                'holder_id': item_index + 1,
-                'indicators': [
-                  indicator_structure
-                ]
-              };
-              holder_ids.push(item_index + 1);
-              created_scorecard.data.data_settings.indicator_holders.push(indicator_holder);
-            });
-
-            created_scorecard.data.data_settings.indicator_holder_groups = [{
-              'id': '1',
-              'name': 'New Group',
-              'indicator_holder_ids': holder_ids,
-              'background_color': '#ffffff',
-              'holder_style': null
-            }];
-            created_scorecard.data.show_data_in_column = true;
-            created_scorecard.data.is_bottleck = true;
-            created_scorecard.data.name = 'Bottleneck Indicators for ' + indicator.name;
-            created_scorecard.data.header.title = 'Bottleneck Indicators for ' + indicator.name;
-            this.subscorecard = created_scorecard;
-            console.log(this.subscorecard);
-            this.showSubScorecard[indicator.id] = true;
           }
-
-        },
-        (error) => {
-          this.children_available[indicator.id] = false;
-          this.showSubScorecard[indicator.id] = true;
-        }
-      )
-
+        );
+      }
     }
-
   }
 
   // prepare scorecard data and download them as csv
