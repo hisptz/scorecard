@@ -27,7 +27,9 @@ import {EventDataService} from './shared/services/event-data.service';
 import {HttpClientService} from './shared/services/http-client.service';
 import {OrgUnitService} from './shared/services/org-unit.service';
 import {Constants} from './shared/services/costants';
-
+import {StoreRouterConnectingModule} from '@ngrx/router-store';
+import {StoreDevtoolsModule} from '@ngrx/store-devtools';
+import {environment} from '../environments/environment';
 @NgModule({
   declarations: [
     AppComponent,
@@ -45,7 +47,9 @@ import {Constants} from './shared/services/costants';
     StoreModule.forRoot(reducers, {
       initialState: getInitialState
     }),
-    EffectsModule.forRoot([DataStoreEffect])
+    EffectsModule.forRoot([DataStoreEffect]),
+    StoreRouterConnectingModule,
+    !environment.production ? StoreDevtoolsModule.instrument() : []
   ],
   providers: [
     StoreService,

@@ -17,6 +17,8 @@ import {OrgUnitService} from '../shared/services/org-unit.service';
 import {FilterService} from '../shared/services/filter.service';
 import {FunctionService} from '../shared/services/function.service';
 import {DataService} from '../shared/services/data.service';
+import {Store} from '@ngrx/store';
+import {ApplicationState} from '../store/application.state';
 
 @Component({
   selector: 'app-create',
@@ -136,7 +138,8 @@ export class CreateComponent implements OnInit, AfterViewInit, OnDestroy {
               private eventService: EventDataService,
               private dataService: DataService,
               private orgunitService: OrgUnitService,
-              private functionService: FunctionService
+              private functionService: FunctionService,
+              private store: Store<ApplicationState>
   ) {
     this.indicatorGroups = [];
     this.dataElementGroups = [];
@@ -145,6 +148,9 @@ export class CreateComponent implements OnInit, AfterViewInit, OnDestroy {
     this.datasets = [];
     this.current_groups = [];
     this.current_listing = [];
+    this.store.select('storeData').subscribe((data) => {
+      console.log('store inafanya kazi hapa', data);
+    })
     // initialize the scorecard with a uid
     this.scorecard = this.scorecardService.getEmptyScoreCard();
     this.dataService.getUserInformation().subscribe(
