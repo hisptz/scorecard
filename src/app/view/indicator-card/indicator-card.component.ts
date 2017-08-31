@@ -234,6 +234,7 @@ export class IndicatorCardComponent implements OnInit, AfterViewInit, OnDestroy 
                   labels.push({'id': bottleneck.id, 'name': bottleneck.bottleneck_title});
                 }
               }
+              console.log('Using functions', function_indicatorsArray);
             }
             // indicatorsArray.push(item.id);
             // labels.push({'id': item.id, 'name': item.title})
@@ -308,7 +309,7 @@ export class IndicatorCardComponent implements OnInit, AfterViewInit, OnDestroy 
 
       this.loading = false;
     } else {
-      if (this.checkIfParametersChanged(orgunits, periods, indicatorsArray)) {
+      if (this.checkIfParametersChanged(orgunits, periods, indicatorsArray, function_indicatorsArray)) {
         this.error_occured = false;
         this.loading = false;
         if (type === 'csv') {
@@ -394,6 +395,44 @@ export class IndicatorCardComponent implements OnInit, AfterViewInit, OnDestroy 
                 console.log(error);
               }
             );
+          }else {
+            if (function_indicatorsArray.length !== 0) {
+              let completed_functions = 0;
+              function_indicatorsArray.forEach( (indicator_item) => {
+                const use_function = this.getFunction(indicator_item.function);
+                const parameters = {
+                  dx: indicator_item.id,
+                  ou: this.getOrgUnitsForAnalytics(orgunits, with_children),
+                  pe: periodArray.join(';'),
+                  rule: this.getFunctionRule(use_function['rules'], indicator_item.id),
+                  success: (function_data) => {
+                    completed_functions++;
+                    analytics_calls.push(function_data);
+                    if (completed_functions === function_indicatorsArray.length ) {
+                      this.current_analytics_data = this.mergeAnalyticsCalls(analytics_calls, labels);
+                      this.loading = false;
+                      if (type === 'csv') {
+                        // this.downloadCSV(data);
+                      } else {
+                        this.chartData = this.visulizationService.drawChart(this.current_analytics_data, this.visualizer_config.chartConfiguration);
+                        this.tableData = this.visulizationService.drawTable(this.current_analytics_data, this.visualizer_config.tableConfiguration);
+                      }
+                      this.error_occured = false;
+                    }
+                  },
+                  error: (error) => {
+                    completed_functions++;
+                    this.error_occured = true;
+                    console.log('error');
+                  },
+                  progress: (progress) => {
+                    console.log('progress');
+                  }
+                };
+                const execute = Function('parameters', use_function['function']);
+                execute(parameters);
+              });
+            }
           }
         }
       }
@@ -484,7 +523,7 @@ export class IndicatorCardComponent implements OnInit, AfterViewInit, OnDestroy 
   }
 
 
-  checkIfParametersChanged(orgunits, periods, indicators): boolean {
+  checkIfParametersChanged(orgunits, periods, indicators, function_indicatorsArray): boolean {
     let checker = false;
     const temp_arr = [];
     for (const per of periods) {
@@ -495,6 +534,9 @@ export class IndicatorCardComponent implements OnInit, AfterViewInit, OnDestroy 
     }
     for (const indicator of indicators) {
       temp_arr.push(indicator);
+    }
+    for (const indicator of function_indicatorsArray) {
+      temp_arr.push(indicator.id);
     }
     if (this.current_parameters.length !== 0 && temp_arr.length === this.current_parameters.length) {
       checker = temp_arr.sort().join(',') === this.current_parameters.sort().join(',');

@@ -106,17 +106,18 @@
     <ng-container *ngFor="let indicator of getItemsFromGroups() | filterIndicatorByName:searchQuery; let i=index">
       <tr style="height: 35px; max-height: 35px; overflow-y: hidden; line-height: 80%" class="orunitTr" *ngIf="scorecard.data.shown_records == 'all' || i < scorecard.data.shown_records">
         <td style="vertical-align: bottom;font-size: 10px;cursor: pointer;line-height: 80%;padding: 8px" *ngIf="scorecard.data.show_rank">{{ i+1 }}</td>
-        <td style="vertical-align: bottom;font-size: 10px;cursor: pointer;line-height: 80%;padding: 0px;min-width:150px"
+        <td style="vertical-align: bottom;font-size: 10px;cursor: pointer;line-height: 80%;padding: 8px;min-width:150px"
             class="orgUnitName"
             dnd-droppable (onDropSuccess)="dragItemSuccessfull($event,'indicator',indicator)"
             (click)="loadChildrenData(null,indicator.indicators[0])"
-        >
 
+        >
+          <div dnd-draggable [dragEnabled]="true" [dragData]="indicator">
             <img src="balls-3.svg"
                  style="height: 30px" *ngIf="indicator_loading[indicator.indicators[0].id]"
                  title="Loading old data for {{ getIndicatorTitle(indicator) }}">
             <span *ngIf="indicator_done_loading[indicator.indicators[0].id] && old_proccessed_percent != 100" class="glyphicon glyphicon-ok text-success"></span>
-          <div dnd-draggable [dragEnabled]="true" [dragData]="indicator" style="padding: 8px">
+
             {{ getIndicatorTitle(indicator) }}
           </div>
         </td>
@@ -147,7 +148,7 @@
       <tr *ngIf="showSubScorecard[indicator.indicators[0].id]">
         <td [attr.colspan]="getSubscorecardColspan() + getCorrectColspan()" style="background-color: rgba(0,0,0,0.1)">
           <!--Internal score card-->
-          <h3 class="text-center text-muted" *ngIf="!children_available[indicator.indicators[0].id]">This indicator has no bottleneck indicators</h3>
+          <h3 class="text-center text-muted" *ngIf="!children_available[indicator.indicators[0].id]">This indicator has no related indicators</h3>
           <app-scorecard
             *ngIf="children_available[indicator.indicators[0].id]"
             [scorecard] = "subscorecard"
