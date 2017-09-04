@@ -184,252 +184,291 @@
   <div class="alert alert-danger" style="margin: 0px; padding: 10px" role="alert">Make sure to write the title, Description and pick at least one indicators for your score card.</div>
 </div>
 
-<div class="container-fluid" style="padding-left: 0px; font-size: 11px">
-  <!--basic details of the scorecard-->
-  <div class="col-sm-3 no-left-padding1">
-    <div class="thumbnail scorecard_details">
-      <div class="form-group">
-        <label for="title" style="padding-top: 3px">Title <span class="text-danger">*</span></label>
-        <input type="text" class="form-control input-sm" #title id="title" placeholder="Title" style="height: 25px; margin-top: 5px" [(ngModel)]="scorecard.data.header.title">
-      </div>
-      <p class="help-block"><a class="btn btn-xs btn-default" (click)="showTextEditor()">
-        <span class="glyphicon glyphicon-pencil"></span> custom header</a></p>
-      <div class="form-group">
-        <label for="description">Description  <span class="text-danger">*</span></label>
-        <textarea class="form-control input-sm" #description id="description" placeholder="Scorecard description" [(ngModel)]="scorecard.data.header.description"></textarea>
-      </div>
-
-      <!--legend definition-->
-      <div class="form-group">
-        <label>Legend Definition</label>
-        <div *ngFor="let legend of scorecard.data.legendset_definitions; let i = index" class="">
-          <div class="col-sm-3" style="padding-right: 2px;padding-left: 2px"><input  style="height: 25px" [(colorPicker)]="legend.color" [style.background]="legend.color" [(ngModel)]="legend.color" class="form-control color-input input-sm"/></div>
-          <div class="col-sm-9" style="padding-left: 2px;padding-right: 2px">
-            <div class="col-sm-11" style="padding: 0px"><input [(ngModel)]="legend.definition" class="form-control color-input input-sm" style="height: 25px;"/></div>
-            <div class="col-sm-1" style="padding: 6px" *ngIf="!legend.default"><span class="glyphicon glyphicon-trash text-danger" style="cursor: pointer" title="click to delete" (click)="showDeleteWarnig(i)"></span></div>
-          </div>
-          <!--nice warning when trying to delete legend-->
-          <div *ngIf="show_delete_legend[i] && scorecard.data.data_settings.indicator_holders.length != 0" class="col-sm-11" style="padding: 5px">
-            <span>Deleting this legend will reset legend definition for all indicators</span><br>
-            <button class="btn btn-default btn-sm" style="border-radius: 50%"(click)="cancelDeleteLegend(i)" title="Cancel"><span class="glyphicon glyphicon-remove text-warning" style="cursor: pointer"  ></span></button>
-            <button class="btn btn-default btn-sm" style="border-radius: 50%" (click)="deleteLegand(i)" title="Confirm Deletion"><span class="glyphicon glyphicon-ok text-success" style="cursor: pointer"  ></span></button>
-          </div>
+<div class="container-fluid" style="font-size: 11px">
+  <div class="row">
+    <!--basic details of the scorecard-->
+    <div class="col-sm-3 no-left-padding1">
+      <div class="thumbnail scorecard_details">
+        <div class="form-group">
+          <label for="title" style="padding-top: 3px">Title <span class="text-danger">*</span></label>
+          <input type="text" class="form-control input-sm" #title id="title" placeholder="Title" style="height: 25px; margin-top: 5px" [(ngModel)]="scorecard.data.header.title">
         </div>
-        <div>
-          <div class="col-sm-3" style="padding-right: 2px;padding-left: 2px"><input title="Choose a color for new Legend"  style="height: 25px" [(colorPicker)]="new_color" [style.background]="new_color" [(ngModel)]="new_color" class="form-control color-input input-sm"/></div>
-          <div class="col-sm-9" style="padding-left: 2px;padding-right: 2px">
-            <div class="col-sm-11" style="padding: 0px"><input [(ngModel)]="new_definition" class="form-control color-input input-sm" style="height: 25px;" placeholder="Type to add new definition here"/></div>
-            <div class="col-sm-1" style="padding: 6px"><span *ngIf="!show_add_legend && new_definition != ''" class="glyphicon glyphicon-plus text-primary" style="cursor: pointer" title="Add Legend Set" (click)="showAddWarning()"></span></div>
-          </div>
+        <p class="help-block">
+          <a class="btn btn-xs btn-default" (click)="showTextEditor()" title="Update custom Header" style="font-size: 12px">
+            <i class="fa fa-pencil"></i> custom header
+          </a>
+        </p>
+        <div class="form-group">
+          <label for="description">Description  <span class="text-danger">*</span></label>
+          <textarea class="form-control input-sm" #description id="description" placeholder="Scorecard description" [(ngModel)]="scorecard.data.header.description"></textarea>
         </div>
-        <!--nice warning when trying to add new legend-->
-        <div *ngIf="show_add_legend && scorecard.data.data_settings.indicator_holders.length != 0" class="col-sm-11" style="padding: 5px">
-          <span>Adding new legend will reset legend definition for all indicators</span><br>
-          <button class="btn btn-default btn-sm" style="border-radius: 50%" title="Add Legend Set" (click)="cancelAddLegend()"><span class="glyphicon glyphicon-remove text-warning" style="cursor: pointer"></span></button>
-          <button class="btn btn-default btn-sm" style="border-radius: 50%" title="Add Legend Set" (click)="addLegend()"><span class="glyphicon glyphicon-ok text-success" style="cursor: pointer"></span></button>
-        </div>
-      </div>
 
-      <!--additional labels-->
-      <div class="form-group" >
-        <label title="this will be used to add additional information about the scorecard item (eg. source of data)" style="margin-top: 5px">Additional labels</label>
-        <div class="col-sm-10" style="padding-left: 5px"><input class="form-control input-sm" style="height: 25px" [(ngModel)]="newLabel"></div>
-        <div class="col-sm-2"><button title="click to add new label eg source of data for indicator" class="btn btn-xs btn-success pull-right" style="-webkit-border-radius:50%;-moz-border-radius:50%;border-radius: 50%;" (click)="addAditionalLabel()">
-          <span class="glyphicon glyphicon-plus"></span>
-        </button> </div>
-        <div class="container-fluid" style="padding-left: 5px" *ngFor="let label of scorecard.data.additional_labels">
-          <div class="col-sm-10" style="padding: 0px">{{ label }}</div>
-          <div class="col-sm-2"><button title="click to delete {{ label }}" class="btn btn-xs btn-danger pull-right" style="-webkit-border-radius:50%;-moz-border-radius:50%;border-radius: 50%;" (click)="deleteAdditionalLabel(label)">
-            <span class="glyphicon glyphicon-trash"></span>
-          </button> </div>
-        </div>
-      </div>
-
-      <div class="form-group">
-        <label>Share with</label>
-      </div>
-    </div>
-  </div>
-
-  <!--Group selection-->
-  <div class="col-sm-2 no-left-padding1">
-    <div class="thumbnail scorecard_details">
-      <!--<h4 style="margin-top: 0px;margin-bottom: 1px">Data Type</h4>-->
-      <div class="form-group">
-        <select [(ngModel)]="group_type" class="form-control input-sm" style="height: 25px"  #f (change)="switchType(f.value)">
-          <option value="indicators">Indicators</option>
-          <option value="dataElements">Data Elements</option>
-          <option value="datasets">Data Sets</option>
-          <option value="programs">Program Indicators</option>
-          <option value="event">Event Data Items </option>
-          <option value="functions">Custom Functions</option>
-        </select>
-      </div>
-      <img src="balls-4.svg" style="height: 70px; padding-top: 20px" *ngIf="!done_loading_groups">
-      <div class="form-group" *ngIf="done_loading_groups">
-        <input type="text" class="form-control input-sm" placeholder="Search by name" style="height: 25px; margin-top: 3px" [(ngModel)]="groupQuery">
-      </div>
-      <ul class="list-group" *ngIf="done_loading_groups">
-        <li
-          class="list-group-item selection_link"
-          *ngFor="let group of current_groups | filterByName:groupQuery | paginate: { id: 'groups', itemsPerPage: 8, currentPage: p }"
-          [ngClass]="{'listSelected': group.id == activeGroup}"
-          (click)="load_list(group.id, f.value)"
-        >
-          {{ group.name }}
-        </li>
-      </ul>
-      <pagination-controls  id="groups" (pageChange)="p = $event" directionLinks="true" autoHide="true"></pagination-controls>
-    </div>
-
-  </div>
-
-  <!--item listing-->
-  <div class="col-sm-2 no-left-padding1">
-    <div class="thumbnail scorecard_details">
-      <div *ngIf="listReady">
-        <img src="balls-4.svg" style="height: 90px; padding-top: 20px" *ngIf="!done_loading_list">
-        <h5 class="text-danger" *ngIf="error_loading_list.occurred">{{ error_loading_list.message }}</h5>
-        <div class="form-group" *ngIf="done_loading_list">
-          <input type="text" class="form-control input-sm" placeholder="Search by name" style="height: 25px;" [(ngModel)]="listQuery">
-        </div>
-        <p *ngIf="done_loading_list && current_listing.length == 0">No items for a selected group</p>
-        <ul class="list-group" *ngIf="done_loading_list">
-          <li
-            class="list-group-item selection_link"
-            *ngFor="let item of current_listing | filterByName:listQuery | paginate: { id: 'list', itemsPerPage: 8, currentPage: r }"
-            [ngClass]="{'already_selected': indicatorExist(scorecard.data.data_settings.indicator_holders, item)}"
-            (click)="load_item(item)"
-            dnd-draggable [dragEnabled]="true" [dragData]="item"
-          >
-            <span class="glyphicon glyphicon-ok-circle text-success" *ngIf="indicatorExist(scorecard.data.data_settings.indicator_holders, item)"></span> {{ item.name }}
-          </li>
-        </ul>
-        <pagination-controls  id="list" (pageChange)="r = $event" directionLinks="true" autoHide="true"></pagination-controls>
-      </div>
-    </div>
-  </div>
-
-  <!--item details-->
-  <div class="col-sm-5 no-left-padding1" style="padding-right: 0px">
-    <div class="thumbnail scorecard_details">
-      <div class="row" *ngFor="let indicator of current_indicator_holder.indicators" style="border-bottom: 1px solid #B3B3B3; padding-top: 3px">
-        <div class="row" style="margin-right: 20px">
-          <button class="btn btn-danger btn-xs pull-right" (click)="deleteIndicator(indicator)">
-            <span class="glyphicon glyphicon-trash" ></span>
-          </button>
-        </div>
-        <div class="col-sm-7">
-          <div style="padding-bottom: 5px">
-            <div class="col-sm-3">
-              <label class="sans-pro lebal">Name:</label>
-            </div>
-            <div class="col-sm-9">
-              <input [value]="indicator.name" class="form-control input-sm" disabled/>
-            </div>
-          </div>
-          <div style="padding-bottom: 5px">
-            <div class="col-sm-3">
-              <label class="sans-pro lebal">Title:</label>
-            </div>
-            <div class="col-sm-9">
-              <input [(ngModel)]="indicator.title" class="form-control input-sm"/>
-            </div>
-          </div>
-          <div  style="padding-bottom: 5px">
-            <div class="col-sm-3">
-              <label class="sans-pro lebal">Weight:</label>
-            </div>
-            <div class="col-sm-9">
-              <input type="number" min="0" max="200" [(ngModel)]="indicator.weight" class="form-control input-sm" [disabled]="!scorecard.data.show_score"/>
-            </div>
-          </div>
-          <div  style="padding-bottom: 5px">
-            <div class="col-sm-3">
-              <label class="sans-pro lebal" title="activate up/down arrow if difference between previous and present value exceeds {{indicator.arrow_settings.effective_gap}}">Effective Gap:</label>
-            </div>
-            <div class="col-sm-3">
-              <input type="number" min="0" [(ngModel)]="indicator.arrow_settings.effective_gap" class="form-control input-sm" [disabled]="!indicator.arrow_settings.display" title="activate up/down arrow if difference between previous and present value exceeds {{indicator.arrow_settings.effective_gap}}"/>
-            </div>
-            <div class="col-sm-4">
-              <label class="sans-pro lebal">Display arrows:</label>
-            </div>
-            <div class="col-sm-2">
-              <input type="checkbox" [(ngModel)]="indicator.arrow_settings.display" >
-            </div>
-          </div>
-          <div style="padding-bottom: 5px">
-            <div class="col-sm-4">
-              <label class="sans-pro lebal">High is good:</label>
-            </div>
-            <div class="col-sm-2">
-              <input type="checkbox" [(ngModel)]="indicator.high_is_good" >
-            </div>
-
-            <div class="col-sm-4">
-              <label class="sans-pro lebal">Show Colours:</label>
-            </div>
-            <div class="col-sm-2">
-              <input type="checkbox" [(ngModel)]="indicator.legend_display" >
-            </div>
-          </div>
-        </div>
-        <!--Legend set definition-->
-        <div class="col-sm-5" style="padding-bottom: 5px">
-          <div *ngFor="let legend of indicator.legendset; let i = index;">
-            <div class="row" style="padding-top: 2px">
-              <div class="col-sm-12">
-                <span [style.background-color]="scorecard.data.legendset_definitions[i].color">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>&nbsp;
-                <label class="sans-pro lebal">{{ scorecard.data.legendset_definitions[i].definition }}</label>
-              </div>
-
-            </div>
-
-            <div class="row">
-              <div class="col-sm-6">
-                <div class="row">
-                  <div class="col-sm-3"><label class="sans-pro lebal">Min</label></div>
-                  <div class="col-sm-9">
-                    <input type="text" [(ngModel)]="legend.min" class="form-control input-sm" [disabled]="!indicator.legend_display">
-                  </div>
+        <!--legend definition-->
+        <div class="form-group container-fluid">
+          <label style="margin-left:-15px;margin-bottom: 1px;margin-top: 10px">Legend Definition</label>
+          <div *ngFor="let legend of scorecard.data.legendset_definitions; let i = index" class="row">
+            <div class="col-sm-3" style="padding-right: 2px;padding-left: 2px"><input  style="height: 25px" [(colorPicker)]="legend.color" [style.background]="legend.color" [(ngModel)]="legend.color" class="form-control color-input input-sm"/></div>
+            <div class="col-sm-9" style="padding-left: 2px;padding-right: 2px">
+              <div class="row" style="margin: 0px">
+                <div class="col-sm-11" style="padding: 0px">
+                  <input [(ngModel)]="legend.definition" class="form-control color-input input-sm" style="height: 25px;"/>
                 </div>
-
+                <div class="col-sm-1" style="padding: 6px" *ngIf="!legend.default">
+                  <i class="fa fa-trash-o text-danger" style="cursor: pointer" title="click to delete" (click)="showDeleteWarnig(i)"></i>
+                </div>
               </div>
-              <div class="col-sm-6">
-                <div class="row">
-                  <div class="col-sm-3"><label class="sans-pro lebal">Max</label></div>
-                  <div class="col-sm-9">
-                    <input type="text" [(ngModel)]="legend.max" class="form-control input-sm" [disabled]="!indicator.legend_display">
-                  </div>
+            </div>
+            <!--nice warning when trying to delete legend-->
+            <div *ngIf="show_delete_legend[i] && scorecard.data.data_settings.indicator_holders.length != 0" class="col-sm-11" style="padding: 5px">
+              <span>Deleting this legend will reset legend definition for all indicators</span><br>
+              <button class="btn btn-default btn-sm" style="border-radius: 50%"(click)="cancelDeleteLegend(i)" title="Cancel">
+                <i class="fa fa-remove text-warning" style="cursor: pointer"  ></i>
+              </button>
+              <button class="btn btn-default btn-sm" style="border-radius: 50%" (click)="deleteLegand(i)" title="Confirm Deletion">
+                <i class="fa fa-check text-success" style="cursor: pointer"  ></i>
+              </button>
+            </div>
+          </div>
+          <label style="margin-left:-15px;margin-bottom: 1px;margin-top: 10px ">New Legend</label>
+          <div class="row">
+
+            <div class="col-sm-3" style="padding-right: 2px;padding-left: 2px"><input title="Choose a color for new Legend"  style="height: 25px" [(colorPicker)]="new_color" [style.background]="new_color" [(ngModel)]="new_color" class="form-control color-input input-sm"/></div>
+            <div class="col-sm-9" style="padding-left: 2px;padding-right: 2px">
+              <div class="row" style="margin: 0px">
+                <div class="col-sm-11" style="padding: 0px">
+                  <input [(ngModel)]="new_definition" class="form-control color-input input-sm" style="height: 25px;" placeholder="Type to add new definition here"/>
+                </div>
+                <div class="col-sm-1" style="padding: 6px">
+                  <i *ngIf="!show_add_legend && new_definition != ''" class="fa fa-plus text-primary" style="cursor: pointer" title="Add Legend Set" (click)="showAddWarning()"></i>
                 </div>
               </div>
             </div>
           </div>
-
+          <!--nice warning when trying to add new legend-->
+          <div *ngIf="show_add_legend && scorecard.data.data_settings.indicator_holders.length != 0" class="col-sm-11" style="padding: 5px">
+            <span>Adding new legend will reset legend definition for all indicators</span><br>
+            <button class="btn btn-outline-secondary btn-sm cursor" style="border-radius: 50%" title="Add Legend Set" (click)="cancelAddLegend()">
+              <i class="fa fa-remove text-warning"></i>
+            </button>
+            <button class="btn btn-outline-secondary btn-sm cursor" style="border-radius: 50%" title="Add Legend Set" (click)="addLegend()">
+              <i class="fa fa-check text-success"></i>
+            </button>
+          </div>
         </div>
-        <a (click)="showBotleneckEditor(indicator)"
-           style="padding: 6px; margin-left: 30px"
-           class="btn btn-xs btn-default"
-           title="Click to manage indicators related to {{ indicator.title }}">
-          <span class="glyphicon glyphicon-pencil"></span> Related/Bottleneck indicators
-          <span class="badge"> {{ indicator.bottleneck_indicators.length }} </span>
-        </a>
-        <!--additinal labels-->
-        <div class="col-sm-7" *ngFor="let label of scorecard.data.additional_labels">
-          <div style="padding-bottom: 5px">
-            <div class="col-sm-3">
-              <label class="sans-pro lebal">{{ label }}:</label>
-            </div>
-            <div class="col-sm-9">
-              <input [(ngModel)]="indicator.additional_label_values[label]" class="form-control input-sm"/>
+
+        <!--additional labels-->
+        <div class="form-group container-fluid" >
+          <label title="this will be used to add additional information about the scorecard item (eg. source of data)" style="margin-top: 5px;margin-left: -15px">Additional labels</label>
+
+          <div class="row" style="padding-left: 2px; margin-bottom: 5px" *ngFor="let label of scorecard.data.additional_labels">
+              <div class="col-sm-10" style="padding-left: 2px">{{ label }}</div>
+              <div class="col-sm-2">
+                <button title="click to delete {{ label }}" class="btn btn-sm btn-outline-danger pull-right cursor" style="height: 23px; padding-top: 1px" (click)="deleteAdditionalLabel(label)">
+                  <i class="fa fa-trash-o"></i>
+                </button>
+              </div>
+            <hr>
+          </div>
+
+          <div class="row" style="margin-bottom: 5px">
+            <div class="col-sm-10" style="padding-left: 2px"><input class="form-control input-sm" style="height: 25px" [(ngModel)]="newLabel"></div>
+            <div class="col-sm-2" >
+              <button title="click to add new label Eg. source of data for indicator" class="btn btn-sm btn-outline-success pull-right cursor" (click)="addAditionalLabel()" style="height: 25px; padding-top: 2px">
+                <i class="fa fa-plus"></i>
+              </button>
             </div>
           </div>
         </div>
+
       </div>
-      <span class="help-block pull-left" *ngIf="current_indicator_holder.indicators.length != 0">If you want to have two data items in the same column just select the second data item from the list on the left</span>
-      <!--<button class="btn btn-sm btn-default pull-right" (click)="enableAddIndicator()" *ngIf="current_indicator_holder.indicators.length != 0">-->
-      <!--<span class="glyphicon glyphicon-plus"></span>Add-->
-      <!--</button>-->
+    </div>
+
+    <!--data selection area-->
+    <div class="col-sm-4">
+      <div class="row">
+        <!--Group selection-->
+        <div class="col-sm-2 no-left-padding1">
+          <div class="thumbnail scorecard_details">
+            <!--<h4 style="margin-top: 0px;margin-bottom: 1px">Data Type</h4>-->
+            <div class="form-group">
+              <select [(ngModel)]="group_type" class="form-control input-sm" style="height: 25px"  #f (change)="switchType(f.value)">
+                <option value="indicators">Indicators</option>
+                <option value="dataElements">Data Elements</option>
+                <option value="datasets">Data Sets</option>
+                <option value="programs">Program Indicators</option>
+                <option value="event">Event Data Items </option>
+                <option value="functions">Custom Functions</option>
+              </select>
+            </div>
+            <img src="balls-4.svg" style="height: 70px; padding-top: 20px" *ngIf="!done_loading_groups">
+            <div class="form-group" *ngIf="done_loading_groups">
+              <input type="text" class="form-control input-sm" placeholder="Search by name" style="height: 25px; margin-top: 3px" [(ngModel)]="groupQuery">
+            </div>
+            <ul class="list-group" *ngIf="done_loading_groups">
+              <li
+                class="list-group-item selection_link"
+                *ngFor="let group of current_groups | filterByName:groupQuery | paginate: { id: 'groups', itemsPerPage: 8, currentPage: p }"
+                [ngClass]="{'listSelected': group.id == activeGroup}"
+                (click)="load_list(group.id, f.value)"
+              >
+                {{ group.name }}
+              </li>
+            </ul>
+            <pagination-controls  id="groups" (pageChange)="p = $event" directionLinks="true" autoHide="true"></pagination-controls>
+          </div>
+
+        </div>
+
+        <!--item listing-->
+        <div class="col-sm-2 no-left-padding1">
+          <div class="thumbnail scorecard_details">
+            <div *ngIf="listReady">
+              <img src="balls-4.svg" style="height: 90px; padding-top: 20px" *ngIf="!done_loading_list">
+              <h5 class="text-danger" *ngIf="error_loading_list.occurred">{{ error_loading_list.message }}</h5>
+              <div class="form-group" *ngIf="done_loading_list">
+                <input type="text" class="form-control input-sm" placeholder="Search by name" style="height: 25px;" [(ngModel)]="listQuery">
+              </div>
+              <p *ngIf="done_loading_list && current_listing.length == 0">No items for a selected group</p>
+              <ul class="list-group" *ngIf="done_loading_list">
+                <li
+                  class="list-group-item selection_link"
+                  *ngFor="let item of current_listing | filterByName:listQuery | paginate: { id: 'list', itemsPerPage: 8, currentPage: r }"
+                  [ngClass]="{'already_selected': indicatorExist(scorecard.data.data_settings.indicator_holders, item)}"
+                  (click)="load_item(item)"
+                  dnd-draggable [dragEnabled]="true" [dragData]="item"
+                >
+                  <span class="glyphicon glyphicon-ok-circle text-success" *ngIf="indicatorExist(scorecard.data.data_settings.indicator_holders, item)"></span> {{ item.name }}
+                </li>
+              </ul>
+              <pagination-controls  id="list" (pageChange)="r = $event" directionLinks="true" autoHide="true"></pagination-controls>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!--item details-->
+    <div class="col-sm-5 no-left-padding1" style="padding-right: 0px">
+      <div class="thumbnail scorecard_details">
+        <div class="row" *ngFor="let indicator of current_indicator_holder.indicators" style="border-bottom: 1px solid #B3B3B3; padding-top: 3px">
+          <div class="row" style="margin-right: 20px">
+            <button class="btn btn-danger btn-xs pull-right" (click)="deleteIndicator(indicator)">
+              <span class="glyphicon glyphicon-trash" ></span>
+            </button>
+          </div>
+          <div class="col-sm-7">
+            <div style="padding-bottom: 5px">
+              <div class="col-sm-3">
+                <label class="sans-pro lebal">Name:</label>
+              </div>
+              <div class="col-sm-9">
+                <input [value]="indicator.name" class="form-control input-sm" disabled/>
+              </div>
+            </div>
+            <div style="padding-bottom: 5px">
+              <div class="col-sm-3">
+                <label class="sans-pro lebal">Title:</label>
+              </div>
+              <div class="col-sm-9">
+                <input [(ngModel)]="indicator.title" class="form-control input-sm"/>
+              </div>
+            </div>
+            <div  style="padding-bottom: 5px">
+              <div class="col-sm-3">
+                <label class="sans-pro lebal">Weight:</label>
+              </div>
+              <div class="col-sm-9">
+                <input type="number" min="0" max="200" [(ngModel)]="indicator.weight" class="form-control input-sm" [disabled]="!scorecard.data.show_score"/>
+              </div>
+            </div>
+            <div  style="padding-bottom: 5px">
+              <div class="col-sm-3">
+                <label class="sans-pro lebal" title="activate up/down arrow if difference between previous and present value exceeds {{indicator.arrow_settings.effective_gap}}">Effective Gap:</label>
+              </div>
+              <div class="col-sm-3">
+                <input type="number" min="0" [(ngModel)]="indicator.arrow_settings.effective_gap" class="form-control input-sm" [disabled]="!indicator.arrow_settings.display" title="activate up/down arrow if difference between previous and present value exceeds {{indicator.arrow_settings.effective_gap}}"/>
+              </div>
+              <div class="col-sm-4">
+                <label class="sans-pro lebal">Display arrows:</label>
+              </div>
+              <div class="col-sm-2">
+                <input type="checkbox" [(ngModel)]="indicator.arrow_settings.display" >
+              </div>
+            </div>
+            <div style="padding-bottom: 5px">
+              <div class="col-sm-4">
+                <label class="sans-pro lebal">High is good:</label>
+              </div>
+              <div class="col-sm-2">
+                <input type="checkbox" [(ngModel)]="indicator.high_is_good" >
+              </div>
+
+              <div class="col-sm-4">
+                <label class="sans-pro lebal">Show Colours:</label>
+              </div>
+              <div class="col-sm-2">
+                <input type="checkbox" [(ngModel)]="indicator.legend_display" >
+              </div>
+            </div>
+          </div>
+          <!--Legend set definition-->
+          <div class="col-sm-5" style="padding-bottom: 5px">
+            <div *ngFor="let legend of indicator.legendset; let i = index;">
+              <div class="row" style="padding-top: 2px">
+                <div class="col-sm-12">
+                  <span [style.background-color]="scorecard.data.legendset_definitions[i].color">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>&nbsp;
+                  <label class="sans-pro lebal">{{ scorecard.data.legendset_definitions[i].definition }}</label>
+                </div>
+
+              </div>
+
+              <div class="row">
+                <div class="col-sm-6">
+                  <div class="row">
+                    <div class="col-sm-3"><label class="sans-pro lebal">Min</label></div>
+                    <div class="col-sm-9">
+                      <input type="text" [(ngModel)]="legend.min" class="form-control input-sm" [disabled]="!indicator.legend_display">
+                    </div>
+                  </div>
+
+                </div>
+                <div class="col-sm-6">
+                  <div class="row">
+                    <div class="col-sm-3"><label class="sans-pro lebal">Max</label></div>
+                    <div class="col-sm-9">
+                      <input type="text" [(ngModel)]="legend.max" class="form-control input-sm" [disabled]="!indicator.legend_display">
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+          <a (click)="showBotleneckEditor(indicator)"
+             style="padding: 6px; margin-left: 30px"
+             class="btn btn-xs btn-default"
+             title="Click to manage indicators related to {{ indicator.title }}">
+            <span class="glyphicon glyphicon-pencil"></span> Related/Bottleneck indicators
+            <span class="badge"> {{ indicator.bottleneck_indicators.length }} </span>
+          </a>
+          <!--additinal labels-->
+          <div class="col-sm-7" *ngFor="let label of scorecard.data.additional_labels">
+            <div style="padding-bottom: 5px">
+              <div class="col-sm-3">
+                <label class="sans-pro lebal">{{ label }}:</label>
+              </div>
+              <div class="col-sm-9">
+                <input [(ngModel)]="indicator.additional_label_values[label]" class="form-control input-sm"/>
+              </div>
+            </div>
+          </div>
+        </div>
+        <span class="help-block pull-left" *ngIf="current_indicator_holder.indicators.length != 0">If you want to have two data items in the same column just select the second data item from the list on the left</span>
+        <!--<button class="btn btn-sm btn-default pull-right" (click)="enableAddIndicator()" *ngIf="current_indicator_holder.indicators.length != 0">-->
+        <!--<span class="glyphicon glyphicon-plus"></span>Add-->
+        <!--</button>-->
+      </div>
     </div>
   </div>
 </div>
@@ -451,9 +490,9 @@
 </div>
 
 <!--model for custom header-->
-<div class="indicator_details" [ngClass]="{'hiddendiv': !show_editor}">
+<div class="custom_header_details" [ngClass]="{'hiddendiv': !show_editor}">
   <div class="indicator_dialog">
-    <div class="indicator-content">
+    <div class="custom-header-content">
       <span class="glyphicon glyphicon-remove pull-right" style="cursor: pointer" (click)="showTextEditor()"></span>
       <div style="padding: 15px">
         <ckeditor
@@ -465,7 +504,7 @@
           (blur)="onTitleBlur($event)"
           debounce="300">
         </ckeditor>
-        <button class="btn btn-default pull-right" (click)="showTextEditor()"> <span class="glyphicon glyphicon-ok"></span> Done </button>
+        <button class="btn btn-sm btn-secondary pull-right cursor" (click)="showTextEditor()"> <i class="fa fa-check"></i> Done </button>
       </div>
     </div>
   </div>
