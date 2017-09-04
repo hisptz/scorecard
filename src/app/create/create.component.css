@@ -5,7 +5,9 @@
   margin-bottom: 2px;
   font-size: 11px;
 }
-
+.table td, .table th {
+   padding: 0px;
+}
 .singleItem input{
   height: 30px;
   font-size: 12px;

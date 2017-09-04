@@ -20,10 +20,12 @@
     </div>
   </div>
 </div>
+<!--loading notification-->
+<!--<span *ngIf="percent_complete != 100" style="position: absolute;right: 5px;bottom: 5px" class="lead">Loading data...{{percent_complete}}%</span>-->
 <!--sample score card-->
 <div class="container-fluid no-left-padding" style="border-top: 1px solid blanchedalmond; padding-top: 8px">
   <!--sample score card-->
-  <div [innerHTML]="scorecard.data.header.template.content | safeHtml"></div>
+  <div [innerHTML]="scorecard.data.header.template.content | safeHtml" class="cursor" title="click to update" (click)="showTextEditor()"></div>
   <!--legend-->
   <div class="row legend" style="margin-bottom: 10px" *ngIf="scorecard.data.header.show_legend_definition">
     <div class="col-sm-2 legendItem" *ngFor="let legend of scorecard.data.legendset_definitions">
@@ -50,7 +52,7 @@
         </th>
         <!--holder groups stays here-->
         <th
-          style="font-size: 9px; "
+          style="font-size: 9px; padding: 5px"
           *ngFor="let indicator_holder_group of scorecard.data.data_settings.indicator_holder_groups"
           [attr.colspan]="indicator_holder_group.indicator_holder_ids.length"
           class="sans-pro"
@@ -73,8 +75,8 @@
         </th>
         <!--add holder groups-->
         <th style="width: 60px"  dnd-droppable (onDropSuccess)="transferDataSuccess($event,'new-group',null)">
-          <button class="btn btn-xs" *ngIf="need_for_group" (click)="createGroup()">
-            <span class="glyphicon-plus"></span> Add
+          <button class="btn btn-sm btn-outline-secondary cursor" *ngIf="need_for_group" (click)="createGroup()">
+            <i class="fa fa-plus"></i> Add
           </button>
         </th>
       </tr>
@@ -89,19 +91,20 @@
           ></app-period-filter>
           <!--end of period configuration-->
         </td>
-        <td *ngFor="let indicator of getItemsFromGroups()" style="font-size: 10px;width:90px;max-width: 90px;overflow-wrap: break-word;cursor: pointer;" class="sans-pro"
+        <td *ngFor="let indicator of getItemsFromGroups()" style="padding: 5px;font-size: 10px;width:90px;max-width: 90px;overflow-wrap: break-word;cursor: pointer;" class="sans-pro"
             title="Click to update {{ getIndicatorTitle(indicator) }}"
             [ngClass]="{'current':is_current_indicator(indicator)}"
             (click)="updateIndicator(indicator)"
             dnd-droppable (onDropSuccess)="transferDataSuccess($event,'table_data',indicator)"
+
         >
           <div dnd-draggable [dragEnabled]="true" [dragData]="indicator">
             {{ getIndicatorTitle(indicator) }}
           </div>
         </td>
         <th style="width: 60px">
-          <button title="Add new Indicator next to the current active indicator" class="btn btn-xs" *ngIf="need_for_indicator" (click)="enableAddIndicator(current_indicator_holder.holder_id)">
-            <span class="glyphicon-plus"></span> Add</button>
+          <button title="Add new Indicator next to the current active indicator" class="btn btn-sm btn-outline-secondary cursor" *ngIf="need_for_indicator" (click)="enableAddIndicator(current_indicator_holder.holder_id)">
+            <i class="fa fa-plus"></i> Add</button>
         </th>
       </tr>
       <tr>

@@ -200,12 +200,14 @@ export class CreateComponent implements OnInit, AfterViewInit, OnDestroy {
           // this.activateNode(this.filterService.getPeriodArray( this.period_type, this.year )[0].id, this.pertree);
           this.current_action = 'new';
           this.scorecard.data.user = this.user;
+          this.percent_complete = 10;
         }else {
           this.current_action = 'update';
           this.need_for_group = true;
           this.need_for_indicator = true;
           this.scorecardService.load(id).subscribe(
             scorecard_details => {
+              this.percent_complete = 10;
               this.scorecard = {
                 id: id,
                 name: scorecard_details.header.title,
@@ -309,6 +311,7 @@ export class CreateComponent implements OnInit, AfterViewInit, OnDestroy {
     // get indicatorGroups
     this.indicatorService.loadAll().subscribe(
       indicatorGroups => {
+        this.percent_complete += 20;
         for ( const group of indicatorGroups.indicatorGroups ) {
           this.indicatorGroups.push({
             id: group.id,
@@ -334,6 +337,7 @@ export class CreateComponent implements OnInit, AfterViewInit, OnDestroy {
     // get dataElementsGroups
     this.dataElementService.loadAll().subscribe(
       dataElementGroups => {
+        this.percent_complete += 20;
         for ( const group of dataElementGroups.dataElementGroups ) {
           this.dataElementGroups.push({
             id: group.id,
@@ -350,6 +354,7 @@ export class CreateComponent implements OnInit, AfterViewInit, OnDestroy {
     // get Programs
     this.programService.loadAll().subscribe(
       programs => {
+        this.percent_complete += 20;
         for ( const group of programs.programs ) {
           this.programs.push({
             id: group.id,
@@ -371,6 +376,7 @@ export class CreateComponent implements OnInit, AfterViewInit, OnDestroy {
     // get datasets
     this.datasetService.loadAll().subscribe(
       dataSets => {
+        this.percent_complete += 10;
         // noinspection TypeScriptUnresolvedVariable
         for ( const dataset of dataSets.dataSets ) {
           this.datasets.push({
@@ -388,6 +394,7 @@ export class CreateComponent implements OnInit, AfterViewInit, OnDestroy {
     //  get functions
     this.functionService.getAll().subscribe(
       functions => {
+        this.percent_complete += 20;
         // noinspection TypeScriptUnresolvedVariable
         this.functions = functions;
       },
@@ -934,6 +941,7 @@ export class CreateComponent implements OnInit, AfterViewInit, OnDestroy {
   updateIndicator(indicator: any): void {
     this.current_indicator_holder = indicator;
     this.need_for_indicator = true;
+    console.log('indicator:', this.current_indicator_holder);
     this.scorecard.data.data_settings.indicator_holder_groups.forEach( (group, groupIndex) => {
       if (group.indicator_holder_ids.indexOf(indicator.holder_id) > -1) {
         this.current_holder_group = group;
@@ -1509,25 +1517,6 @@ export class CreateComponent implements OnInit, AfterViewInit, OnDestroy {
     return index;
   }
 
-  //  check if legend color exist
-  checkLegendColorExist(color) {
-    let checker = false;
-    for ( const item of this.scorecard.data.legendset_definitions ) {
-      if (item.color === color) {
-        checker = true;
-      }
-    }
-    return checker;
-  }
-
-  activateNode(nodeId: any, nodes) {
-    setTimeout(() => {
-      const node = nodes.treeModel.getNodeById(nodeId);
-      if (node) {
-        node.setIsActive(true, true);
-      }
-    }, 0);
-  }
 
   transferDataSuccess($event, drop_area: string, object: any) {
     if (drop_area === 'group') {
