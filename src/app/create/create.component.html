@@ -284,49 +284,77 @@
     </div>
 
     <!--data selection area-->
-    <div class="col-sm-4">
+    <div class="col-sm-4 scorecard_details">
+      <div class="row ">
+        <div class="col-sm-12" style="padding: 0px">
+          <div class="form-group">
+            <ul class="list-inline" style="margin-bottom: 0px">
+              <li class="list-inline-item">
+                <a (click)="group_type='indicators';switchType('indicators')" class="cursor btn btn-sm {{group_type=='indicators' ? 'btn-info' : 'btn-outline-secondary'}}" title="Click to see All Data">
+                  Indicators
+                </a>
+              </li>
+              <li class="list-inline-item">
+                <a (click)="group_type='dataElements';switchType('dataElements')" class="cursor btn btn-sm {{group_type=='dataElements' ? 'btn-info' : 'btn-outline-secondary'}}" title="Click to see All Data">
+                  Data Elements
+                </a>
+              </li>
+              <li class="list-inline-item">
+                <a (click)="group_type='datasets';switchType('datasets')" class="cursor btn btn-sm {{group_type=='datasets' ? 'btn-info' : 'btn-outline-secondary'}}" title="Click to see All Data">
+                  Data Sets
+                </a>
+              </li>
+              <li class="list-inline-item">
+                <a (click)="group_type='programs';switchType('programs')" class="cursor btn btn-sm {{group_type=='programs' ? 'btn-info' : 'btn-outline-secondary'}}" title="Click to see All Data">
+                  Program Indicators
+                </a>
+              </li>
+              <li class="list-inline-item">
+                <a (click)="group_type='event';switchType('event')" class="cursor btn btn-sm {{group_type=='event' ? 'btn-info' : 'btn-outline-secondary'}}" title="Click to see All Data">
+                  Event Data Items
+                </a>
+              </li>
+              <li class="list-inline-item" >
+                <a (click)="group_type='functions';switchType('functions')" class="cursor btn btn-sm {{group_type=='functions' ? 'btn-info' : 'btn-outline-secondary'}}" title="Click to see All Data">
+                  Custom Functions
+                </a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
       <div class="row">
         <!--Group selection-->
-        <div class="col-sm-2 no-left-padding1">
-          <div class="thumbnail scorecard_details">
+        <div class="col-sm-6 no-left-padding1">
+          <div class="thumbnail scorecard_details2">
             <!--<h4 style="margin-top: 0px;margin-bottom: 1px">Data Type</h4>-->
-            <div class="form-group">
-              <select [(ngModel)]="group_type" class="form-control input-sm" style="height: 25px"  #f (change)="switchType(f.value)">
-                <option value="indicators">Indicators</option>
-                <option value="dataElements">Data Elements</option>
-                <option value="datasets">Data Sets</option>
-                <option value="programs">Program Indicators</option>
-                <option value="event">Event Data Items </option>
-                <option value="functions">Custom Functions</option>
-              </select>
-            </div>
             <img src="balls-4.svg" style="height: 70px; padding-top: 20px" *ngIf="!done_loading_groups">
             <div class="form-group" *ngIf="done_loading_groups">
-              <input type="text" class="form-control input-sm" placeholder="Search by name" style="height: 25px; margin-top: 3px" [(ngModel)]="groupQuery">
+              <input type="text" class="form-control input-sm" placeholder="Search group by name" style="height: 25px;padding-left: 2px; font-size: 11px" [(ngModel)]="groupQuery">
             </div>
             <ul class="list-group" *ngIf="done_loading_groups">
               <li
                 class="list-group-item selection_link"
                 *ngFor="let group of current_groups | filterByName:groupQuery | paginate: { id: 'groups', itemsPerPage: 8, currentPage: p }"
                 [ngClass]="{'listSelected': group.id == activeGroup}"
-                (click)="load_list(group.id, f.value)"
+                (click)="load_list(group.id, group_type)"
               >
                 {{ group.name }}
               </li>
             </ul>
-            <pagination-controls  id="groups" (pageChange)="p = $event" directionLinks="true" autoHide="true"></pagination-controls>
+            <pagination-controls  id="groups" (pageChange)="p = $event" directionLinks="true" autoHide="true" previousLabel=" " nextLabel=" "></pagination-controls>
           </div>
 
         </div>
 
         <!--item listing-->
-        <div class="col-sm-2 no-left-padding1">
-          <div class="thumbnail scorecard_details">
+        <div class="col-sm-6 no-left-padding1">
+          <div class="thumbnail scorecard_details2">
             <div *ngIf="listReady">
               <img src="balls-4.svg" style="height: 90px; padding-top: 20px" *ngIf="!done_loading_list">
               <h5 class="text-danger" *ngIf="error_loading_list.occurred">{{ error_loading_list.message }}</h5>
               <div class="form-group" *ngIf="done_loading_list">
-                <input type="text" class="form-control input-sm" placeholder="Search by name" style="height: 25px;" [(ngModel)]="listQuery">
+                <input type="text" class="form-control input-sm" placeholder="Search Item by name" style="height: 25px;padding-left: 2px; font-size: 11px" [(ngModel)]="listQuery">
               </div>
               <p *ngIf="done_loading_list && current_listing.length == 0">No items for a selected group</p>
               <ul class="list-group" *ngIf="done_loading_list">
@@ -337,10 +365,10 @@
                   (click)="load_item(item)"
                   dnd-draggable [dragEnabled]="true" [dragData]="item"
                 >
-                  <span class="glyphicon glyphicon-ok-circle text-success" *ngIf="indicatorExist(scorecard.data.data_settings.indicator_holders, item)"></span> {{ item.name }}
+                  <span class="fa fa-check-circle-o text-success" *ngIf="indicatorExist(scorecard.data.data_settings.indicator_holders, item)"></span> {{ item.name }}
                 </li>
               </ul>
-              <pagination-controls  id="list" (pageChange)="r = $event" directionLinks="true" autoHide="true"></pagination-controls>
+              <pagination-controls  id="list" (pageChange)="r = $event" directionLinks="true" autoHide="true" previousLabel=" " nextLabel=" "></pagination-controls>
             </div>
           </div>
         </div>
@@ -353,98 +381,101 @@
       <div class="thumbnail scorecard_details">
         <div class="row" *ngFor="let indicator of current_indicator_holder.indicators" style="border-bottom: 1px solid #B3B3B3; padding-top: 3px">
           <div class="row" style="margin-right: 20px">
-            <button class="btn btn-danger btn-xs pull-right" (click)="deleteIndicator(indicator)">
-              <span class="glyphicon glyphicon-trash" ></span>
+            <button class="btn btn-outline-danger btn-sm pull-right" (click)="deleteIndicator(indicator)">
+              <span class="fa fa-trash-o" ></span>
             </button>
           </div>
-          <div class="col-sm-7">
-            <div style="padding-bottom: 5px">
-              <div class="col-sm-3">
-                <label class="sans-pro lebal">Name:</label>
+          <div class="row" style="margin: 0px">
+            <div class="col-sm-7">
+              <div class="row" style="padding-bottom: 5px">
+                <div class="col-sm-3">
+                  <label class="sans-pro lebal">Name:</label>
+                </div>
+                <div class="col-sm-9">
+                  <input [value]="indicator.name" class="form-control input-sm" disabled/>
+                </div>
               </div>
-              <div class="col-sm-9">
-                <input [value]="indicator.name" class="form-control input-sm" disabled/>
+              <div class="row" style="padding-bottom: 5px">
+                <div class="col-sm-3">
+                  <label class="sans-pro lebal">Title:</label>
+                </div>
+                <div class="col-sm-9">
+                  <input [(ngModel)]="indicator.title" class="form-control input-sm"/>
+                </div>
               </div>
-            </div>
-            <div style="padding-bottom: 5px">
-              <div class="col-sm-3">
-                <label class="sans-pro lebal">Title:</label>
+              <div class="row"  style="padding-bottom: 5px">
+                <div class="col-sm-3">
+                  <label class="sans-pro lebal">Weight:</label>
+                </div>
+                <div class="col-sm-9">
+                  <input type="number" min="0" max="200" [(ngModel)]="indicator.weight" class="form-control input-sm" [disabled]="!scorecard.data.show_score"/>
+                </div>
               </div>
-              <div class="col-sm-9">
-                <input [(ngModel)]="indicator.title" class="form-control input-sm"/>
+              <div class="row"  style="padding-bottom: 5px">
+                <div class="col-sm-3">
+                  <label class="sans-pro lebal" title="activate up/down arrow if difference between previous and present value exceeds {{indicator.arrow_settings.effective_gap}}">Effective Gap:</label>
+                </div>
+                <div class="col-sm-3">
+                  <input type="number" min="0" [(ngModel)]="indicator.arrow_settings.effective_gap" class="form-control input-sm" [disabled]="!indicator.arrow_settings.display" title="activate up/down arrow if difference between previous and present value exceeds {{indicator.arrow_settings.effective_gap}}"/>
+                </div>
+                <div class="col-sm-4">
+                  <label class="sans-pro lebal">Display arrows:</label>
+                </div>
+                <div class="col-sm-2">
+                  <input type="checkbox" [(ngModel)]="indicator.arrow_settings.display" >
+                </div>
               </div>
-            </div>
-            <div  style="padding-bottom: 5px">
-              <div class="col-sm-3">
-                <label class="sans-pro lebal">Weight:</label>
-              </div>
-              <div class="col-sm-9">
-                <input type="number" min="0" max="200" [(ngModel)]="indicator.weight" class="form-control input-sm" [disabled]="!scorecard.data.show_score"/>
-              </div>
-            </div>
-            <div  style="padding-bottom: 5px">
-              <div class="col-sm-3">
-                <label class="sans-pro lebal" title="activate up/down arrow if difference between previous and present value exceeds {{indicator.arrow_settings.effective_gap}}">Effective Gap:</label>
-              </div>
-              <div class="col-sm-3">
-                <input type="number" min="0" [(ngModel)]="indicator.arrow_settings.effective_gap" class="form-control input-sm" [disabled]="!indicator.arrow_settings.display" title="activate up/down arrow if difference between previous and present value exceeds {{indicator.arrow_settings.effective_gap}}"/>
-              </div>
-              <div class="col-sm-4">
-                <label class="sans-pro lebal">Display arrows:</label>
-              </div>
-              <div class="col-sm-2">
-                <input type="checkbox" [(ngModel)]="indicator.arrow_settings.display" >
-              </div>
-            </div>
-            <div style="padding-bottom: 5px">
-              <div class="col-sm-4">
-                <label class="sans-pro lebal">High is good:</label>
-              </div>
-              <div class="col-sm-2">
-                <input type="checkbox" [(ngModel)]="indicator.high_is_good" >
-              </div>
-
-              <div class="col-sm-4">
-                <label class="sans-pro lebal">Show Colours:</label>
-              </div>
-              <div class="col-sm-2">
-                <input type="checkbox" [(ngModel)]="indicator.legend_display" >
-              </div>
-            </div>
-          </div>
-          <!--Legend set definition-->
-          <div class="col-sm-5" style="padding-bottom: 5px">
-            <div *ngFor="let legend of indicator.legendset; let i = index;">
-              <div class="row" style="padding-top: 2px">
-                <div class="col-sm-12">
-                  <span [style.background-color]="scorecard.data.legendset_definitions[i].color">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>&nbsp;
-                  <label class="sans-pro lebal">{{ scorecard.data.legendset_definitions[i].definition }}</label>
+              <div class="row" style="padding-bottom: 5px">
+                <div class="col-sm-4">
+                  <label class="sans-pro lebal">High is good:</label>
+                </div>
+                <div class="col-sm-2">
+                  <input type="checkbox" [(ngModel)]="indicator.high_is_good" >
                 </div>
 
+                <div class="col-sm-4">
+                  <label class="sans-pro lebal">Show Colours:</label>
+                </div>
+                <div class="col-sm-2">
+                  <input type="checkbox" [(ngModel)]="indicator.legend_display" >
+                </div>
               </div>
-
-              <div class="row">
-                <div class="col-sm-6">
-                  <div class="row">
-                    <div class="col-sm-3"><label class="sans-pro lebal">Min</label></div>
-                    <div class="col-sm-9">
-                      <input type="text" [(ngModel)]="legend.min" class="form-control input-sm" [disabled]="!indicator.legend_display">
-                    </div>
+            </div>
+            <!--Legend set definition-->
+            <div class="col-sm-5" style="padding-bottom: 5px">
+              <div *ngFor="let legend of indicator.legendset; let i = index;">
+                <div class="row" style="padding-top: 2px">
+                  <div class="col-sm-12">
+                    <span [style.background-color]="scorecard.data.legendset_definitions[i].color">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>&nbsp;
+                    <label class="sans-pro lebal">{{ scorecard.data.legendset_definitions[i].definition }}</label>
                   </div>
 
                 </div>
-                <div class="col-sm-6">
-                  <div class="row">
-                    <div class="col-sm-3"><label class="sans-pro lebal">Max</label></div>
-                    <div class="col-sm-9">
-                      <input type="text" [(ngModel)]="legend.max" class="form-control input-sm" [disabled]="!indicator.legend_display">
+
+                <div class="row">
+                  <div class="col-sm-6">
+                    <div class="row">
+                      <div class="col-sm-3"><label class="sans-pro lebal">Min</label></div>
+                      <div class="col-sm-9">
+                        <input type="text" [(ngModel)]="legend.min" class="form-control input-sm" [disabled]="!indicator.legend_display">
+                      </div>
+                    </div>
+
+                  </div>
+                  <div class="col-sm-6">
+                    <div class="row">
+                      <div class="col-sm-3"><label class="sans-pro lebal">Max</label></div>
+                      <div class="col-sm-9">
+                        <input type="text" [(ngModel)]="legend.max" class="form-control input-sm" [disabled]="!indicator.legend_display">
+                      </div>
                     </div>
                   </div>
                 </div>
               </div>
-            </div>
 
+            </div>
           </div>
+
           <a (click)="showBotleneckEditor(indicator)"
              style="padding: 6px; margin-left: 30px"
              class="btn btn-xs btn-default"

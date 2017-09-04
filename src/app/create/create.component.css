@@ -1,3 +1,14 @@
+.list-inline a{
+  height: 27px;
+  border-radius: 10px;
+  padding: 2px 9px;
+  margin-bottom: 2px;
+  font-size: 11px;
+}
+
+.list-inline .list-inline-item{
+  margin: 0px;
+}
 .no-left-padding{
   padding-left: 0px;
 }
@@ -24,7 +35,7 @@ label{
   width: auto;
   height: 450px;
   position: relative;
-  padding-top: 10px;
+  /*padding-top: 10px;*/
   overflow: hidden;
   margin-bottom: 5px;
   /*padding-left: 20px;*/
