@@ -4,7 +4,7 @@
       <img src="scorecard.svg" style="height: 58px; width: 48px"> <span style="font-size: 20px"> Score Card</span>
     </div>
     <div  class="col-md-8 col-xs-12">
-      <h3 class="text-center" style="margin-top: 14px">
+      <h3 class="text-center" style="margin-top: 8px">
         <small *ngIf="scorecard.name == ''">Create a new scorecard</small>
         <small *ngIf="scorecard.name != ''">{{ scorecard.name }}</small>
       </h3>
@@ -191,7 +191,7 @@
       <div class="thumbnail scorecard_details">
         <div class="form-group">
           <label for="title" style="padding-top: 3px">Title <span class="text-danger">*</span></label>
-          <input type="text" class="form-control input-sm" #title id="title" placeholder="Title" style="height: 25px; margin-top: 5px" [(ngModel)]="scorecard.data.header.title">
+          <input type="text" class="form-control form-control-sm" #title id="title" placeholder="Title" style="height: 25px; margin-top: 5px" [(ngModel)]="scorecard.data.header.title">
         </div>
         <p class="help-block">
           <a class="btn btn-xs btn-default" (click)="showTextEditor()" title="Update custom Header" style="font-size: 12px">
@@ -200,18 +200,18 @@
         </p>
         <div class="form-group">
           <label for="description">Description  <span class="text-danger">*</span></label>
-          <textarea class="form-control input-sm" #description id="description" placeholder="Scorecard description" [(ngModel)]="scorecard.data.header.description"></textarea>
+          <textarea class="form-control form-control-sm" #description id="description" placeholder="Scorecard description" [(ngModel)]="scorecard.data.header.description"></textarea>
         </div>
 
         <!--legend definition-->
         <div class="form-group container-fluid">
           <label style="margin-left:-15px;margin-bottom: 1px;margin-top: 10px">Legend Definition</label>
           <div *ngFor="let legend of scorecard.data.legendset_definitions; let i = index" class="row">
-            <div class="col-sm-3" style="padding-right: 2px;padding-left: 2px"><input  style="height: 25px" [(colorPicker)]="legend.color" [style.background]="legend.color" [(ngModel)]="legend.color" class="form-control color-input input-sm"/></div>
+            <div class="col-sm-3" style="padding-right: 2px;padding-left: 2px"><input  style="height: 25px" [(colorPicker)]="legend.color" [style.background]="legend.color" [(ngModel)]="legend.color" class="form-control color-input form-control-sm"/></div>
             <div class="col-sm-9" style="padding-left: 2px;padding-right: 2px">
               <div class="row" style="margin: 0px">
                 <div class="col-sm-11" style="padding: 0px">
-                  <input [(ngModel)]="legend.definition" class="form-control color-input input-sm" style="height: 25px;"/>
+                  <input [(ngModel)]="legend.definition" class="form-control color-input form-control-sm" style="height: 25px;"/>
                 </div>
                 <div class="col-sm-1" style="padding: 6px" *ngIf="!legend.default">
                   <i class="fa fa-trash-o text-danger" style="cursor: pointer" title="click to delete" (click)="showDeleteWarnig(i)"></i>
@@ -232,11 +232,11 @@
           <label style="margin-left:-15px;margin-bottom: 1px;margin-top: 10px ">New Legend</label>
           <div class="row">
 
-            <div class="col-sm-3" style="padding-right: 2px;padding-left: 2px"><input title="Choose a color for new Legend"  style="height: 25px" [(colorPicker)]="new_color" [style.background]="new_color" [(ngModel)]="new_color" class="form-control color-input input-sm"/></div>
+            <div class="col-sm-3" style="padding-right: 2px;padding-left: 2px"><input title="Choose a color for new Legend"  style="height: 25px" [(colorPicker)]="new_color" [style.background]="new_color" [(ngModel)]="new_color" class="form-control color-input form-control-sm"/></div>
             <div class="col-sm-9" style="padding-left: 2px;padding-right: 2px">
               <div class="row" style="margin: 0px">
                 <div class="col-sm-11" style="padding: 0px">
-                  <input [(ngModel)]="new_definition" class="form-control color-input input-sm" style="height: 25px;" placeholder="Type to add new definition here"/>
+                  <input [(ngModel)]="new_definition" class="form-control color-input form-control-sm" style="height: 25px;" placeholder="Type to add new definition here"/>
                 </div>
                 <div class="col-sm-1" style="padding: 6px">
                   <i *ngIf="!show_add_legend && new_definition != ''" class="fa fa-plus text-primary" style="cursor: pointer" title="Add Legend Set" (click)="showAddWarning()"></i>
@@ -271,7 +271,7 @@
           </div>
 
           <div class="row" style="margin-bottom: 5px">
-            <div class="col-sm-10" style="padding-left: 2px"><input class="form-control input-sm" style="height: 25px" [(ngModel)]="newLabel"></div>
+            <div class="col-sm-10" style="padding-left: 2px"><input class="form-control form-control-sm" style="height: 25px" [(ngModel)]="newLabel"></div>
             <div class="col-sm-2" >
               <button title="click to add new label Eg. source of data for indicator" class="btn btn-sm btn-outline-success pull-right cursor" (click)="addAditionalLabel()" style="height: 25px; padding-top: 2px">
                 <i class="fa fa-plus"></i>
@@ -330,7 +330,7 @@
             <!--<h4 style="margin-top: 0px;margin-bottom: 1px">Data Type</h4>-->
             <img src="balls-4.svg" style="height: 70px; padding-top: 20px" *ngIf="!done_loading_groups">
             <div class="form-group" *ngIf="done_loading_groups">
-              <input type="text" class="form-control input-sm" placeholder="Search group by name" style="height: 25px;padding-left: 2px; font-size: 11px" [(ngModel)]="groupQuery">
+              <input type="text" class="form-control form-control-sm" placeholder="Search group by name" style="height: 25px;padding-left: 2px; font-size: 11px" [(ngModel)]="groupQuery">
             </div>
             <ul class="list-group" *ngIf="done_loading_groups">
               <li
@@ -354,7 +354,7 @@
               <img src="balls-4.svg" style="height: 90px; padding-top: 20px" *ngIf="!done_loading_list">
               <h5 class="text-danger" *ngIf="error_loading_list.occurred">{{ error_loading_list.message }}</h5>
               <div class="form-group" *ngIf="done_loading_list">
-                <input type="text" class="form-control input-sm" placeholder="Search Item by name" style="height: 25px;padding-left: 2px; font-size: 11px" [(ngModel)]="listQuery">
+                <input type="text" class="form-control form-control-sm" placeholder="Search Item by name" style="height: 25px;padding-left: 2px; font-size: 11px" [(ngModel)]="listQuery">
               </div>
               <p *ngIf="done_loading_list && current_listing.length == 0">No items for a selected group</p>
               <ul class="list-group" *ngIf="done_loading_list">
@@ -377,22 +377,27 @@
     </div>
 
     <!--item details-->
-    <div class="col-sm-5 no-left-padding1" style="padding-right: 0px">
+    <div class="col-sm-5 no-left-padding1 singleItem" style="padding-right: 0px">
       <div class="thumbnail scorecard_details">
-        <div class="row" *ngFor="let indicator of current_indicator_holder.indicators" style="border-bottom: 1px solid #B3B3B3; padding-top: 3px">
-          <div class="row" style="margin-right: 20px">
-            <button class="btn btn-outline-danger btn-sm pull-right" (click)="deleteIndicator(indicator)">
-              <span class="fa fa-trash-o" ></span>
-            </button>
+        <div class="row" *ngFor="let indicator of current_indicator_holder.indicators" style="border-bottom: 1px solid #B3B3B3; padding-top: 3px;margin-left: 0px">
+          <div class="container-fluid" style="margin-right: 20px">
+            <div class="row">
+              <div class="col-sm-12" style="padding: 0px">
+                <button class="btn btn-outline-danger btn-sm pull-right cursor" (click)="deleteIndicator(indicator)" style="padding-top:2px; height: 27px">
+                  <span class="fa fa-trash-o" ></span>
+                </button>
+              </div>
+            </div>
+
           </div>
           <div class="row" style="margin: 0px">
-            <div class="col-sm-7">
+            <div class="col-sm-7" style="padding-left: 5px">
               <div class="row" style="padding-bottom: 5px">
                 <div class="col-sm-3">
                   <label class="sans-pro lebal">Name:</label>
                 </div>
                 <div class="col-sm-9">
-                  <input [value]="indicator.name" class="form-control input-sm" disabled/>
+                  <input [value]="indicator.name" class="form-control form-control-sm" disabled/>
                 </div>
               </div>
               <div class="row" style="padding-bottom: 5px">
@@ -400,7 +405,7 @@
                   <label class="sans-pro lebal">Title:</label>
                 </div>
                 <div class="col-sm-9">
-                  <input [(ngModel)]="indicator.title" class="form-control input-sm"/>
+                  <input [(ngModel)]="indicator.title" class="form-control form-control-sm"/>
                 </div>
               </div>
               <div class="row"  style="padding-bottom: 5px">
@@ -408,7 +413,7 @@
                   <label class="sans-pro lebal">Weight:</label>
                 </div>
                 <div class="col-sm-9">
-                  <input type="number" min="0" max="200" [(ngModel)]="indicator.weight" class="form-control input-sm" [disabled]="!scorecard.data.show_score"/>
+                  <input type="number" min="0" max="200" [(ngModel)]="indicator.weight" class="form-control form-control-sm" [disabled]="!scorecard.data.show_score"/>
                 </div>
               </div>
               <div class="row"  style="padding-bottom: 5px">
@@ -416,7 +421,7 @@
                   <label class="sans-pro lebal" title="activate up/down arrow if difference between previous and present value exceeds {{indicator.arrow_settings.effective_gap}}">Effective Gap:</label>
                 </div>
                 <div class="col-sm-3">
-                  <input type="number" min="0" [(ngModel)]="indicator.arrow_settings.effective_gap" class="form-control input-sm" [disabled]="!indicator.arrow_settings.display" title="activate up/down arrow if difference between previous and present value exceeds {{indicator.arrow_settings.effective_gap}}"/>
+                  <input type="number" min="0" [(ngModel)]="indicator.arrow_settings.effective_gap" class="form-control form-control-sm" [disabled]="!indicator.arrow_settings.display" title="activate up/down arrow if difference between previous and present value exceeds {{indicator.arrow_settings.effective_gap}}"/>
                 </div>
                 <div class="col-sm-4">
                   <label class="sans-pro lebal">Display arrows:</label>
@@ -457,7 +462,7 @@
                     <div class="row">
                       <div class="col-sm-3"><label class="sans-pro lebal">Min</label></div>
                       <div class="col-sm-9">
-                        <input type="text" [(ngModel)]="legend.min" class="form-control input-sm" [disabled]="!indicator.legend_display">
+                        <input type="text" [(ngModel)]="legend.min" class="form-control form-control-sm" [disabled]="!indicator.legend_display">
                       </div>
                     </div>
 
@@ -466,7 +471,7 @@
                     <div class="row">
                       <div class="col-sm-3"><label class="sans-pro lebal">Max</label></div>
                       <div class="col-sm-9">
-                        <input type="text" [(ngModel)]="legend.max" class="form-control input-sm" [disabled]="!indicator.legend_display">
+                        <input type="text" [(ngModel)]="legend.max" class="form-control form-control-sm" [disabled]="!indicator.legend_display">
                       </div>
                     </div>
                   </div>
@@ -477,11 +482,11 @@
           </div>
 
           <a (click)="showBotleneckEditor(indicator)"
-             style="padding: 6px; margin-left: 30px"
-             class="btn btn-xs btn-default"
+             style="padding: 6px;padding-top: 0px; margin-left: 0px; font-size: 12px"
+             class="btn btn-sm btn-default"
              title="Click to manage indicators related to {{ indicator.title }}">
-            <span class="glyphicon glyphicon-pencil"></span> Related/Bottleneck indicators
-            <span class="badge"> {{ indicator.bottleneck_indicators.length }} </span>
+            <span class="fa fa-pencil"></span> Related/Bottleneck indicators
+            <span class="badge badge-pill badge-secondary"> {{ indicator.bottleneck_indicators.length }} </span>
           </a>
           <!--additinal labels-->
           <div class="col-sm-7" *ngFor="let label of scorecard.data.additional_labels">
@@ -490,12 +495,12 @@
                 <label class="sans-pro lebal">{{ label }}:</label>
               </div>
               <div class="col-sm-9">
-                <input [(ngModel)]="indicator.additional_label_values[label]" class="form-control input-sm"/>
+                <input [(ngModel)]="indicator.additional_label_values[label]" class="form-control form-control-sm"/>
               </div>
             </div>
           </div>
         </div>
-        <span class="help-block pull-left" *ngIf="current_indicator_holder.indicators.length != 0">If you want to have two data items in the same column just select the second data item from the list on the left</span>
+        <span style="margin-left: 5px" class="help-block pull-left" *ngIf="current_indicator_holder.indicators.length != 0">If you want to have two data items in the same column just select the second data item from the list on the left</span>
         <!--<button class="btn btn-sm btn-default pull-right" (click)="enableAddIndicator()" *ngIf="current_indicator_holder.indicators.length != 0">-->
         <!--<span class="glyphicon glyphicon-plus"></span>Add-->
         <!--</button>-->
@@ -506,16 +511,16 @@
 
 
 <div class="container-fluid no-left-padding">
-  <button class="btn btn-sm btn-info pull-right" style="margin-left: 5px"(click)="saveScoreCard()"
+  <button class="btn btn-sm btn-outline-primary pull-right" style="margin-left: 5px"(click)="saveScoreCard()"
           *ngIf="!saving_scorecard && current_action == 'new'">
-    Create
+    <i class="fa fa-save"></i>  Create
   </button>
-  <button class="btn btn-sm btn-info pull-right" style="margin-left: 5px"
+  <button class="btn btn-sm btn-outline-primary pull-right" style="margin-left: 5px"
           (click)="saveScoreCard('update')"
           *ngIf="!saving_scorecard && current_action == 'update'">
-    Update
+    <i class="fa fa-save"></i> Update
   </button>
-  <button class="btn btn-sm btn-warning pull-right" (click)="cancelCreate()" *ngIf="!saving_scorecard">Cancel</button>
+  <button class="btn btn-sm btn-outline-warning pull-right" (click)="cancelCreate()" *ngIf="!saving_scorecard">Cancel</button>
   <h5 class="pull-right" *ngIf="saving_scorecard"><img src="balls-4.svg" style="height: 50px;"> Saving score card Information, Please wait...</h5>
   <h5 class="pull-right text-danger" *ngIf="saving_error">Something went wrong, Saving score card Information failed</h5>
 </div>
@@ -545,14 +550,16 @@
 <div class="indicator_details" [ngClass]="{'hiddendiv': !show_bottleneck_indicators}">
   <div class="indicator_dialog">
     <div class="indicator-content">
-      <span class="glyphicon glyphicon-remove pull-right" style="cursor: pointer" (click)="showBotleneckEditor(bottleneck_card.indicator)"></span>
-      <div style="padding: 15px" class="row">
+      <!--<div class="container-fluid">-->
+        <!--<span class="fa fa-cut pull-right" style="cursor: pointer" (click)="showBotleneckEditor(bottleneck_card.indicator)"></span>-->
+      <!--</div>-->
+      <div style="padding: 15px; margin-right: 0px" class="row" >
         <!--indicator groups-->
         <div class="col-sm-4" style="padding: 0px">
           <div class="thumbnail bottleneck_scorecard_details">
             <!--<h4 style="margin-top: 0px;margin-bottom: 1px">Data Type</h4>-->
             <div class="form-group">
-              <select [(ngModel)]="bootleneck_group_type" class="form-control input-sm" style="height: 25px"  #t (change)="switchBottleneckType(t.value)">
+              <select [(ngModel)]="bootleneck_group_type" class="form-control form-control-sm" style="height: 25px"  #t (change)="switchBottleneckType(t.value)">
                 <option value="indicators">Indicators</option>
                 <option value="dataElements">Data Elements</option>
                 <option value="datasets">Data Sets</option>
@@ -563,7 +570,7 @@
             </div>
             <img src="balls-4.svg" style="height: 70px; padding-top: 20px" *ngIf="!bottleneck_card.done_loading_groups">
             <div class="form-group" *ngIf="bottleneck_card.done_loading_groups">
-              <input type="text" class="form-control input-sm" placeholder="Search by name" style="height: 25px; margin-top: 3px" [(ngModel)]="bottleneck_card.groupQuery">
+              <input type="text" class="form-control form-control-sm" placeholder="Search by name" style="height: 25px; margin-top: 3px" [(ngModel)]="bottleneck_card.groupQuery">
             </div>
             <ul class="list-group" *ngIf="bottleneck_card.done_loading_groups">
               <li
@@ -575,7 +582,7 @@
                 {{ group.name }}
               </li>
             </ul>
-            <pagination-controls  id="bottleneck_cardgroups1" (pageChange)="k = $event" directionLinks="true" autoHide="true"></pagination-controls>
+            <pagination-controls  id="bottleneck_cardgroups1" (pageChange)="k = $event" directionLinks="true" autoHide="true" previousLabel=" " nextLabel=" "></pagination-controls>
           </div>
         </div>
         <!--indicators lists-->
@@ -585,7 +592,7 @@
               <img src="balls-4.svg" style="height: 90px; padding-top: 20px" *ngIf="!bottleneck_card.done_loading_list">
               <h5 class="text-danger" *ngIf="bottleneck_card.error_loading_list.occurred">{{ bottleneck_card.error_loading_list.message }}</h5>
               <div class="form-group" *ngIf="bottleneck_card.done_loading_list">
-                <input type="text" class="form-control input-sm" placeholder="Search by name" style="height: 25px;" [(ngModel)]="bottleneck_card.listQuery">
+                <input type="text" class="form-control form-control-sm" placeholder="Search by name" style="height: 25px;" [(ngModel)]="bottleneck_card.listQuery">
               </div>
               <p *ngIf="bottleneck_card.done_loading_list && bottleneck_card.current_listing.length == 0">No items for a selected group</p>
               <ul class="list-group" *ngIf="bottleneck_card.done_loading_list">
@@ -598,7 +605,7 @@
                   <span class="glyphicon glyphicon-ok-circle text-success" *ngIf="botteneckIndicatorExist(item)"></span> {{ item.name }}
                 </li>
               </ul>
-              <pagination-controls  id="bottleneck_cardlist2" (pageChange)="n = $event" directionLinks="true" autoHide="true"></pagination-controls>
+              <pagination-controls  id="bottleneck_cardlist2" (pageChange)="n = $event" directionLinks="true" autoHide="true" previousLabel=" " nextLabel=" "></pagination-controls>
             </div>
           </div>
         </div>
@@ -610,31 +617,34 @@
                 class="list-group-item"
                 *ngFor="let item of bottleneck_card.indicator.bottleneck_indicators | paginate: { id: 'list3', itemsPerPage: 6, currentPage: r }"
               >
-                <p>{{ item.name }}
-                  <a style="padding-right: 5px" (click)="removeBottleneckIndicator(item)" title="Remove from list" class="remove-bottleneck pull-right">
-                    <span class="glyphicon glyphicon-trash text-danger"></span>
-                  </a>
-                </p>
-                <label>Display Name</label>
-                <input class="form-control input-sm" [(ngModel)]="item.bottleneck_title">
+                <div style="margin-left: -15px;margin-right: -15px">
+                  <p>{{ item.name }}
+                    <a style="padding-right: 5px" (click)="removeBottleneckIndicator(item)" title="Remove from list" class="remove-bottleneck pull-right">
+                      <i class="fa fa-trash-o text-danger"></i>
+                    </a>
+                  </p>
+                  <label>Display Name</label>
+                  <input class="form-control form-control-sm" [(ngModel)]="item.bottleneck_title">
+                </div>
                 <div class="container-fluid" style="padding: 0px">
-                  <div class="col-sm-6" style="padding-left: 0px">
-                    <label>Baseline</label>
-                    <input class="form-control input-sm" [(ngModel)]="item.baseline" placeholder="Baseline">
-                  </div>
-                  <div class="col-sm-6" style="padding-right: 0px">
-                    <label>Target</label>
-                    <input class="form-control input-sm" [(ngModel)]="item.target" placeholder="Target">
+                  <div class="row">
+                    <div class="col-sm-6" style="padding-left: 0px">
+                      <label>Baseline</label>
+                      <input class="form-control form-control-sm" [(ngModel)]="item.baseline" placeholder="Baseline">
+                    </div>
+                    <div class="col-sm-6" style="padding-right: 0px">
+                      <label>Target</label>
+                      <input class="form-control form-control-sm" [(ngModel)]="item.target" placeholder="Target">
+                    </div>
                   </div>
                 </div>
-
               </li>
             </ul>
-            <pagination-controls  id="list3" (pageChange)="r = $event" directionLinks="true" autoHide="true"></pagination-controls>
+            <pagination-controls  id="list3" (pageChange)="r = $event" directionLinks="true" autoHide="true" previousLabel=" " nextLabel=" "></pagination-controls>
           </div>
         </div>
-        <div>
-          <button class="btn btn-default pull-right" (click)="showBotleneckEditor(bottleneck_card.indicator)"> <span class="glyphicon glyphicon-ok"></span> Done </button>
+        <div class="container-fluid" style="padding: 0px">
+          <button class="btn btn-outline-secondary pull-right cursor" (click)="showBotleneckEditor(bottleneck_card.indicator)"> <i class="fa fa-check"></i> Done </button>
         </div>
         <span *ngIf="bottleneck_card.indicator_ready">{{bottleneck_card.indicator.bottleneck_indicators}}</span>
       </div>

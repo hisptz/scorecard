@@ -150,7 +150,7 @@ export class CreateComponent implements OnInit, AfterViewInit, OnDestroy {
     this.current_listing = [];
     this.store.select('storeData').subscribe((data) => {
       console.log('store inafanya kazi hapa', data);
-    })
+    });
     // initialize the scorecard with a uid
     this.scorecard = this.scorecardService.getEmptyScoreCard();
     this.dataService.getUserInformation().subscribe(
