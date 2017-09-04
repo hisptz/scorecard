@@ -79,7 +79,7 @@ export class DataService {
   }
 
   // Get current user information
-  getUserGroupInformation () {
+  getUserGroupInformation (): Observable<any> {
     return this.http.get('../../../api/userGroups.json?fields=id,name&paging=false')
       .map((response: Response) => response.json())
       .catch( this.handleError );

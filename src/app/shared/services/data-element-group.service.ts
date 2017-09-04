@@ -14,14 +14,14 @@ export class DataElementGroupService {
   constructor(private http: Http) { }
 
   // get all data element group
-  loadAll() {
+  loadAll(): Observable<any> {
     return this.http.get(`../../../api/dataElementGroups.json?fields=id,name&paging=false`)
       .map((response: Response) => response.json())
       .catch(this.handleError);
   }
 
   // load a single data element group
-  load(id: string ) {
+  load(id: string ): Observable<any> {
     return this.http.get(`../../../api/dataElementGroups/${id}.json?fields=id,name,dataElements[id,name]`)
       .map((response: Response) => response.json())
       .catch(this.handleError);

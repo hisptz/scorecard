@@ -17,13 +17,13 @@ export class ProgramIndicatorsService {
   constructor(private http: Http) {}
 
   // get all indicator groups
-  loadAll() {
+  loadAll(): Observable<any> {
     return this.http.get('../../../api/programs.json?fields=id,name&paging=false')
       .map((response: Response) => response.json())
       .catch(this.handleError);
   }
 
-  load(id: string ) {
+  load(id: string ): Observable<any> {
     return this.http.get(`../../../api/programs.json?filter=id:eq:${id}&fields=programIndicators[id,name]&paging=false`)
       .map((response: Response) => response.json())
       .catch(this.handleError);

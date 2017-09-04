@@ -25,13 +25,13 @@ export class ScorecardService {
     this.baseUrl = '../../../';
   }
 
-  loadAll() {
+  loadAll(): Observable<any> {
     return this.http.get(this.baseUrl + 'api/dataStore/scorecards')
       .map((response: Response) => response.json())
       .catch(this.handleError);
   }
 
-  load(id: string ) {
+  load(id: string ): Observable<any> {
     return this.http.get(`${this.baseUrl}api/dataStore/scorecards/${id}`)
       .map((response: Response) => response.json())
       .catch(this.handleError);

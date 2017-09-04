@@ -128,6 +128,7 @@ export class CreateComponent implements OnInit, AfterViewInit, OnDestroy {
   selected_groups: any = [];
   group_type: string = 'indicators';
   bootleneck_group_type: string = 'indicators';
+  percent_complete: number = 0;
   constructor(private indicatorService: IndicatorGroupService,
               private datasetService: DatasetService,
               private dataElementService: DataElementGroupService,
@@ -148,9 +149,6 @@ export class CreateComponent implements OnInit, AfterViewInit, OnDestroy {
     this.datasets = [];
     this.current_groups = [];
     this.current_listing = [];
-    this.store.select('storeData').subscribe((data) => {
-      console.log('store inafanya kazi hapa', data);
-    });
     // initialize the scorecard with a uid
     this.scorecard = this.scorecardService.getEmptyScoreCard();
     this.dataService.getUserInformation().subscribe(

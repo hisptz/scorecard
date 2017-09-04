@@ -17,13 +17,13 @@ export class IndicatorGroupService {
   constructor(private http: Http ) { }
 
   // get all indicator groups
-  loadAll() {
+  loadAll(): Observable<any> {
     return this.http.get('../../../api/indicatorGroups.json?fields=id,name&paging=false')
       .map((response: Response) => response.json())
       .catch(this.handleError);
   }
 
-  load(id: string ) {
+  load(id: string ): Observable<any> {
     return this.http.get(`../../../api/indicatorGroups/${id}.json?fields=id,name,indicators[id,name,indicatorType[id,name]]`)
       .map((response: Response) => response.json())
       .catch(this.handleError);
