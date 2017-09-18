@@ -14,7 +14,7 @@
 </div>
 <!--if there is no scorecard created-->
 <!--<div class="container-fluid" style="padding-left: 0px; border-top: 1px solid blanchedalmond; margin-top: 20px; padding-top: 23px">-->
-<div class="container-fluid" style="padding-left: 0px; border-top: 1px solid blanchedalmond;margin-top: 15px" *ngIf="scorecards.length == 0 && !scorecards_loading">
+<div class="container-fluid" style="padding-left: 0px; border-top: 1px solid blanchedalmond;margin-top: 15px" *ngIf="(scorecards$ | async).length == 0 && !(scorecards_loading$ | async)">
   <div class="jumbotron" style="background-color: transparent" >
     <h1 class="display-3">Welcome to Scorecard App!</h1>
     <p class="lead">Create a score card instantly, over tea break...</p>
@@ -38,22 +38,45 @@
 </div>
 
 <!--if the scorecards are being loaded-->
-<div class="container-fluid" style="padding-left: 0px; border-top: 1px solid blanchedalmond; margin-top: 20px; padding-top: 23px" *ngIf="scorecards_loading" >
+<div
+  class="container-fluid"
+  style="padding-left: 0px; border-top: 1px solid blanchedalmond; margin-top: 20px; padding-top: 23px"
+  *ngIf="(scorecards$ | async).length == 0 && (scorecards_loading$ | async)"
+>
   <div class="well well-lg ">
-    <h5 class="text-center"><img src="balls-3.svg"/> Loading score cards...</h5>
+    <h5 class="text-center"><img src="balls-3.svg" style="height: 70px"/> Loading score cards...</h5>
     <app-placeholder></app-placeholder>
   </div>
 </div>
 
 
-<div class="container-fluid" style="padding-top: 20px;padding-left: 0px; border-top: 1px solid blanchedalmond; margin-top: 20px; padding-top: 23px" *ngIf="scorecards.length != 0 && !scorecards_loading" >
+<div
+  class="container-fluid"
+  style="padding-top: 20px;padding-left: 0px; border-top: 1px solid blanchedalmond; margin-top: 20px; padding-top: 23px"
+  *ngIf="(scorecards$ | async).length != 0" >
+  <div [@hiddenItem] = "(scorecards_loading$ | async)?'notHidden':'hidden'">
+    <h5 class="text-center"><img src="balls-3.svg" style="height: 70px"/>
+      Loading score cards( {{ complete_percent$ | async }}% )
+    </h5>
+    <div class="progress" style="margin-bottom: 5px">
+      <div
+        class="progress-bar progress-bar-striped progress-bar-animated"
+        role="progressbar"
+        [attr.aria-valuenow]="complete_percent$ | async"
+        [attr.aria-valuemin]="0"
+        [attr.aria-valuemax]="100"
+        [style.width]="(complete_percent$ | async)+'%'"
+      ></div>
+    </div>
+  </div>
+
     <div class="card-deck">
       <div
         class="card scorecard_details col-sm-12 col-md-4 text-center cursor"
-        *ngFor="let scorecard of scorecards | scoreCardFilter: queryterm | paginate: config "
-        [@visibilityChanged]="hoverState[scorecard.id] || 'notHovered'"
-        (mouseenter) ="mouseEnter(scorecard.id)"
-        (mouseleave) ="mouseLeave(scorecard.id)"
+        *ngFor="let scorecard of (scorecards$ | async) | scoreCardFilter: queryterm | paginate: config "
+        [@visibilityChanged]="scorecard.hoverState || 'notHovered'"
+        (mouseenter) ="mouseEnter(scorecard)"
+        (mouseleave) ="mouseLeave(scorecard)"
         [routerLink]="['view',scorecard.id]"
       >
         <h1 class="text-center text-muted"><img src="assets/img/scorecardplaceholder.jpg" style="height: 120px"> </h1>
@@ -65,7 +88,7 @@
 
         </div>
         <div class="card-footer" style="border-top: 0px;background-color: rgba(0,0,0,0.0)">
-          <h1 class="text-center" *ngIf="!confirm_deleting[scorecard.id] && !deleting[scorecard.id] && !error_deleting[scorecard.id]">
+          <h1 class="text-center" *ngIf="!scorecard.confirm_deleting && !scorecard.deleting && !scorecard.error_deleting">
             <a
               style="cursor: pointer"
               class="btn btn-outline-primary sans-pro"
@@ -84,7 +107,7 @@
             <button
               *ngIf="scorecard.can_edit"
               title="delete {{ scorecard.data.header.title }}"
-              (click)="confirm_deleting[scorecard.id] = true; $event.stopPropagation()"
+              (click)="scorecard.confirm_deleting = true; $event.stopPropagation()"
               class="btn btn-outline-dark sans-pro"
               role="button"
               style="cursor: pointer"
@@ -92,15 +115,15 @@
               <i class="fa fa-trash-o text-danger"></i>
             </button>
           </h1>
-          <p class="icons" *ngIf="confirm_deleting[scorecard.id]" style="padding: 5px; font-size: 12px"> Are you sure you want to delete this score card?
+          <p class="icons" *ngIf="scorecard.confirm_deleting" style="padding: 5px; font-size: 12px"> Are you sure you want to delete this score card?
             <button class="btn btn-sm btn-outline-danger cursor" (click)="deleteScoreCard(scorecard,$event)">Delete</button>
-            <button class="btn btn-sm btn-outline-success cursor" (click)="confirm_deleting[scorecard.id] = false; $event.stopPropagation()">Cancel</button>
+            <button class="btn btn-sm btn-outline-success cursor" (click)="scorecard.confirm_deleting = false; $event.stopPropagation()">Cancel</button>
           </p>
 
-          <p class="icons" *ngIf="deleting[scorecard.id]" style="padding: 5px; font-size: 12px">
+          <p class="icons" *ngIf="scorecard.deleting" style="padding: 5px; font-size: 12px">
             <img src="balls-5.svg" style="height: 50px;"> Deleting Scorecard...
           </p>
-          <p class="icons text-danger" *ngIf="error_deleting[scorecard.id]" style="padding: 5px; font-size: 12px">
+          <p class="icons text-danger" *ngIf="scorecard.error_deleting" style="padding: 5px; font-size: 12px">
             Something went wrong, Scorecard was not deleted
           </p>
         </div>

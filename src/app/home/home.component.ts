@@ -7,8 +7,10 @@ import {DataService} from '../shared/services/data.service';
 import {PaginationInstance} from 'ngx-pagination';
 import {animate, state, style, transition, trigger} from '@angular/animations';
 import {StoreService} from '../shared/services/store-service';
-import {ADD_SCORE_CARDS, AddScorecardsAction} from '../store/actions/store.data.action';
+import {ADD_SCORE_CARDS, AddScorecardsAction, DeleteScorecardAction} from '../store/actions/store.data.action';
 import {Router} from '@angular/router';
+import {Observable} from 'rxjs/Observable';
+import * as selectors from '../store/selectors';
 
 @Component({
   selector: 'app-home',
@@ -31,13 +33,26 @@ import {Router} from '@angular/router';
         'border': '1px solid #ddd'
       })),
       transition('notHovered <=> hoovered', animate('400ms'))
-    ])
+    ]),
+    trigger('hiddenItem', [
+      state('notHidden' , style({
+        'transform': 'scale(1, 1)'
+      })),
+      state('hidden', style({
+        'transform': 'scale(0.0, 0.00)',
+        'visibility': 'hidden',
+        'height': '0px'
+      })),
+      transition('notHidden <=> hidden', animate('500ms'))
+    ]),
+
   ]
 })
 export class HomeComponent implements OnInit {
+  scorecards$: Observable<any[]>;
   scorecards: any = [];
-  scorecards_loading: boolean = true;
-  complete_percent: number;
+  scorecards_loading$: Observable<boolean>;
+  complete_percent$: Observable<number>;
   total = 0;
   loading_message: string;
   queryterm: string = null;
@@ -63,40 +78,18 @@ export class HomeComponent implements OnInit {
     private router: Router
   ) {
     store.select(state => state.uiState).subscribe(uiState => console.log(uiState));
+    this.scorecards$ = store.select(selectors.getScorecards);
     this.scorecards = [];
-    this.scorecards_loading = true;
-    this.complete_percent = 0;
+    this.scorecards_loading$ = store.select(selectors.getLoadingState);
+    this.complete_percent$ = store.select(selectors.getLoadingPercent);
     this.loading_message = 'Loading Score cards...';
 
   }
 
   ngOnInit() {
     this.dataService.getUserInformation().subscribe(
-      userInfo => {
-        this.userInfo = userInfo;
-        this.scoreCardService.getAllScoreCards(this.userInfo).subscribe(
-          scorecards => {
-            this.scorecards = scorecards;
-
-            this.dataService.sortArrOfObjectsByParam(this.scorecards, 'name', true);
-            this.scorecards.forEach((scorecard) => {
-              this.deleting[scorecard.id] = false;
-              this.hoverState[scorecard.id] = 'notHovered';
-              this.confirm_deleting[scorecard.id] = false;
-              this.deleted[scorecard.id] = false;
-              this.error_deleting[scorecard.id] = false;
-            });
-            this.scorecards_loading = false;
-            this.storeService.dispatch(new AddScorecardsAction(this.scorecards));
-
-          },
-          // catch error when there is no scorecard
-          error => {
-            console.log('SOME ERROR OCCURRED');
-            this.loading_message = 'Error Occurred while loading scorecards';
-            this.scorecards_loading = false;
-          }
-        );
+      (userInfo) => {
+        this.scoreCardService.getAllScoreCards( userInfo );
       }
     );
 
@@ -120,39 +113,32 @@ export class HomeComponent implements OnInit {
 
   deleteScoreCard( scorecard, event ) {
     event.stopPropagation();
-    this.deleting[scorecard.id] = true;
-    this.confirm_deleting[scorecard.id] = false;
+    scorecard.deleting = true;
+    scorecard.confirm_deleting = false;
     this.scoreCardService.remove( scorecard ).subscribe(
       data => {
-        this.deleted[scorecard.id] = true;
-        this.error_deleting[scorecard.id] = false;
-        this.scorecards.forEach((item, index) => {
-          if ( item.id === scorecard.id ) {
-            this.scorecards.splice(index, 1);
-          }
-        });
-        this.scoreCardService._scorecards = this.scorecards;
-        this.storeService.dispatch(new AddScorecardsAction(this.scorecards));
+        this.store.dispatch(new DeleteScorecardAction(scorecard.id));
+        this.queryterm = '';
       },
       error => {
-        this.deleted[scorecard.id] = false;
-        this.deleting[scorecard.id] = false;
-        this.error_deleting[scorecard.id] = true;
+        scorecard.deleted = false;
+        scorecard.deleting = false;
+        scorecard.error_deleting = true;
         setTimeout(function() {
-          this.error_deleting[scorecard.id] = false;
+          scorecard.error_deleting = false;
         }, 4000);
       }
     );
   }
 
-  mouseEnter(id) {
-    this.hoverState[id] = 'hoovered';
-    this.showDetails[id] = true;
+  mouseEnter(scorecard) {
+    scorecard.hoverState = 'hoovered';
+    scorecard.showDetails = true;
   }
 
-  mouseLeave(id) {
-    this.showDetails[id] = false;
-    this.hoverState[id] = 'notHovered';
+  mouseLeave(scorecard) {
+    scorecard.showDetail = false;
+    scorecard.hoverState = 'notHovered';
   }
 
 }

@@ -13,6 +13,10 @@ import 'rxjs/add/operator/switchMap';
 import 'rxjs/add/operator/toPromise';
 import { ScoreCard } from '../models/scorecard';
 import {DataService} from './data.service';
+import {Store} from '@ngrx/store';
+import {ApplicationState} from '../../store/application.state';
+import {getScorecards} from '../../store/selectors';
+import {AddScorecardAction, UpdateLoadingAction, UpdateLoadingPercentAction} from '../../store/actions/store.data.action';
 
 
 @Injectable()
@@ -21,7 +25,11 @@ export class ScorecardService {
   _scorecards: ScoreCard[] = [];
   private baseUrl: string;
 
-  constructor(private http: Http, private dataService: DataService) {
+  constructor(
+    private http: Http,
+    private dataService: DataService,
+    private store: Store<ApplicationState>
+  ) {
     this.baseUrl = '../../../';
   }
 
@@ -37,53 +45,50 @@ export class ScorecardService {
       .catch(this.handleError);
   }
 
-  getAllScoreCards(userInfo): Observable<any> {
-    return new Observable((observ) => {
-      if (this._scorecards.length !== 0) {
-        observ.next(this._scorecards);
-        observ.complete();
-      }else {
-        this.loadAll().subscribe(
-          scorecards => {
-            let scorecard_count = 0;
-            scorecards.forEach((scorecard) => {
-              // loading scorecard details
-              this.load(scorecard).subscribe(
-                (scorecard_details) => {
-                  const scorecard_item = {
-                    id: scorecard,
-                    name: scorecard_details.header.title,
-                    data: scorecard_details,
-                    can_see: this.dataService.checkForUserGroupInScorecard(scorecard_details, userInfo).see,
-                    can_edit: this.dataService.checkForUserGroupInScorecard(scorecard_details, userInfo).edit,
-                  };
-                  if ( scorecard_item.can_see ) {
-                    this._scorecards.push(scorecard_item);
-                  }
-                  this.dataService.sortArrOfObjectsByParam(this._scorecards, 'name', true);
-                  scorecard_count++;
-                  // set loading equal to false when all scorecards are loaded
-                  if (scorecard_count === scorecards.length) {
-                    observ.next(this._scorecards);
-                    observ.complete();
-                  }
-                },
-                // catch error if anything happens when loading scorecard details
-                detail_error => {
-                  observ.error();
-                }
-              );
-            });
-          },
-          // catch error when there is no scorecard
-          error => {
-            observ.error();
-          }
-        );
-    }
-    });
-
-
+  getAllScoreCards(userInfo) {
+    this.loadAll().subscribe(
+      scorecards => {
+        let scorecard_count = 0;
+        scorecards.forEach((scorecard) => {
+          // loading scorecard details
+          this.load(scorecard).subscribe(
+            (scorecard_details) => {
+              const scorecard_item = {
+                id: scorecard,
+                name: scorecard_details.header.title,
+                data: scorecard_details,
+                can_see: this.dataService.checkForUserGroupInScorecard(scorecard_details, userInfo).see,
+                can_edit: this.dataService.checkForUserGroupInScorecard(scorecard_details, userInfo).edit,
+                deleting: false,
+                hoverState: 'notHovered',
+                confirm_deleting: false,
+                deleted: false,
+                error_deleting: false,
+              };
+              if ( scorecard_item.can_see ) {
+                this.store.dispatch(new AddScorecardAction(scorecard_item));
+                this._scorecards.push(scorecard_item);
+              }
+              this.dataService.sortArrOfObjectsByParam(this._scorecards, 'name', true);
+              scorecard_count++;
+              this.store.dispatch(new UpdateLoadingPercentAction(Math.floor((scorecard_count / scorecards.length) * 100)));
+              // set loading equal to false when all scorecards are loaded
+              if (scorecard_count === scorecards.length) {
+                this.store.dispatch(new UpdateLoadingAction( false ));
+              }
+            },
+            // catch error if anything happens when loading scorecard details
+            detail_error => {
+              this.store.dispatch(new UpdateLoadingAction( false ));
+            }
+          );
+        });
+      },
+      // catch error when there is no scorecard
+      error => {
+        this.store.dispatch(new UpdateLoadingAction( false ));
+      }
+    );
   }
 
   create(scorecard: ScoreCard) {
