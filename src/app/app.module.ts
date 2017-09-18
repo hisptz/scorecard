@@ -31,6 +31,7 @@ import {StoreRouterConnectingModule} from '@ngrx/router-store';
 import {StoreDevtoolsModule} from '@ngrx/store-devtools';
 import {environment} from '../environments/environment';
 import { PlaceholderComponent } from './home/placeholder/placeholder.component';
+import {MenuModule} from './shared/components/menu/menu.module';
 @NgModule({
   declarations: [
     AppComponent,
@@ -42,6 +43,7 @@ import { PlaceholderComponent } from './home/placeholder/placeholder.component';
     BrowserModule,
     BrowserAnimationsModule,
     HttpModule,
+    MenuModule,
     FormsModule,
     ReactiveFormsModule,
     ScoreCardRoutingModule,
