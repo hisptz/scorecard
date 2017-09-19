@@ -12,19 +12,32 @@ export class OrgUnitService {
   user_orgunits: any[] = [];
   orgunit_groups: any[] = [];
   initial_orgunits: any[] = [];
+  user_information: any = null;
   constructor(private http: Http) { }
 
   // Get current user information
   getUserInformation (priority = null) {
-    if (priority === false) {
-      return this.http.get('../../../api/me.json?fields=dataViewOrganisationUnits[id,name,level],organisationUnits[id,name,level]')
-        .map((response: Response) => response.json())
-        .catch( this.handleError );
-    }else {
-      return this.http.get('../../../api/me.json?fields=organisationUnits[id,name,level]')
-        .map((response: Response) => response.json())
-        .catch( this.handleError );
-    }
+    const url = (priority === false) ?
+      '../../../api/me.json?fields=dataViewOrganisationUnits[id,name,level],organisationUnits[id,name,level]' :
+      '../../../api/me.json?fields=organisationUnits[id,name,level]';
+    return Observable.create(observer => {
+      if (this.user_information !== null) {
+        observer.next(this.user_information);
+        observer.complete();
+      }else {
+        this.http.get(url)
+          .map((response: Response) => response.json())
+          .catch( this.handleError )
+          .subscribe((useInfo) => {
+              this.user_information = useInfo;
+              observer.next(this.user_information);
+              observer.complete();
+            },
+            error => {
+              observer.error('some error occur');
+            });
+      }
+    });
   }
 
 
@@ -120,27 +133,38 @@ export class OrgUnitService {
     this.getOrgunitLevelsInformation()
       .subscribe(
         (data: any) => {
-          this.orgunit_levels = data.organisationUnitLevels;
+          // identify currently logged in usser
           this.getUserInformation(priority).subscribe(
             userOrgunit => {
-              this.user_orgunits = this.getUserOrgUnits( userOrgunit );
-              const level = this.getUserHighestOrgUnitlevel(userOrgunit);
+              const level = this.getUserHighestOrgUnitlevel( userOrgunit );
               const all_levels = data.pager.total;
-              const orgunits = this.getuserOrganisationUnitsWithHighestlevel(level, userOrgunit);
+              const orgunits = this.getuserOrganisationUnitsWithHighestlevel( level, userOrgunit );
               const use_level = parseInt(all_levels) - (parseInt(level) - 1);
-              const fields = this.generateUrlBasedOnLevels(use_level);
-              this.getAllOrgunitsForTree1(fields, orgunits).subscribe(
-                items => {
-                  //noinspection TypeScriptUnresolvedVariable
-                  this.nodes = items.organisationUnits;
+              // load inital orgiunits to speed up loading speed
+              this.getInitialOrgunitsForTree(orgunits).subscribe(
+                (initial_data) => {
+                  // after done loading initial organisation units now load all organisation units
+                  const fields = this.generateUrlBasedOnLevels(use_level);
+                  this.getAllOrgunitsForTree1(fields, orgunits).subscribe(
+                    items => {
+                      items[0].expanded = true;
+                    },
+                    error => {
+                      console.log('something went wrong while fetching Organisation units');
+                    }
+                  );
+                },
+                error => {
+                  console.log('something went wrong while fetching Organisation units');
                 }
               );
+
             }
           );
         }
       );
     this.getOrgunitGroups().subscribe( groups => {//noinspection TypeScriptUnresolvedVariable
-      this.orgunit_groups = groups.organisationUnitGroups;
+      this.orgunit_groups = groups;
     });
   }
 

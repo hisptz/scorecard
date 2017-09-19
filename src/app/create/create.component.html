@@ -52,12 +52,12 @@
         </th>
         <!--holder groups stays here-->
         <th
-          style="font-size: 9px; padding: 5px"
           *ngFor="let indicator_holder_group of scorecard.data.data_settings.indicator_holder_groups"
+          dnd-droppable (onDropSuccess)="transferDataSuccess($event,'group',indicator_holder_group)"
+          style="font-size: 9px; padding: 5px"
           [attr.colspan]="indicator_holder_group.indicator_holder_ids.length"
           class="sans-pro"
           [ngClass]="{'current':is_current_group(indicator_holder_group)}"
-          dnd-droppable (onDropSuccess)="transferDataSuccess($event,'group',indicator_holder_group)"
         >
           <div dnd-draggable [dragEnabled]="true" [dragData]="indicator_holder_group">
             <input type="text" [(ngModel)]="indicator_holder_group.name" class="group-text">
@@ -74,7 +74,7 @@
           </div>
         </th>
         <!--add holder groups-->
-        <th style="width: 60px"  dnd-droppable (onDropSuccess)="transferDataSuccess($event,'new-group',null)">
+        <th style="width: 60px" dnd-droppable (onDropSuccess)="transferDataSuccess($event,'new-group',null)">
           <button class="btn btn-sm btn-outline-secondary cursor" *ngIf="need_for_group" (click)="createGroup()">
             <i class="fa fa-plus"></i> Add
           </button>

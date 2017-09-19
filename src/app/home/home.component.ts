@@ -1,16 +1,16 @@
-import { Component, OnInit } from '@angular/core';
+import {AfterViewInit, Component, OnInit} from '@angular/core';
 import {Store} from '@ngrx/store';
 import {ApplicationState} from '../store/application.state';
 import {ScorecardService} from '../shared/services/scorecard.service';
-import {ScoreCard} from '../shared/models/scorecard';
 import {DataService} from '../shared/services/data.service';
 import {PaginationInstance} from 'ngx-pagination';
 import {animate, state, style, transition, trigger} from '@angular/animations';
-import {StoreService} from '../shared/services/store-service';
-import {ADD_SCORE_CARDS, AddScorecardsAction, DeleteScorecardAction} from '../store/actions/store.data.action';
+import { DeleteScorecardAction} from '../store/actions/store.data.action';
 import {Router} from '@angular/router';
 import {Observable} from 'rxjs/Observable';
 import * as selectors from '../store/selectors';
+import {OrgUnitService} from '../shared/services/org-unit.service';
+import {IndicatorGroupService} from '../shared/services/indicator-group.service';
 
 @Component({
   selector: 'app-home',
@@ -44,11 +44,11 @@ import * as selectors from '../store/selectors';
         'height': '0px'
       })),
       transition('notHidden <=> hidden', animate('500ms'))
-    ]),
+    ])
 
   ]
 })
-export class HomeComponent implements OnInit {
+export class HomeComponent implements OnInit, AfterViewInit {
   scorecards$: Observable<any[]>;
   scorecards: any = [];
   scorecards_loading$: Observable<boolean>;
@@ -74,8 +74,9 @@ export class HomeComponent implements OnInit {
     private store: Store<ApplicationState>,
     private scoreCardService: ScorecardService,
     private dataService: DataService,
-    private storeService: StoreService,
-    private router: Router
+    private orgUnitService: OrgUnitService,
+    private router: Router,
+    private indicatorService: IndicatorGroupService
   ) {
     store.select(state => state.uiState).subscribe(uiState => console.log(uiState));
     this.scorecards$ = store.select(selectors.getScorecards);
@@ -94,6 +95,13 @@ export class HomeComponent implements OnInit {
     );
 
     // this.orgUnitService.prepareOrgunits();
+  }
+
+  ngAfterViewInit() {
+    setTimeout( () => {
+      this.orgUnitService.prepareOrgunits('report');
+      this.indicatorService.loadAll();
+    }, 1000);
   }
 
   openscorecard(id, event ) {

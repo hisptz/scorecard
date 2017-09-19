@@ -11,16 +11,31 @@ export interface IndicatorGroup {
 @Injectable()
 export class IndicatorGroupService {
 
-  private _indicatorGroups: IndicatorGroup[];
+  private _indicatorGroups: any = null;
   private baseUrl: string;
 
   constructor(private http: Http ) { }
 
   // get all indicator groups
   loadAll(): Observable<any> {
-    return this.http.get('../../../api/indicatorGroups.json?fields=id,name&paging=false')
-      .map((response: Response) => response.json())
-      .catch(this.handleError);
+    return Observable.create(observer => {
+      if (this._indicatorGroups !== null) {
+        observer.next(this._indicatorGroups);
+        observer.complete();
+      }else {
+        this.http.get('../../../api/indicatorGroups.json?fields=id,name&paging=false')
+          .map((response: Response) => response.json())
+          .catch( this.handleError )
+          .subscribe((groups: any) => {
+              this._indicatorGroups = groups;
+              observer.next(this._indicatorGroups);
+              observer.complete();
+            },
+            error => {
+              observer.error('some error occur');
+            });
+      }
+    });
   }
 
   load(id: string ): Observable<any> {

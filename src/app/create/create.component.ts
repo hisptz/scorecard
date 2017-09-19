@@ -1,6 +1,5 @@
 import {AfterViewInit, Component, ElementRef, OnDestroy, OnInit, ViewChild} from '@angular/core';
-import {animate, style, transition, trigger} from '@angular/animations';
-import {Http} from '@angular/http';
+import {animate, state, style, transition, trigger} from '@angular/animations';
 import {ActivatedRoute, Router} from '@angular/router';
 import {Subscription} from 'rxjs/Subscription';
 
@@ -14,7 +13,6 @@ import {TreeComponent} from 'angular-tree-component';
 import {IndicatorGroupService} from '../shared/services/indicator-group.service';
 import {ScorecardService} from '../shared/services/scorecard.service';
 import {OrgUnitService} from '../shared/services/org-unit.service';
-import {FilterService} from '../shared/services/filter.service';
 import {FunctionService} from '../shared/services/function.service';
 import {DataService} from '../shared/services/data.service';
 import {Store} from '@ngrx/store';
@@ -26,13 +24,21 @@ import {ApplicationState} from '../store/application.state';
   styleUrls: ['./create.component.css'],
   animations: [
     trigger('fadeInOut', [
-      transition(':enter', [   // :enter is alias to 'void => *'
-        style({opacity: 0 }),
-        animate(600, style({opacity: 1 }))
-      ]),
-      transition(':leave', [   // :leave is alias to '* => void'
-        animate(500, style({opacity: 0 }))
-      ])
+      state('notHovered' , style({
+        'transform': 'scale(1, 1)',
+        '-webkit-box-shadow': '0 0 0px rgba(0,0,0,0.1)',
+        'box-shadow': '0 0 0px rgba(0,0,0,0.2)',
+        'background-color': 'rgba(0,0,0,0.0)',
+        'border': '0px solid #ddd'
+      })),
+      state('hoovered', style({
+        'transform': 'scale(1.04, 1.04)',
+        '-webkit-box-shadow': '0 0 10px rgba(0,0,0,0.2)',
+        'box-shadow': '0 0 10px rgba(0,0,0,0.2)',
+        'background-color': 'rgba(0,0,0,0.03)',
+        'border': '1px solid #ddd'
+      })),
+      transition('notHovered <=> hoovered', animate('400ms'))
     ])
   ]
 })
@@ -1519,10 +1525,12 @@ export class CreateComponent implements OnInit, AfterViewInit, OnDestroy {
 
 
   transferDataSuccess($event, drop_area: string, object: any) {
+    console.log('droped here', $event);
     if (drop_area === 'group') {
       //  check if someone is trying to reorder items within the scorecard
 
       if ( $event.dragData.hasOwnProperty('holder_id') ) {
+
         const last_holder = ( object.indicator_holder_ids.length === 0 ) ? 0 : object.indicator_holder_ids.length - 1;
         if (object.indicator_holder_ids.indexOf($event.dragData.holder_id) === -1) {
           this.deleteHolder( $event.dragData );
