@@ -93,8 +93,6 @@ export class HomeComponent implements OnInit, AfterViewInit {
         this.scoreCardService.getAllScoreCards( userInfo );
       }
     );
-
-    // this.orgUnitService.prepareOrgunits();
   }
 
   ngAfterViewInit() {

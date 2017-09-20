@@ -12,8 +12,10 @@
     </div>
   </div>
 </div>
-
-<div class="container-fluid" style="margin-top: 20px">
+<p class="text-center">
+  <LoadingComponent *ngIf="loading"></LoadingComponent>
+</p>
+<div class="container-fluid" style="margin-top: 20px" *ngIf="!loading">
   <div class="row">
     <div class="col-md-4 col-xs-12" style="padding-left: 0px; cursor: pointer;">
       <app-org-unit-filter
@@ -23,16 +25,17 @@
     </div>
     <div  class="col-md-4 col-xs-12">
       <app-period-filter
+        [@fadeInOut]=""
         [selected_periods]="scorecard.data.selected_periods"
         [period_type]="period_type"
         (onPeriodUpdate) = "updatePeriod($event)"
       ></app-period-filter>
     </div>
     <div class="col-md-4 col-xs-12">
-      <button class="btn btn-outline-secondary btn-sm pull-right cursor" style="height: 35px;margin-left: 5px">
+      <button class="btn btn-outline-secondary btn-sm pull-right cursor" style="height: 35px;margin-left: 3px">
         <i class="fa fa-file-excel-o"></i> Excel
       </button>
-      <button class="btn btn-outline-secondary btn-sm pull-right cursor" style="height: 35px;margin-left: 5px">
+      <button class="btn btn-outline-secondary btn-sm pull-right cursor" style="height: 35px;margin-left: 3px">
         <i class="fa fa-print"></i> Print
       </button>
       <app-options
@@ -40,9 +43,19 @@
         [scorecard]="scorecard"
         (onOptionUpdate) = "optionUpdated($event)"
       ></app-options>
-      <button class="btn btn-outline-secondary btn-sm pull-right cursor" style="height: 35px;margin-right: 5px">
+      <button
+        class="btn btn-outline-secondary btn-sm pull-right cursor"
+        style="height: 35px;margin-right: 3px"
+        *ngIf="scorecard.can_edit"
+      >
         <i class="fa fa-pencil-square-o"></i> Edit
       </button>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-sm-12">
+      <app-scorecard></app-scorecard>
     </div>
   </div>
 </div>

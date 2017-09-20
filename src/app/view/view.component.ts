@@ -12,6 +12,9 @@ import {animate, style, transition, trigger} from '@angular/animations';
 import {ScoreCard} from '../shared/models/scorecard';
 import {TreeComponent} from 'angular-tree-component';
 import {DataService} from '../shared/services/data.service';
+import {ApplicationState} from '../store/application.state';
+import {Store} from '@ngrx/store';
+import * as selectors from '../store/selectors';
 
 
 @Component({
@@ -34,27 +37,17 @@ export class ViewComponent implements OnInit, AfterViewInit, OnDestroy {
 
   private subscription: Subscription;
   private indicatorCalls: Subscription[] = [];
-  scorecard: ScoreCard;
+  scorecard: any;
   scorecardId: string;
   orgUnit: any = {};
-  period: any = [];
-  orgunits: any[] = [];
   loading: boolean = true;
 
-  selected_orgunits: any[] = [];
-  selected_periods: any = [];
   period_type: string = 'Quarterly';
   showOrgTree: boolean = true;
   showPerTree: boolean = true;
 
   default_selected_periods: any = [];
   show_details: boolean = false;
-
-  @ViewChild('orgtree')
-  orgtree: TreeComponent;
-
-  @ViewChild('pertree')
-  pertree: TreeComponent;
 
   @ViewChild(ScorecardComponent)
   private childScoreCard: ScorecardComponent;
@@ -70,38 +63,132 @@ export class ViewComponent implements OnInit, AfterViewInit, OnDestroy {
   shown_records: number = 0;
   average_selection: string = 'all';
   show_rank: boolean = false;
-  have_authorities: boolean = true;
   orgUnitlength: number = 0;
-
-  userInfo: any = {};
 
   constructor(private scorecardService: ScorecardService,
               private dataService: DataService,
               private activatedRouter: ActivatedRoute,
               private filterService: FilterService,
-              private orgunitService: OrgUnitService
+              private orgunitService: OrgUnitService,
+              private store: Store<ApplicationState>
   ) {
     this.subscription = this.activatedRouter.params.subscribe(
       (params: any) => {
         this.scorecardId = params['scorecardid'];
         this.scorecard = this.scorecardService.getEmptyScoreCard();
       });
-    this.dataService.getUserInformation().subscribe(
-      userInfo => {
-        this.userInfo = userInfo;
-        //noinspection TypeScriptUnresolvedVariable
-        userInfo.userCredentials.userRoles.forEach( (role) => {
-          role.authorities.forEach( (ath) => {
-            if ( ath === 'ALL') {
-              this.have_authorities = true;
-            }
-          } );
+  }
 
-        });
-      }
-    );
+  ngOnInit() {
+    this.subscription = this.activatedRouter.params.subscribe(
+      (params: any) => {
+        this.scorecardId = params['scorecardid'];
+        this.scorecard = this.scorecardService.getEmptyScoreCard();
+        this.dataService.getUserInformation().subscribe(
+          (userInfo: any) => {
+            this.store.select(selectors.getSelectedScorecard).subscribe(
+              (scorecard_details: any) => {
+                if (scorecard_details == null) {
+                  this.scorecardService.load(this.scorecardId).subscribe(
+                    (scorecardItem) => {
+                      this.setUpScoreCard(scorecardItem, userInfo);
+                    }
+                  );
+                }else {
+                  this.setUpScoreCard(scorecard_details.data, userInfo);
+                }
+              });
+          }
+        );
+    });
 
   }
+
+  setUpScoreCard(scorecard_details, userInfo) {
+    this.scorecard = {
+      id: this.scorecardId,
+      name: scorecard_details.header.title,
+      data: scorecard_details,
+      can_see: this.dataService.checkForUserGroupInScorecard(scorecard_details, userInfo).see,
+      can_edit: this.dataService.checkForUserGroupInScorecard(scorecard_details, userInfo).edit,
+    };
+
+    if (!this.scorecard.data.hasOwnProperty('orgunit_settings')) {
+      this.scorecard.data.orgunit_settings = {
+        'selection_mode': 'Usr_orgUnit',
+        'selected_levels': [],
+        'show_update_button': true,
+        'selected_groups': [],
+        'orgunit_levels': [],
+        'orgunit_groups': [],
+        'selected_orgunits': [],
+        'user_orgunits': [],
+        'type': 'report',
+        'selected_user_orgunit': []
+      };
+    }else if (!this.scorecard.data.orgunit_settings.hasOwnProperty('selected_orgunits')) {
+      this.scorecard.data.orgunit_settings = {
+        'selection_mode': 'Usr_orgUnit',
+        'selected_levels': [],
+        'show_update_button': true,
+        'selected_groups': [],
+        'orgunit_levels': [],
+        'orgunit_groups': [],
+        'selected_orgunits': [],
+        'user_orgunits': [],
+        'type': 'report',
+        'selected_user_orgunit': []
+      };
+    }else if (!this.isArray(this.scorecard.data.orgunit_settings.selected_levels)) {
+      this.scorecard.data.orgunit_settings = {
+        'selection_mode': 'Usr_orgUnit',
+        'selected_levels': [],
+        'show_update_button': true,
+        'selected_groups': [],
+        'orgunit_levels': [],
+        'orgunit_groups': [],
+        'selected_orgunits': [],
+        'user_orgunits': [],
+        'type': 'report',
+        'selected_user_orgunit': []
+      };
+    }
+    // attach average_selection if none is defined
+    if (!this.scorecard.data.hasOwnProperty('average_selection')) {
+      this.scorecard.data.average_selection = 'all';
+    }
+    // attach shown_records if none is defined
+    if (!this.scorecard.data.hasOwnProperty('shown_records')) {
+      this.scorecard.data.shown_records = 'all';
+    }
+    // attach show_average_in_row if none is defined
+    if (!this.scorecard.data.hasOwnProperty('show_average_in_row')) {
+      this.scorecard.data.show_average_in_row = false;
+    }
+    // attach show_average_in_column if none is defined
+    if (!this.scorecard.data.hasOwnProperty('show_average_in_column')) {
+      this.scorecard.data.show_average_in_column = false;
+    }
+    // attach a property empty row if none is defined
+    if (!this.scorecard.data.hasOwnProperty('empty_rows')) {
+      this.scorecard.data.empty_rows = true;
+    }
+    if (this.scorecard.data.hasOwnProperty('periodType')) {
+      this.period_type = this.scorecard.data.periodType;
+    }
+    if (!this.scorecard.data.hasOwnProperty('show_data_in_column')) {
+      this.scorecard.data.show_data_in_column = false;
+    }
+    this.loading = false;
+  }
+
+
+  ngAfterViewInit() {
+
+  }
+
+
+
 
   // listen to changes in period
   updatePeriod( period ) {
@@ -117,79 +204,6 @@ export class ViewComponent implements OnInit, AfterViewInit, OnDestroy {
 
   isArray(o) {
     return Object.prototype.toString.call(o) === '[object Array]';
-  }
-
-  ngOnInit() {
-    // loading organisation units
-    this.scorecardService.load(this.scorecardId).subscribe(
-      scorecard_details => {
-        this.scorecard = {
-          id: this.scorecardId,
-          name: scorecard_details.header.title,
-          data: scorecard_details
-        };
-        // attach organisation unit if none is defined
-        if (!this.scorecard.data.orgunit_settings.hasOwnProperty('selected_orgunits')) {
-          this.scorecard.data.orgunit_settings = {
-            'selection_mode': 'Usr_orgUnit',
-            'selected_levels': [],
-            'show_update_button': true,
-            'selected_groups': [],
-            'orgunit_levels': [],
-            'orgunit_groups': [],
-            'selected_orgunits': [],
-            'user_orgunits': [],
-            'type': 'report',
-            'selected_user_orgunit': []
-          };
-        }else if (!this.isArray(this.scorecard.data.orgunit_settings.selected_levels)) {
-          this.scorecard.data.orgunit_settings = {
-            'selection_mode': 'Usr_orgUnit',
-            'selected_levels': [],
-            'show_update_button': true,
-            'selected_groups': [],
-            'orgunit_levels': [],
-            'orgunit_groups': [],
-            'selected_orgunits': [],
-            'user_orgunits': [],
-            'type': 'report',
-            'selected_user_orgunit': []
-          };
-        }
-        // attach average_selection if none is defined
-        if (!this.scorecard.data.hasOwnProperty('average_selection')) {
-          this.scorecard.data.average_selection = 'all';
-        }
-        // attach shown_records if none is defined
-        if (!this.scorecard.data.hasOwnProperty('shown_records')) {
-          this.scorecard.data.shown_records = 'all';
-        }
-        // attach show_average_in_row if none is defined
-        if (!this.scorecard.data.hasOwnProperty('show_average_in_row')) {
-          this.scorecard.data.show_average_in_row = false;
-        }
-        // attach show_average_in_column if none is defined
-        if (!this.scorecard.data.hasOwnProperty('show_average_in_column')) {
-          this.scorecard.data.show_average_in_column = false;
-        }
-        // attach a property empty row if none is defined
-        if (!this.scorecard.data.hasOwnProperty('empty_rows')) {
-          this.scorecard.data.empty_rows = true;
-        }
-        if (this.scorecard.data.hasOwnProperty('periodType')) {
-          this.period_type = this.scorecard.data.periodType;
-        }
-        if (!this.scorecard.data.hasOwnProperty('show_data_in_column')) {
-          this.scorecard.data.show_data_in_column = false;
-        }
-        //   // this.loadScoreCard();
-        // }
-      });
-
-  }
-
-  ngAfterViewInit() {
-
   }
 
 
@@ -212,35 +226,35 @@ export class ViewComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   // load a preview function
-  loadPreview($event) {
-    this.selected_indicator = [];
-    // prepare indicators
-    if ($event.period === null) {
-      this.default_selected_periods = this.selected_periods;
-    }else {
-      this.default_selected_periods = [$event.period];
-    }
-    if ($event.holderGroup === null) {
-      this.selected_indicator = [$event.indicator];
-    }else {
-      for ( const holderid of $event.holderGroup.indicator_holder_ids ) {
-        for ( const holder of this.scorecard.data.data_settings.indicator_holders ) {
-          if ( holder.holder_id === holderid ) {
-            this.selected_indicator.push(holder);
-          }
-        }
-      }
-    }
-
-    // prepare organisation units
-    if ($event.ou === null) {
-      this.orgunit_for_model = this.scorecard.data.orgunit_settings;
-    }else {
-      const node = this.orgtree.treeModel.getNodeById($event.ou);
-      this.orgunit_for_model = node.data;
-    }
-    this.show_details = true;
-  }
+  // loadPreview($event) {
+  //   this.selected_indicator = [];
+  //   // prepare indicators
+  //   if ($event.period === null) {
+  //     this.default_selected_periods = this.selected_periods;
+  //   }else {
+  //     this.default_selected_periods = [$event.period];
+  //   }
+  //   if ($event.holderGroup === null) {
+  //     this.selected_indicator = [$event.indicator];
+  //   }else {
+  //     for ( const holderid of $event.holderGroup.indicator_holder_ids ) {
+  //       for ( const holder of this.scorecard.data.data_settings.indicator_holders ) {
+  //         if ( holder.holder_id === holderid ) {
+  //           this.selected_indicator.push(holder);
+  //         }
+  //       }
+  //     }
+  //   }
+  //
+  //   // prepare organisation units
+  //   if ($event.ou === null) {
+  //     this.orgunit_for_model = this.scorecard.data.orgunit_settings;
+  //   }else {
+  //     const node = this.orgtree.treeModel.getNodeById($event.ou);
+  //     this.orgunit_for_model = node.data;
+  //   }
+  //   this.show_details = true;
+  // }
 
   removeModel() {
     this.show_details = false;

@@ -5,9 +5,9 @@ import 'rxjs/Rx';
 import {Observable} from 'rxjs/Observable';
 import {Subscription} from 'rxjs/Rx';
 import {Angular2Csv} from 'angular2-csv';
-import {VisualizerService} from '../dhis-visualizer/visulizer.service';
 import {IActionMapping, TREE_ACTIONS, TreeComponent} from 'angular-tree-component';
 import {Constants} from '../../shared/services/costants';
+import {VisualizerService} from '../../shared/services/visualizer.service';
 
 const actionMapping1: IActionMapping = {
   mouse: {

@@ -9,6 +9,8 @@ export interface StoreData {
     currentUser: any;
     options: any;
     orgunitNodes: any;
+    selectedPeriod: any;
+    selectedOrgunit: any;
 }
 
 export const INITIAL_STORE_DATA: StoreData = {
@@ -19,5 +21,7 @@ export const INITIAL_STORE_DATA: StoreData = {
   errorloadingScorecards: false,
   currentUser: null,
   options: null,
-  orgunitNodes: null
+  orgunitNodes: null,
+  selectedPeriod: '',
+  selectedOrgunit: ''
 };

@@ -203,8 +203,6 @@ export class CreateComponent implements OnInit, AfterViewInit, OnDestroy {
         const type = params['type'];
         if (type === 'new') {
           this.period_type = this.scorecard.data.periodType;
-          // this.periods = this.filterService.getPeriodArray( this.period_type, this.year );
-          // this.activateNode(this.filterService.getPeriodArray( this.period_type, this.year )[0].id, this.pertree);
           this.current_action = 'new';
           this.scorecard.data.user = this.user;
           this.percent_complete = 10;

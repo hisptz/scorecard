@@ -11,7 +11,7 @@ export class Constants {
 
   constructor(private http: Http) {
     this.root_dir = '../../../';
-    this.loadVersion().subscribe((system_info) => {
+    this.loadVersion().subscribe((system_info: any) => {
       if (system_info.version >= 2.25) {
         this.root_api = '../../../api/25/';
       } else {

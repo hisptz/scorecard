@@ -17,6 +17,7 @@ import {Store} from '@ngrx/store';
 import {ApplicationState} from '../../store/application.state';
 import {getScorecards} from '../../store/selectors';
 import {AddScorecardAction, UpdateLoadingAction, UpdateLoadingPercentAction} from '../../store/actions/store.data.action';
+import {OrgUnitService} from './org-unit.service';
 
 
 @Injectable()
@@ -28,6 +29,7 @@ export class ScorecardService {
   constructor(
     private http: Http,
     private dataService: DataService,
+    private orgunitService: OrgUnitService,
     private store: Store<ApplicationState>
   ) {
     this.baseUrl = '../../../';
@@ -63,7 +65,7 @@ export class ScorecardService {
                 hoverState: 'notHovered',
                 confirm_deleting: false,
                 deleted: false,
-                error_deleting: false,
+                error_deleting: false
               };
               if ( scorecard_item.can_see ) {
                 this.store.dispatch(new AddScorecardAction(scorecard_item));

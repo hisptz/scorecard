@@ -24,4 +24,12 @@ export const getLoadingState = createSelector(getStoreData, (datastate) => {
   return datastate.loadingScorecards;
 });
 
+export const getSelectedPeriod = createSelector(getStoreData, (datastate) => {
+  return datastate.selectedPeriod;
+});
+
+export const getSelectedOrgunit = createSelector(getStoreData, (datastate) => {
+  return datastate.selectedOrgunit;
+});
+
 

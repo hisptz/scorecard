@@ -1,11 +1,12 @@
 import { Injectable } from '@angular/core';
 import {Http, Headers} from '@angular/http';
+import {Constants} from './costants';
 
 @Injectable()
 export class HttpClientService {
-  public APIURL = '../../../api/25/';
-  constructor(private http: Http) {
-    this.http = http;
+  public APIURL = '../../../api/';
+  constructor(private http: Http, private constant: Constants) {
+    this.APIURL = constant.root_api;
   }
 
   createAuthorizationHeader(headers: Headers, options?) {
@@ -38,6 +39,7 @@ export class HttpClientService {
       headers: headers
     }).map(this.responseHandler());
   }
+
   delete(url, options?) {
     const headers = new Headers();
     this.createAuthorizationHeader(headers, options);
@@ -45,6 +47,7 @@ export class HttpClientService {
       headers: headers
     }).map(this.responseHandler());
   }
+
   responseHandler() {
     return (res) => {
       try {
@@ -56,4 +59,5 @@ export class HttpClientService {
       }
     };
   }
+
 }

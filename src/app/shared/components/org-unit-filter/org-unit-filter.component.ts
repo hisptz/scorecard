@@ -404,22 +404,10 @@ export class OrgUnitFilterComponent implements OnInit {
   getOrgUnitsForAnalytics(orgunit_model: any, with_children: boolean): string {
     const orgUnits = [];
     let organisation_unit_analytics_string = '';
-    // if the selected orgunit is user org unit
     if ( orgunit_model.selected_user_orgunit.length !== 0 ) {
-      // if (orgunit_model.user_orgunits.length === 1) {
-      //   let user_orgunit = this.orgtree.treeModel.getNodeById(orgunit_model.user_orgunits[0].id);
-      //   orgUnits.push(user_orgunit.id);
-      //   if (user_orgunit.hasOwnProperty('children') && with_children) {
-      //     for( let orgunit of user_orgunit.children ) {
-      //       orgUnits.push(orgunit.id);
-      //     }
-      //   }
-      // }else {
         orgunit_model.selected_user_orgunit.forEach((orgunit) => {
           organisation_unit_analytics_string += orgunit.id + ';';
         });
-
-      // }
     }else {
       // if there is only one organisation unit selected
       if ( orgunit_model.selected_orgunits.length === 1 ) {

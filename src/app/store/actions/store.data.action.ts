@@ -6,6 +6,8 @@ import {ScoreCard} from '../../shared/models/scorecard';
 export const ADD_SCORE_CARDS = 'ADD_SCORE_CARDS';
 export const ADD_SCORE_CARD = 'ADD_SCORE_CARD';
 export const SET_SELECTED_SCORE_CARD_ACTION = 'SET_SELECTED_SCORE_CARD_ACTION';
+export const SET_SELECTED_PERIOD = 'SET_SELECTED_PERIOD';
+export const SET_SELECTED_ORGUNIT = 'SET_SELECTED_ORGUNIT';
 export const UPDATE_SCORE_CARD_ACTION = 'UPDATE_SCORE_CARD_ACTION';
 export const DELETE_SCORE_CARD_ACTION = 'DELETE_SCORE_CARD_ACTION';
 export const UPDATE_LOADING_ACTION = 'UPDATE_LOADING_ACTION';
@@ -20,6 +22,16 @@ export class UpdateLoadingAction implements Action {
 export class UpdateLoadingPercentAction implements Action {
   type = UPDATE_LOADING_PERCENT_ACTION;
   constructor ( public payload: number ) {}
+}
+
+export class SetSelectedPeriodAction implements Action {
+  type = SET_SELECTED_PERIOD;
+  constructor ( public payload: any ) {}
+}
+
+export class SetSelectedOrgunitAction implements Action {
+  type = SET_SELECTED_ORGUNIT;
+  constructor ( public payload: any ) {}
 }
 
 export class UpdateErrorLoadingAction implements Action {

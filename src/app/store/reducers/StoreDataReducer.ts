@@ -1,6 +1,7 @@
 import { StoreData } from '../store-data';
 import {
-  ADD_SCORE_CARD, ADD_SCORE_CARDS, DELETE_SCORE_CARD_ACTION, SET_SELECTED_SCORE_CARD_ACTION, UPDATE_ERROR_LOADING_ACTION,
+  ADD_SCORE_CARD, ADD_SCORE_CARDS, DELETE_SCORE_CARD_ACTION, SET_SELECTED_ORGUNIT, SET_SELECTED_PERIOD, SET_SELECTED_SCORE_CARD_ACTION,
+  UPDATE_ERROR_LOADING_ACTION,
   UPDATE_LOADING_ACTION,
   UPDATE_LOADING_PERCENT_ACTION,
   UPDATE_SCORE_CARD_ACTION
@@ -58,6 +59,18 @@ export function storeData(state: StoreData, action: any): StoreData {
         const errorLoadingStore = _.cloneDeep( state );
         errorLoadingStore.errorloadingScorecards = action.payload;
         return errorLoadingStore;
+
+      // set error status if something went wrong while loading scorecards
+      case SET_SELECTED_PERIOD:
+        const perStore = _.cloneDeep( state );
+        perStore.selectedPeriod = action.payload;
+        return perStore;
+
+      // set error status if something went wrong while loading scorecards
+      case SET_SELECTED_ORGUNIT:
+        const orgStore = _.cloneDeep( state );
+        orgStore.selectedOrgunit = action.payload;
+        return orgStore;
 
       default:
         return state;
