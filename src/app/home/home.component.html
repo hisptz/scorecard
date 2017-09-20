@@ -77,7 +77,7 @@
         [@visibilityChanged]="scorecard.hoverState || 'notHovered'"
         (mouseenter) ="mouseEnter(scorecard)"
         (mouseleave) ="mouseLeave(scorecard)"
-        [routerLink]="['view',scorecard.id]"
+        (click)="viewcorecard(scorecard,$event)"
       >
         <h1 class="text-center text-muted"><img src="assets/img/scorecardplaceholder.jpg" style="height: 120px"> </h1>
         <!--<img class="card-img-top" src="assets/img/scorecardplaceholder.jpg" style="height: 160px; width: 280px;margin-right: 20%" alt="{{ scorecard.data.header.title }}">-->
@@ -97,7 +97,7 @@
               View
             </a>
             <a  *ngIf="scorecard.can_edit" title="edit {{ scorecard.data.header.title }}"
-                (click)="openscorecard(scorecard.id,$event)"
+                (click)="openscorecard(scorecard,$event)"
                 class="btn btn-outline-info sans-pro"
                 role="button"
                 style="cursor: pointer"

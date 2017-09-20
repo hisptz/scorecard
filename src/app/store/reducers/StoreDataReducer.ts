@@ -1,6 +1,7 @@
 import { StoreData } from '../store-data';
 import {
-  ADD_SCORE_CARD, ADD_SCORE_CARDS, DELETE_SCORE_CARD_ACTION, UPDATE_ERROR_LOADING_ACTION, UPDATE_LOADING_ACTION,
+  ADD_SCORE_CARD, ADD_SCORE_CARDS, DELETE_SCORE_CARD_ACTION, SET_SELECTED_SCORE_CARD_ACTION, UPDATE_ERROR_LOADING_ACTION,
+  UPDATE_LOADING_ACTION,
   UPDATE_LOADING_PERCENT_ACTION,
   UPDATE_SCORE_CARD_ACTION
 } from '../actions/store.data.action';
@@ -47,6 +48,10 @@ export function storeData(state: StoreData, action: any): StoreData {
       // set scorecard loading status
       case UPDATE_LOADING_PERCENT_ACTION:
         return <StoreData>{...state, loadingPercent: action.payload};
+
+      // set scorecard loading status
+      case SET_SELECTED_SCORE_CARD_ACTION:
+        return <StoreData>{...state, selectedScorecard: action.payload};
 
       // set error status if something went wrong while loading scorecards
       case UPDATE_ERROR_LOADING_ACTION:

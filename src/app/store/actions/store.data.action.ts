@@ -5,6 +5,7 @@ import {ScoreCard} from '../../shared/models/scorecard';
  */
 export const ADD_SCORE_CARDS = 'ADD_SCORE_CARDS';
 export const ADD_SCORE_CARD = 'ADD_SCORE_CARD';
+export const SET_SELECTED_SCORE_CARD_ACTION = 'SET_SELECTED_SCORE_CARD_ACTION';
 export const UPDATE_SCORE_CARD_ACTION = 'UPDATE_SCORE_CARD_ACTION';
 export const DELETE_SCORE_CARD_ACTION = 'DELETE_SCORE_CARD_ACTION';
 export const UPDATE_LOADING_ACTION = 'UPDATE_LOADING_ACTION';
@@ -42,5 +43,10 @@ export class UpdateScorecardAction implements Action {
 
 export class DeleteScorecardAction implements Action {
   type = DELETE_SCORE_CARD_ACTION;
+  constructor ( public payload: any ) {}
+}
+
+export class SetSelectedScorecardAction implements Action {
+  type = SET_SELECTED_SCORE_CARD_ACTION;
   constructor ( public payload: any ) {}
 }

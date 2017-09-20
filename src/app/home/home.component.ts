@@ -5,7 +5,7 @@ import {ScorecardService} from '../shared/services/scorecard.service';
 import {DataService} from '../shared/services/data.service';
 import {PaginationInstance} from 'ngx-pagination';
 import {animate, state, style, transition, trigger} from '@angular/animations';
-import { DeleteScorecardAction} from '../store/actions/store.data.action';
+import {DeleteScorecardAction, SetSelectedScorecardAction} from '../store/actions/store.data.action';
 import {Router} from '@angular/router';
 import {Observable} from 'rxjs/Observable';
 import * as selectors from '../store/selectors';
@@ -104,8 +104,15 @@ export class HomeComponent implements OnInit, AfterViewInit {
     }, 1000);
   }
 
-  openscorecard(id, event ) {
-    this.router.navigate(['create', 'edit', id]);
+  openscorecard(scorecard, event ) {
+    this.store.dispatch(new SetSelectedScorecardAction(scorecard))
+    this.router.navigate(['create', 'edit', scorecard.id]);
+    event.stopPropagation();
+  }
+
+  viewcorecard(scorecard, event ) {
+    this.store.dispatch(new SetSelectedScorecardAction(scorecard))
+    this.router.navigate(['view', scorecard.id]);
     event.stopPropagation();
   }
 

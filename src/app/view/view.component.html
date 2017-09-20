@@ -1,156 +1,48 @@
-<div class="container-fluid no-print" style="padding-left: 5px">
-  <div class="col-sm-2" style="padding-left: 0px; cursor: pointer;" [routerLink]="['']">
-    <img src="scorecard.svg" style="height: 58px; width: 48px"> <span style="font-size: 15px"> Score Card</span>
-  </div>
-  <div class="col-sm-8">
-    <h3 class="text-center" style="margin-top: 0px"><small></small></h3>
-  </div>
-  <div class="col-sm-2" style="margin-top: 14px;padding-right: 0px">
-    <button class="btn btn-default btn-sm pull-right" [routerLink]="['']"><span class="glyphicon glyphicon-home"></span> home</button>
-  </div>
-</div>
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-md-2 col-xs-12" style="padding-left: 0px; cursor: pointer;" [routerLink]="['']">
+      <img src="scorecard.svg" style="height: 58px; width: 48px"> <span style="font-size: 20px"> Score Card</span>
+    </div>
+    <div  class="col-md-8 col-xs-12">
 
-<!--filters-->
-<div class="container-fluid no-print" id="filters" style="padding: 0px"d>
-  <div class="col-sm-4" style="padding-left: 5px">
-    <label>Organisation Units</label>
-    <app-org-unit-filter
-      [orgunit_model]="orgunit_model"
-      [showUpdate] = "true"
-      (onOrgUnitUpdate) = "updateOrgUnits($event)"
-    >
-    </app-org-unit-filter>
-  </div>
-  <div class="col-sm-4">
-    <label>Selected Period</label>
-    <app-period-filter
-      [selected_periods]="scorecard.data.selected_periods"
-      [period_type]="period_type"
-      (onPeriodUpdate) = "updatePeriod($event)"
-      [showUpdate] = "true"
-    ></app-period-filter>
-
-  </div>
-  <!--options-->
-  <div class="col-sm-4">
-    <label>&nbsp;&nbsp;</label>
-    <div>
-      <button type="button" class="btn btn-default pull-right"  style="height: 38px" (click)="loadScoreCard()" title="Update Scorecard" *ngIf="checkSelectionCompletion()">
-        <span class="glyphicon glyphicon-refresh"></span>  Update
-      </button>
-      <button type="button" class="btn btn-default pull-right"  style="height: 38px" (click)="downloadCSV(orgUnit.id)" title="download CSV version of scorecard">
-        <span class="glyphicon glyphicon-save-file"></span>  CSV
-      </button>
-      <button type="button" class="btn btn-default pull-right"  style="height: 38px" (click)="browserPrint()" title="Print scorecard">
-        <span class="glyphicon glyphicon-print"></span> Print
-      </button>
-
-      <!--some aditional configurations-->
-      <button  type="button" class="btn btn-default pull-right"  style="height: 38px" title="Customize scorecard" (click)="showOptions()">
-        <span class="glyphicon glyphicon-cog"></span> Options
-      </button>
-      <div class="additional-options" [ngClass]="{'hiddenTree':showAdditionalOptions}" style="padding-top: 0px">
-        <ul class="list-group">
-          <li class="list-group-item pointer">
-            <div class="row">
-              <div class="col-sm-4"><label title="tick to show legend"><input type="checkbox" [(ngModel)]="scorecard.data.header.show_legend_definition"> Legend</label></div>
-              <div class="col-sm-4"><label title="tick to show ranking"><input type="checkbox" [(ngModel)]="scorecard.data.show_rank"> Rank</label></div>
-              <div class="col-sm-4"><label title="tick to show empty rows"><input type="checkbox" [(ngModel)]="scorecard.data.empty_rows"> Empty Rows</label></div>
-            </div>
-          </li>
-          <li class="list-group-item pointer">
-            <div class="row">
-              <div class="col-sm-6"><label title="tick to show average row"><input type="checkbox" [(ngModel)]="scorecard.data.show_average_in_column" > Average Row</label></div>
-              <div class="col-sm-6"><label title="tick to show average column"><input type="checkbox" [(ngModel)]="scorecard.data.show_average_in_row"> Average Column</label></div>
-            </div>
-          </li>
-          <li class="list-group-item pointer">
-            <div class="row">
-              <div class="col-sm-2"><label title="show both above and bellow average"><input type="radio" value="all" [(ngModel)]="scorecard.data.average_selection"> All</label></div>
-              <div class="col-sm-5"><label title="Show organisation units below average"><input type="radio" value="below" [(ngModel)]="scorecard.data.average_selection" > Below Average</label></div>
-              <div class="col-sm-5"><label title="Show organisation units above average"><input type="radio" value="above" [(ngModel)]="scorecard.data.average_selection" > Above Average</label></div>
-            </div>
-          </li>
-          <li class="list-group-item">
-            <div class="row">
-              <div class="col-sm-12" style="padding-top: 5px">
-                <label title="show all items"><input name="shown_records" type="radio" value="all" [(ngModel)]="scorecard.data.shown_records"> All</label>
-                <label title="show top three based on current selections"><input name="shown_records"  type="radio" value="3" [(ngModel)]="scorecard.data.shown_records"> Top Three</label>
-                <label title="show top five based on current selections"><input name="shown_records"  type="radio" value="5" [(ngModel)]="scorecard.data.shown_records"> Top Five</label>
-                <label title="show top ten based on current selections"><input name="shown_records"  type="radio" value="10" [(ngModel)]="scorecard.data.shown_records"> Top Ten</label>
-              </div>
-            </div>
-          </li>
-          <li class="list-group-item">
-            <label>Hide Columns</label>
-            <select class="form-control" multiple [(ngModel)]="hidenColums" (change)="hideColums()">
-              <option value="">Show All</option>
-              <option *ngFor="let listItem of getIndicatorsList(scorecard)" value="{{ listItem.id }}">{{ listItem.title }}</option>
-            </select>
-            <span class="help-block"><span class="glyphicon glyphicon-question-sign"></span> hold control to select multiple</span>
-          </li>
-        </ul>
-        <button class="btn btn-sm btn-warning pull-right" (click)="showOptions()" style="height: 35px">
-          <span class="glyphicon glyphicon-remove"></span> close
-        </button>
-
-      </div>
-      <!--end of additional configuration-->
-      <button *ngIf="canEditScoreCard()" class="btn btn btn-default pull-right" [routerLink]="['../../create','edit',scorecard.id]" style="height: 38px" title="Update score card">
-        <span class="glyphicon glyphicon-pencil"></span>
-      </button>
+    </div>
+    <div class="col-md-2 col-xs-12" style="margin-top: 14px">
+      <button class="btn btn-outline-secondary btn-sm pull-right cursor" [routerLink]="['']" style="height: 30px;margin-left: 5px">
+        <i class="fa fa-home"></i> home</button>
     </div>
   </div>
-
 </div>
 
-<!--main scorecard-->
-<app-scorecard
-  #scorecardCcomponent
-  *ngIf="metadata_ready"
-  [scorecard]="scorecard"
-  [orgUnit]="orgUnit"
-  [period]="selected_periods"
-  [default_period]="period"
-  [period_type]="period_type"
-  [show_average_in_column]="scorecard.data.show_average_in_column"
-  [show_average_in_row]="scorecard.data.show_average_in_row"
-  [show_sum_in_column]="show_sum_in_column"
-  [show_sum_in_row]="show_sum_in_row"
-  [shown_records]="scorecard.data.shown_records"
-  [average_selection]="scorecard.data.average_selection"
-  [hidenColums]="hidenColums"
-  [show_rank]="scorecard.data.show_rank"
-  [sorting_column]="sorting_column"
-  [orgtree]="orgtree"
-  [level]="'top'"
-  [orgunit_model]="orgunit_model"
-  (show_details) = "loadPreview($event)"
-  (updatedScorecard)="getUpdatedScorecard($event)"
-
-></app-scorecard>
-
-
-<!--scorecard indicator details-->
-<div class="indicator_details" *ngIf="show_details" [@fadeInOut]>
-  <div class="indicator_dialog">
-    <div class="indicator-content">
-      <span class="glyphicon glyphicon-remove pull-right" style="cursor: pointer" (click)="removeModel()"></span>
-      <div style="padding: 15px">
-        <indicator-card
-          [orgunit_nodes]="organisationunits"
-          [current_period_type]="period_type"
-          [current_year]="year"
-          [indicator]="selected_indicator"
-          [default_period]="default_selected_periods"
-          [default_period_type]="period_type"
-          [default_orgunit] = "orgunit_for_model"
-          [hidden_columns] = "hidenColums"
-          [default_orgunit_model] = "orgunit_model"
-          (show_details) = "getDetails($event)"
-        >Loading ....
-        </indicator-card>
-      </div>
+<div class="container-fluid" style="margin-top: 20px">
+  <div class="row">
+    <div class="col-md-4 col-xs-12" style="padding-left: 0px; cursor: pointer;">
+      <app-org-unit-filter
+        [orgunit_model] = "scorecard.data.orgunit_settings"
+        (onOrgUnitModelUpdate) = "updateOrgUnitModel($event)"
+      ></app-org-unit-filter>
+    </div>
+    <div  class="col-md-4 col-xs-12">
+      <app-period-filter
+        [selected_periods]="scorecard.data.selected_periods"
+        [period_type]="period_type"
+        (onPeriodUpdate) = "updatePeriod($event)"
+      ></app-period-filter>
+    </div>
+    <div class="col-md-4 col-xs-12">
+      <button class="btn btn-outline-secondary btn-sm pull-right cursor" style="height: 35px;margin-left: 5px">
+        <i class="fa fa-file-excel-o"></i> Excel
+      </button>
+      <button class="btn btn-outline-secondary btn-sm pull-right cursor" style="height: 35px;margin-left: 5px">
+        <i class="fa fa-print"></i> Print
+      </button>
+      <app-options
+        *ngIf="scorecard"
+        [scorecard]="scorecard"
+        (onOptionUpdate) = "optionUpdated($event)"
+      ></app-options>
+      <button class="btn btn-outline-secondary btn-sm pull-right cursor" style="height: 35px;margin-right: 5px">
+        <i class="fa fa-pencil-square-o"></i> Edit
+      </button>
     </div>
   </div>
 </div>

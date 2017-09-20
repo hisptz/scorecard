@@ -17,6 +17,7 @@ import {FunctionService} from '../shared/services/function.service';
 import {DataService} from '../shared/services/data.service';
 import {Store} from '@ngrx/store';
 import {ApplicationState} from '../store/application.state';
+import * as selectors from '../store/selectors';
 
 @Component({
   selector: 'app-create',
@@ -211,104 +212,17 @@ export class CreateComponent implements OnInit, AfterViewInit, OnDestroy {
           this.current_action = 'update';
           this.need_for_group = true;
           this.need_for_indicator = true;
-          this.scorecardService.load(id).subscribe(
-            scorecard_details => {
-              this.percent_complete = 10;
-              this.scorecard = {
-                id: id,
-                name: scorecard_details.header.title,
-                data: scorecard_details
-              };
-              // check if period configuration is there
-              if (!this.scorecard.data.hasOwnProperty('periodType')) {
-                this.scorecard.data.periodType = 'Quarterly';
-              }
-              if (!this.scorecard.data.hasOwnProperty('selected_periods')) {
-                this.scorecard.data.selected_periods = [];
-              }
-              if (!this.scorecard.data.hasOwnProperty('user')) {
-                this.scorecard.data.user = this.user;
-              }
-              if (!this.scorecard.data.hasOwnProperty('user_groups')) {
-                this.scorecard.data.user_groups = [];
-              }
-              // replace selected user orgunit with correct configuration
-
-              // attach organisation unit if none is defined
-              if (!this.scorecard.data.orgunit_settings.hasOwnProperty('selected_orgunits')) {
-                this.scorecard.data.orgunit_settings = {
-                  'selection_mode': 'Usr_orgUnit',
-                  'selected_levels': [],
-                  'show_update_button': true,
-                  'selected_groups': [],
-                  'orgunit_levels': [],
-                  'orgunit_groups': [],
-                  'selected_orgunits': [],
-                  'user_orgunits': [],
-                  'type': 'report',
-                  'selected_user_orgunit': []
-                };
-              }else if (!this.isArray(this.scorecard.data.orgunit_settings.selected_levels)) {
-                this.scorecard.data.orgunit_settings = {
-                  'selection_mode': 'Usr_orgUnit',
-                  'selected_levels': [],
-                  'show_update_button': true,
-                  'selected_groups': [],
-                  'orgunit_levels': [],
-                  'orgunit_groups': [],
-                  'selected_orgunits': [],
-                  'user_orgunits': [],
-                  'type': 'report',
-                  'selected_user_orgunit': []
-                };
-              }
-              // attach period type if none is defined
-              if (!this.scorecard.data.hasOwnProperty('periodType')) {
-                this.scorecard.data.periodType = 'Quarterly';
-              }
-              this.period_type = this.scorecard.data.periodType;
-              // attach average_selection if none is defined
-              if (!this.scorecard.data.hasOwnProperty('average_selection')) {
-                this.scorecard.data.average_selection = 'all';
-              }
-              // attach shown_records if none is defined
-              if (!this.scorecard.data.hasOwnProperty('shown_records')) {
-                this.scorecard.data.shown_records = 'all';
-              }
-              // attach show_average_in_row if none is defined
-              if (!this.scorecard.data.hasOwnProperty('show_average_in_row')) {
-                this.scorecard.data.show_average_in_row = false;
-              }
-              // attach show_average_in_column if none is defined
-              if (!this.scorecard.data.hasOwnProperty('show_average_in_column')) {
-                this.scorecard.data.show_average_in_column = false;
-              }
-              // attach a property empty row if none is defined
-              if (!this.scorecard.data.hasOwnProperty('empty_rows')) {
-                this.scorecard.data.empty_rows = true;
-              }
-              // this.getItemsFromGroups();
-              let i = 0;
-              for ( const item of this.scorecard.data.data_settings.indicator_holder_groups ) {
-                i++;
-                if (i === 1) {
-                  this.current_holder_group = item;
-                }else { continue; }
-
-              }
-              let j = 0;
-              for ( const item of this.scorecard.data.data_settings.indicator_holders) {
-                for ( const indicator of item.indicators ) {
-                  if (!indicator.hasOwnProperty('bottleneck_indicators')) {
-                    indicator.bottleneck_indicators = [];
+          this.store.select(selectors.getSelectedScorecard).subscribe(
+            (scorecard_details: any) => {
+              if (scorecard_details == null) {
+                this.scorecardService.load(id).subscribe(
+                  (scorecardItem) => {
+                    this.setUpScoreCard(scorecardItem, id);
                   }
-                }
-                j++;
-                if (j === 1) {
-                  this.current_indicator_holder = item;
-                }else { continue; }
+                );
+              }else {
+                this.setUpScoreCard(scorecard_details.data, id);
               }
-
             });
 
         }
@@ -409,16 +323,109 @@ export class CreateComponent implements OnInit, AfterViewInit, OnDestroy {
         this.error_loading_groups.message = 'There was an error when loading Data sets';
       }
     );
-    // laod organisation units
-    this.loadOrganisationUnit();
-
     // period configuration
     // this.periods = this.filterService.getPeriodArray( this.period_type, this.year );
   }
 
-  loadOrganisationUnit() {
+  setUpScoreCard(scorecard_details, id) {
+    this.percent_complete = 10;
+    this.scorecard = {
+      id: id,
+      name: scorecard_details.header.title,
+      data: scorecard_details
+    };
+    // check if period configuration is there
+    if (!this.scorecard.data.hasOwnProperty('periodType')) {
+      this.scorecard.data.periodType = 'Quarterly';
+    }
+    if (!this.scorecard.data.hasOwnProperty('selected_periods')) {
+      this.scorecard.data.selected_periods = [];
+    }
+    if (!this.scorecard.data.hasOwnProperty('user')) {
+      this.scorecard.data.user = this.user;
+    }
+    if (!this.scorecard.data.hasOwnProperty('user_groups')) {
+      this.scorecard.data.user_groups = [];
+    }
+    // replace selected user orgunit with correct configuration
+
+    // attach organisation unit if none is defined
+    if (!this.scorecard.data.orgunit_settings.hasOwnProperty('selected_orgunits')) {
+      this.scorecard.data.orgunit_settings = {
+        'selection_mode': 'Usr_orgUnit',
+        'selected_levels': [],
+        'show_update_button': true,
+        'selected_groups': [],
+        'orgunit_levels': [],
+        'orgunit_groups': [],
+        'selected_orgunits': [],
+        'user_orgunits': [],
+        'type': 'report',
+        'selected_user_orgunit': []
+      };
+    }else if (!this.isArray(this.scorecard.data.orgunit_settings.selected_levels)) {
+      this.scorecard.data.orgunit_settings = {
+        'selection_mode': 'Usr_orgUnit',
+        'selected_levels': [],
+        'show_update_button': true,
+        'selected_groups': [],
+        'orgunit_levels': [],
+        'orgunit_groups': [],
+        'selected_orgunits': [],
+        'user_orgunits': [],
+        'type': 'report',
+        'selected_user_orgunit': []
+      };
+    }
+    // attach period type if none is defined
+    if (!this.scorecard.data.hasOwnProperty('periodType')) {
+      this.scorecard.data.periodType = 'Quarterly';
+    }
+    this.period_type = this.scorecard.data.periodType;
+    // attach average_selection if none is defined
+    if (!this.scorecard.data.hasOwnProperty('average_selection')) {
+      this.scorecard.data.average_selection = 'all';
+    }
+    // attach shown_records if none is defined
+    if (!this.scorecard.data.hasOwnProperty('shown_records')) {
+      this.scorecard.data.shown_records = 'all';
+    }
+    // attach show_average_in_row if none is defined
+    if (!this.scorecard.data.hasOwnProperty('show_average_in_row')) {
+      this.scorecard.data.show_average_in_row = false;
+    }
+    // attach show_average_in_column if none is defined
+    if (!this.scorecard.data.hasOwnProperty('show_average_in_column')) {
+      this.scorecard.data.show_average_in_column = false;
+    }
+    // attach a property empty row if none is defined
+    if (!this.scorecard.data.hasOwnProperty('empty_rows')) {
+      this.scorecard.data.empty_rows = true;
+    }
+    // this.getItemsFromGroups();
+    let i = 0;
+    for ( const item of this.scorecard.data.data_settings.indicator_holder_groups ) {
+      i++;
+      if (i === 1) {
+        this.current_holder_group = item;
+      }else { continue; }
+
+    }
+    let j = 0;
+    for ( const item of this.scorecard.data.data_settings.indicator_holders) {
+      for ( const indicator of item.indicators ) {
+        if (!indicator.hasOwnProperty('bottleneck_indicators')) {
+          indicator.bottleneck_indicators = [];
+        }
+      }
+      j++;
+      if (j === 1) {
+        this.current_indicator_holder = item;
+      }else { continue; }
+    }
 
   }
+
 
   optionUpdated(options: any) {
     this.scorecard.data.header.show_legend_definition = options.show_legend_definition;
