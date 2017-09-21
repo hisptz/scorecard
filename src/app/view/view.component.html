@@ -15,20 +15,23 @@
 <p class="text-center">
   <LoadingComponent *ngIf="loading"></LoadingComponent>
 </p>
-<div class="container-fluid" style="margin-top: 20px" *ngIf="!loading">
+<div class="container-fluid" style="margin-top: 20px" [ngClass]="{'hide_no_group': loading}">
   <div class="row">
     <div class="col-md-4 col-xs-12" style="padding-left: 0px; cursor: pointer;">
       <app-org-unit-filter
+        [showUpdate]="true"
         [orgunit_model] = "scorecard.data.orgunit_settings"
-        (onOrgUnitModelUpdate) = "updateOrgUnitModel($event)"
+        (onOrgUnitChange)= "changeOrgUnit($event)"
+        (onOrgUnitUpdate)= "updateOrgUnit($event)"
       ></app-org-unit-filter>
     </div>
     <div  class="col-md-4 col-xs-12">
       <app-period-filter
-        [@fadeInOut]=""
+        [showUpdate]="true"
         [selected_periods]="scorecard.data.selected_periods"
-        [period_type]="period_type"
+        [period_type]="scorecard.data.periodType"
         (onPeriodUpdate) = "updatePeriod($event)"
+        (onPeriodChange) = "changePeriod($event)"
       ></app-period-filter>
     </div>
     <div class="col-md-4 col-xs-12">
@@ -55,7 +58,11 @@
 
   <div class="row">
     <div class="col-sm-12">
-      <app-scorecard></app-scorecard>
+      <app-scorecard
+        [scorecard]="scorecard"
+        [selectedOrganisationUnit]="selectedOrganisationUnits$ | async"
+        [selectedPeriod]="selectedPeriod$ | async"
+      ></app-scorecard>
     </div>
   </div>
 </div>

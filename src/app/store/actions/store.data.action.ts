@@ -8,6 +8,7 @@ export const ADD_SCORE_CARD = 'ADD_SCORE_CARD';
 export const SET_SELECTED_SCORE_CARD_ACTION = 'SET_SELECTED_SCORE_CARD_ACTION';
 export const SET_SELECTED_PERIOD = 'SET_SELECTED_PERIOD';
 export const SET_SELECTED_ORGUNIT = 'SET_SELECTED_ORGUNIT';
+export const SET_FUNCTIONS = 'SET_FUNCTIONS';
 export const UPDATE_SCORE_CARD_ACTION = 'UPDATE_SCORE_CARD_ACTION';
 export const DELETE_SCORE_CARD_ACTION = 'DELETE_SCORE_CARD_ACTION';
 export const UPDATE_LOADING_ACTION = 'UPDATE_LOADING_ACTION';
@@ -60,5 +61,10 @@ export class DeleteScorecardAction implements Action {
 
 export class SetSelectedScorecardAction implements Action {
   type = SET_SELECTED_SCORE_CARD_ACTION;
+  constructor ( public payload: any ) {}
+}
+
+export class SetFunctionsAction implements Action {
+  type = SET_FUNCTIONS;
   constructor ( public payload: any ) {}
 }

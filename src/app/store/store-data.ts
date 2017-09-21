@@ -1,7 +1,7 @@
 import {ScoreCard} from '../shared/models/scorecard';
 
 export interface StoreData {
-    scorecards: ScoreCard[];
+    scorecards: any[];
     selectedScorecard: ScoreCard;
     loadingScorecards: boolean;
     loadingPercent: number;
@@ -11,6 +11,7 @@ export interface StoreData {
     orgunitNodes: any;
     selectedPeriod: any;
     selectedOrgunit: any;
+    functions: any[];
 }
 
 export const INITIAL_STORE_DATA: StoreData = {
@@ -23,5 +24,6 @@ export const INITIAL_STORE_DATA: StoreData = {
   options: null,
   orgunitNodes: null,
   selectedPeriod: '',
-  selectedOrgunit: ''
+  selectedOrgunit: '',
+  functions: []
 };

@@ -32,4 +32,8 @@ export const getSelectedOrgunit = createSelector(getStoreData, (datastate) => {
   return datastate.selectedOrgunit;
 });
 
+export const getFunctions = createSelector(getStoreData, (datastate) => {
+  return datastate.selectedOrgunit;
+});
+
 

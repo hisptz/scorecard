@@ -15,6 +15,10 @@ import {DataService} from '../shared/services/data.service';
 import {ApplicationState} from '../store/application.state';
 import {Store} from '@ngrx/store';
 import * as selectors from '../store/selectors';
+import {SetSelectedOrgunitAction, SetSelectedPeriodAction} from '../store/actions/store.data.action';
+import {Observable} from 'rxjs/Observable';
+import {first} from 'rxjs/operator/first';
+import {FunctionService} from '../shared/services/function.service';
 
 
 @Component({
@@ -39,39 +43,27 @@ export class ViewComponent implements OnInit, AfterViewInit, OnDestroy {
   private indicatorCalls: Subscription[] = [];
   scorecard: any;
   scorecardId: string;
-  orgUnit: any = {};
   loading: boolean = true;
-
-  period_type: string = 'Quarterly';
-  showOrgTree: boolean = true;
-  showPerTree: boolean = true;
-
-  default_selected_periods: any = [];
-  show_details: boolean = false;
+  firstLoad = true;
 
   @ViewChild(ScorecardComponent)
   private childScoreCard: ScorecardComponent;
 
-  selected_indicator: any = [];
-  orgunit_for_model: any = [];
-
-  show_average_in_row: boolean = false;
-  show_average_in_column: boolean = false;
-
-  sortAscending: boolean = true;
-
+  selectedOrganisationUnits$: Observable<any>;
+  selectedPeriod$: Observable<any>;
   shown_records: number = 0;
   average_selection: string = 'all';
   show_rank: boolean = false;
-  orgUnitlength: number = 0;
+  functions: any = []
 
   constructor(private scorecardService: ScorecardService,
               private dataService: DataService,
               private activatedRouter: ActivatedRoute,
-              private filterService: FilterService,
-              private orgunitService: OrgUnitService,
+              private functionService: FunctionService,
               private store: Store<ApplicationState>
   ) {
+    this.selectedOrganisationUnits$ = store.select(selectors.getSelectedOrgunit);
+    this.selectedPeriod$ = this.store.select(selectors.getSelectedPeriod);
     this.subscription = this.activatedRouter.params.subscribe(
       (params: any) => {
         this.scorecardId = params['scorecardid'];
@@ -86,25 +78,32 @@ export class ViewComponent implements OnInit, AfterViewInit, OnDestroy {
         this.scorecard = this.scorecardService.getEmptyScoreCard();
         this.dataService.getUserInformation().subscribe(
           (userInfo: any) => {
+            // load functions
+            this.functionService.getAll().subscribe(
+              (val) => {
+                this.functions = val;
+              }, (error) => {
+                this.functions = [];
+              });
+            // try first to check if selected scorecard is set
             this.store.select(selectors.getSelectedScorecard).subscribe(
               (scorecard_details: any) => {
-                if (scorecard_details == null) {
+                if (scorecard_details == null) { // if it is not set load again from server
                   this.scorecardService.load(this.scorecardId).subscribe(
                     (scorecardItem) => {
-                      this.setUpScoreCard(scorecardItem, userInfo);
+                      this.setUpScoreCard(scorecardItem, userInfo, 'loaded');
                     }
                   );
-                }else {
-                  this.setUpScoreCard(scorecard_details.data, userInfo);
+                }else { // if it is set use the scorecard from store
+                  this.setUpScoreCard(scorecard_details.data, userInfo, 'available');
                 }
               });
           }
         );
     });
-
   }
 
-  setUpScoreCard(scorecard_details, userInfo) {
+  setUpScoreCard(scorecard_details, userInfo, loading) {
     this.scorecard = {
       id: this.scorecardId,
       name: scorecard_details.header.title,
@@ -173,9 +172,6 @@ export class ViewComponent implements OnInit, AfterViewInit, OnDestroy {
     if (!this.scorecard.data.hasOwnProperty('empty_rows')) {
       this.scorecard.data.empty_rows = true;
     }
-    if (this.scorecard.data.hasOwnProperty('periodType')) {
-      this.period_type = this.scorecard.data.periodType;
-    }
     if (!this.scorecard.data.hasOwnProperty('show_data_in_column')) {
       this.scorecard.data.show_data_in_column = false;
     }
@@ -187,32 +183,60 @@ export class ViewComponent implements OnInit, AfterViewInit, OnDestroy {
 
   }
 
-
-
-
-  // listen to changes in period
+  // listen to changes in period on update click
   updatePeriod( period ) {
-    console.log( period );
+    this.store.dispatch(new SetSelectedPeriodAction( period ));
+    this.loadScoreCard();
   }
 
-  // listen to changes in period
-  updateOrgUnitModel( orgunits ) {
-    console.log( orgunits );
+  // listen to changes in period on item selections
+  changePeriod( period ) {
+    console.log('nimefika', period);
+    this.store.dispatch(new SetSelectedPeriodAction( period ));
+    this.updateOnFirstLoad();
   }
 
+  // listen to changes in organisation unit on Update click
+  updateOrgUnit( orgunits ) {
+    this.store.dispatch(new SetSelectedOrgunitAction( orgunits ));
+    this.loadScoreCard();
+  }
 
+ // listen to changes in organisation unit on each click
+  changeOrgUnit( orgunits ) {
+    console.log('nimefika', orgunits);
+    this.store.dispatch(new SetSelectedOrgunitAction( orgunits ));
+    this.updateOnFirstLoad();
+  }
 
   isArray(o) {
     return Object.prototype.toString.call(o) === '[object Array]';
   }
 
-
   // a function that will be used to load scorecard
-  loadScoreCard( orgunit: any = null ) {
-    this.showOrgTree = true;
-    this.showPerTree = true;
-    this.orgUnitlength = (this.orgUnit.children) ? this.orgUnit.children.length + 1 : 1;
+  loadScoreCard() {
     this.childScoreCard.loadScoreCard();
+  }
+
+  updateOnFirstLoad() {
+    if (this.firstLoad) {
+      this.store.select(selectors.getSelectedPeriod).first((period) => period).subscribe((period) => {
+        this.store.select(selectors.getSelectedOrgunit).first((orgunit) => orgunit).subscribe((orgunit) => {
+          console.log('period', period);
+          console.log('orgunit', orgunit);
+          console.log('firstLoad', this.firstLoad);
+
+            if (period.hasOwnProperty('items')) {
+              if (orgunit.hasOwnProperty('items')) {
+                this.childScoreCard.initiateScorecard(period, orgunit);
+                this.firstLoad = false;
+              }
+            }
+
+          console.log('firstLoad2', this.firstLoad);
+        });
+      });
+    }
   }
 
   // prepare scorecard data and download them as csv
@@ -257,7 +281,7 @@ export class ViewComponent implements OnInit, AfterViewInit, OnDestroy {
   // }
 
   removeModel() {
-    this.show_details = false;
+
   }
 
   // a function to prepare a list of indicators to pass into a table

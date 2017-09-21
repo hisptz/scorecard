@@ -46,6 +46,7 @@ export class PeriodFilterComponent implements OnInit {
   @Input() starting_year: number = new Date().getFullYear();
   @Input() showUpdate: boolean = false;
   @Output() onPeriodUpdate: EventEmitter<any> = new EventEmitter<any>();
+  @Output() onPeriodChange: EventEmitter<any> = new EventEmitter<any>();
   @Output() onYearUpdate: EventEmitter<any> = new EventEmitter<any>();
   @Output() onTypeUpdate: EventEmitter<any> = new EventEmitter<any>();
   periods = [];
@@ -83,6 +84,7 @@ export class PeriodFilterComponent implements OnInit {
     this.period_type_config = PERIOD_TYPE;
     if (this.period_type !== '') {
       this.changePeriodType();
+      this.emitPeriod(false);
     }
     // this.getRelativePeriodText('LAST_5_YEARS');
   }
@@ -97,9 +99,7 @@ export class PeriodFilterComponent implements OnInit {
       const number = (this.getPeriodPosition(data.dragData.id) > this.getPeriodPosition(current.id)) ? 0 : 1;
       this.deletePeriod( data.dragData );
       this.insertPeriod( data.dragData, current, number);
-      if (!this.showUpdate) {
-        this.emitPeriod();
-      }
+      this.emitPeriod(false);
     }
   }
 
@@ -110,16 +110,12 @@ export class PeriodFilterComponent implements OnInit {
         this.selected_periods.push(item);
       }
     });
-    if (!this.showUpdate) {
-      this.emitPeriod();
-    }
+    this.emitPeriod(false);
   }
 
   deselectAllItems() {
     this.selected_periods = [];
-    if (!this.showUpdate) {
-      this.emitPeriod();
-    }
+      this.emitPeriod(false);
   }
 
   // helper method to find the index of dragged item
@@ -134,7 +130,7 @@ export class PeriodFilterComponent implements OnInit {
   }
 
   updatePeriods() {
-    this.emitPeriod();
+    this.emitPeriod(true);
     this.showPerTree = true;
   }
 
@@ -186,29 +182,36 @@ export class PeriodFilterComponent implements OnInit {
   // action to be called when a tree item is deselected(Remove item in array of selected items
   deactivatePer ( $event ) {
     this.selected_periods.splice(this.selected_periods.indexOf($event), 1);
-    if (!this.showUpdate) {
-      this.emitPeriod();
-    }
+    this.emitPeriod(false);
   }
 
   // add item to array of selected items when item is selected
   activatePer($event) {
     if (!this.checkPeriodAvailabilty($event, this.selected_periods)) {
       this.selected_periods.push($event);
-      if (!this.showUpdate) {
-        this.emitPeriod();
-      }
+      this.emitPeriod(false);
     }
   }
 
-  emitPeriod() {
-    this.onPeriodUpdate.emit({
-      items: this.selected_periods,
-      type: this.period_type,
-      starting_year: this.starting_year,
-      name: 'pe',
-      value: this.getPeriodsForAnalytics(this.selected_periods)
-    });
+  emitPeriod(showUpdate: boolean) {
+    if (showUpdate) {
+      this.onPeriodUpdate.emit({
+        items: this.selected_periods,
+        type: this.period_type,
+        starting_year: this.starting_year,
+        name: 'pe',
+        value: this.getPeriodsForAnalytics(this.selected_periods)
+      });
+    }else {
+      this.onPeriodChange.emit({
+        items: this.selected_periods,
+        type: this.period_type,
+        starting_year: this.starting_year,
+        name: 'pe',
+        value: this.getPeriodsForAnalytics(this.selected_periods)
+      });
+    }
+
   }
 
 

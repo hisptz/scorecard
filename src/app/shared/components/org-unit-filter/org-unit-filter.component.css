@@ -146,8 +146,8 @@
 }
 
 .tree-area{
-  max-height: 270px;
-  min-height: 270px;
+  max-height: 250px;
+  min-height: 250px;
   overflow: hidden;
   width: 100%;
 }

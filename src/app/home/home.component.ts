@@ -11,6 +11,7 @@ import {Observable} from 'rxjs/Observable';
 import * as selectors from '../store/selectors';
 import {OrgUnitService} from '../shared/services/org-unit.service';
 import {IndicatorGroupService} from '../shared/services/indicator-group.service';
+import {FunctionService} from '../shared/services/function.service';
 
 @Component({
   selector: 'app-home',
@@ -74,6 +75,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
     private store: Store<ApplicationState>,
     private scoreCardService: ScorecardService,
     private dataService: DataService,
+    private functionService: FunctionService,
     private orgUnitService: OrgUnitService,
     private router: Router,
     private indicatorService: IndicatorGroupService
@@ -96,20 +98,22 @@ export class HomeComponent implements OnInit, AfterViewInit {
   }
 
   ngAfterViewInit() {
+    // initialize some items that will be used latter.
     setTimeout( () => {
       this.orgUnitService.prepareOrgunits('report');
       this.indicatorService.loadAll();
+      this.functionService.getAll().subscribe(() => console.log('functions loaded'));
     }, 1000);
   }
 
   openscorecard(scorecard, event ) {
-    this.store.dispatch(new SetSelectedScorecardAction(scorecard))
+    this.store.dispatch(new SetSelectedScorecardAction(scorecard));
     this.router.navigate(['create', 'edit', scorecard.id]);
     event.stopPropagation();
   }
 
   viewcorecard(scorecard, event ) {
-    this.store.dispatch(new SetSelectedScorecardAction(scorecard))
+    this.store.dispatch(new SetSelectedScorecardAction(scorecard));
     this.router.navigate(['view', scorecard.id]);
     event.stopPropagation();
   }

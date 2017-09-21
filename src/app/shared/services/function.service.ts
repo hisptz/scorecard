@@ -4,13 +4,20 @@ import {Observable} from 'rxjs/Rx';
 import {FunctionObject} from '../models/function-object';
 import {User} from '../models/user';
 import {FunctionParameters} from '../models/function-parameters';
+import {Store} from '@ngrx/store';
+import {ApplicationState} from '../../store/application.state';
+import {SetFunctionsAction} from '../../store/actions/store.data.action';
 
 @Injectable()
 export class FunctionService {
 
-  constructor(private http: HttpClientService) { }
+  constructor(
+    private http: HttpClientService,
+    private store: Store<ApplicationState>
+  ) { }
 
   currentUser;
+  functions: any = [];
   getCurrentUser() {
     return new Observable((observable) => {
       if (this.currentUser) {
@@ -65,24 +72,35 @@ export class FunctionService {
   }
   getAll() {
     return new Observable((observ) => {
-      this.http.get('dataStore/functions').subscribe((results) => {
-        const observable = [];
-        results.forEach((id) => {
-          observable.push(this.http.get('dataStore/functions/' + id));
-        });
-        Observable.forkJoin(observable).subscribe((responses: any) => {
-          const functions = [];
-          responses.forEach((response, index) => {
-            functions.push(response);
+      if ( this.functions.length === 0) {
+        this.http.get('dataStore/functions').subscribe((results) => {
+          const observable = [];
+          results.forEach((id) => {
+            observable.push(this.http.get('dataStore/functions/' + id));
           });
-          observ.next(functions);
-          observ.complete();
+          Observable.forkJoin(observable).subscribe((responses: any) => {
+            const functions = [];
+            responses.forEach((response, index) => {
+              functions.push(response);
+            });
+            this.functions = functions;
+            this.store.dispatch( new SetFunctionsAction( functions ) );
+            observ.next(functions);
+            observ.complete();
+          }, (error) => {
+            this.store.dispatch( new SetFunctionsAction( [] ) );
+            observ.error('no functions available');
+          });
         }, (error) => {
+          this.store.dispatch( new SetFunctionsAction( [] ) );
           observ.error('no functions available');
         });
-      }, (error) => {
-        observ.error('no functions available');
-      });
+      } else {
+        this.store.dispatch( new SetFunctionsAction( this.functions ) );
+        observ.next(this.functions);
+        observ.complete();
+      }
+
     });
 
   }

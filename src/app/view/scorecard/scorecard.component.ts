@@ -7,6 +7,7 @@ import {FunctionService} from '../../shared/services/function.service';
 import {DataService} from '../../shared/services/data.service';
 import {HttpClientService} from '../../shared/services/http-client.service';
 import {VisualizerService} from '../../shared/services/visualizer.service';
+import {getSelectedOrgunit} from '../../store/selectors';
 
 
 @Component({
@@ -35,14 +36,26 @@ export class ScorecardComponent implements OnInit, OnDestroy {
 
   // load scorecard after changes has occur
   loadScoreCard() {
-    this.httpService.get(
-      'analytics.json?dimension=pe:LAST_4_QUARTERS&filter=ou:YtVMnut7Foe;acZHYslyJLt;vU0Qt1A5IDz&displayProperty=NAME&skipData=true'
-    ).subscribe(
-      (data) => {
-        console.log(data);
-      }
-    )
+    console.log(this.selectedPeriod);
+    console.log(this.selectedOrganisationUnit);
+    if (this.selectedPeriod && this.selectedOrganisationUnit) {
+      this.httpService.get(
+        'analytics.json?dimension=pe:' + this.selectedPeriod.value + '&filter=ou:' + this.selectedOrganisationUnit.value + '&displayProperty=NAME&skipData=true'
+      ).subscribe(
+        (data) => {
+          console.log(data);
+        }
+      );
+    }else {
+      console.log('scorecard not loaded');
+    }
     console.log('scorecard loaded');
+  }
+
+  initiateScorecard( period, orgunit ) {
+    this.selectedPeriod = period;
+    this.selectedOrganisationUnit = orgunit;
+    this.loadScoreCard();
   }
 
   downloadCSV() {
