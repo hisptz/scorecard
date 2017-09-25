@@ -19,7 +19,7 @@ export class IndicatorGroupService {
   // get all indicator groups
   loadAll(): Observable<any> {
     return Observable.create(observer => {
-      if (this._indicatorGroups !== null) {
+      if ( this._indicatorGroups ) {
         observer.next(this._indicatorGroups);
         observer.complete();
       }else {

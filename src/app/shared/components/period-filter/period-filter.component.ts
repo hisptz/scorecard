@@ -69,6 +69,7 @@ export class PeriodFilterComponent implements OnInit {
     }
 
     this.getSystemSettings().subscribe((value) => {
+      console.log(this.selected_periods);
       // TODO: Find a way to find the relative period dynamic
       // this.activatePer({ id: value.keyAnalysisRelativePeriod, name: 'Last 12 Months' })
       // this.activatePer({ id: '2015July', name: 'July 2015 - June 2016' })
@@ -81,6 +82,7 @@ export class PeriodFilterComponent implements OnInit {
   }
 
   ngOnInit() {
+
     this.period_type_config = PERIOD_TYPE;
     if (this.period_type !== '') {
       this.changePeriodType();

@@ -7,7 +7,7 @@ import {Observable} from 'rxjs/Observable';
 @Injectable()
 export class Constants {
   root_dir: string = null;
-  root_api: string = '../../../api/';
+  root_api: string = '../../../api/25/';
 
   constructor(private http: Http) {
     this.root_dir = '../../../';

@@ -9,6 +9,7 @@ export const SET_SELECTED_SCORE_CARD_ACTION = 'SET_SELECTED_SCORE_CARD_ACTION';
 export const SET_SELECTED_PERIOD = 'SET_SELECTED_PERIOD';
 export const SET_SELECTED_ORGUNIT = 'SET_SELECTED_ORGUNIT';
 export const SET_FUNCTIONS = 'SET_FUNCTIONS';
+export const SET_ERROR_MESSAGE = 'SET_ERROR_MESSAGE';
 export const UPDATE_SCORE_CARD_ACTION = 'UPDATE_SCORE_CARD_ACTION';
 export const DELETE_SCORE_CARD_ACTION = 'DELETE_SCORE_CARD_ACTION';
 export const UPDATE_LOADING_ACTION = 'UPDATE_LOADING_ACTION';
@@ -66,5 +67,10 @@ export class SetSelectedScorecardAction implements Action {
 
 export class SetFunctionsAction implements Action {
   type = SET_FUNCTIONS;
+  constructor ( public payload: any ) {}
+}
+
+export class SetErrorMessageAction implements Action {
+  type = SET_ERROR_MESSAGE;
   constructor ( public payload: any ) {}
 }

@@ -12,18 +12,20 @@ export interface StoreData {
     selectedPeriod: any;
     selectedOrgunit: any;
     functions: any[];
+    errorMessage: string;
 }
 
 export const INITIAL_STORE_DATA: StoreData = {
-  scorecards: [],
-  selectedScorecard: null,
-  loadingScorecards: true,
-  loadingPercent: 0,
-  errorloadingScorecards: false,
-  currentUser: null,
-  options: null,
-  orgunitNodes: null,
-  selectedPeriod: '',
-  selectedOrgunit: '',
-  functions: []
+    scorecards: [],
+    selectedScorecard: null,
+    loadingScorecards: true,
+    loadingPercent: 0,
+    errorloadingScorecards: false,
+    currentUser: null,
+    options: null,
+    orgunitNodes: null,
+    selectedPeriod: '',
+    selectedOrgunit: '',
+    functions: [],
+    errorMessage: ''
 };

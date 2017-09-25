@@ -162,13 +162,22 @@ export class OrgUnitFilterComponent implements OnInit {
                     const fields = this.orgunitService.generateUrlBasedOnLevels(use_level);
                     this.orgunitService.getAllOrgunitsForTree1(fields, orgunits).subscribe(
                       items => {
-
                         items[0].expanded = true;
                         this.organisationunits = items;
 
+                        console.log('ready');
+                        console.log(this.orgunit_model);
                         // activate organisation units
                         for (const active_orgunit of this.orgunit_model.selected_orgunits) {
                           this.activateNode(active_orgunit.id, this.orgtree, true);
+                          console.log('ready1');
+                        }
+                        // backup to make sure that always there is default organisation unit
+                        if (this.orgunit_model.selected_orgunits.length === 0) {
+                          console.log('ready2');
+                          for (const active_orgunit of this.orgunit_model.user_orgunits) {
+                            this.activateNode(active_orgunit.id, this.orgtree, true);
+                          }
                         }
                         this.prepareOrganisationUnitTree(this.organisationunits, 'parent');
                       },
@@ -307,10 +316,21 @@ export class OrgUnitFilterComponent implements OnInit {
     });
 
     if (showUpdate) {
-      this.onOrgUnitUpdate.emit({starting_name: this.getProperPreOrgunitName(), arrayed_org_units: arrayed_org_units, items: this.orgunit_model.selected_orgunits, name: 'ou', value: this.getOrgUnitsForAnalytics(this.orgunit_model, false)});
+      this.onOrgUnitUpdate.emit({
+        starting_name: this.getProperPreOrgunitName(),
+        arrayed_org_units: arrayed_org_units,
+        items: this.orgunit_model.selected_orgunits,
+        name: 'ou',
+        value: this.getOrgUnitsForAnalytics(this.orgunit_model, true)
+      });
       this.onOrgUnitModelUpdate.emit(this.orgunit_model);
     }else {
-      this.onOrgUnitChange.emit({starting_name: this.getProperPreOrgunitName(), arrayed_org_units: arrayed_org_units, items: this.orgunit_model.selected_orgunits, name: 'ou', value: this.getOrgUnitsForAnalytics(this.orgunit_model, false)});
+      this.onOrgUnitChange.emit({
+        starting_name: this.getProperPreOrgunitName(),
+        arrayed_org_units: arrayed_org_units,
+        items: this.orgunit_model.selected_orgunits,
+        name: 'ou',
+        value: this.getOrgUnitsForAnalytics(this.orgunit_model, true)});
     }
   }
 

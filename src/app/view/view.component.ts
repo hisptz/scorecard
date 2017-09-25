@@ -5,20 +5,16 @@ import {
 import {ScorecardService} from '../shared/services/scorecard.service';
 import {ActivatedRoute} from '@angular/router';
 import {Subscription} from 'rxjs/Subscription';
-import {FilterService} from '../shared/services/filter.service';
-import {OrgUnitService} from '../shared/services/org-unit.service';
 import {ScorecardComponent} from './scorecard/scorecard.component';
 import {animate, style, transition, trigger} from '@angular/animations';
-import {ScoreCard} from '../shared/models/scorecard';
-import {TreeComponent} from 'angular-tree-component';
 import {DataService} from '../shared/services/data.service';
 import {ApplicationState} from '../store/application.state';
 import {Store} from '@ngrx/store';
 import * as selectors from '../store/selectors';
 import {SetSelectedOrgunitAction, SetSelectedPeriodAction} from '../store/actions/store.data.action';
 import {Observable} from 'rxjs/Observable';
-import {first} from 'rxjs/operator/first';
 import {FunctionService} from '../shared/services/function.service';
+import {PeriodFilterComponent} from '../shared/components/period-filter/period-filter.component';
 
 
 @Component({
@@ -49,12 +45,15 @@ export class ViewComponent implements OnInit, AfterViewInit, OnDestroy {
   @ViewChild(ScorecardComponent)
   private childScoreCard: ScorecardComponent;
 
+  @ViewChild(PeriodFilterComponent)
+  private periodComponent: PeriodFilterComponent;
+
   selectedOrganisationUnits$: Observable<any>;
   selectedPeriod$: Observable<any>;
   shown_records: number = 0;
   average_selection: string = 'all';
   show_rank: boolean = false;
-  functions: any = []
+  functions$: Observable<any>;
 
   constructor(private scorecardService: ScorecardService,
               private dataService: DataService,
@@ -62,8 +61,9 @@ export class ViewComponent implements OnInit, AfterViewInit, OnDestroy {
               private functionService: FunctionService,
               private store: Store<ApplicationState>
   ) {
-    this.selectedOrganisationUnits$ = store.select(selectors.getSelectedOrgunit);
-    this.selectedPeriod$ = this.store.select(selectors.getSelectedPeriod);
+    this.selectedOrganisationUnits$ = store.select( selectors.getSelectedOrgunit );
+    this.selectedPeriod$ = this.store.select( selectors.getSelectedPeriod );
+    this.functions$ = this.store.select( selectors.getFunctions );
     this.subscription = this.activatedRouter.params.subscribe(
       (params: any) => {
         this.scorecardId = params['scorecardid'];
@@ -75,27 +75,22 @@ export class ViewComponent implements OnInit, AfterViewInit, OnDestroy {
     this.subscription = this.activatedRouter.params.subscribe(
       (params: any) => {
         this.scorecardId = params['scorecardid'];
-        this.scorecard = this.scorecardService.getEmptyScoreCard();
+        // this.scorecard = this.scorecardService.getEmptyScoreCard();
         this.dataService.getUserInformation().subscribe(
           (userInfo: any) => {
             // load functions
-            this.functionService.getAll().subscribe(
-              (val) => {
-                this.functions = val;
-              }, (error) => {
-                this.functions = [];
-              });
+            this.functionService.getAll().subscribe((val) => {}, (error) => { });
             // try first to check if selected scorecard is set
             this.store.select(selectors.getSelectedScorecard).subscribe(
               (scorecard_details: any) => {
                 if (scorecard_details == null) { // if it is not set load again from server
                   this.scorecardService.load(this.scorecardId).subscribe(
                     (scorecardItem) => {
-                      this.setUpScoreCard(scorecardItem, userInfo, 'loaded');
+                      this.setUpScoreCard(scorecardItem, userInfo);
                     }
                   );
                 }else { // if it is set use the scorecard from store
-                  this.setUpScoreCard(scorecard_details.data, userInfo, 'available');
+                  this.setUpScoreCard(scorecard_details.data, userInfo);
                 }
               });
           }
@@ -103,7 +98,9 @@ export class ViewComponent implements OnInit, AfterViewInit, OnDestroy {
     });
   }
 
-  setUpScoreCard(scorecard_details, userInfo, loading) {
+  setUpScoreCard(scorecard_details, userInfo) {
+    console.log( scorecard_details)
+
     this.scorecard = {
       id: this.scorecardId,
       name: scorecard_details.header.title,
@@ -176,6 +173,7 @@ export class ViewComponent implements OnInit, AfterViewInit, OnDestroy {
       this.scorecard.data.show_data_in_column = false;
     }
     this.loading = false;
+
   }
 
 
@@ -222,18 +220,16 @@ export class ViewComponent implements OnInit, AfterViewInit, OnDestroy {
     if (this.firstLoad) {
       this.store.select(selectors.getSelectedPeriod).first((period) => period).subscribe((period) => {
         this.store.select(selectors.getSelectedOrgunit).first((orgunit) => orgunit).subscribe((orgunit) => {
-          console.log('period', period);
-          console.log('orgunit', orgunit);
-          console.log('firstLoad', this.firstLoad);
-
             if (period.hasOwnProperty('items')) {
               if (orgunit.hasOwnProperty('items')) {
-                this.childScoreCard.initiateScorecard(period, orgunit);
-                this.firstLoad = false;
+                this.store.select(selectors.getFunctions).first(( functions ) => functions).subscribe(( functions ) => {
+                  if ( functions.length !== 0 ) {
+                    this.childScoreCard.initiateScorecard(period, orgunit);
+                    this.firstLoad = false;
+                  }
+                });
               }
             }
-
-          console.log('firstLoad2', this.firstLoad);
         });
       });
     }

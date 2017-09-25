@@ -1,6 +1,7 @@
 import { StoreData } from '../store-data';
 import {
-  ADD_SCORE_CARD, ADD_SCORE_CARDS, DELETE_SCORE_CARD_ACTION, SET_SELECTED_ORGUNIT, SET_SELECTED_PERIOD, SET_SELECTED_SCORE_CARD_ACTION,
+  ADD_SCORE_CARD, ADD_SCORE_CARDS, DELETE_SCORE_CARD_ACTION, SET_FUNCTIONS, SET_SELECTED_ORGUNIT, SET_SELECTED_PERIOD,
+  SET_SELECTED_SCORE_CARD_ACTION,
   UPDATE_ERROR_LOADING_ACTION,
   UPDATE_LOADING_ACTION,
   UPDATE_LOADING_PERCENT_ACTION,
@@ -15,36 +16,40 @@ export function storeData(state: StoreData, action: any): StoreData {
     switch (action.type)  {
 
       // set all scorecards
-      case ADD_SCORE_CARDS:
-        const optionStore = _.cloneDeep( state );
-        optionStore.scorecards = action.payload;
-        return optionStore;
+      case ADD_SCORE_CARDS: {
+        const newState = _.cloneDeep( state );
+        newState.scorecards = action.payload;
+        return newState;
+      }
 
       // set one scorecard in store
-      case ADD_SCORE_CARD:
-        const addStore = _.cloneDeep( state );
-        if (!_.find(addStore.scorecards, {id: action.payload.id})) {
-          addStore.scorecards.push( action.payload );
+      case ADD_SCORE_CARD: {
+        const newState = _.cloneDeep( state );
+        if (!_.find(newState.scorecards, {id: action.payload.id})) {
+          newState.scorecards.push( action.payload );
         }
-        return addStore;
+        return newState;
+      }
+
 
       // set one scorecard in store
-      case UPDATE_SCORE_CARD_ACTION:
-        const updateStore = _.cloneDeep( state );
-        updateStore.scorecards[_.findIndex(updateStore.scorecards, {id: action.payload.id })] = action.payload;
-        return updateStore;
+      case UPDATE_SCORE_CARD_ACTION: {
+        const newState = _.cloneDeep( state );
+        newState.scorecards[_.findIndex(newState.scorecards, {id: action.payload.id })] = action.payload;
+        return newState;
+      }
 
       // set one scorecard in store
-      case DELETE_SCORE_CARD_ACTION:
-        const deleteStore = _.cloneDeep( state );
-        deleteStore.scorecards.splice(_.findIndex(deleteStore.scorecards, {id: action.payload }));
-        return deleteStore;
+      case DELETE_SCORE_CARD_ACTION: {
+        const newState = _.cloneDeep( state );
+        newState.scorecards.splice(_.findIndex(newState.scorecards, {id: action.payload }));
+        return newState;
+      }
+
 
       // set scorecard loading status
       case UPDATE_LOADING_ACTION:
-        const loadingStore = _.cloneDeep( state );
-        loadingStore.loadingScorecards = action.payload;
-        return loadingStore;
+        return <StoreData>{...state, loadingScorecards: action.payload};
 
       // set scorecard loading status
       case UPDATE_LOADING_PERCENT_ACTION:
@@ -56,21 +61,19 @@ export function storeData(state: StoreData, action: any): StoreData {
 
       // set error status if something went wrong while loading scorecards
       case UPDATE_ERROR_LOADING_ACTION:
-        const errorLoadingStore = _.cloneDeep( state );
-        errorLoadingStore.errorloadingScorecards = action.payload;
-        return errorLoadingStore;
+        return <StoreData>{...state, errorloadingScorecards: action.payload};
 
       // set error status if something went wrong while loading scorecards
       case SET_SELECTED_PERIOD:
-        const perStore = _.cloneDeep( state );
-        perStore.selectedPeriod = action.payload;
-        return perStore;
+        return <StoreData>{...state, selectedPeriod: action.payload};
 
       // set error status if something went wrong while loading scorecards
       case SET_SELECTED_ORGUNIT:
-        const orgStore = _.cloneDeep( state );
-        orgStore.selectedOrgunit = action.payload;
-        return orgStore;
+        return <StoreData>{...state, selectedOrgunit: action.payload};
+
+      // set error status if something went wrong while loading scorecards
+      case SET_FUNCTIONS:
+        return <StoreData>{...state, functions: action.payload};
 
       default:
         return state;
