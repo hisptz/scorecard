@@ -172,7 +172,7 @@ export class IndicatorCardComponent implements OnInit, AfterViewInit, OnDestroy 
       this.orgunit_model.selected_orgunits = [this.default_orgunit];
     }
     this.card_periods = this.filterService.getPeriodArray(this.default_period_type, this.card_year);
-    this.card_selected_periods = this.default_period;
+    this.card_selected_periods = [...this.default_period];
 
   }
 
