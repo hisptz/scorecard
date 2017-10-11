@@ -461,25 +461,10 @@ export class ScorecardComponent implements OnInit, AfterViewInit, OnDestroy {
               this.showSubScorecard[indicator.id] = true;
             } else {
               this.children_available[indicator.id] = true;
+              console.log(indicator)
               // this.subscorecard = this.createScorecardByIndicators(indicator,indicator.bottleneck_indicators);
               const created_scorecard = this.scorecardService.getEmptyScoreCard();
-              const legendSet = [
-                {
-                  color: '#008000',
-                  min: '80',
-                  max: '-'
-                },
-                {
-                  color: '#FFFF00',
-                  min: '60',
-                  max: '80'
-                },
-                {
-                  color: '#FF0000',
-                  min: '0',
-                  max: '60'
-                }
-              ];
+              const legendSet = indicator.legendset;
               const holder_ids = [];
               data.forEach((item, item_index) => {
                 // check first if it is a function or not
