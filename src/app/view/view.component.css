@@ -367,3 +367,6 @@ table * {
 .list-group-item{
   padding: 5px 15px
 }
+.period{
+  cursor: pointer;
+}

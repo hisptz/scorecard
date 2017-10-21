@@ -195,7 +195,7 @@
                 <div class="container-fluid" style="padding-top: 3px">
                   <div  class="container-fluid" style="border-bottom: 1px solid rgba(0,0,0,0.1); padding: 0px">
                     <div class="col-sm-6" style="padding-left:3px; margin-bottom: 5px">
-                      <select id="periodType" [(ngModel)]="scorecard.data.periodType" class="form-control" style="height: 30px " (change)="changePeriodType()">
+                      <select id="periodType" [(ngModel)]="scorecard.data.periodType" class="form-control" style="height: 30px " (change)="changePeriodType(scorecard.data.periodType)">
                         <option value="">[ Select period type ]</option>
                         <option value="Monthly">Monthly</option>
                         <option value="BiMonthly">Bimonthly</option>
@@ -243,10 +243,11 @@
                       </ul>
                     </div>
                     <div class="col-sm-6 tree-area1">
-                      <ul class="nav nav-pills nav-stacked">
-                        <li *ngFor="let period of selected_periods"
+                      <ul class="nav nav-pills nav-stacked" dnd-sortable-container [sortableData]="selected_periods">
+                        <li *ngFor="let period of selected_periods; let i = index"
                             class="period" (click)="deactivatePer(period);$event.stopPropagation()"
                             title="Click to deselect"
+                            dnd-sortable [sortableIndex]="i"
                         >
                           <div>{{ period.name }}</div>
                         </li>

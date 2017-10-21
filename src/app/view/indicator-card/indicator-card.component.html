@@ -118,7 +118,7 @@
               <span *ngIf="card_selected_periods.length <= 4">
                 <span *ngFor="let item of card_selected_periods" class="selected-item ng-binding ng-scope">
                   {{ item.name }}
-                  <a (click)="deactivatePer(item.id);$event.stopPropagation()" class="removeorgunit">x</a>
+                  <a (click)="deactivatePer(item);$event.stopPropagation()" class="removeorgunit">x</a>
                 </span>
               </span>
               <span class="no-selection"*ngIf="card_selected_periods.length == 0 && !card_period_tree_config.loading">{{ card_period_tree_config.placeholder }}</span>
@@ -177,10 +177,11 @@
                     </ul>
                   </div>
                   <div class="col-sm-6">
-                    <ul class="nav nav-pills nav-stacked">
-                      <li *ngFor="let period of card_selected_periods"
+                    <ul class="nav nav-pills nav-stacked" dnd-sortable-container [sortableData]="card_selected_periods">
+                      <li *ngFor="let period of card_selected_periods; let i = index"
                           class="period" (click)="deactivatePer(period);$event.stopPropagation()"
                           title="Click to deselect"
+                          dnd-sortable [sortableIndex]="i"
                       >
                         <div>{{ period.name }}</div>
                       </li>

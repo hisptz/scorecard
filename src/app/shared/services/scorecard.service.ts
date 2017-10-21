@@ -48,7 +48,6 @@ export class ScorecardService {
   }
 
   update(scorecard: ScoreCard) {
-    console.log(JSON.stringify(scorecard));
     return this.http.put(this.baseUrl+"api/dataStore/scorecards/"+scorecard.id, scorecard.data)
       .map((response: Response) => response.json())
       .catch(this.handleError);

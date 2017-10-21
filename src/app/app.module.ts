@@ -5,7 +5,6 @@ import { HttpModule } from '@angular/http';
 import { ScoreCardRoutingModule } from './app-routing.module';
 
 import { AppComponent } from './app.component';
-import { DhisMenuComponent } from './shared/dhis-menu.component';
 import { HomeComponent } from './home/home.component';
 
 
@@ -24,12 +23,12 @@ import { EventDataService } from './shared/services/event-data.service';
 import {VisualizerService} from './view/dhis-visualizer/visulizer.service';
 import {FunctionService} from './shared/services/function.service';
 import {HttpClientService} from './shared/services/http-client.service';
-import {CanDeactivateGuard} from "./shared/guards/cad-deactivate-guard";
+import {CanDeactivateGuard} from './shared/guards/cad-deactivate-guard';
+import {MenuModule} from './menu/menu.module';
 
 @NgModule({
   declarations: [
     AppComponent,
-    DhisMenuComponent,
     HomeComponent,
     ScoreCardFilterPipe
   ],
@@ -37,6 +36,7 @@ import {CanDeactivateGuard} from "./shared/guards/cad-deactivate-guard";
     BrowserModule,
     FormsModule,
     HttpModule,
+    MenuModule,
     ScoreCardRoutingModule,
     Ng2PaginationModule
   ],

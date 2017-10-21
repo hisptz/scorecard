@@ -421,7 +421,6 @@ export class CreateComponent implements OnInit, AfterViewInit, OnDestroy {
       functions => {
         // noinspection TypeScriptUnresolvedVariable
         this.functions = functions;
-        console.log(functions)
       },
       error => {
         this.error_loading_groups.occurred = true;
@@ -522,7 +521,6 @@ export class CreateComponent implements OnInit, AfterViewInit, OnDestroy {
       }
     } else {
       organisationUnit.forEach((orgunit) => {
-        console.log(orgunit);
         if (orgunit.children) {
           orgunit.children.sort((a, b) => {
             if (a.name > b.name) {
@@ -826,7 +824,6 @@ export class CreateComponent implements OnInit, AfterViewInit, OnDestroy {
       this.addIndicatorHolder(this.current_indicator_holder);
       this.current_holder_group.id = this.current_holder_group_id;
       this.addHolderGroups(this.current_holder_group, this.current_indicator_holder);
-      console.log(indicator)
     }
 
 
@@ -1185,7 +1182,6 @@ export class CreateComponent implements OnInit, AfterViewInit, OnDestroy {
         indicator.additional_label_values[this.newLabel] = '';
       }
     }
-    console.log(this.scorecard.data.data_settings);
   }
 
   getIndicatorLabel(indicator, label) {
@@ -1775,8 +1771,8 @@ export class CreateComponent implements OnInit, AfterViewInit, OnDestroy {
     this.periods = this.filterService.getPeriodArray(this.period_type, this.year);
   }
 
-  changePeriodType() {
-    this.periods = this.filterService.getPeriodArray(this.period_type, this.year);
+  changePeriodType(type) {
+    this.periods = this.filterService.getPeriodArray(type, this.year);
   }
 
   // add user sharing settings
@@ -1981,7 +1977,6 @@ export class CreateComponent implements OnInit, AfterViewInit, OnDestroy {
   insertHolder(holder_to_insert, current_holder, num: number) {
     this.scorecard.data.data_settings.indicator_holder_groups.forEach((group, holder_index) => {
       group.indicator_holder_ids.forEach((holder, indicator_index) => {
-        console.log(holder + '===' + current_holder.holder_id);
         if (holder === current_holder.holder_id && group.indicator_holder_ids.indexOf(holder_to_insert.holder_id) === -1) {
           group.indicator_holder_ids.splice(indicator_index + num, 0, holder_to_insert.holder_id);
         }

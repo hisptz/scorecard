@@ -467,3 +467,7 @@ span.selected-item {
   opacity:0.7;
   border: 1px dashed #000;
 }
+
+.period{
+  cursor: pointer;
+}
