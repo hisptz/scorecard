@@ -444,7 +444,6 @@ export class CreateComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   updatePeriod (period) {
-    console.log(period);
     this.scorecard.data.selected_periods = period.items;
     this.scorecard.data.periodType = period.type;
   }

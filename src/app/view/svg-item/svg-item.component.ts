@@ -1,6 +1,5 @@
 import {Component, OnInit, Input} from '@angular/core';
-import {ScoreCard} from '../../shared/models/scorecard';
-
+import * as _ from 'lodash';
 @Component({
   selector: 'svg-item',
   templateUrl: './svg-item.component.html'
@@ -9,7 +8,7 @@ export class SvgItemComponent implements OnInit {
 
   @Input() current_orgunit: any;
   @Input() indicator: any;
-  @Input() scorecard: ScoreCard;
+  @Input() scorecard: any;
   @Input() indicator_list: any[] = [];
   @Input() period: string;
   value_key: string;
@@ -22,9 +21,13 @@ export class SvgItemComponent implements OnInit {
   }
 
   // assign a background color to area depending on the legend set details
+  // TODO: change the default colors depending on the scorecard legend
   assignBgColor(object, value): string {
     let color = '#BBBBBB';
-    for ( const data of object.legendset ) {
+    if (value === null) {
+      color = '#F5F5F5';
+    }
+    _.each(object.legendset, (data: any)  => {
       if (data.max === '-') {
 
         if (parseInt(value) >= parseInt(data.min) ) {
@@ -35,7 +38,7 @@ export class SvgItemComponent implements OnInit {
           color = data.color;
         }
       }
-    }
+    });
     return color;
   }
 

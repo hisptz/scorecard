@@ -99,7 +99,6 @@ export class ViewComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   setUpScoreCard(scorecard_details, userInfo) {
-    console.log( scorecard_details)
 
     this.scorecard = {
       id: this.scorecardId,
@@ -189,7 +188,6 @@ export class ViewComponent implements OnInit, AfterViewInit, OnDestroy {
 
   // listen to changes in period on item selections
   changePeriod( period ) {
-    console.log('nimefika', period);
     this.store.dispatch(new SetSelectedPeriodAction( period ));
     this.updateOnFirstLoad();
   }
@@ -202,7 +200,6 @@ export class ViewComponent implements OnInit, AfterViewInit, OnDestroy {
 
  // listen to changes in organisation unit on each click
   changeOrgUnit( orgunits ) {
-    console.log('nimefika', orgunits);
     this.store.dispatch(new SetSelectedOrgunitAction( orgunits ));
     this.updateOnFirstLoad();
   }
@@ -220,15 +217,13 @@ export class ViewComponent implements OnInit, AfterViewInit, OnDestroy {
     if (this.firstLoad) {
       this.store.select(selectors.getSelectedPeriod).first((period) => period).subscribe((period) => {
         this.store.select(selectors.getSelectedOrgunit).first((orgunit) => orgunit).subscribe((orgunit) => {
-            if (period.hasOwnProperty('items')) {
-              if (orgunit.hasOwnProperty('items')) {
+            if (period.hasOwnProperty('items') && orgunit.hasOwnProperty('items') ) {
                 this.store.select(selectors.getFunctions).first(( functions ) => functions).subscribe(( functions ) => {
-                  if ( functions.length !== 0 ) {
+                  if ( functions.length !== 0 && this.childScoreCard ) {
                     this.childScoreCard.initiateScorecard(period, orgunit);
                     this.firstLoad = false;
                   }
                 });
-              }
             }
         });
       });
@@ -279,18 +274,6 @@ export class ViewComponent implements OnInit, AfterViewInit, OnDestroy {
   removeModel() {
 
   }
-
-  // a function to prepare a list of indicators to pass into a table
-  getIndicatorsList(scorecard): string[] {
-    const indicators = [];
-    for ( const holder of scorecard.data.data_settings.indicator_holders ) {
-      for ( const indicator of holder.indicators ) {
-        indicators.push(indicator);
-      }
-    }
-    return indicators;
-  }
-
 
   private findOrgunitIndicatorValue(orgunit_id: string, indicator_id: string) {
     let val: number = 0;

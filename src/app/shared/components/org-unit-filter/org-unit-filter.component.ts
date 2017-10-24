@@ -165,16 +165,12 @@ export class OrgUnitFilterComponent implements OnInit {
                         items[0].expanded = true;
                         this.organisationunits = items;
 
-                        console.log('ready');
-                        console.log(this.orgunit_model);
                         // activate organisation units
                         for (const active_orgunit of this.orgunit_model.selected_orgunits) {
                           this.activateNode(active_orgunit.id, this.orgtree, true);
-                          console.log('ready1');
                         }
                         // backup to make sure that always there is default organisation unit
                         if (this.orgunit_model.selected_orgunits.length === 0) {
-                          console.log('ready2');
                           for (const active_orgunit of this.orgunit_model.user_orgunits) {
                             this.activateNode(active_orgunit.id, this.orgtree, true);
                           }
@@ -321,6 +317,7 @@ export class OrgUnitFilterComponent implements OnInit {
         arrayed_org_units: arrayed_org_units,
         items: this.orgunit_model.selected_orgunits,
         name: 'ou',
+        orgtree: this.orgtree,
         value: this.getOrgUnitsForAnalytics(this.orgunit_model, true)
       });
       this.onOrgUnitModelUpdate.emit(this.orgunit_model);
@@ -330,7 +327,10 @@ export class OrgUnitFilterComponent implements OnInit {
         arrayed_org_units: arrayed_org_units,
         items: this.orgunit_model.selected_orgunits,
         name: 'ou',
-        value: this.getOrgUnitsForAnalytics(this.orgunit_model, true)});
+        orgtree: this.orgtree,
+        value: this.getOrgUnitsForAnalytics(this.orgunit_model, true)
+      });
+      this.onOrgUnitModelUpdate.emit(this.orgunit_model);
     }
   }
 

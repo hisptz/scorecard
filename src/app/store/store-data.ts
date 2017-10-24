@@ -3,6 +3,7 @@ import {ScoreCard} from '../shared/models/scorecard';
 export interface StoreData {
     scorecards: any[];
     selectedScorecard: ScoreCard;
+    currentDeletedScorecard: string;
     loadingScorecards: boolean;
     loadingPercent: number;
     errorloadingScorecards: boolean;
@@ -18,6 +19,7 @@ export interface StoreData {
 export const INITIAL_STORE_DATA: StoreData = {
     scorecards: [],
     selectedScorecard: null,
+    currentDeletedScorecard: null,
     loadingScorecards: true,
     loadingPercent: 0,
     errorloadingScorecards: false,

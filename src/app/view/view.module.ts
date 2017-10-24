@@ -8,6 +8,8 @@ import {IndicatorCardComponent} from './indicator-card/indicator-card.component'
 import {SubtotalComponent} from './subtotal/subtotal.component';
 import {SvgItemComponent} from './svg-item/svg-item.component';
 import {MetadataDictionaryComponent} from './metadata-dictionary/metadata-dictionary.component';
+import { IndicatorTitleComponent } from './indicator-title/indicator-title.component';
+import { PeriodTitleComponent } from './period-title/period-title.component';
 
 @NgModule({
   imports: [
@@ -21,7 +23,9 @@ import {MetadataDictionaryComponent} from './metadata-dictionary/metadata-dictio
     IndicatorCardComponent,
     MetadataDictionaryComponent,
     SubtotalComponent,
-    SvgItemComponent
+    SvgItemComponent,
+    IndicatorTitleComponent,
+    PeriodTitleComponent
   ]
 })
 export class ViewModule { }

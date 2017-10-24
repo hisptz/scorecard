@@ -87,7 +87,8 @@
           <app-period-filter
             [selected_periods]="scorecard.data.selected_periods"
             [period_type]="period_type"
-            (onPeriodUpdate) = "updatePeriod($event)"
+            [showUpdate]="false"
+            (onPeriodChange)= "updatePeriod($event)"
           ></app-period-filter>
           <!--end of period configuration-->
         </td>
@@ -113,6 +114,7 @@
           <!--organisation unit tree-->
           <app-org-unit-filter
             [orgunit_model] = "scorecard.data.orgunit_settings"
+            [showUpdate]="false"
             (onOrgUnitModelUpdate) = "updateOrgUnitModel($event)"
           ></app-org-unit-filter>
           <!--end of organisation unit tree-->
