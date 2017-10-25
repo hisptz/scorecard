@@ -18,7 +18,7 @@ const PERIOD_TYPE: Array<any> = [
   {value: 'RelativeMonth', name: 'Relative Month', shown: true},
   {value: 'RelativeBiMonth', name: 'Relative Bi-Month', shown: true},
   {value: 'RelativeQuarter', name: 'Relative Quarter', shown: true},
-  {value: 'RelativeSixMonth', name: 'Relative Six Monthly', shown: true},
+  {value: 'RelativeSixMonthly', name: 'Relative Six Monthly', shown: true},
   {value: 'RelativeYear', name: 'Relative Year', shown: true},
   {value: 'RelativeFinancialYear', name: 'Relative Financial Year', shown: true},
 ];
@@ -281,8 +281,8 @@ export class PeriodFilterComponent implements OnInit {
       periods.push({id: 'THIS_WEEK', name: 'This Week'}, {id: 'LAST_WEEK', name: 'Last Week'}, {id: 'LAST_4_WEEK', name: 'Last 4 Weeks', selected: true}, {id: 'LAST_12_WEEK', name: 'last 12 Weeks'}, {id: 'LAST_52_WEEK', name: 'Last 52 weeks'});
     }else if (type === 'RelativeMonth') {
       periods.push({id: 'THIS_MONTH', name: 'This Month'}, {id: 'LAST_MONTH', name: 'Last Month'}, {id: 'LAST_3_MONTHS', name: 'Last 3 Months'}, {id: 'LAST_6_MONTHS', name: 'Last 6 Months'}, {id: 'LAST_12_MONTHS', name: 'Last 12 Months', selected: true});
-    }else if (type === 'Relative Bi-Month') {
-      periods.push({id: 'THIS_BIMONTH', name: 'This Bi-month'}, {id: 'LAST_BIMONTH', name: 'Last Bi-month'}, {id: 'LAST_6_BIMONTHS', name: 'Last 6 bi-month', selected: true});
+    }else if (type === 'RelativeBiMonth') {
+      periods.push({id: 'THIS_BIMONTH', name: 'This Bi-month'}, {id: 'LAST_BIMONTH', name: 'Last Bi-month'}, {id: 'LAST_6_BIMONTHS', name: 'Last 6 Bi-Month', selected: true});
     }else if (type === 'RelativeQuarter') {
       periods.push({id: 'THIS_QUARTER', name: 'This Quarter'}, {id: 'LAST_QUARTER', name: 'Last Quarter'}, {id: 'LAST_4_QUARTERS', name: 'Last 4 Quarters', selected: true});
     }else if (type === 'RelativeSixMonthly') {

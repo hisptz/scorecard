@@ -113,7 +113,6 @@ export class ScorecardComponent implements OnInit, OnDestroy {
     let old_proccesed_indicators = 0;
     // create a list of all indicators
     const allIndicators = _.flatten(_.map(this.scorecard.data.data_settings.indicator_holders, (holder: any) => holder.indicators ));
-    this.allIndicatorsLength = allIndicators.length * this.periods_list.length;
     if (period && orgUnits) {
       this.httpService.get(
         'analytics.json?dimension=pe:' + period.value + '&filter=ou:' + orgUnits.value + '&displayProperty=NAME&skipData=true'
@@ -134,6 +133,7 @@ export class ScorecardComponent implements OnInit, OnDestroy {
               'name': initialAnalyticsResult.metaData.names[pe]
             };
           });
+          this.allIndicatorsLength = allIndicators.length * this.periods_list.length;
           // go through all indicators groups and then through all indicators in a group
           _.each(this.scorecard.data.data_settings.indicator_holders , (holder: any) => {
             holder.title = this.getIndicatorTitle(holder);
