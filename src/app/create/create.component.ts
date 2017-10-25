@@ -1085,6 +1085,8 @@ export class CreateComponent implements OnInit, AfterViewInit, OnDestroy {
 
   //  saving scorecard details
   saveScoreCard(action: string = 'save'): void {
+    console.log(this.scorecard)
+
     //  display error if some fields are missing
     if (this.scorecard.data.data_settings.indicator_holders.length === 0 || this.scorecard.data.header.title === '' || this.scorecard.data.header.description === '') {
       this.someErrorOccured = true;
@@ -1111,7 +1113,6 @@ export class CreateComponent implements OnInit, AfterViewInit, OnDestroy {
         });
       });
 
-      this.scorecard.data.selected_periods = this.selected_periods;
       //  post the data
       this.saving_scorecard = true;
       if (action === 'save') {

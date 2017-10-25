@@ -77,6 +77,7 @@ export class ScorecardComponent implements OnInit, OnDestroy {
   subscorecard: any;
   sub_unit: any;
   sub_model: any;
+  periodListFromAnalyicts: any;
 
 
   constructor(
@@ -106,7 +107,8 @@ export class ScorecardComponent implements OnInit, OnDestroy {
     const orgUnits: any = { ...this.selectedOrganisationUnit };
     const period: any = { ...this.selectedPeriod };
     this.periods_list = [...this.selectedPeriod.items];
-    this.organisationUnitName = orgUnits.starting_name;
+    this.organisationUnitName = orgUnits.starting_name + ' ' + orgUnits.items.map((ou: any) => ou.name).join(', ');
+    this.periodName = period.items.map((pe: any) => pe.name).join(', ');
     this.proccesed_indicators = 0;
     let old_proccesed_indicators = 0;
     // create a list of all indicators
@@ -125,6 +127,13 @@ export class ScorecardComponent implements OnInit, OnDestroy {
               'is_parent': (this.scorecard.data.show_data_in_column) ? false : orgUnits.items[0].id === ou
             };
           });
+          // Prepare a list of period to use from analytics this will help to cover the relative period issue
+          this.periods_list = _.map(initialAnalyticsResult.metaData.pe, (pe: any) => {
+            return {
+              'id': pe,
+              'name': initialAnalyticsResult.metaData.names[pe]
+            };
+          });
           // go through all indicators groups and then through all indicators in a group
           _.each(this.scorecard.data.data_settings.indicator_holders , (holder: any) => {
             holder.title = this.getIndicatorTitle(holder);
@@ -138,7 +147,7 @@ export class ScorecardComponent implements OnInit, OnDestroy {
               }
 
               // go through all selected period for scorecard
-              _.each(period.items, (current_period: any) => {
+              _.each(this.periods_list, (current_period: any) => {
                 const loading_key = indicator.id + current_period.id;
                 this.indicator_loading[loading_key] = true;
                 // check if the indicator is supposed to come from function
@@ -370,35 +379,15 @@ export class ScorecardComponent implements OnInit, OnDestroy {
 
   // A function used to decouple indicator list and prepare them for a display
   getItemsFromGroups() {
-    // let indicators_list = [];
-    // _.each(this.scorecard.data.data_settings.indicator_holder_groups, (group: any) => {
-    //   indicators_list = [...indicators_list, ..._.map(group.indicator_holder_ids, (holder_id) => {
-    //     return _.find(_.filter(this.scorecard.data.data_settings.indicator_holders,
-    //       (holder: any) => _.difference(_.map(holder.indicators, (indicator: any) => indicator.id), this.hidenColums).length !== 0)
-    //       , {'holder_id': holder_id});
-    //   })];
-    // });
-    const indicators_list = [];
-    for (const data of this.scorecard.data.data_settings.indicator_holder_groups) {
-      for (const holders_list of data.indicator_holder_ids) {
-        for (const holder of this.scorecard.data.data_settings.indicator_holders) {
-          if (holder.holder_id === holders_list) {
-            // check if indicators in a card are hidden so don show them
-            let hide_this: boolean = true;
-            for (const indicator of holder.indicators) {
-              if (this.hidenColums.indexOf(indicator.id) === -1) {
-                hide_this = false;
-              }
-            }
-            if (!hide_this) {
-              indicators_list.push(holder);
-            }
-          }
-        }
-      }
-    }
+    let indicators_list = [];
+    _.each(this.scorecard.data.data_settings.indicator_holder_groups, (group: any) => {
+      indicators_list = [...indicators_list, ..._.map(group.indicator_holder_ids, (holder_id) => {
+        return _.find(_.filter(this.scorecard.data.data_settings.indicator_holders,
+          (holder: any) => _.difference(_.map(holder.indicators, (indicator: any) => indicator.id), this.hidenColums).length !== 0)
+          , {'holder_id': holder_id});
+      })];
+    });
     return indicators_list;
-    // return indicators_list;
   }
 
   // A function used to decouple indicator list and prepare them for a display

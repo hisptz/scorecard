@@ -1,12 +1,12 @@
 {
-    "version": "2.1",
-    "name": "Score Card V2",
+    "version": "2.4",
+    "name": "Score Card v4",
     "description": "Score Card Generation",
     "launch_path": "index.html",
     "icons": {
-        "16": "scorecard.svg",
-        "48": "scorecard.svg",
-        "128": "scorecard.svg"
+        "16": "scorecard.png",
+        "48": "scorecard.png",
+        "128": "scorecard.png"
     },
     "developer": {
         "name": "HISP Tanzania",
@@ -16,9 +16,6 @@
     "activities": {
         "dhis": {
             "href": "../../.."
-        },
-        "build": {
-           "command":"ng build --prod --aot && rm -r /home/kelvin/dhis-home/apps/score/* &&  cp -f -r dist/* /home/kelvin/dhis-home/apps/score"
         }
     }
 }

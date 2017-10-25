@@ -17,33 +17,48 @@ export function storeData(state: StoreData, action: any): StoreData {
 
       // set all scorecards
       case ADD_SCORE_CARDS: {
-        const newState = _.cloneDeep( state );
-        newState.scorecards = action.payload;
-        return newState;
+        return {
+          ...state,
+          ...action.payload
+        };
       }
 
       // set one scorecard in store
       case ADD_SCORE_CARD: {
-        const newState = _.cloneDeep( state );
-        if (!_.find(newState.scorecards, {id: action.payload.id})) {
-          newState.scorecards.push( action.payload );
+        if (!_.find(state.scorecards, {id: action.payload.id})) {
+          return {
+            ...state,
+            scorecards: [...state.scorecards, action.payload]
+          };
         }
-        return newState;
+        return state;
       }
 
 
       // set one scorecard in store
       case UPDATE_SCORE_CARD_ACTION: {
-        const newState = _.cloneDeep( state );
-        newState.scorecards[_.findIndex(newState.scorecards, {id: action.payload.id })] = action.payload;
-        return newState;
+        const index = _.findIndex(state.scorecards, {id: action.payload.id });
+        const scorecard = state.scorecards[index];
+        const updatedScorecard = {
+          ...scorecard,
+          ...action.payload
+        };
+        const scorecards = [...state.scorecards];
+        scorecards[index] = updatedScorecard;
+        return {
+          ...state,
+          scorecards: scorecards
+        };
       }
 
       // set one scorecard in store
       case DELETE_SCORE_CARD_ACTION: {
-        const newState = _.cloneDeep( state );
-        newState.scorecards.splice(_.findIndex(newState.scorecards, {id: action.payload }));
-        return newState;
+        const scorecards = [...state.scorecards];
+        scorecards.splice(_.findIndex(scorecards, {id: action.payload }));
+        return {
+          ...state,
+          scorecards: scorecards
+        };
       }
 
 

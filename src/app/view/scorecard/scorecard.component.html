@@ -32,7 +32,8 @@
 <!--main scorecard area-->
 <div class="container-fluid" id="scorecard" style="padding-left: 5px;margin-top: 10px">
   <div [innerHTML]="scorecard.data.header.template.content | safeHtml"></div>
-  <h3>{{ scorecard.data.header.title }} &nbsp;
+  <h3 class="text-center">
+    <span *ngIf="!scorecard.data.header.template.content">{{ scorecard.data.header.title }} &nbsp;</span>
     {{ organisationUnitName || '' }}&nbsp;&nbsp;&nbsp;
     <span> {{ periodName || '' }} </span>
   </h3>
