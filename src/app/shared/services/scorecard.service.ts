@@ -86,7 +86,7 @@ export class ScorecardService {
     }
   }
 
-  addScorecardToStore(scorecardId, scorecard_details, update = false, can_see = true, can_edit = true) {
+  addScorecardToStore(scorecardId, scorecard_details, can_see = true, can_edit = true) {
     const scorecard_item = {
       id: scorecardId,
       name: scorecard_details.header.title,
