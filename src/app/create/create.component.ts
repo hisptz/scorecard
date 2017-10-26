@@ -2,6 +2,7 @@ import {AfterViewInit, Component, ElementRef, OnDestroy, OnInit, ViewChild} from
 import {animate, state, style, transition, trigger} from '@angular/animations';
 import {ActivatedRoute, Router} from '@angular/router';
 import {Subscription} from 'rxjs/Subscription';
+import { Location } from '@angular/common';
 
 import {ScoreCard} from '../shared/models/scorecard';
 import {Dataset, DatasetService} from '../shared/services/dataset.service';
@@ -18,6 +19,8 @@ import {DataService} from '../shared/services/data.service';
 import {Store} from '@ngrx/store';
 import {ApplicationState} from '../store/application.state';
 import * as selectors from '../store/selectors';
+import {UpdateScorecardAction} from '../store/actions/store.data.action';
+
 
 @Component({
   selector: 'app-create',
@@ -147,6 +150,7 @@ export class CreateComponent implements OnInit, AfterViewInit, OnDestroy {
               private dataService: DataService,
               private orgunitService: OrgUnitService,
               private functionService: FunctionService,
+              private _location: Location,
               private store: Store<ApplicationState>
   ) {
     this.indicatorGroups = [];
@@ -195,7 +199,12 @@ export class CreateComponent implements OnInit, AfterViewInit, OnDestroy {
   ngOnInit() {
     this.dataService.getUserGroupInformation().subscribe( userGroups => {
       this.group_loading = false;
-      this.userGroups = userGroups.userGroups;
+      this.userGroups.push({
+        id: 'all',
+        name: 'Public',
+        title: 'This will be accessible to everyone in the system accessing the scorecard'
+      });
+      this.userGroups = [...this.userGroups, ...userGroups.userGroups];
     });
     this.subscription = this.activatedRouter.params.subscribe(
       (params: any) => {
@@ -488,7 +497,7 @@ export class CreateComponent implements OnInit, AfterViewInit, OnDestroy {
   }
   // cancel scorecard creation process
   cancelCreate() {
-    // this._location.back();
+    this._location.back();
   }
   // deal with all issues during group type switching between dataelent, indicators and datasets
   switchType(current_type): void {
@@ -1085,8 +1094,6 @@ export class CreateComponent implements OnInit, AfterViewInit, OnDestroy {
 
   //  saving scorecard details
   saveScoreCard(action: string = 'save'): void {
-    console.log(this.scorecard)
-
     //  display error if some fields are missing
     if (this.scorecard.data.data_settings.indicator_holders.length === 0 || this.scorecard.data.header.title === '' || this.scorecard.data.header.description === '') {
       this.someErrorOccured = true;
@@ -1119,6 +1126,7 @@ export class CreateComponent implements OnInit, AfterViewInit, OnDestroy {
         this.scorecardService.create(this.scorecard).subscribe(
           (data) => {
             this.saving_scorecard = false;
+            this.scorecardService.addScorecardToStore( this.scorecard.id, this.scorecard.data );
             this.router.navigate(['view', this.scorecard.id]);
           },
           error => {
@@ -1130,6 +1138,19 @@ export class CreateComponent implements OnInit, AfterViewInit, OnDestroy {
         this.scorecardService.update(this.scorecard).subscribe(
           (data) => {
             this.saving_scorecard = false;
+            const scorecard_item = {
+              id: this.scorecard.id,
+              name: this.scorecard.data.header.title,
+              data: this.scorecard.data,
+              can_see: true,
+              can_edit: true,
+              deleting: false,
+              hoverState: 'notHovered',
+              confirm_deleting: false,
+              deleted: false,
+              error_deleting: false
+            };
+            this.store.dispatch(new UpdateScorecardAction(scorecard_item));
             this.router.navigate(['view', this.scorecard.id]);
           },
           error => {

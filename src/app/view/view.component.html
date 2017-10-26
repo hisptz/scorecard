@@ -36,10 +36,13 @@
       ></app-period-filter>
     </div>
     <div class="col-md-4 col-xs-12">
+      <button class="btn btn-outline-secondary btn-sm pull-right cursor" (click)="loadScoreCard()" style="height: 35px;margin-left: 3px">
+        <i class="fa fa-refresh"></i> Refresh
+      </button>
       <button class="btn btn-outline-secondary btn-sm pull-right cursor" style="height: 35px;margin-left: 3px">
         <i class="fa fa-file-excel-o"></i> Excel
       </button>
-      <button class="btn btn-outline-secondary btn-sm pull-right cursor" style="height: 35px;margin-left: 3px">
+      <button class="btn btn-outline-secondary btn-sm pull-right cursor" (click)="browserPrint()" style="height: 35px;margin-left: 3px">
         <i class="fa fa-print"></i> Print
       </button>
       <app-options
@@ -51,6 +54,7 @@
         class="btn btn-outline-secondary btn-sm pull-right cursor"
         style="height: 35px;margin-right: 3px"
         *ngIf="scorecard.can_edit"
+        [routerLink]="['../../create','edit',scorecard.id]"
       >
         <i class="fa fa-pencil-square-o"></i> Edit
       </button>

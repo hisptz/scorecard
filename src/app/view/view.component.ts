@@ -220,7 +220,6 @@ export class ViewComponent implements OnInit, AfterViewInit, OnDestroy {
             if (period.hasOwnProperty('items') && orgunit.hasOwnProperty('items') ) {
                 this.store.select(selectors.getFunctions).first(( functions ) => functions).subscribe(( functions ) => {
                   if ( functions.length !== 0 && this.childScoreCard ) {
-                    console.log(period)
                     this.childScoreCard.initiateScorecard(period, orgunit);
                     this.firstLoad = false;
                   }

@@ -516,16 +516,16 @@
 
 
 <div class="container-fluid no-left-padding">
-  <button class="btn btn-sm btn-outline-primary pull-right" style="margin-left: 5px"(click)="saveScoreCard()"
+  <button class="btn btn-sm btn-outline-primary pull-right cursor" style="margin-left: 5px"(click)="saveScoreCard()"
           *ngIf="!saving_scorecard && current_action == 'new'">
     <i class="fa fa-save"></i>  Create
   </button>
-  <button class="btn btn-sm btn-outline-primary pull-right" style="margin-left: 5px"
+  <button class="btn btn-sm btn-outline-primary pull-right cursor" style="margin-left: 5px"
           (click)="saveScoreCard('update')"
           *ngIf="!saving_scorecard && current_action == 'update'">
     <i class="fa fa-save"></i> Update
   </button>
-  <button class="btn btn-sm btn-outline-warning pull-right" (click)="cancelCreate()" *ngIf="!saving_scorecard">Cancel</button>
+  <button class="btn btn-sm btn-outline-warning pull-right cursor" (click)="cancelCreate()" *ngIf="!saving_scorecard">Cancel</button>
   <h5 class="pull-right" *ngIf="saving_scorecard"><img src="balls-4.svg" style="height: 50px;"> Saving score card Information, Please wait...</h5>
   <h5 class="pull-right text-danger" *ngIf="saving_error">Something went wrong, Saving score card Information failed</h5>
 </div>

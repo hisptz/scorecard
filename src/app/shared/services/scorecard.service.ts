@@ -15,9 +15,9 @@ import { ScoreCard } from '../models/scorecard';
 import {DataService} from './data.service';
 import {Store} from '@ngrx/store';
 import {ApplicationState} from '../../store/application.state';
-import {getScorecards} from '../../store/selectors';
 import {AddScorecardAction, UpdateLoadingAction, UpdateLoadingPercentAction} from '../../store/actions/store.data.action';
 import {OrgUnitService} from './org-unit.service';
+import * as _ from 'lodash';
 
 
 @Injectable()
@@ -60,22 +60,9 @@ export class ScorecardService {
             // loading scorecard details
             this.load(scorecard).subscribe(
               (scorecard_details) => {
-                const scorecard_item = {
-                  id: scorecard,
-                  name: scorecard_details.header.title,
-                  data: scorecard_details,
-                  can_see: this.dataService.checkForUserGroupInScorecard(scorecard_details, userInfo).see,
-                  can_edit: this.dataService.checkForUserGroupInScorecard(scorecard_details, userInfo).edit,
-                  deleting: false,
-                  hoverState: 'notHovered',
-                  confirm_deleting: false,
-                  deleted: false,
-                  error_deleting: false
-                };
-                if ( scorecard_item.can_see ) {
-                  this.store.dispatch(new AddScorecardAction(scorecard_item));
-                  this._scorecards.push(scorecard_item);
-                }
+                const can_see = this.dataService.checkForUserGroupInScorecard(scorecard_details, userInfo).see;
+                const can_edit = this.dataService.checkForUserGroupInScorecard(scorecard_details, userInfo).edit;
+                this.addScorecardToStore(scorecard, scorecard_details, can_see, can_edit);
                 this.dataService.sortArrOfObjectsByParam(this._scorecards, 'name', true);
                 scorecard_count++;
                 this.store.dispatch(new UpdateLoadingPercentAction(Math.floor((scorecard_count / scorecards.length) * 100)));
@@ -96,6 +83,27 @@ export class ScorecardService {
           this.store.dispatch(new UpdateLoadingAction( false ));
         }
       );
+    }
+  }
+
+  addScorecardToStore(scorecardId, scorecard_details, update = false, can_see = true, can_edit = true) {
+    const scorecard_item = {
+      id: scorecardId,
+      name: scorecard_details.header.title,
+      data: scorecard_details,
+      can_see: can_see,
+      can_edit: can_edit,
+      deleting: false,
+      hoverState: 'notHovered',
+      confirm_deleting: false,
+      deleted: false,
+      error_deleting: false
+    };
+    if ( can_see ) {
+      this.store.dispatch(new AddScorecardAction(scorecard_item));
+      if ( !_.find( this._scorecards, {'id': scorecardId} )) {
+        this._scorecards.push(scorecard_item);
+      }
     }
   }
 

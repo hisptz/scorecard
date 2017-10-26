@@ -358,23 +358,6 @@ export class ScorecardComponent implements OnInit, OnDestroy {
         return _.includes(group_holders, holder.holder_id)
           && _.difference(_.map(holder.indicators, ((indicator: any) => indicator.id)), this.hidenColums).length !== 0;
       }).length * this.periods_list.length;
-    // let colspan = 0;
-    // for (const holder of this.scorecard.data.data_settings.indicator_holders) {
-    //   if (group_holders.indexOf(holder.holder_id) !== -1) {
-    //     let hide_this: boolean = true;
-    //     for (const indicator of holder.indicators) {
-    //       if (this.hidenColums.indexOf(indicator.id) === -1) {
-    //         hide_this = false;
-    //       }
-    //     }
-    //     if (!hide_this) {
-    //       for (const per of this.periods_list) {
-    //         colspan++;
-    //       }
-    //     }
-    //   }
-    // }
-    // return colspan;
   }
 
   // A function used to decouple indicator list and prepare them for a display

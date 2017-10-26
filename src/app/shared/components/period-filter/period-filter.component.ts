@@ -239,6 +239,9 @@ export class PeriodFilterComponent implements OnInit {
 
 
   getPeriodArray(type, year) {
+    const date = new Date();
+    const this_year = date.getFullYear();
+    const last_year = this_year - 1;
     const periods = [];
     if (type === 'Weekly') {
       periods.push({id: '', name: ''});
@@ -280,11 +283,26 @@ export class PeriodFilterComponent implements OnInit {
     }else if (type === 'Relative Weeks') {
       periods.push({id: 'THIS_WEEK', name: 'This Week'}, {id: 'LAST_WEEK', name: 'Last Week'}, {id: 'LAST_4_WEEK', name: 'Last 4 Weeks', selected: true}, {id: 'LAST_12_WEEK', name: 'last 12 Weeks'}, {id: 'LAST_52_WEEK', name: 'Last 52 weeks'});
     }else if (type === 'RelativeMonth') {
-      periods.push({id: 'THIS_MONTH', name: 'This Month'}, {id: 'LAST_MONTH', name: 'Last Month'}, {id: 'LAST_3_MONTHS', name: 'Last 3 Months'}, {id: 'LAST_6_MONTHS', name: 'Last 6 Months'}, {id: 'LAST_12_MONTHS', name: 'Last 12 Months', selected: true});
+      periods.push(
+        {id: 'THIS_MONTH', name: 'This Month'},
+        {id: 'LAST_MONTH', name: 'Last Month'},
+        {id: 'LAST_3_MONTHS', name: 'Last 3 Months'},
+        {id: 'LAST_6_MONTHS', name: 'Last 6 Months'},
+        {id: 'LAST_12_MONTHS', name: 'Last 12 Months', selected: true},
+        {id: this_year + '01;' + this_year + '02;' + this_year + '03;' + this_year + '04;' + this_year + '05;' + this_year + '06;' + this_year + '07;' + this_year + '08;' + this_year + '09;' + this_year + '10;' + this_year + '11;' + this_year + '12', name: 'Month This Year'},
+        {id: last_year + '01;' + last_year + '02;' + last_year + '03;' + last_year + '04;' + last_year + '05;' + last_year + '06;' + last_year + '07;' + last_year + '08;' + last_year + '09;' + last_year + '10;' + last_year + '11;' + last_year + '12', name: 'Month Last Year'}
+
+      );
     }else if (type === 'RelativeBiMonth') {
       periods.push({id: 'THIS_BIMONTH', name: 'This Bi-month'}, {id: 'LAST_BIMONTH', name: 'Last Bi-month'}, {id: 'LAST_6_BIMONTHS', name: 'Last 6 Bi-Month', selected: true});
     }else if (type === 'RelativeQuarter') {
-      periods.push({id: 'THIS_QUARTER', name: 'This Quarter'}, {id: 'LAST_QUARTER', name: 'Last Quarter'}, {id: 'LAST_4_QUARTERS', name: 'Last 4 Quarters', selected: true});
+      periods.push(
+        {id: 'THIS_QUARTER', name: 'This Quarter'},
+        {id: 'LAST_QUARTER', name: 'Last Quarter'},
+        {id: 'LAST_4_QUARTERS', name: 'Last 4 Quarters', selected: true},
+        {id: this_year + 'Q1;' + this_year + 'Q2;' + this_year + 'Q3;' + this_year + 'Q4', name: 'Quarters This Year'},
+        {id: last_year + 'Q1;' + last_year + 'Q2;' + last_year + 'Q3;' + last_year + 'Q4', name: 'Quarters Last Year'}
+        );
     }else if (type === 'RelativeSixMonthly') {
       periods.push({id: 'THIS_SIX_MONTH', name: 'This Six-month'}, {id: 'LAST_SIX_MONTH', name: 'Last Six-month'}, {id: 'LAST_2_SIXMONTHS', name: 'Last 2 Six-month', selected: true});
     }else if (type === 'RelativeFinancialYear') {

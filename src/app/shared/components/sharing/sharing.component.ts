@@ -1,4 +1,5 @@
 import {Component, Input, OnInit} from '@angular/core';
+import * as _ from 'lodash';
 
 @Component({
   selector: 'app-sharing',
@@ -16,7 +17,6 @@ export class SharingComponent implements OnInit {
   constructor() { }
 
   ngOnInit() {
-
   }
 
   //  display sharing Tree
@@ -31,7 +31,7 @@ export class SharingComponent implements OnInit {
     }else {
       group[type] = true;
     }
-    if (!this.checkItemAvailabilty(group, this.scorecard.data.user_groups)) {
+    if (!_.find(this.scorecard.data.user_groups, {'id': group.id})) {
       this.scorecard.data.user_groups.push(group);
     }else {
       this.scorecard.data.user_groups.forEach((value, index) => {
