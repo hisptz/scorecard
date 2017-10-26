@@ -139,11 +139,11 @@ export class ScorecardComponent implements OnInit, OnDestroy {
             holder.title = this.getIndicatorTitle(holder);
             _.each(holder.indicators, (indicator: any) => {
               if (this.level === 'top' || this.scorecard.data.is_bottleck) {
-                indicator['values'] = [];
-                indicator['tooltip'] = [];
-                indicator['previous_values'] = [];
-                indicator['showTopArrow'] = [];
-                indicator['showBottomArrow'] = [];
+                indicator['values'] = indicator.hasOwnProperty('values') ? indicator.values : [];
+                indicator['tooltip'] =  indicator.hasOwnProperty('tooltip') ? indicator.tooltip : [];
+                indicator['previous_values'] =  indicator.hasOwnProperty('previous_values') ? indicator.previous_values : [];
+                indicator['showTopArrow'] =   [];
+                indicator['showBottomArrow'] =  [];
               }
 
               // go through all selected period for scorecard

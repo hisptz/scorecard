@@ -1,4 +1,4 @@
-<div class="container-fluid">
+<div class="container-fluid no-print">
   <div class="row">
     <div class="col-md-2 col-xs-12" style="padding-left: 0px; cursor: pointer;" [routerLink]="['']">
       <img src="scorecard.svg" style="height: 58px; width: 48px"> <span style="font-size: 20px"> Score Card</span>
@@ -15,8 +15,8 @@
 <!--<p class="text-center">-->
   <!--<LoadingComponent *ngIf="loading"></LoadingComponent>-->
 <!--</p>-->
-<div class="container-fluid" style="margin-top: 20px" *ngIf="!loading">
-  <div class="row">
+<div id="options" class="container-fluid " style="margin-top: 20px" *ngIf="!loading">
+  <div class="row no-print">
     <div class="col-md-4 col-xs-12" style="padding-left: 0px; cursor: pointer;">
       <app-org-unit-filter
         [showUpdate]="true"
@@ -36,28 +36,54 @@
       ></app-period-filter>
     </div>
     <div class="col-md-4 col-xs-12">
-      <button class="btn btn-outline-secondary btn-sm pull-right cursor" (click)="loadScoreCard()" style="height: 35px;margin-left: 3px">
-        <i class="fa fa-refresh"></i> Refresh
+      <!--Scorecard refresh button-->
+      <button
+        (mouseenter)="refreshHovered = true"
+        (mouseleave)="refreshHovered = false"
+        class="btn btn-outline-secondary btn-sm pull-right cursor"
+        (click)="loadScoreCard()" style="height: 35px;margin-left: 3px" title="Refresh">
+        <i class="fa fa-refresh"></i>
+        <span *ngIf="refreshHovered">Refresh</span>
       </button>
-      <button class="btn btn-outline-secondary btn-sm pull-right cursor" style="height: 35px;margin-left: 3px">
-        <i class="fa fa-file-excel-o"></i> Excel
+      <!--Excel download button-->
+      <button (mouseenter)="excelHovered = true"
+              (mouseleave)="excelHovered = false"
+              class="btn btn-outline-secondary btn-sm pull-right cursor"
+              style="height: 35px;margin-left: 3px"
+              title="Download Excel">
+        <i class="fa fa-file-excel-o"></i>
+        <span *ngIf="excelHovered"> Excel</span>
       </button>
-      <button class="btn btn-outline-secondary btn-sm pull-right cursor" (click)="browserPrint()" style="height: 35px;margin-left: 3px">
-        <i class="fa fa-print"></i> Print
+      <!--Printing button-->
+      <button
+        (mouseenter)="printHovered = true"
+        (mouseleave)="printHovered = false"
+        class="btn btn-outline-secondary btn-sm pull-right cursor"
+        (click)="browserPrint()"
+        style="height: 35px;margin-left: 3px" title="Print"
+      >
+        <i class="fa fa-print"></i>
+        <span *ngIf="printHovered">Print</span>
       </button>
+      <!--Editing button-->
+      <button
+        (mouseenter)="editHovered = true"
+        (mouseleave)="editHovered = false"
+        class="btn btn-outline-secondary btn-sm pull-right cursor"
+        style="height: 35px;margin-right: 3px; margin-left: 3px" *ngIf="scorecard.can_edit"
+        [routerLink]="['../../create','edit',scorecard.id]"
+      >
+        <i class="fa fa-pencil-square-o"></i>
+        <span *ngIf="editHovered">Edit</span>
+      </button>
+      <!--Additional options for a scorecard-->
       <app-options
         *ngIf="scorecard"
+        [mode]="'view'"
         [scorecard]="scorecard"
         (onOptionUpdate) = "optionUpdated($event)"
       ></app-options>
-      <button
-        class="btn btn-outline-secondary btn-sm pull-right cursor"
-        style="height: 35px;margin-right: 3px"
-        *ngIf="scorecard.can_edit"
-        [routerLink]="['../../create','edit',scorecard.id]"
-      >
-        <i class="fa fa-pencil-square-o"></i> Edit
-      </button>
+
     </div>
   </div>
 

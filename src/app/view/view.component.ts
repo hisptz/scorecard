@@ -55,6 +55,11 @@ export class ViewComponent implements OnInit, AfterViewInit, OnDestroy {
   show_rank: boolean = false;
   functions$: Observable<any>;
 
+  printHovered = false;
+  excelHovered = false;
+  refreshHovered = false;
+  editHovered = false;
+
   constructor(private scorecardService: ScorecardService,
               private dataService: DataService,
               private activatedRouter: ActivatedRoute,
@@ -190,6 +195,17 @@ export class ViewComponent implements OnInit, AfterViewInit, OnDestroy {
   changePeriod( period ) {
     this.store.dispatch(new SetSelectedPeriodAction( period ));
     this.updateOnFirstLoad();
+  }
+
+  // listen to changes in period on item selections
+  optionUpdated( options ) {
+    this.scorecard.data.header.show_legend_definition = options.show_legend_definition;
+    this.scorecard.data.show_rank = options.show_rank;
+    this.scorecard.data.empty_rows = options.empty_rows;
+    this.scorecard.data.show_average_in_column = options.show_average_in_column;
+    this.scorecard.data.show_average_in_row = options.show_average_in_row;
+    this.scorecard.data.average_selection = options.average_selection;
+    this.scorecard.data.shown_records = options.shown_records;
   }
 
   // listen to changes in organisation unit on Update click

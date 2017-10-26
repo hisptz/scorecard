@@ -2,3 +2,14 @@
 .cursor{
   cursor: pointer;
 }
+
+
+
+@media print {
+  #menu-container{
+    display: none;
+  }
+  #menu-container *{
+    display: none;
+  }
+}

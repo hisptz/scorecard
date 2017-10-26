@@ -222,7 +222,7 @@ export class ScorecardService {
           'sub_title': '',
           'description': '',
           'show_arrows_definition': true,
-          'show_legend_definition': false,
+          'show_legend_definition': true,
           'template': {
             'display': false,
             'content': ''

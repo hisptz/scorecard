@@ -8,6 +8,7 @@ import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 export class OptionsComponent implements OnInit {
 
   @Input() scorecard: any;
+  @Input() mode = 'edit';
   @Output() onOptionUpdate: EventEmitter<any> = new EventEmitter<any>();
 
   showAdditionalOptions: boolean = true;
@@ -36,6 +37,15 @@ export class OptionsComponent implements OnInit {
   updateOption(event) {
     this.onOptionUpdate.emit(this.options);
     event.stopPropagation();
+  }
+
+  setOptionFromButton( option, type, value = null ) {
+    if (type === 'boolean') {
+      this.options[option] = !this.options[option];
+    }else {
+      this.options[option] = value;
+    }
+    this.onOptionUpdate.emit(this.options);
   }
 
 }

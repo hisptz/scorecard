@@ -2,48 +2,90 @@
   <i class="fa fa-cog"></i> Options
 </button>
 <div class="additional-options" [ngClass]="{'hiddenTree':showAdditionalOptions}" style="padding-top: 0px">
-  <ul class="list-group">
+  <ul class="list-group btn-sec">
     <li class="list-group-item pointer">
       <div class="row">
-        <div class="col-sm-4"><label title="tick to show legend"><input type="checkbox" (change)="updateOption($event)" [(ngModel)]="options.show_legend_definition"> Legend</label></div>
-        <div class="col-sm-4"><label title="tick to show ranking"><input type="checkbox" (change)="updateOption($event)" [(ngModel)]="options.show_rank"> Rank</label></div>
-        <div class="col-sm-4"><label title="tick to show empty rows"><input type="checkbox" (change)="updateOption($event)" [(ngModel)]="options.empty_rows"> Empty Rows</label></div>
-      </div>
-    </li>
-    <li class="list-group-item pointer">
-      <div class="row">
-        <div class="col-sm-6"><label title="tick to show average column"><input type="checkbox" (change)="updateOption($event)" [(ngModel)]="options.show_average_in_column"> Average Column</label></div>
-        <div class="col-sm-6"><label title="tick to show average column"><input type="checkbox" (change)="updateOption($event)" [(ngModel)]="options.show_average_in_row"> Average Row</label></div>
-      </div>
-    </li>
-    <li class="list-group-item pointer">
-      <div class="row">
-        <div class="col-sm-2"><label title="show both above and bellow average"><input type="radio" (change)="updateOption($event)" value="all" [(ngModel)]="options.average_selection"> All</label></div>
-        <div class="col-sm-5"><label title="Show organisation units below average"><input type="radio" (change)="updateOption($event)" value="below" [(ngModel)]="options.average_selection" > Below Average</label></div>
-        <div class="col-sm-5"><label title="Show organisation units above average"><input type="radio" (change)="updateOption($event)" value="above" [(ngModel)]="options.average_selection" > Above Average</label></div>
-      </div>
-    </li>
-    <li class="list-group-item">
-      <div class="row">
-        <div class="col-sm-12" style="padding-top: 5px">
-          <label title="show all items"><input type="radio" [value]="'all'" [(ngModel)]="options.shown_records"> All</label>
-          <label title="show top three based on current selections"><input type="radio" (change)="updateOption($event)" value="3" [(ngModel)]="options.shown_records"> Top Three</label>
-          <label title="show top five based on current selections"><input type="radio" (change)="updateOption($event)" value="5" [(ngModel)]="options.shown_records"> Top Five</label>
-          <label title="show top ten based on current selections"><input type="radio" (change)="updateOption($event)" value="10" [(ngModel)]="options.shown_records"> Top Ten</label>
+        <div class="col-sm-4 btn btn btn-outline-secondary" [ngClass]="{'current': options.show_legend_definition }" (click)="setOptionFromButton('show_legend_definition', 'boolean')">
+          <i class="fa fa-check text-success" *ngIf="options.show_legend_definition"></i>
+          Legend
+        </div>
+        <div class="col-sm-3 btn btn btn-outline-secondary" [ngClass]="{'current': options.show_rank }" (click)="setOptionFromButton('show_rank', 'boolean')">
+          <i class="fa fa-check text-success" *ngIf="options.show_rank"></i>
+          Rank
+        </div>
+        <div class="col-sm-5 btn btn-outline-secondary" [ngClass]="{'current': options.empty_rows }" (click)="setOptionFromButton('empty_rows', 'boolean')">
+          <i class="fa fa-check text-success" *ngIf="options.empty_rows"></i>
+          Empty Rows
         </div>
       </div>
     </li>
-    <li class="list-group-item">
+    <li class="list-group-item pointer">
       <div class="row">
-        <div class="col-sm-3"><label title="tick to show score"><input type="checkbox" (change)="updateOption($event)" [(ngModel)]="options.show_score" > Score</label></div>
-        <div class="col-sm-3"><label title="tick to show arrows on scorecard"><input type="checkbox" (change)="updateOption($event)" [(ngModel)]="options.show_arrows_definition" > Arrows</label></div>
-        <div class="col-sm-6"><label title="tick to show data in rows"><input type="checkbox" (change)="updateOption($event)" [(ngModel)]="options.show_data_in_column" > show data in rows</label></div>
-
+        <div class="col-sm-6 btn btn-outline-secondary" [ngClass]="{'current': options.show_average_in_column }" (click)="setOptionFromButton('show_average_in_column', 'boolean')">
+          <i class="fa fa-check text-success" *ngIf="options.show_average_in_column"></i>
+          Average Column
+        </div>
+        <div class="col-sm-6 btn btn-outline-secondary" [ngClass]="{'current': options.show_average_in_row }" (click)="setOptionFromButton('show_average_in_row', 'boolean')">
+          <i class="fa fa-check text-success" *ngIf="options.show_average_in_row"></i>
+          Average Row
+        </div>
+      </div>
+    </li>
+    <li class="list-group-item pointer">
+      <div class="row">
+        <div class="col-sm-2 btn btn-outline-secondary" [ngClass]="{'current': options.average_selection == 'all' }" (click)="setOptionFromButton('average_selection', 'value', 'all')">
+          <i class="fa fa-check text-success" *ngIf="options.average_selection == 'all'"></i>
+          All
+        </div>
+        <div class="col-sm-5 btn btn-outline-secondary" [ngClass]="{'current': options.average_selection == 'below' }" (click)="setOptionFromButton('average_selection', 'value', 'below')">
+          <i class="fa fa-check text-success" *ngIf="options.average_selection == 'below'"></i>
+          Below Average
+        </div>
+        <div class="col-sm-5 btn btn-outline-secondary" [ngClass]="{'current': options.average_selection == 'above' }" (click)="setOptionFromButton('average_selection', 'value', 'above')">
+          <i class="fa fa-check text-success" *ngIf="options.average_selection == 'above'"></i>
+          Above Average
+        </div>
+      </div>
+    </li>
+    <li class="list-group-item" *ngIf="mode == 'view'">
+      <div class="row">
+        <div class="col-sm-3 btn btn-outline-secondary" [ngClass]="{'current': options.shown_records == 'all' }" (click)="setOptionFromButton('shown_records', 'value', 'all')">
+          <i class="fa fa-check text-success" *ngIf="options.shown_records == 'all'"></i>
+          All
+        </div>
+        <div class="col-sm-3 btn btn-outline-secondary" [ngClass]="{'current': options.shown_records == 3 }" (click)="setOptionFromButton('shown_records', 'value', 3)">
+          <i class="fa fa-check text-success" *ngIf="options.shown_records == 3"></i>
+          Top Three
+        </div>
+        <div class="col-sm-3 btn btn-outline-secondary" [ngClass]="{'current': options.shown_records == 5 }" (click)="setOptionFromButton('shown_records', 'value', 5)">
+          <i class="fa fa-check text-success" *ngIf="options.shown_records == 5"></i>
+          Top Five
+        </div>
+        <div class="col-sm-3 btn btn-outline-secondary" [ngClass]="{'current': options.shown_records == 10 }" (click)="setOptionFromButton('shown_records', 'value', 10)">
+          <i class="fa fa-check text-success" *ngIf="options.shown_records == 10"></i>
+          Top Ten
+        </div>
+      </div>
+    </li>
+    <li class="list-group-item" *ngIf="mode !== 'view'">
+      <div class="row">
+        <div class="col-sm-3 btn btn-outline-secondary cursor" [ngClass]="{'current': options.show_score }" (click)="setOptionFromButton('show_score', 'boolean')">
+          <i class="fa fa-check text-success" *ngIf="options.show_score"></i>
+          Score
+        </div>
+        <div class="col-sm-3 btn btn-outline-secondary cursor" [ngClass]="{'current': options.show_arrows_definition }" (click)="setOptionFromButton('show_arrows_definition', 'boolean')">
+          <i class="fa fa-check text-success" *ngIf="options.show_arrows_definition"></i>
+          Arrows
+        </div>
+        <div class="col-sm-6 btn btn-outline-secondary cursor" [ngClass]="{'current': options.show_data_in_column }" (click)="setOptionFromButton('show_data_in_column', 'boolean')">
+          <i class="fa fa-check text-success" *ngIf="options.show_data_in_column"></i>
+          show data in rows
+        </div>
       </div>
     </li>
   </ul>
-  <button class="btn btn-sm btn-outline-warning cursor pull-right" (click)="showOptions()" style="height: 35px">
-    <i class="fa fa-close"></i> close
-  </button>
+  <!--<button class="btn btn-sm btn-light cursor pull-right" (click)="showOptions()" style="height: 35px">-->
+    <!--<i class="fa fa-close"></i> close-->
+  <!--</button>-->
 
 </div>

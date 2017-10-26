@@ -445,7 +445,6 @@ export class CreateComponent implements OnInit, AfterViewInit, OnDestroy {
     this.scorecard.data.show_score = options.show_score;
     this.scorecard.data.header.show_arrows_definition = options.show_arrows_definition;
     this.scorecard.data.show_data_in_column = options.show_data_in_column;
-    console.log(this.scorecard.data.show_rank);
   }
 
   updateOrgUnitModel(ouModel) {
