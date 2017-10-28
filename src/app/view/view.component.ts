@@ -303,6 +303,10 @@ export class ViewComponent implements OnInit, AfterViewInit, OnDestroy {
     return val;
   }
 
+  downloadXls() {
+
+  }
+
   ngOnDestroy () {
     if ( this.subscription ) {
       this.subscription.unsubscribe();

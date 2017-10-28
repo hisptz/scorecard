@@ -381,3 +381,7 @@ table * {
   opacity:0.7;
   border: 1px dashed #000;
 }
+
+.ngx-contextmenu li {
+  font-size: 12px;
+}

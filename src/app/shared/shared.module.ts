@@ -16,6 +16,7 @@ import {PeriodFilterComponent} from './components/period-filter/period-filter.co
 import { SharingComponent } from './components/sharing/sharing.component';
 import { OptionsComponent } from './components/options/options.component';
 import {FilterIndicatorByNamePipe} from './pipes/filter-indicator-by-name.pipe';
+import {ContextMenuModule} from 'ngx-contextmenu';
 
 @NgModule({
   imports: [
@@ -24,7 +25,11 @@ import {FilterIndicatorByNamePipe} from './pipes/filter-indicator-by-name.pipe';
     ColorPickerModule,
     DndModule.forRoot(),
     NgxPaginationModule,
-    FormsModule
+    FormsModule,
+    ContextMenuModule.forRoot({
+      useBootstrap4: true,
+      autoFocus: true,
+    })
   ],
   declarations: [
     ClickOutsideDirective,
@@ -56,7 +61,8 @@ import {FilterIndicatorByNamePipe} from './pipes/filter-indicator-by-name.pipe';
     MultiselectComponent,
     SharingComponent,
     OptionsComponent,
-    FilterIndicatorByNamePipe
+    FilterIndicatorByNamePipe,
+    ContextMenuModule
   ]
 })
 export class SharedModule { }

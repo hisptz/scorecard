@@ -50,6 +50,7 @@
               (mouseleave)="excelHovered = false"
               class="btn btn-outline-secondary btn-sm pull-right cursor"
               style="height: 35px;margin-left: 3px"
+              (click)="downloadXls()"
               title="Download Excel">
         <i class="fa fa-file-excel-o"></i>
         <span *ngIf="excelHovered"> Excel</span>

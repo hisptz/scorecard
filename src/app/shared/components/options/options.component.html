@@ -1,84 +1,84 @@
-<button  type="button" class="btn btn-outline-secondary pull-right cursor"  style="height: 35px;padding-top: 0px;padding-bottom: 0px" title="Customize scorecard" (click)="showOptions()">
+<button  type="button" class="btn btn-outline-secondary pull-right cursor" style="height: 35px;padding-top: 0px;padding-bottom: 0px" title="Customize scorecard" (click)="showOptions()">
   <i class="fa fa-cog"></i> Options
 </button>
-<div class="additional-options" [ngClass]="{'hiddenTree':showAdditionalOptions}" style="padding-top: 0px">
+<div class="additional-options" [ngClass]="{'hiddenTree':showAdditionalOptions}" style="padding-top: 0px; padding-bottom: 0px">
   <ul class="list-group btn-sec">
     <li class="list-group-item pointer">
       <div class="row">
-        <div class="col-sm-4 btn btn btn-outline-secondary" [ngClass]="{'current': options.show_legend_definition }" (click)="setOptionFromButton('show_legend_definition', 'boolean')">
-          <i class="fa fa-check text-success" *ngIf="options.show_legend_definition"></i>
+        <div [@selected] = "options.show_legend_definition?'active':'not'" class="col-sm-4 btn btn btn-outline-secondary" (click)="setOptionFromButton('show_legend_definition', 'boolean')">
+          <i class="fa fa-check-circle text-secondary" *ngIf="options.show_legend_definition"></i>
           Legend
         </div>
-        <div class="col-sm-3 btn btn btn-outline-secondary" [ngClass]="{'current': options.show_rank }" (click)="setOptionFromButton('show_rank', 'boolean')">
-          <i class="fa fa-check text-success" *ngIf="options.show_rank"></i>
-          Rank
+        <div class="col-sm-4 btn btn btn-outline-secondary" [@selected] = "options.show_rank?'active':'not'"  (click)="setOptionFromButton('show_rank', 'boolean')">
+          <i class="fa fa-check-circle text-secondary" *ngIf="options.show_rank"></i>
+          Item Number
         </div>
-        <div class="col-sm-5 btn btn-outline-secondary" [ngClass]="{'current': options.empty_rows }" (click)="setOptionFromButton('empty_rows', 'boolean')">
-          <i class="fa fa-check text-success" *ngIf="options.empty_rows"></i>
+        <div class="col-sm-4 btn btn-outline-secondary" [@selected] = "options.empty_rows?'active':'not'"  (click)="setOptionFromButton('empty_rows', 'boolean')">
+          <i class="fa fa-check-circle text-secondary" *ngIf="options.empty_rows"></i>
           Empty Rows
         </div>
       </div>
     </li>
     <li class="list-group-item pointer">
       <div class="row">
-        <div class="col-sm-6 btn btn-outline-secondary" [ngClass]="{'current': options.show_average_in_column }" (click)="setOptionFromButton('show_average_in_column', 'boolean')">
-          <i class="fa fa-check text-success" *ngIf="options.show_average_in_column"></i>
+        <div class="col-sm-6 btn btn-outline-secondary" [@selected] = "options.show_average_in_column?'active':'not'"  (click)="setOptionFromButton('show_average_in_column', 'boolean')">
+          <i class="fa fa-check-circle text-secondary" *ngIf="options.show_average_in_column"></i>
           Average Column
         </div>
-        <div class="col-sm-6 btn btn-outline-secondary" [ngClass]="{'current': options.show_average_in_row }" (click)="setOptionFromButton('show_average_in_row', 'boolean')">
-          <i class="fa fa-check text-success" *ngIf="options.show_average_in_row"></i>
+        <div class="col-sm-6 btn btn-outline-secondary" [@selected] = "options.show_average_in_row?'active':'not'"  (click)="setOptionFromButton('show_average_in_row', 'boolean')">
+          <i class="fa fa-check-circle text-secondary" *ngIf="options.show_average_in_row"></i>
           Average Row
         </div>
       </div>
     </li>
     <li class="list-group-item pointer">
       <div class="row">
-        <div class="col-sm-2 btn btn-outline-secondary" [ngClass]="{'current': options.average_selection == 'all' }" (click)="setOptionFromButton('average_selection', 'value', 'all')">
-          <i class="fa fa-check text-success" *ngIf="options.average_selection == 'all'"></i>
+        <div class="col-sm-2 btn btn-outline-secondary" [@selected]="options.average_selection == 'all'?'active':'not'" (click)="setOptionFromButton('average_selection', 'value', 'all')">
+          <i class="fa fa-check-circle text-secondary" *ngIf="options.average_selection == 'all'"></i>
           All
         </div>
-        <div class="col-sm-5 btn btn-outline-secondary" [ngClass]="{'current': options.average_selection == 'below' }" (click)="setOptionFromButton('average_selection', 'value', 'below')">
-          <i class="fa fa-check text-success" *ngIf="options.average_selection == 'below'"></i>
+        <div class="col-sm-5 btn btn-outline-secondary" [@selected]="options.average_selection == 'below'?'active':'not'" (click)="setOptionFromButton('average_selection', 'value', 'below')">
+          <i class="fa fa-check-circle text-secondary" *ngIf="options.average_selection == 'below'"></i>
           Below Average
         </div>
-        <div class="col-sm-5 btn btn-outline-secondary" [ngClass]="{'current': options.average_selection == 'above' }" (click)="setOptionFromButton('average_selection', 'value', 'above')">
-          <i class="fa fa-check text-success" *ngIf="options.average_selection == 'above'"></i>
+        <div class="col-sm-5 btn btn-outline-secondary" [@selected]="options.average_selection == 'above'?'active':'not'" (click)="setOptionFromButton('average_selection', 'value', 'above')">
+          <i class="fa fa-check-circle text-secondary" *ngIf="options.average_selection == 'above'"></i>
           Above Average
         </div>
       </div>
     </li>
     <li class="list-group-item" *ngIf="mode == 'view'">
       <div class="row">
-        <div class="col-sm-3 btn btn-outline-secondary" [ngClass]="{'current': options.shown_records == 'all' }" (click)="setOptionFromButton('shown_records', 'value', 'all')">
-          <i class="fa fa-check text-success" *ngIf="options.shown_records == 'all'"></i>
+        <div class="col-sm-3 btn btn-outline-secondary" [@selected]="options.shown_records == 'all'?'active':'not'" (click)="setOptionFromButton('shown_records', 'value', 'all')">
+          <i class="fa fa-check-circle text-secondary" *ngIf="options.shown_records == 'all'"></i>
           All
         </div>
-        <div class="col-sm-3 btn btn-outline-secondary" [ngClass]="{'current': options.shown_records == 3 }" (click)="setOptionFromButton('shown_records', 'value', 3)">
-          <i class="fa fa-check text-success" *ngIf="options.shown_records == 3"></i>
+        <div class="col-sm-3 btn btn-outline-secondary" [@selected]="options.shown_records == 3?'active':'not'" (click)="setOptionFromButton('shown_records', 'value', 3)">
+          <i class="fa fa-check-circle text-secondary" *ngIf="options.shown_records == 3"></i>
           Top Three
         </div>
-        <div class="col-sm-3 btn btn-outline-secondary" [ngClass]="{'current': options.shown_records == 5 }" (click)="setOptionFromButton('shown_records', 'value', 5)">
-          <i class="fa fa-check text-success" *ngIf="options.shown_records == 5"></i>
+        <div class="col-sm-3 btn btn-outline-secondary" [@selected]="options.shown_records == 5?'active':'not'" (click)="setOptionFromButton('shown_records', 'value', 5)">
+          <i class="fa fa-check-circle text-secondary" *ngIf="options.shown_records == 5"></i>
           Top Five
         </div>
-        <div class="col-sm-3 btn btn-outline-secondary" [ngClass]="{'current': options.shown_records == 10 }" (click)="setOptionFromButton('shown_records', 'value', 10)">
-          <i class="fa fa-check text-success" *ngIf="options.shown_records == 10"></i>
+        <div class="col-sm-3 btn btn-outline-secondary" [@selected]="options.shown_records == 10?'active':'not'" (click)="setOptionFromButton('shown_records', 'value', 10)">
+          <i class="fa fa-check-circle text-secondary" *ngIf="options.shown_records == 10"></i>
           Top Ten
         </div>
       </div>
     </li>
     <li class="list-group-item" *ngIf="mode !== 'view'">
       <div class="row">
-        <div class="col-sm-3 btn btn-outline-secondary cursor" [ngClass]="{'current': options.show_score }" (click)="setOptionFromButton('show_score', 'boolean')">
-          <i class="fa fa-check text-success" *ngIf="options.show_score"></i>
+        <div class="col-sm-3 btn btn-outline-secondary cursor" [@selected]="options.show_score?'active':'not'" (click)="setOptionFromButton('show_score', 'boolean')">
+          <i class="fa fa-check-circle text-secondary" *ngIf="options.show_score"></i>
           Score
         </div>
-        <div class="col-sm-3 btn btn-outline-secondary cursor" [ngClass]="{'current': options.show_arrows_definition }" (click)="setOptionFromButton('show_arrows_definition', 'boolean')">
-          <i class="fa fa-check text-success" *ngIf="options.show_arrows_definition"></i>
+        <div class="col-sm-3 btn btn-outline-secondary cursor" [@selected]="options.show_arrows_definition?'active':'not'" (click)="setOptionFromButton('show_arrows_definition', 'boolean')">
+          <i class="fa fa-check-circle text-secondary" *ngIf="options.show_arrows_definition"></i>
           Arrows
         </div>
-        <div class="col-sm-6 btn btn-outline-secondary cursor" [ngClass]="{'current': options.show_data_in_column }" (click)="setOptionFromButton('show_data_in_column', 'boolean')">
-          <i class="fa fa-check text-success" *ngIf="options.show_data_in_column"></i>
+        <div class="col-sm-6 btn btn-outline-secondary cursor" [@selected]="options.show_data_in_column?'active':'not'" (click)="setOptionFromButton('show_data_in_column', 'boolean')">
+          <i class="fa fa-check-circle text-secondary" *ngIf="options.show_data_in_column"></i>
           show data in rows
         </div>
       </div>

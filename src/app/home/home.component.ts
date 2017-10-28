@@ -70,6 +70,9 @@ export class HomeComponent implements OnInit, AfterViewInit {
     currentPage: 1
   };
 
+  viewTitle = 'List View';
+  viewStle = 'Card';
+
   hoverState: string[] = [];
   constructor(
     private store: Store<ApplicationState>,
@@ -156,6 +159,20 @@ export class HomeComponent implements OnInit, AfterViewInit {
   mouseLeave(scorecard) {
     scorecard.showDetail = false;
     scorecard.hoverState = 'notHovered';
+  }
+
+  changeView() {
+    if (this.viewStle === 'List') {
+      this.viewStle = 'Card';
+      this.viewTitle = 'Card View';
+    } else if (this.viewStle === 'Card') {
+      this.viewStle = 'Thumbnail';
+      this.viewTitle = 'Thumbnail View';
+    }else if (this.viewStle === 'Thumbnail') {
+      this.viewStle = 'List';
+      this.viewTitle = 'List View';
+    }
+    console.log(this.viewStle)
   }
 
 }

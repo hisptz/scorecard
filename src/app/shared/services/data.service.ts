@@ -8,6 +8,7 @@ import {Constants} from './costants';
 export class DataService {
 
   user: any = null;
+  user_groups: any = null;
   constructor(private http: Http,
               private constant: Constants) { }
 
@@ -80,9 +81,24 @@ export class DataService {
 
   // Get current user information
   getUserGroupInformation (): Observable<any> {
-    return this.http.get('../../../api/userGroups.json?fields=id,name&paging=false')
-      .map((response: Response) => response.json())
-      .catch( this.handleError );
+    return Observable.create( (observ) => {
+      if ( this.user_groups === null) {
+        this.http.get('../../../api/userGroups.json?fields=id,name&paging=false')
+          .map((response: Response) => response.json())
+          .catch( this.handleError ).subscribe(
+          (data) => {
+            this.user_groups = data;
+            observ.next(data);
+            observ.complete();
+          }, error => {
+            observ.error();
+          }
+        );
+      }else {
+        observ.next(this.user);
+        observ.complete();
+      }
+    });
   }
 
 

@@ -11,6 +11,7 @@ import {VisualizerService} from '../../shared/services/visualizer.service';
 import * as _ from 'lodash';
 import {animate, state, style, transition, trigger} from '@angular/animations';
 import {ScoreCard} from '../../shared/models/scorecard';
+import {ContextMenuComponent, ContextMenuService} from 'ngx-contextmenu';
 
 @Component({
   selector: 'app-scorecard',
@@ -79,6 +80,8 @@ export class ScorecardComponent implements OnInit, OnDestroy {
   sub_model: any;
   periodListFromAnalyicts: any;
 
+  @ViewChild(ContextMenuComponent)
+  public contextMenu: ContextMenuComponent;
 
   constructor(
     private dataService: DataService,
@@ -86,7 +89,8 @@ export class ScorecardComponent implements OnInit, OnDestroy {
     private scorecardService: ScorecardService,
     private functionService: FunctionService,
     private visualizerService: VisualizerService,
-    private httpService: HttpClientService
+    private httpService: HttpClientService,
+    private contextMenuService: ContextMenuService
   ) {}
 
   ngOnInit() {
@@ -362,14 +366,34 @@ export class ScorecardComponent implements OnInit, OnDestroy {
 
   // A function used to decouple indicator list and prepare them for a display
   getItemsFromGroups() {
-    let indicators_list = [];
-    _.each(this.scorecard.data.data_settings.indicator_holder_groups, (group: any) => {
-      indicators_list = [...indicators_list, ..._.map(group.indicator_holder_ids, (holder_id) => {
-        return _.find(_.filter(this.scorecard.data.data_settings.indicator_holders,
-          (holder: any) => _.difference(_.map(holder.indicators, (indicator: any) => indicator.id), this.hidenColums).length !== 0)
-          , {'holder_id': holder_id});
-      })];
-    });
+    // let indicators_list = [];
+    // _.each(this.scorecard.data.data_settings.indicator_holder_groups, (group: any) => {
+    //   indicators_list = [...indicators_list, ..._.map(group.indicator_holder_ids, (holder_id) => {
+    //     return _.find(_.filter(this.scorecard.data.data_settings.indicator_holders,
+    //       (holder: any) => _.difference(_.map(holder.indicators, (indicator: any) => indicator.id), this.hidenColums).length !== 0)
+    //       , {'holder_id': holder_id});
+    //   })];
+    // });
+    // return indicators_list;
+    const indicators_list = [];
+    for (const data of this.scorecard.data.data_settings.indicator_holder_groups) {
+      for (const holders_list of data.indicator_holder_ids) {
+        for (const holder of this.scorecard.data.data_settings.indicator_holders) {
+          if (holder.holder_id === holders_list) {
+            // check if indicators in a card are hidden so don show them
+            let hide_this: boolean = true;
+            for (const indicator of holder.indicators) {
+              if (this.hidenColums.indexOf(indicator.id) === -1) {
+                hide_this = false;
+              }
+            }
+            if (!hide_this) {
+              indicators_list.push(holder);
+            }
+          }
+        }
+      }
+    }
     return indicators_list;
   }
 
@@ -939,6 +963,27 @@ export class ScorecardComponent implements OnInit, OnDestroy {
     }
 
   }
+
+  // context menu options
+  public onContextMenu($event: MouseEvent, item: any): void {
+    this.contextMenuService.show.next({
+      // Optional - if unspecified, all context menu components will open
+      contextMenu: this.contextMenu,
+      event: $event,
+      'item': item,
+    });
+  }
+
+  hideClicked( item , type = null) {
+    if (type) {
+      this.hidenColums = [];
+    }else {
+      if (this.getItemsFromGroups().length === 1) { }else {
+        this.hidenColums.push(..._.map(item.indicators, (indicator: any) => indicator.id));
+      }
+    }
+  }
+
 
 
   // Use this for all clean ups

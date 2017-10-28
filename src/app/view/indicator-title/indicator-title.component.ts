@@ -1,4 +1,5 @@
-import {Component, Input, OnInit} from '@angular/core';
+import {Component, EventEmitter, Input, OnInit, Output, ViewChild} from '@angular/core';
+import {ContextMenuComponent, ContextMenuService} from 'ngx-contextmenu';
 
 @Component({
   selector: 'app-indicator-title',
@@ -15,10 +16,16 @@ export class IndicatorTitleComponent implements OnInit {
   @Input() current_sorting: boolean;
   @Input() sorting_column: string;
   @Input() old_proccessed_percent: number;
+
+  // Event emmiter to use once the context menu is clicked
+  @Output() sortItem = new EventEmitter<any>();
+  @Output() hideItem = new EventEmitter<any>();
+
   constructor() { }
 
   ngOnInit() {
   }
+
 
 
 }

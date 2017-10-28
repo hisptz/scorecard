@@ -148,7 +148,6 @@ export class CreateComponent implements OnInit, AfterViewInit, OnDestroy {
               private programService: ProgramIndicatorsService,
               private eventService: EventDataService,
               private dataService: DataService,
-              private orgunitService: OrgUnitService,
               private functionService: FunctionService,
               private _location: Location,
               private store: Store<ApplicationState>

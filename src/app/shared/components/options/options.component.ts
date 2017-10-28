@@ -1,9 +1,24 @@
 import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
+import {animate, state, style, transition, trigger} from '@angular/animations';
 
 @Component({
   selector: 'app-options',
   templateUrl: './options.component.html',
-  styleUrls: ['./options.component.css']
+  styleUrls: ['./options.component.css'],
+  animations: [
+    trigger('selected', [
+      state('not' , style({
+        'transform': 'scale(1, 1)'
+      })),
+      state('active', style({
+        'background-color': 'rgba(158, 166, 174, 0.43)',
+        '-webkit-box-shadow': '0px 6px 10px rgba(0, 0, 0, .175)',
+        'box-shadow': '0px 6px 10px rgba(0, 0, 0, .175)'
+      })),
+      transition('active <=> not', animate('500ms'))
+    ])
+
+  ]
 })
 export class OptionsComponent implements OnInit {
 

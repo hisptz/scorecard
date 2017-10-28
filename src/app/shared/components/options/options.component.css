@@ -18,7 +18,7 @@
   border-radius: 4px;
   -webkit-box-shadow: 0 6px 12px rgba(0, 0, 0, .175);
   box-shadow: 0 6px 12px rgba(0, 0, 0, .175);
-  min-width: 420px;
+  min-width: 350px;
   margin-right: 13px;
   max-height: 400px;
   overflow: auto;
@@ -46,10 +46,13 @@
   color: #868e96;
   border-color: rgba(158, 166, 174, 0.23);
   border-radius: 0px;
+  font-size: 12px;
 }
 
 .current {
   background-color: rgba(158, 166, 174, 0.43);
+  -webkit-box-shadow: 0 3px 6px rgba(0, 0, 0, .175);
+  box-shadow: 0 3px 6px rgba(0, 0, 0, .175);
 }
 
 .list-group-item {
