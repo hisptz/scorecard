@@ -369,6 +369,9 @@
                   [ngClass]="{'already_selected': indicatorExist(scorecard.data.data_settings.indicator_holders, item)}"
                   (click)="load_item(item)"
                   dnd-draggable [dragEnabled]="true" [dragData]="item"
+                  [contextMenu]="contextMenu"
+                  [contextMenuSubject]="item"
+                  (contextmenu)="onContextMenu($event, item)"
                 >
                   <span class="fa fa-check-circle-o text-success" *ngIf="indicatorExist(scorecard.data.data_settings.indicator_holders, item)"></span> {{ item.name }}
                 </li>
@@ -380,6 +383,25 @@
 
       </div>
     </div>
+
+    <!--right click option for indicator selection-->
+    <context-menu>
+      <ng-template contextMenuItem (execute)="load_item($event.item)" let-item>
+        <span *ngIf="!indicatorExist(scorecard.data.data_settings.indicator_holders, item)">
+          <i class="fa fa-plus"></i> Add
+        </span>
+      </ng-template>
+      <ng-template contextMenuItem (execute)="load_item($event.item)" let-item>
+        <span *ngIf="indicatorExist(scorecard.data.data_settings.indicator_holders, item)">
+          <i class="fa fa-trash"></i> Remove
+        </span>
+      </ng-template>
+      <ng-template contextMenuItem (execute)="load_item($event.item, true)" let-item *ngIf="getItemsFromGroups().length != 0">
+        <span  *ngIf="!indicatorExist(scorecard.data.data_settings.indicator_holders, item)">
+          <i class="fa fa-chain"></i> Pair With Current
+        </span>
+      </ng-template>
+    </context-menu>
 
     <!--item details-->
     <div class="col-sm-5 no-left-padding1 singleItem" style="padding-right: 0px">

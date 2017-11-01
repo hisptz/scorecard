@@ -20,6 +20,7 @@ import {Store} from '@ngrx/store';
 import {ApplicationState} from '../store/application.state';
 import * as selectors from '../store/selectors';
 import {UpdateScorecardAction} from '../store/actions/store.data.action';
+import {ContextMenuComponent, ContextMenuService} from 'ngx-contextmenu';
 
 
 @Component({
@@ -105,6 +106,9 @@ export class CreateComponent implements OnInit, AfterViewInit, OnDestroy {
   @ViewChild('orgtree')
   orgtree: TreeComponent;
 
+  @ViewChild(ContextMenuComponent)
+  public contextMenu: ContextMenuComponent;
+
   @ViewChild('pertree')
   pertree: TreeComponent;
   selected_periods: any = [];
@@ -150,6 +154,7 @@ export class CreateComponent implements OnInit, AfterViewInit, OnDestroy {
               private dataService: DataService,
               private functionService: FunctionService,
               private _location: Location,
+              private contextMenuService: ContextMenuService,
               private store: Store<ApplicationState>
   ) {
     this.indicatorGroups = [];
@@ -702,7 +707,7 @@ export class CreateComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   // load a single item for use in a score card
-  load_item(item): void {
+  load_item(item, pair = false): void {
 
     if ( this.indicatorExist( this.scorecard.data.data_settings.indicator_holders, item )) {
       this.deleteIndicator(item);
@@ -720,7 +725,7 @@ export class CreateComponent implements OnInit, AfterViewInit, OnDestroy {
         indicator.additional_label_values[label] = '';
       }
       // this.current_indicator_holder.holder_id = this.current_group_id;
-      if (this.current_indicator_holder.indicators.length < 2) {
+      if (this.current_indicator_holder.indicators.length < 2 && pair) {
         this.current_indicator_holder.indicators.push( indicator );
       }else {
         this.current_group_id = this.getStartingIndicatorId() + 1;
@@ -1027,7 +1032,7 @@ export class CreateComponent implements OnInit, AfterViewInit, OnDestroy {
     let check = false;
     for ( const holder of holders ) {
       for ( const indicatorValue of holder.indicators ) {
-        if (indicatorValue.id === indicator.id) {
+        if (indicator && indicatorValue.id === indicator.id ) {
           check = true;
         }
       }
@@ -1707,6 +1712,16 @@ export class CreateComponent implements OnInit, AfterViewInit, OnDestroy {
     return colspan;
   }
 
+
+  // context menu options
+  public onContextMenu($event: MouseEvent, item: any): void {
+    this.contextMenuService.show.next({
+      // Optional - if unspecified, all context menu components will open
+      contextMenu: this.contextMenu,
+      event: $event,
+      'item': item,
+    });
+  }
 
   ngOnDestroy() {
     // tinymce.remove(this.editor);

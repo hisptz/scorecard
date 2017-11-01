@@ -8,12 +8,14 @@ import {animate, state, style, transition, trigger} from '@angular/animations';
   animations: [
     trigger('selected', [
       state('not' , style({
-        'transform': 'scale(1, 1)'
+        'transform': 'scale(1, 1)',
+        'border': '0px'
       })),
       state('active', style({
-        'background-color': 'rgba(158, 166, 174, 0.43)',
-        '-webkit-box-shadow': '0px 6px 10px rgba(0, 0, 0, .175)',
-        'box-shadow': '0px 6px 10px rgba(0, 0, 0, .175)'
+        'background-color': 'rgba(158, 166, 174, 0.0)',
+        '-webkit-box-shadow': '0px 1px 1px rgba(0, 0, 0, .075)',
+        'box-shadow': '0px 1px 1px rgba(0, 0, 0, .075)',
+        'border': '0px'
       })),
       transition('active <=> not', animate('500ms'))
     ])
