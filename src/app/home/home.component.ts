@@ -161,18 +161,8 @@ export class HomeComponent implements OnInit, AfterViewInit {
     scorecard.hoverState = 'notHovered';
   }
 
-  changeView() {
-    if (this.viewStle === 'List') {
-      this.viewStle = 'Card';
-      this.viewTitle = 'Card View';
-    } else if (this.viewStle === 'Card') {
-      this.viewStle = 'Thumbnail';
-      this.viewTitle = 'Thumbnail View';
-    }else if (this.viewStle === 'Thumbnail') {
-      this.viewStle = 'List';
-      this.viewTitle = 'List View';
-    }
-    console.log(this.viewStle)
+  changeView(type) {
+    this.viewStle = type;
   }
 
 }

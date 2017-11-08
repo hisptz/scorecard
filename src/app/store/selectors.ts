@@ -8,6 +8,8 @@ import * as _ from 'lodash';
  */
 export const getStoreData = (state: ApplicationState) => state.storeData;
 
+export const getIndicatorPreviewData = (state: ApplicationState) => state.indicatorPreview;
+
 export const getScorecards = createSelector(getStoreData, (datastate) => {
   return datastate.scorecards;
 });
@@ -33,7 +35,53 @@ export const getSelectedOrgunit = createSelector(getStoreData, (datastate) => {
 });
 
 export const getFunctions = createSelector(getStoreData, (datastate) => {
-  return datastate.selectedOrgunit;
+  return datastate.functions;
 });
+
+export const getPreviewStatus = createSelector(getStoreData, (datastate) => {
+  return datastate.showPreview;
+});
+
+// Indicator preview selectors
+export const getPreviewOuModel = createSelector(getIndicatorPreviewData, ( previewData ) => {
+  return previewData.ouModel;
+});
+
+export const getPreviewSelectedPeriod = createSelector(getIndicatorPreviewData, ( previewData ) => {
+  return previewData.selectedPe;
+});
+
+export const getPreviewSelectedOu = createSelector(getIndicatorPreviewData, ( previewData ) => {
+  return previewData.selectedOu;
+});
+
+export const getPreviewPeriodType = createSelector(getIndicatorPreviewData, ( previewData ) => {
+  return previewData.periodType;
+});
+
+export const getPreviewYear = createSelector(getIndicatorPreviewData, ( previewData ) => {
+  return previewData.year;
+});
+
+export const getPreviewAnalytics = createSelector(getIndicatorPreviewData, ( previewData ) => {
+  return previewData.analytics;
+});
+
+export const getPreviewChart = createSelector(getIndicatorPreviewData, ( previewData ) => {
+  return previewData.chartObject;
+});
+
+export const getPreviewMap = createSelector(getIndicatorPreviewData, ( previewData ) => {
+  return previewData.mapObject;
+});
+
+export const getPreviewTable = createSelector(getIndicatorPreviewData, ( previewData ) => {
+  return previewData.tableObject;
+});
+
+export const getPreviewLoading = createSelector(getIndicatorPreviewData, ( previewData ) => {
+  return previewData.loading;
+});
+
 
 

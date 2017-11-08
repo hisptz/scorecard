@@ -50,7 +50,7 @@ export class ScorecardService {
   getAllScoreCards(userInfo) {
     if ( this._scorecards.length !== 0 ) {
       this._scorecards.forEach( ( scorecard ) => {
-        this.store.dispatch(new AddScorecardAction( scorecard ));
+        // this.store.dispatch(new AddScorecardAction( scorecard ));
       });
     }else {
       this.loadAll().subscribe(

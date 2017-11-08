@@ -52,4 +52,10 @@ a:hover{
   display: none;
 }
 
+.current{
+  background-color: rgba(0,0,0,0.2);
+}
 
+.outline-secondary:focus {
+  box-shadow: 0 0 0 0.0rem rgba(134,142,150,.5);
+}

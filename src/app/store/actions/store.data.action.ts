@@ -15,6 +15,7 @@ export const DELETE_SCORE_CARD_ACTION = 'DELETE_SCORE_CARD_ACTION';
 export const UPDATE_LOADING_ACTION = 'UPDATE_LOADING_ACTION';
 export const UPDATE_LOADING_PERCENT_ACTION = 'UPDATE_LOADING_PERCENT_ACTION';
 export const UPDATE_ERROR_LOADING_ACTION = 'UPDATE_ERROR_LOADING_ACTION';
+export const SET_PREVIEW_STATUS = 'SET_PREVIEW_STATUS';
 
 export class UpdateLoadingAction implements Action {
   type = UPDATE_LOADING_ACTION;
@@ -73,4 +74,9 @@ export class SetFunctionsAction implements Action {
 export class SetErrorMessageAction implements Action {
   type = SET_ERROR_MESSAGE;
   constructor ( public payload: any ) {}
+}
+
+export class SetPreviewStatusAction implements Action {
+  type = SET_PREVIEW_STATUS;
+  constructor ( public payload: boolean ) {}
 }

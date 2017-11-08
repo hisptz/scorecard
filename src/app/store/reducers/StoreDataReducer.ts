@@ -1,6 +1,6 @@
 import { StoreData } from '../store-data';
 import {
-  ADD_SCORE_CARD, ADD_SCORE_CARDS, DELETE_SCORE_CARD_ACTION, SET_FUNCTIONS, SET_SELECTED_ORGUNIT, SET_SELECTED_PERIOD,
+  ADD_SCORE_CARD, ADD_SCORE_CARDS, DELETE_SCORE_CARD_ACTION, SET_FUNCTIONS, SET_PREVIEW_STATUS, SET_SELECTED_ORGUNIT, SET_SELECTED_PERIOD,
   SET_SELECTED_SCORE_CARD_ACTION,
   UPDATE_ERROR_LOADING_ACTION,
   UPDATE_LOADING_ACTION,
@@ -9,7 +9,6 @@ import {
 } from '../actions/store.data.action';
 
 import * as _ from 'lodash';
-import {_ParseAST} from '@angular/compiler';
 
 
 export function storeData(state: StoreData, action: any): StoreData {
@@ -89,6 +88,10 @@ export function storeData(state: StoreData, action: any): StoreData {
       // set error status if something went wrong while loading scorecards
       case SET_FUNCTIONS:
         return <StoreData>{...state, functions: action.payload};
+
+      // set status of the indicator preview window
+      case SET_PREVIEW_STATUS:
+        return <StoreData>{...state, showPreview: action.payload};
 
       default:
         return state;

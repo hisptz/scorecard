@@ -53,7 +53,8 @@ import {VisualizerService} from './shared/services/visualizer.service';
       initialState: getInitialState
     }),
     EffectsModule.forRoot([DataStoreEffect]),
-    StoreRouterConnectingModule
+    StoreRouterConnectingModule,
+    !environment.production ? StoreDevtoolsModule.instrument() : []
   ],
   providers: [
     StoreService,

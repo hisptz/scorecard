@@ -6,7 +6,7 @@ import {ScorecardService} from '../shared/services/scorecard.service';
 import {ActivatedRoute} from '@angular/router';
 import {Subscription} from 'rxjs/Subscription';
 import {ScorecardComponent} from './scorecard/scorecard.component';
-import {animate, style, transition, trigger} from '@angular/animations';
+import {animate, state, style, transition, trigger} from '@angular/animations';
 import {DataService} from '../shared/services/data.service';
 import {ApplicationState} from '../store/application.state';
 import {Store} from '@ngrx/store';
@@ -22,6 +22,30 @@ import {PeriodFilterComponent} from '../shared/components/period-filter/period-f
   templateUrl: './view.component.html',
   styleUrls: ['./view.component.css'],
   animations: [
+    trigger('visibilityChanged', [
+      state('notHovered' , style({
+        'transform': 'scale(0, 0)',
+        'position': 'absolute',
+        'top': '100px',
+        'box-shadow': '0 0 0px rgba(0,0,0,0.0)',
+        'background-color': 'rgba(0,0,0,0.0)',
+        'border': '0px solid #ddd'
+      })),
+      state('hoovered', style({
+        'min-height': '500px',
+        'width': '90%',
+        'left': '5%',
+        'position': 'absolute',
+        'top': '100px',
+        'bottom': '50px',
+        'z-index': '100',
+        '-webkit-box-shadow': '0 0 10px rgba(0,0,0,0.2)',
+        'box-shadow': '0 0 10px rgba(0,0,0,0.2)',
+        'background-color': 'rgba(255,255,255,1)',
+        'border': '1px solid #ddd'
+      })),
+      transition('notHovered <=> hoovered', animate('600ms'))
+    ]),
     trigger('fadeInOut', [
       transition(':enter', [   // :enter is alias to 'void => *'
         style({opacity: 0}),
@@ -50,15 +74,19 @@ export class ViewComponent implements OnInit, AfterViewInit, OnDestroy {
 
   selectedOrganisationUnits$: Observable<any>;
   selectedPeriod$: Observable<any>;
+  showPreview$: Observable<any>;
   shown_records: number = 0;
   average_selection: string = 'all';
   show_rank: boolean = false;
-  functions$: Observable<any>;
+  functions$: Observable<any[]>;
 
   printHovered = false;
   excelHovered = false;
   refreshHovered = false;
   editHovered = false;
+
+
+  hoverState = 'notHovered';
 
   constructor(private scorecardService: ScorecardService,
               private dataService: DataService,
@@ -68,6 +96,7 @@ export class ViewComponent implements OnInit, AfterViewInit, OnDestroy {
   ) {
     this.selectedOrganisationUnits$ = store.select( selectors.getSelectedOrgunit );
     this.selectedPeriod$ = this.store.select( selectors.getSelectedPeriod );
+    this.showPreview$ = this.store.select( selectors.getPreviewStatus );
     this.functions$ = this.store.select( selectors.getFunctions );
     this.subscription = this.activatedRouter.params.subscribe(
       (params: any) => {
@@ -234,7 +263,7 @@ export class ViewComponent implements OnInit, AfterViewInit, OnDestroy {
       this.store.select(selectors.getSelectedPeriod).first((period) => period).subscribe((period) => {
         this.store.select(selectors.getSelectedOrgunit).first((orgunit) => orgunit).subscribe((orgunit) => {
             if (period.hasOwnProperty('items') && orgunit.hasOwnProperty('items') ) {
-                this.store.select(selectors.getFunctions).first(( functions ) => functions).subscribe(( functions ) => {
+                this.store.select(selectors.getFunctions).first(( functions: any ) => functions).subscribe(( functions ) => {
                   if ( functions.length !== 0 && this.childScoreCard ) {
                     this.childScoreCard.initiateScorecard(period, orgunit);
                     this.firstLoad = false;
@@ -257,38 +286,8 @@ export class ViewComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   // load a preview function
-  // loadPreview($event) {
-  //   this.selected_indicator = [];
-  //   // prepare indicators
-  //   if ($event.period === null) {
-  //     this.default_selected_periods = this.selected_periods;
-  //   }else {
-  //     this.default_selected_periods = [$event.period];
-  //   }
-  //   if ($event.holderGroup === null) {
-  //     this.selected_indicator = [$event.indicator];
-  //   }else {
-  //     for ( const holderid of $event.holderGroup.indicator_holder_ids ) {
-  //       for ( const holder of this.scorecard.data.data_settings.indicator_holders ) {
-  //         if ( holder.holder_id === holderid ) {
-  //           this.selected_indicator.push(holder);
-  //         }
-  //       }
-  //     }
-  //   }
-  //
-  //   // prepare organisation units
-  //   if ($event.ou === null) {
-  //     this.orgunit_for_model = this.scorecard.data.orgunit_settings;
-  //   }else {
-  //     const node = this.orgtree.treeModel.getNodeById($event.ou);
-  //     this.orgunit_for_model = node.data;
-  //   }
-  //   this.show_details = true;
-  // }
-
-  removeModel() {
-
+  loadPreview($event) {
+    this.hoverState = 'hoovered';
   }
 
   private findOrgunitIndicatorValue(orgunit_id: string, indicator_id: string) {
@@ -301,6 +300,10 @@ export class ViewComponent implements OnInit, AfterViewInit, OnDestroy {
       }
     }
     return val;
+  }
+
+  closeModel() {
+    this.hoverState = 'notHovered';
   }
 
   downloadXls() {

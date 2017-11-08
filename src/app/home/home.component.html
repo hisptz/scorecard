@@ -13,12 +13,29 @@
       <button
         style="height: 34px;margin-right: 3px"
         class="btn btn-outline-secondary btn-sm float-md-right cursor"
-        title="{{viewTitle}}"
-        (click)="changeView()"
+        [ngClass]="{'current': viewStle == 'Card'}"
+        title="Card View"
+        (click)="changeView('Card')"
       >
-        <i class="fa fa-list" *ngIf="viewStle == 'Thumbnail'"></i>
-        <i class="fa fa-th-large" *ngIf="viewStle == 'List'"></i>
-        <i class="fa fa-th" *ngIf="viewStle == 'Card'"></i>
+        <i class="fa fa-th-large"></i>
+      </button>
+      <button
+        style="height: 34px"
+        class="btn btn-outline-secondary btn-sm float-md-right cursor"
+        [ngClass]="{'current': viewStle == 'Thumbnail'}"
+        title="Thumbnail View"
+        (click)="changeView('Thumbnail')"
+      >
+        <i class="fa fa-th"></i>
+      </button>
+      <button
+        style="height: 34px"
+        class="btn btn-outline-secondary btn-sm float-md-right cursor"
+        [ngClass]="{'current': viewStle == 'List'}"
+        title="List View"
+        (click)="changeView('List')"
+      >
+        <i class="fa fa-list"></i>
       </button>
     </div>
   </div>

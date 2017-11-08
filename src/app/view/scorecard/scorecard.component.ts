@@ -12,6 +12,8 @@ import * as _ from 'lodash';
 import {animate, state, style, transition, trigger} from '@angular/animations';
 import {ScoreCard} from '../../shared/models/scorecard';
 import {ContextMenuComponent, ContextMenuService} from 'ngx-contextmenu';
+import {Store} from '@ngrx/store';
+import {ApplicationState} from '../../store/application.state';
 
 @Component({
   selector: 'app-scorecard',
@@ -81,13 +83,17 @@ export class ScorecardComponent implements OnInit, OnDestroy {
   periodListFromAnalyicts: any;
 
   @ViewChild(ContextMenuComponent)
-  public contextMenu: ContextMenuComponent;
+  public indicatorMenu: ContextMenuComponent;
+
+  @ViewChild(ContextMenuComponent)
+  public itemMenu: ContextMenuComponent;
 
   constructor(
     private dataService: DataService,
     private filterService: FilterService,
     private scorecardService: ScorecardService,
     private functionService: FunctionService,
+    private store: Store<ApplicationState>,
     private visualizerService: VisualizerService,
     private httpService: HttpClientService,
     private contextMenuService: ContextMenuService
@@ -101,6 +107,7 @@ export class ScorecardComponent implements OnInit, OnDestroy {
 
   // load scorecard after changes has occur
   loadScoreCard() {
+    console.log('functions', this.functions);
     this.showSubScorecard = [];
     this.periods_list = [];
     this.indicator_done_loading = [];
@@ -161,7 +168,7 @@ export class ScorecardComponent implements OnInit, OnDestroy {
                   if (use_function) {
                     const parameters = {
                       dx: indicator.id,
-                      ou: orgUnits.values,
+                      ou: orgUnits.value,
                       pe: current_period.id,
                       rule: this.getFunctionRule(use_function['rules'], indicator.id),
                       success: (data) => { // This will run on successfull function return, which will save the result to the data store for analytics
@@ -968,7 +975,17 @@ export class ScorecardComponent implements OnInit, OnDestroy {
   public onContextMenu($event: MouseEvent, item: any): void {
     this.contextMenuService.show.next({
       // Optional - if unspecified, all context menu components will open
-      contextMenu: this.contextMenu,
+      contextMenu: this.indicatorMenu,
+      event: $event,
+      'item': item,
+    });
+  }
+
+ // context menu options
+  public onItemContextMenu($event: MouseEvent, item: any): void {
+    this.contextMenuService.show.next({
+      // Optional - if unspecified, all context menu components will open
+      contextMenu: this.itemMenu,
       event: $event,
       'item': item,
     });

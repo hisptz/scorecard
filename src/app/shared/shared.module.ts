@@ -17,6 +17,7 @@ import { SharingComponent } from './components/sharing/sharing.component';
 import { OptionsComponent } from './components/options/options.component';
 import {FilterIndicatorByNamePipe} from './pipes/filter-indicator-by-name.pipe';
 import {ContextMenuModule} from 'ngx-contextmenu';
+import {LayoutComponent} from './components/layout/layout.component';
 
 @NgModule({
   imports: [
@@ -42,7 +43,8 @@ import {ContextMenuModule} from 'ngx-contextmenu';
     MultiselectComponent,
     SharingComponent,
     OptionsComponent,
-    FilterIndicatorByNamePipe
+    FilterIndicatorByNamePipe,
+    LayoutComponent
   ],
   exports: [
     TreeModule,
@@ -62,7 +64,8 @@ import {ContextMenuModule} from 'ngx-contextmenu';
     SharingComponent,
     OptionsComponent,
     FilterIndicatorByNamePipe,
-    ContextMenuModule
+    ContextMenuModule,
+    LayoutComponent
   ]
 })
 export class SharedModule { }

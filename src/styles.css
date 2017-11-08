@@ -3,7 +3,9 @@
   cursor: pointer;
 }
 
-
+.outline-secondary:focus {
+  box-shadow: 0 0 0 0.0rem rgba(134,142,150,.5);
+}
 
 @media print {
   #menu-container{

@@ -1,0 +1,17 @@
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-md-4">
+      <app-org-unit-filter [orgunit_model]="orgUnitModel" [showUpdate]="true"></app-org-unit-filter>
+    </div>
+    <div class="col-md-4">
+      <app-period-filter [showUpdate]="true" [selected_periods]="selectedPeriod?.items" [starting_year]="year"></app-period-filter>
+    </div>
+    <div class="col-md-4">
+      <!--<app-layout></app-layout>-->
+    </div>
+  </div>
+
+  <div class="row" *ngIf="loading" style="margin-top: 100px; margin-left: 30%">
+    <h5 class="text-center"><img src="balls-3.svg" style="height: 90px"/> Preparing data, please wait...</h5>
+  </div>
+</div>

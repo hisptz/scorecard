@@ -237,7 +237,7 @@
             (dblclick)="loadPreview(null,indicator,null,null)"
             [attr.colspan]="periods_list.length"
             dnd-droppable (onDropSuccess)="dragItemSuccessfull($event,'indicator',indicator)"
-            [contextMenu]="contextMenu"
+            [contextMenu]="indicatorMenu"
             [contextMenuSubject]="indicator"
             (contextmenu)="onContextMenu($event, indicator)"
         >
@@ -330,7 +330,11 @@
                 [indicator]="indicator"
                 [current_orgunit]="current_orgunit"
                 [indicator_list]="getVisibleIndicators(indicator)"
-                [scorecard]="scorecard" [period]="per.id">
+                [scorecard]="scorecard" [period]="per.id"
+                [contextMenu]="itemMenu"
+                [contextMenuSubject]="indicator"
+                (contextmenu)="onItemContextMenu($event, indicator)"
+              >
               </svg-item>
             </td>
           </ng-container>
@@ -409,7 +413,7 @@
     <h3>Getting the scorecard ready</h3>
   </div>
 </div>
-<context-menu>
+<context-menu #indicatorMenu>
   <ng-template contextMenuItem (execute)="loadPreview(null,$event.item,null,null)">
     <i class="fa fa-bar-chart-o" aria-hidden="true"></i> Analyse
   </ng-template>
@@ -424,6 +428,28 @@
   </ng-template>
   <ng-template  *ngIf="hidenColums.length !== 0" contextMenuItem (execute)="hideClicked($event.item, 'all')">
     <i class="fa fa-eye" style="margin-left:4px" aria-hidden="true"></i> Show All
+  </ng-template>
+</context-menu>
+
+<context-menu #itemMenu>
+  <ng-template contextMenuItem (execute)="loadPreview(null,$event.item,null,null)">
+    <i class="fa fa-bar-chart-o" aria-hidden="true"></i> Analyse
+  </ng-template>
+  <ng-template contextMenuItem divider="true"></ng-template>
+  <ng-template contextMenuItem (execute)="sortScoreCardFromColumn($event.item.indicators[0].id, true, orgunits, periods_list[0].id, false)">
+    <i class="fa fa-sort-amount-asc" aria-hidden="true"></i> Last 3 Month
+  </ng-template>
+  <ng-template contextMenuItem (execute)="sortScoreCardFromColumn($event.item.indicators[0].id, false, orgunits, periods_list[0].id, false)">
+    <i class="fa fa-sort-amount-desc" aria-hidden="true"></i> Last 6 Month
+  </ng-template>
+  <ng-template  contextMenuItem (execute)="hideClicked($event.item)">
+    <i class="fa fa-eye-slash" aria-hidden="true"></i> Last 12 Month
+  </ng-template>
+  <ng-template contextMenuItem (execute)="hideClicked($event.item, 'all')">
+    <i class="fa fa-eye" style="margin-left:4px" aria-hidden="true"></i> Last 4 Quarter
+  </ng-template>
+  <ng-template contextMenuItem (execute)="hideClicked($event.item, 'all')">
+    <i class="fa fa-eye" style="margin-left:4px" aria-hidden="true"></i> Last 5 Years
   </ng-template>
 </context-menu>
 

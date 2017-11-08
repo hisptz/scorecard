@@ -1,0 +1,46 @@
+.drop-target{
+  height:100px
+}
+.draggable{
+  border: 1px solid lightgrey;
+  padding: 3px;
+}
+
+.layout-btn {
+  display: block;
+  height: 29px;
+  padding-top: 3px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+.layout-btn:hover {
+  background-color: #ececec;
+}
+
+.dimension-drops{
+  height: 125px;
+  width: 150px;
+}
+
+
+.dnd-drag-enter {
+  opacity:0.7;
+  border: 1px dotted #204d74;
+}
+
+.dnd-drag-over {
+  border: 0px dotted #204d74;
+}
+
+.dnd-sortable-drag {
+  -moz-transform:scale(0.9);
+  -webkit-transform:scale(0.9);
+  transform:scale(0.9);
+  opacity:0.7;
+  border: 2px dashed #000;
+}
+
+.draggable img {
+  height: 14px;
+}
+
