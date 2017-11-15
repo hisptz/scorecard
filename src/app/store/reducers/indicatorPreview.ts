@@ -36,6 +36,9 @@ export function indicatorPreview(state: IndicatorPreview, action: any): Indicato
     case previewActions.SET_LOADING_ACTION:
       return <IndicatorPreview>{...state, loading: action.payload};
 
+    case previewActions.SHOW_MODEL:
+      return <IndicatorPreview>{...state, showModel: action.payload};
+
     default:
       return state;
   }

@@ -1,17 +1,131 @@
 <div class="container-fluid">
   <div class="row">
     <div class="col-md-4">
-      <app-org-unit-filter [orgunit_model]="orgUnitModel" [showUpdate]="true"></app-org-unit-filter>
+      <app-org-unit-filter
+        *ngIf="orgUnitModel"
+        [orgunit_model]="orgUnitModel"
+        [showUpdate]="true"
+        [pickChildren]="false"
+        (onOrgUnitChange)= "changeOrgUnit($event)"
+        (onOrgUnitUpdate)= "updateOrgUnit($event)"
+      >
+      </app-org-unit-filter>
     </div>
     <div class="col-md-4">
-      <app-period-filter [showUpdate]="true" [selected_periods]="selectedPeriod?.items" [starting_year]="year"></app-period-filter>
+      <app-period-filter
+        *ngIf="selectedPeriod"
+        [showUpdate]="true"
+        [selected_periods]="selectedPeriod"
+        [starting_year]="year"
+        (onPeriodUpdate) = "updatePeriod($event)"
+        (onPeriodChange) = "changePeriod($event)"
+      >
+      </app-period-filter>
     </div>
     <div class="col-md-4">
-      <!--<app-layout></app-layout>-->
+      <app-layout
+        [visualizationType]="layoutVisualizationType"
+        [layoutModel]="layoutModel"
+        (onLayoutUpdate)="updateLayout($event)"
+      ></app-layout>
     </div>
   </div>
 
-  <div class="row" *ngIf="loading" style="margin-top: 100px; margin-left: 30%">
-    <h5 class="text-center"><img src="balls-3.svg" style="height: 90px"/> Preparing data, please wait...</h5>
+  <div class="row">
+    <!--bootleneck analysis switching-->
+    <label
+      *ngIf="indicator.length == 1 && getIndicatorLength(indicator[0])"
+      style="cursor: pointer; margin-left: 10px">
+      <input
+        type="checkbox"
+        [(ngModel)]="showBottleneck"
+        (change)="switchBottleneck(indicator)">
+      Bottleneck Analysis
+    </label>
+    <!--chart labels switching-->
+    <label *ngIf="visualizer_config.type == 'chart'">
+      &nbsp;&nbsp;&nbsp;&nbsp;<input type="checkbox" [(ngModel)]="show_labels" (change)="updateType(visualizer_config.type)">
+      Chart Labels
+    </label>
+    <div class="card" style="width: 100%; position: absolute; bottom: 5px; top:80px">
+      <div class="card-body">
+        <div class="lead" *ngIf="loading">
+          <h3 class="lead text-center">{{prepareCardTitle(indicator)}}</h3>
+          <app-placeholder
+            [loadingMessage]="'Getting  data ...'"></app-placeholder>
+        </div>
+        <app-metadata-dictionary
+          [metadataidentifiers]="indicator.identifiers"
+          *ngIf="!indicator.loading && indicator.visualizerType == 'info' && !indicator.hasError"
+        ></app-metadata-dictionary>
+        <div *ngIf="!loading && visualizer_config.type == 'chart' && !error_occured"
+             [ng2-highcharts]="chartData"></div>
+        <div *ngIf="!loading && visualizer_config.type == 'table' && !error_occured">
+          <app-table-template [tableObject]="tableData"></app-table-template>
+        </div>
+        <!--<div *ngIf="!loading && visualizer_config.type == 'map' && !error_occured">-->
+          <!--<app-map-template *ngIf="indicator.mapObject" [mapObject]="indicator.mapObject"></app-map-template>-->
+          <!--<div class="lead" *ngIf="!indicator.mapObject">-->
+            <!--<h3 class="lead text-center">{{indicator.title}}</h3>-->
+            <!--<app-placeholder-->
+              <!--[loadingMessage]="'Preparing '+ selected_ou_name + ' ' + indicator.title + ' maps ...'"></app-placeholder>-->
+          <!--</div>-->
+        <!--</div>-->
+
+
+        <div class="options-block"
+             *ngIf="indicator.showOptions && indicator.visualizerType == 'chart' && !indicator.hasError">
+          <ul class="nav nav-stacked">
+            <li *ngFor="let chartType of chartTypes">
+              <a
+                (click)="updateChartType(chartType.type, indicator)"
+                title="{{chartType.description}}"
+                [ngClass]="{ 'chart-active': (indicator.chart == chartType.type) }"
+              >
+                <img [src]="chartType.icon" class="chart-option-icon" alt="">
+              </a>
+            </li>
+          </ul>
+        </div>
+
+        <!--error handling-->
+        <div class="lead text-warning" *ngIf="indicator.hasError">
+          <i class="fa fa-warning"></i> Sorry, something went wrong while fetching data! make sure you have internet
+          connection and try to reload the page
+        </div>
+      </div>
+
+      <div class="card-footer text-muted" style="margin-right: 5px">
+        <button class="btn btn-sm cursor"
+                [ngClass]="{ 'btn-outline-success': (indicator.visualizerType != 'table'),'btn-secondary':(indicator.visualizerType == 'table') }"
+                (click)="updateType('table', indicator)">
+          <i class="fa fa-table"></i> Table
+        </button>
+        <button class="btn btn-sm cursor"
+                [ngClass]="{ 'btn-outline-success': (indicator.visualizerType != 'chart'),'btn-secondary':(indicator.visualizerType == 'chart') }"
+                (click)="updateType('chart', indicator)">
+          <img [src]="'assets/img/'+indicator.chart+'.png'" class="chart-option-icon" alt="" style="margin: 0px">
+          Chart
+        </button>
+        <button class="btn btn-sm cursor"
+                [ngClass]="{ 'btn-outline-success': (indicator.visualizerType != 'map'),'btn-secondary':(indicator.visualizerType == 'map')}"
+                (click)="updateType('map', indicator)"
+                [disabled]="(indicator.visualizerType == 'map' && geoFeatures.length==0)"
+        >
+          <i class="fa fa-map"></i>
+          Map
+        </button>
+        <a class="btn btn-outline-success btn-sm cursor" (click)="getCSV(indicator)" >
+          <i class="fa fa-file-excel-o"></i> Excel
+        </a>
+        <a
+          class="btn btn-sm pull-right cursor"
+          (click)="updateType('info', indicator)"
+          [ngClass]="{ 'btn-outline-info': (indicator.visualizerType != 'info'),'btn-secondary':(indicator.visualizerType == 'info') }"
+        >
+          <i class="fa fa-info-circle" [ngClass]="{ 'text-white':(indicator.visualizerType == 'info') }"></i>
+        </a>
+      </div>
+    </div>
   </div>
 </div>

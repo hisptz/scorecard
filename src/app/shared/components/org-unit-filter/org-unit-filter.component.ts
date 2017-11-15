@@ -38,7 +38,8 @@ export class OrgUnitFilterComponent implements OnInit {
     placeholder: 'Select Organisation Unit'
   };
 
-  @Input() showUpdate: false;
+  @Input() showUpdate: boolean = false;
+  @Input() pickChildren: boolean = true;
 
   @Output() onOrgUnitUpdate: EventEmitter<any> = new EventEmitter<any>();
   @Output() onOrgUnitChange: EventEmitter<any> = new EventEmitter<any>();
@@ -313,22 +314,24 @@ export class OrgUnitFilterComponent implements OnInit {
 
     if (showUpdate) {
       this.onOrgUnitUpdate.emit({
+        orgunit_model: this.orgunit_model,
         starting_name: this.getProperPreOrgunitName(),
         arrayed_org_units: arrayed_org_units,
         items: this.orgunit_model.selected_orgunits,
         name: 'ou',
         orgtree: this.orgtree,
-        value: this.getOrgUnitsForAnalytics(this.orgunit_model, true)
+        value: this.getOrgUnitsForAnalytics(this.orgunit_model, this.pickChildren)
       });
       this.onOrgUnitModelUpdate.emit(this.orgunit_model);
     }else {
       this.onOrgUnitChange.emit({
+        orgunit_model: this.orgunit_model,
         starting_name: this.getProperPreOrgunitName(),
         arrayed_org_units: arrayed_org_units,
         items: this.orgunit_model.selected_orgunits,
         name: 'ou',
         orgtree: this.orgtree,
-        value: this.getOrgUnitsForAnalytics(this.orgunit_model, true)
+        value: this.getOrgUnitsForAnalytics(this.orgunit_model,  this.pickChildren)
       });
       this.onOrgUnitModelUpdate.emit(this.orgunit_model);
     }

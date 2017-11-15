@@ -53,7 +53,7 @@ export function storeData(state: StoreData, action: any): StoreData {
       // set one scorecard in store
       case DELETE_SCORE_CARD_ACTION: {
         const scorecards = [...state.scorecards];
-        scorecards.splice(_.findIndex(scorecards, {id: action.payload }));
+        scorecards.splice(_.findIndex(scorecards, {id: action.payload }), 1);
         return {
           ...state,
           scorecards: scorecards

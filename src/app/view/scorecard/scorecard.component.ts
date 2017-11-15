@@ -82,11 +82,8 @@ export class ScorecardComponent implements OnInit, OnDestroy {
   sub_model: any;
   periodListFromAnalyicts: any;
 
-  @ViewChild(ContextMenuComponent)
-  public indicatorMenu: ContextMenuComponent;
-
-  @ViewChild(ContextMenuComponent)
-  public itemMenu: ContextMenuComponent;
+  @ViewChild('indicatorMenu') public indicatorMenu: ContextMenuComponent;
+  @ViewChild('itemMenu') public itemMenu: ContextMenuComponent;
 
   constructor(
     private dataService: DataService,
@@ -513,9 +510,9 @@ export class ScorecardComponent implements OnInit, OnDestroy {
         }
       }
     } else {
-      let use_key = orgunit_id + '.' + period;
-      for (let holder of this.scorecard.data.data_settings.indicator_holders) {
-        for (let indicator of holder.indicators) {
+      const use_key = orgunit_id + '.' + period;
+      for (const holder of this.scorecard.data.data_settings.indicator_holders) {
+        for (const indicator of holder.indicators) {
           if (this.hidenColums.indexOf(indicator.id) === -1 && indicator.values[use_key] !== null) {
             counter++;
             sum = sum + parseFloat(indicator.values[use_key]);
@@ -691,14 +688,62 @@ export class ScorecardComponent implements OnInit, OnDestroy {
   }
 
   // load a preview function
-  loadPreview(holderGroup, indicator, ou, period) {
+  loadPreview(holderGroup, indicator, ou, period, periods = null) {
+    console.log(ou)
+    const selected_indicator = [];
+    if (holderGroup == null) {
+      selected_indicator.push(indicator);
+    } else {
+      for (const holderid of holderGroup.indicator_holder_ids) {
+        for (const holder of this.scorecard.data.data_settings.indicator_holders) {
+          if (holder.holder_id === holderid) {
+            selected_indicator.push(holder);
+          }
+        }
+      }
+    }
+
+    // Organisation unit settings
+    const selected_ou = Object.assign({}, this.selectedOrganisationUnit);
+    const ou_model = {...selected_ou.orgunit_model};
+    if (ou) {
+      ou_model.selection_mode = 'orgUnit';
+      ou_model.selected_levels = [];
+      ou_model.selected_groups = [];
+      ou_model.selected_orgunits = [ou];
+      selected_ou.value = ou.id;
+    }else { }
+
+    // period settings
+     const selected_pe = Object.assign({}, this.selectedPeriod);
+    let period_list = [...this.selectedPeriod.items];
+    const periodObject = {...this.selectedPeriod}
+    const year = this.selectedPeriod.starting_year;
+    const pe_type = this.selectedPeriod.type;
+    if (period) {
+      periodObject.items = [period];
+      periodObject.value = period.id;
+      period_list = [period];
+    }else {}
+
+    if (periods) {
+      periodObject.items = [periods];
+      periodObject.value = periods.id;
+      period_list = [periods];
+    }
+
+    console.log('selected_ou', selected_ou)
     // emit the array with these items;
     this.show_details.emit({
-      holderGroup: holderGroup,
-      indicator: indicator,
-      ou: ou,
-      period: period,
-      functions: this.functions
+      period_list: period_list,
+      year: year,
+      pe_type: pe_type,
+      ou_model: ou_model,
+      selected_indicator: selected_indicator,
+      functions: this.functions,
+      hidden_columns: this.hidenColums,
+      periodObject: periodObject,
+      selectedOrganisationUnit: selected_ou
     });
   }
 
@@ -780,7 +825,7 @@ export class ScorecardComponent implements OnInit, OnDestroy {
   // this function will return an holder with specified ID
   getHolderById(holder_id) {
     let return_id = null;
-    for (let holder of this.scorecard.data.data_settings.indicator_holders) {
+    for (const holder of this.scorecard.data.data_settings.indicator_holders) {
       if (holder.holder_id === holder_id) {
         return_id = holder;
         break;
@@ -921,7 +966,6 @@ export class ScorecardComponent implements OnInit, OnDestroy {
               this.showSubScorecard[indicator.id] = true;
             } else {
               this.children_available[indicator.id] = true;
-              console.log(indicator)
               // this.subscorecard = this.createScorecardByIndicators(indicator,indicator.bottleneck_indicators);
               const created_scorecard = this.scorecardService.getEmptyScoreCard();
               const legendSet = indicator.legendset;
@@ -982,12 +1026,12 @@ export class ScorecardComponent implements OnInit, OnDestroy {
   }
 
  // context menu options
-  public onItemContextMenu($event: MouseEvent, item: any): void {
+  public onItemContextMenu($event: MouseEvent, item: any, ou: any, pe: any): void {
     this.contextMenuService.show.next({
       // Optional - if unspecified, all context menu components will open
       contextMenu: this.itemMenu,
       event: $event,
-      'item': item,
+      'item': {'item': item, 'ou': ou, 'pe': pe},
     });
   }
 

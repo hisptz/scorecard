@@ -1,4 +1,5 @@
 import {Injectable} from '@angular/core';
+import * as _ from 'lodash';
 
 @Injectable()
 export class VisualizerService {
@@ -107,7 +108,20 @@ export class VisualizerService {
     return index;
   }
 
-  _sanitizeIncomingAnalytics(analyticsObject: any) {
+  _sanitizeIncomingAnalytics(analyticsObject: any, nameConfiguration: any = null) {
+    // this will fix the analytics call from 27 and above
+    if (analyticsObject.metaData.hasOwnProperty('items')) {
+      const arr = {names: {}};
+      _.forEach(analyticsObject.metaData.items, function(value: any, key) {
+        arr.names[key] = value.name;
+      });
+      const dimensions = analyticsObject.metaData.dimensions;
+      // analyticsObject = {...analyticsObject, metaData: {...analyticsObject.metaData, names: arr.names, ...dimensions }};
+      analyticsObject.metaData.names = arr.names;
+      analyticsObject.metaData.ou = analyticsObject.metaData.dimensions.ou;
+      analyticsObject.metaData.pe = analyticsObject.metaData.dimensions.pe;
+      analyticsObject.metaData.dx = analyticsObject.metaData.dimensions.dx;
+    }
     for (const header of analyticsObject.headers) {
       if (header.hasOwnProperty('optionSet')) {
         if (analyticsObject.metaData[header.name].length === 0) {
@@ -124,7 +138,24 @@ export class VisualizerService {
         }
       }
     }
+    if(nameConfiguration != null) {
+      analyticsObject = this._updateAnalyticsForOptins(analyticsObject, nameConfiguration);
+    }
 
+    return analyticsObject;
+  }
+
+  /**
+   * Exchange the names of the analytics objects with custom names
+   * @param analyticsObject
+   * @param nameConfiguration eg { id:'HydhUd32', name:'Some custom name' }
+   */
+  _updateAnalyticsForOptins(analyticsObject, nameConfiguration) {
+    for ( const config of nameConfiguration ){
+      if ( analyticsObject.metaData.names[config.id] ) {
+        analyticsObject.metaData.names[config.id] = config.name;
+      }
+    }
     return analyticsObject;
   }
 
@@ -188,8 +219,8 @@ export class VisualizerService {
    * @param yAxisItems : Array
    * @returns {{xAxisItems: Array, yAxisItems: Array}}
    */
-  prepareCategories(analyticsObject, xAxis: string, yAxis: string, xAxisItems = [], yAxisItems = []) {
-    analyticsObject = this._sanitizeIncomingAnalytics(analyticsObject);
+  prepareCategories(analyticsObject, xAxis: string, yAxis: string, xAxisItems = [], yAxisItems = [], nameConfiguration: any = null) {
+    analyticsObject = this._sanitizeIncomingAnalytics(analyticsObject, nameConfiguration);
     const structure = {
       'xAxisItems': [],
       'yAxisItems': []
@@ -224,8 +255,8 @@ export class VisualizerService {
    * @param xAxisItems
    * @returns {{xAxisItems: Array, yAxisItems: Array}}
    */
-  prepareSingleCategories(analyticsObject, itemIdentifier, preDefinedItems = []) {
-    analyticsObject = this._sanitizeIncomingAnalytics(analyticsObject);
+  prepareSingleCategories(analyticsObject, itemIdentifier, nameConfiguration: any = null, preDefinedItems = []) {
+    analyticsObject = this._sanitizeIncomingAnalytics(analyticsObject, nameConfiguration);
     const structure = [];
     if (preDefinedItems.length === 0) {
       for (const val of this.getMetadataArray(analyticsObject, itemIdentifier)) {
@@ -314,6 +345,7 @@ export class VisualizerService {
    */
   drawPieChart(analyticsObject, chartConfiguration) {
 
+    const labels = (chartConfiguration.hasOwnProperty('labels')) ? chartConfiguration.labels : null;
     const chartObject = this.getChartConfigurationObject('pieChart', chartConfiguration.show_labels);
     chartObject.title.text = chartConfiguration.title;
     const metaDataObject = this.prepareCategories(
@@ -321,7 +353,8 @@ export class VisualizerService {
       chartConfiguration.xAxisType,
       chartConfiguration.yAxisType,
       chartConfiguration.xAxisItems,
-      chartConfiguration.yAxisItems
+      chartConfiguration.yAxisItems,
+      labels
     );
     const serie = [];
     for (const yAxis of metaDataObject.yAxisItems) {
@@ -352,6 +385,7 @@ export class VisualizerService {
    * @returns {{title, chart, xAxis, yAxis, labels, series}|any}
    */
   drawCombinedChart(analyticsObject, chartConfiguration) {
+    const labels = (chartConfiguration.hasOwnProperty('labels')) ? chartConfiguration.labels : null;
     const chartObject = this.getChartConfigurationObject('defaultChartObject', chartConfiguration.show_labels);
     chartObject.title.text = chartConfiguration.title;
     chartObject.chart.type = '';
@@ -360,7 +394,8 @@ export class VisualizerService {
       chartConfiguration.xAxisType,
       chartConfiguration.yAxisType,
       (chartConfiguration.hasOwnProperty('xAxisItems')) ? chartConfiguration.xAxisItems : [],
-      (chartConfiguration.hasOwnProperty('yAxisItems')) ? chartConfiguration.yAxisItems : []
+      (chartConfiguration.hasOwnProperty('yAxisItems')) ? chartConfiguration.yAxisItems : [],
+      labels
     );
     // set x-axis categories
     chartObject.xAxis.categories = [];
@@ -392,6 +427,7 @@ export class VisualizerService {
    * @returns {{title, chart, xAxis, yAxis, labels, series}|any}
    */
   drawOtherCharts(analyticsObject, chartConfiguration) {
+    const labels = (chartConfiguration.hasOwnProperty('labels')) ? chartConfiguration.labels : null;
     const chartObject = this.getChartConfigurationObject('defaultChartObject', chartConfiguration.show_labels);
     if (chartConfiguration.type === 'bar') {
       chartObject.chart.type = chartConfiguration.type;
@@ -404,7 +440,8 @@ export class VisualizerService {
       chartConfiguration.xAxisType,
       chartConfiguration.yAxisType,
       (chartConfiguration.hasOwnProperty('xAxisItems')) ? chartConfiguration.xAxisItems : [],
-      (chartConfiguration.hasOwnProperty('yAxisItems')) ? chartConfiguration.yAxisItems : []
+      (chartConfiguration.hasOwnProperty('yAxisItems')) ? chartConfiguration.yAxisItems : [],
+      labels
     );
     chartObject.xAxis.categories = [];
     for (const val of metaDataObject.xAxisItems) {
@@ -454,7 +491,7 @@ export class VisualizerService {
    * @returns {any}
    */
   drawStackedChart(analyticsObject, chartConfiguration) {
-
+    const labels = (chartConfiguration.hasOwnProperty('labels')) ? chartConfiguration.labels : null;
     // decide which chart object to use
     const chartObject = ( chartConfiguration.stackingType === 'bar' ) ?
       this.getChartConfigurationObject('barStackedObject', chartConfiguration.show_labels) :
@@ -465,7 +502,8 @@ export class VisualizerService {
       chartConfiguration.xAxisType,
       chartConfiguration.yAxisType,
       (chartConfiguration.hasOwnProperty('xAxisItems')) ? chartConfiguration.xAxisItems : [],
-      (chartConfiguration.hasOwnProperty('yAxisItems')) ? chartConfiguration.yAxisItems : []
+      (chartConfiguration.hasOwnProperty('yAxisItems')) ? chartConfiguration.yAxisItems : [],
+      labels
     );
     chartObject.xAxis.categories = [];
     chartObject.series = [];
@@ -494,13 +532,15 @@ export class VisualizerService {
    * @returns {{chart, title, pane, tooltip, yAxis, plotOptions, credits, series}|any}
    */
   drawGaugeChart(analyticsObject, chartConfiguration) {
+    const labels = (chartConfiguration.hasOwnProperty('labels')) ? chartConfiguration.labels : null;
     const chartObject = this.getChartConfigurationObject('gaugeObject', chartConfiguration.show_labels);
     chartObject.title.text = chartConfiguration.title;
     const metaDataObject = this.prepareCategories(analyticsObject,
       chartConfiguration.xAxisType,
       chartConfiguration.yAxisType,
       (chartConfiguration.hasOwnProperty('xAxisItems')) ? chartConfiguration.xAxisItems : [],
-      (chartConfiguration.hasOwnProperty('yAxisItems')) ? chartConfiguration.yAxisItems : []
+      (chartConfiguration.hasOwnProperty('yAxisItems')) ? chartConfiguration.yAxisItems : [],
+      labels
     );
     let gaugeValue = 0;
     for (const yAxis of metaDataObject.yAxisItems) {
@@ -537,11 +577,13 @@ export class VisualizerService {
    * series: Array}}
    */
   drawSpiderChart(analyticsObject, chartConfiguration) {
+    const labels = (chartConfiguration.hasOwnProperty('labels')) ? chartConfiguration.labels : null;
     const metaDataObject = this.prepareCategories(analyticsObject,
       chartConfiguration.xAxisType,
       chartConfiguration.yAxisType,
       (chartConfiguration.hasOwnProperty('xAxisItems')) ? chartConfiguration.xAxisItems : [],
-      (chartConfiguration.hasOwnProperty('yAxisItems')) ? chartConfiguration.yAxisItems : []
+      (chartConfiguration.hasOwnProperty('yAxisItems')) ? chartConfiguration.yAxisItems : [],
+      labels
     );
     const categories = [];
     for (const val of metaDataObject.xAxisItems) {
@@ -620,7 +662,8 @@ export class VisualizerService {
       titlesAvailable: false,
       hasParentOu: false
     };
-    if (tableConfiguration.hasOwnProperty('title')) {
+    const labels = (tableConfiguration.hasOwnProperty('labels')) ? tableConfiguration.labels : null;
+      if (tableConfiguration.hasOwnProperty('title')) {
       table['title'] = tableConfiguration.title;
     }
     if (tableConfiguration.hasOwnProperty('display_list') && tableConfiguration.display_list) {
@@ -670,7 +713,7 @@ export class VisualizerService {
       }
       for (const columnItem of tableConfiguration.columns) {
         const dimension = this.calculateColSpan(analyticsObject, tableConfiguration.columns, columnItem);
-        const currentColumnItems = this.prepareSingleCategories(analyticsObject, columnItem);
+        const currentColumnItems = this.prepareSingleCategories(analyticsObject, columnItem, labels);
         const headerItem = [];
         for (let i = 0; i < dimension.duplication; i++) {
           for (const currentItem of currentColumnItems) {
@@ -698,7 +741,7 @@ export class VisualizerService {
       const column_length = tableConfiguration.columns.length;
       const column_items_array = [];
       for (let i = 0; i < column_length; i++) {
-        const currentRowItems = this.prepareSingleCategories(analyticsObject, tableConfiguration.columns[i]);
+        const currentRowItems = this.prepareSingleCategories(analyticsObject, tableConfiguration.columns[i], labels);
         column_items_array.push(currentRowItems);
       }
       let table_columns_array = [];
@@ -729,7 +772,7 @@ export class VisualizerService {
       const row_items_array = [];
       for (let i = 0; i < rows_length; i++) {
         const dimension = this.calculateColSpan(analyticsObject, tableConfiguration.rows, tableConfiguration.rows[i]);
-        const currentRowItems = this.prepareSingleCategories(analyticsObject, tableConfiguration.rows[i]);
+        const currentRowItems = this.prepareSingleCategories(analyticsObject, tableConfiguration.rows[i], labels);
         row_items_array.push({'items': currentRowItems, 'dimensions': dimension});
       }
       let table_rows_array = [];
@@ -813,213 +856,6 @@ export class VisualizerService {
           item.items.push({
             'name': '',
             'val': this.getDataValue(analyticsObject, dataItem),
-            'row_span': '1',
-            'display': true
-          });
-        }
-        if (tableConfiguration.hasOwnProperty('hide_zeros') && tableConfiguration.hide_zeros) {
-          console.log(item.items);
-          if (!this.checkZeros(tableConfiguration.rows.length, item.items)) {
-            table.rows.push(item);
-          }
-        } else {
-          table.rows.push(item);
-        }
-      }
-    }
-    return table;
-  }
-
-  drawAutogrowingTable(analyticsObject, tableConfiguration) {
-    const table = {
-      'headers': [],
-      'columns': [],
-      'rows': [],
-      'titles': {
-        'rows': [],
-        'column': []
-      }
-    };
-    if (tableConfiguration.hasOwnProperty('title')) {
-      table['title'] = tableConfiguration.title;
-    }
-    if (tableConfiguration.hasOwnProperty('display_list') && tableConfiguration.display_list) {
-      table.headers[0] = {
-        items: [],
-        style: ''
-      };
-      tableConfiguration.columns[tableConfiguration.columns.indexOf('pe')] = 'eventdate';
-      tableConfiguration.columns[tableConfiguration.columns.indexOf('ou')] = 'ouname';
-      for (const item of tableConfiguration.columns) {
-        table.headers[0].items.push(
-          {
-            name: analyticsObject.headers[this._getTitleIndex(analyticsObject.headers, item)].column,
-            span: 1
-          }
-        );
-      }
-      for (const item of analyticsObject.rows) {
-        const column_items = [];
-        for (const col of tableConfiguration.columns) {
-          const index = this._getTitleIndex(analyticsObject.headers, col);
-          column_items.push({
-            name: '',
-            display: true,
-            row_span: '1',
-            val: item[index]
-          });
-
-        }
-        table.rows.push(
-          {
-            headers: [],
-            items: column_items
-          }
-        );
-      }
-    } else {
-      // add names to titles array
-      for (const item of tableConfiguration.columns) {
-        table.titles.column.push(analyticsObject.headers[this._getTitleIndex(analyticsObject.headers, item)].column);
-      }
-      for (const item of tableConfiguration.rows) {
-        table.titles.rows.push(analyticsObject.headers[this._getTitleIndex(analyticsObject.headers, item)].column);
-      }
-      for (const columnItem of tableConfiguration.columns) {
-        const dimension = this.calculateColSpan(analyticsObject, tableConfiguration.columns, columnItem);
-        const currentColumnItems = this.prepareSingleCategories(analyticsObject, columnItem);
-        const headerItem = [];
-        for (let i = 0; i < dimension.duplication; i++) {
-          for (const currentItem of currentColumnItems) {
-            headerItem.push({'name': currentItem.name, 'span': dimension.col_span});
-          }
-        }
-        let styles = '';
-        if (tableConfiguration.hasOwnProperty('style')) {
-          if (tableConfiguration.styles.hasOwnProperty(columnItem)) {
-            styles = tableConfiguration.styles[columnItem];
-          }
-        }
-        table.headers.push({'items': headerItem, 'style': styles});
-      }
-      for (const rowItem of tableConfiguration.rows) {
-        table.columns.push(rowItem);
-      }
-
-      // Preparing table columns
-      const column_length = tableConfiguration.columns.length;
-      const column_items_array = [];
-      for (let i = 0; i < column_length; i++) {
-        const currentRowItems = this.prepareSingleCategories(analyticsObject, tableConfiguration.columns[i]);
-        column_items_array.push(currentRowItems);
-      }
-      let table_columns_array = [];
-      for (let i = 0; i < column_items_array.length; i++) {
-        if (table_columns_array.length === 0) {
-          for (const item of column_items_array[i]) {
-            table_columns_array.push([item]);
-          }
-        } else {
-          const temp_arr = table_columns_array.concat();
-          table_columns_array = [];
-          for (const item of temp_arr) {
-            for (const val of  column_items_array[i]) {
-              if (item instanceof Array) {
-                const tempArr = Array.from(item);
-                table_columns_array.push(tempArr.concat([val]));
-              } else {
-                table_columns_array.push([item, val]);
-              }
-            }
-          }
-        }
-
-      }
-
-      // Preparing table rows
-      const rows_length = tableConfiguration.rows.length;
-      const row_items_array = [];
-      for (let i = 0; i < rows_length; i++) {
-        const dimension = this.calculateColSpan(analyticsObject, tableConfiguration.rows, tableConfiguration.rows[i]);
-        const currentRowItems = this.prepareSingleCategories(analyticsObject, tableConfiguration.rows[i]);
-        row_items_array.push({'items': currentRowItems, 'dimensions': dimension});
-      }
-      let table_rows_array = [];
-      for (let i = 0; i < row_items_array.length; i++) {
-        if (table_rows_array.length === 0) {
-          for (const item of row_items_array[i].items) {
-            item.dimensions = row_items_array[i].dimensions;
-            table_rows_array.push([item]);
-          }
-        } else {
-          const temp_arr = table_rows_array.concat();
-          table_rows_array = [];
-          for (const item of temp_arr) {
-            for (const val of  row_items_array[i].items) {
-              val.dimensions = row_items_array[i].dimensions;
-              if (item instanceof Array) {
-                const tempArr = Array.from(item);
-                table_rows_array.push(tempArr.concat([val]));
-              } else {
-                table_rows_array.push([item, val]);
-              }
-            }
-          }
-        }
-
-      }
-
-      let counter = 0;
-      if (table_rows_array.length !== 0) {
-        for (const rowItem of table_rows_array) {
-          const item = {
-            'items': [],
-            'headers': rowItem
-          };
-          for (const val of rowItem) {
-            if (counter === 0 || counter % val.dimensions.col_span === 0) {
-              // item.items.push({'name': val.uid, 'val': val.name, 'row_span': val.dimensions.col_span});
-            }
-          }
-          for (const colItem of table_columns_array) {
-            const dataItem = [];
-            for (const val of rowItem) {
-              dataItem.push({'type': val.type, 'value': val.uid});
-            }
-            for (const val of colItem) {
-              dataItem.push({'type': val.type, 'value': val.uid});
-            }
-            item.items.push({
-              'name': '',
-              'val': this.getAutoGrowingDataValue(analyticsObject, dataItem),
-              'row_span': '1',
-              'display': true
-            });
-          }
-          if (tableConfiguration.hasOwnProperty('hide_zeros') && tableConfiguration.hide_zeros) {
-            console.log(item.items);
-            if (!this.checkZeros(tableConfiguration.rows.length, item.items)) {
-              table.rows.push(item);
-            }
-          } else {
-            table.rows.push(item);
-          }
-
-          counter++;
-        }
-      } else {
-        const item = {
-          'items': [],
-          'headers': []
-        };
-        for (const colItem of table_columns_array) {
-          const dataItem = [];
-          for (const val of colItem) {
-            dataItem.push({'type': val.type, 'value': val.uid});
-          }
-          item.items.push({
-            'name': '',
-            'val': this.getAutoGrowingDataValue(analyticsObject, dataItem),
             'row_span': '1',
             'display': true
           });

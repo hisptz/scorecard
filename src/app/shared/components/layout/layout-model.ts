@@ -27,7 +27,7 @@ export const INITIAL_LAYOUT_MODEL: LayoutModel = {
     value: 'dx'
   }],
   filters: [{
-    name: 'Filter',
+    name: 'Organisation Units',
     value: 'ou'
   }],
   excluded: [{

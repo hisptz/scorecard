@@ -16,6 +16,7 @@ import {Observable} from 'rxjs/Observable';
 import {FunctionService} from '../shared/services/function.service';
 import {PeriodFilterComponent} from '../shared/components/period-filter/period-filter.component';
 
+import * as previewActions from '../store/actions/indicator-preview.action';
 
 @Component({
   selector: 'app-view',
@@ -32,19 +33,18 @@ import {PeriodFilterComponent} from '../shared/components/period-filter/period-f
         'border': '0px solid #ddd'
       })),
       state('hoovered', style({
-        'min-height': '500px',
+        'min-height': '580px',
         'width': '90%',
         'left': '5%',
         'position': 'absolute',
         'top': '100px',
-        'bottom': '50px',
         'z-index': '100',
         '-webkit-box-shadow': '0 0 10px rgba(0,0,0,0.2)',
         'box-shadow': '0 0 10px rgba(0,0,0,0.2)',
         'background-color': 'rgba(255,255,255,1)',
         'border': '1px solid #ddd'
       })),
-      transition('notHovered <=> hoovered', animate('600ms'))
+      transition('notHovered <=> hoovered', animate('300ms'))
     ]),
     trigger('fadeInOut', [
       transition(':enter', [   // :enter is alias to 'void => *'
@@ -74,11 +74,14 @@ export class ViewComponent implements OnInit, AfterViewInit, OnDestroy {
 
   selectedOrganisationUnits$: Observable<any>;
   selectedPeriod$: Observable<any>;
-  showPreview$: Observable<any>;
+
+  functions$: Observable<any[]>;
+  showPreview = false;
+
+
   shown_records: number = 0;
   average_selection: string = 'all';
   show_rank: boolean = false;
-  functions$: Observable<any[]>;
 
   printHovered = false;
   excelHovered = false;
@@ -88,6 +91,8 @@ export class ViewComponent implements OnInit, AfterViewInit, OnDestroy {
 
   hoverState = 'notHovered';
 
+  indicatorDetails = null;
+
   constructor(private scorecardService: ScorecardService,
               private dataService: DataService,
               private activatedRouter: ActivatedRoute,
@@ -96,7 +101,6 @@ export class ViewComponent implements OnInit, AfterViewInit, OnDestroy {
   ) {
     this.selectedOrganisationUnits$ = store.select( selectors.getSelectedOrgunit );
     this.selectedPeriod$ = this.store.select( selectors.getSelectedPeriod );
-    this.showPreview$ = this.store.select( selectors.getPreviewStatus );
     this.functions$ = this.store.select( selectors.getFunctions );
     this.subscription = this.activatedRouter.params.subscribe(
       (params: any) => {
@@ -286,8 +290,12 @@ export class ViewComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   // load a preview function
+
   loadPreview($event) {
+    this.indicatorDetails = $event;
+
     this.hoverState = 'hoovered';
+    this.showPreview = true;
   }
 
   private findOrgunitIndicatorValue(orgunit_id: string, indicator_id: string) {
@@ -304,6 +312,7 @@ export class ViewComponent implements OnInit, AfterViewInit, OnDestroy {
 
   closeModel() {
     this.hoverState = 'notHovered';
+    this.showPreview = false;
   }
 
   downloadXls() {

@@ -18,6 +18,8 @@ import { OptionsComponent } from './components/options/options.component';
 import {FilterIndicatorByNamePipe} from './pipes/filter-indicator-by-name.pipe';
 import {ContextMenuModule} from 'ngx-contextmenu';
 import {LayoutComponent} from './components/layout/layout.component';
+import {PlaceholderComponent} from './components/placeholder/placeholder.component';
+import {TableTemplateComponent} from './components/table-template/table-template.component';
 
 @NgModule({
   imports: [
@@ -44,7 +46,9 @@ import {LayoutComponent} from './components/layout/layout.component';
     SharingComponent,
     OptionsComponent,
     FilterIndicatorByNamePipe,
-    LayoutComponent
+    LayoutComponent,
+    PlaceholderComponent,
+    TableTemplateComponent
   ],
   exports: [
     TreeModule,
@@ -65,7 +69,9 @@ import {LayoutComponent} from './components/layout/layout.component';
     OptionsComponent,
     FilterIndicatorByNamePipe,
     ContextMenuModule,
-    LayoutComponent
+    LayoutComponent,
+    PlaceholderComponent,
+    TableTemplateComponent
   ]
 })
 export class SharedModule { }

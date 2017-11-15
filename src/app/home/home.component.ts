@@ -116,8 +116,8 @@ export class HomeComponent implements OnInit, AfterViewInit {
   }
 
   viewcorecard(scorecard, event ) {
-    this.store.dispatch(new SetSelectedScorecardAction(scorecard));
     this.router.navigate(['view', scorecard.id]);
+    this.store.dispatch(new SetSelectedScorecardAction(scorecard));
     event.stopPropagation();
   }
 

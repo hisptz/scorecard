@@ -12,6 +12,7 @@ export const SET_TABLE_OBJECT_ACTION = 'SET_TABLE_OBJECT_ACTION';
 export const SET_CHART_OBJECT_ACTION = 'SET_CHART_OBJECT_ACTION';
 export const SET_MAP_OBJECT_ACTION = 'SET_MAP_OBJECT_ACTION';
 export const SET_LOADING_ACTION = 'SET_LOADING_ACTION';
+export const SHOW_MODEL = 'SHOW_MODEL';
 
 export class SetOUModelAction implements Action {
   type = SET_OU_MODEL_ACTION;
@@ -60,5 +61,10 @@ export class SetMapObjectAction implements Action {
 
 export class SetLoadingAction implements Action {
   type = SET_LOADING_ACTION;
+  constructor ( public payload: boolean ) {}
+}
+
+export class SetShowModelAction implements Action {
+  type = SHOW_MODEL;
   constructor ( public payload: boolean ) {}
 }

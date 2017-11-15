@@ -14,7 +14,6 @@ export interface StoreData {
     selectedOrgunit: any;
     functions: any[];
     errorMessage: string;
-    showPreview: boolean;
 }
 
 export const INITIAL_STORE_DATA: StoreData = {
@@ -30,6 +29,5 @@ export const INITIAL_STORE_DATA: StoreData = {
     selectedPeriod: '',
     selectedOrgunit: '',
     functions: [],
-    errorMessage: '',
-    showPreview: false
+    errorMessage: ''
 };

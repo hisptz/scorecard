@@ -14,6 +14,7 @@ export interface IndicatorPreview {
   loading: any;
   visualizationType: string;
   chartType: string;
+  showModel: boolean;
 
 }
 
@@ -29,5 +30,6 @@ export const INITIAL_INDICATOR_PREVIEW_STATE: IndicatorPreview = {
   chartObject: null,
   loading: true,
   visualizationType: 'table',
-  chartType: 'column'
+  chartType: 'column',
+  showModel: false
 };

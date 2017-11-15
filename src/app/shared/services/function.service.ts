@@ -96,7 +96,7 @@ export class FunctionService {
           observ.error('no functions available');
         });
       } else {
-        this.store.dispatch( new SetFunctionsAction( this.functions ) );
+        // this.store.dispatch( new SetFunctionsAction( this.functions ) );
         observ.next(this.functions);
         observ.complete();
       }

@@ -34,7 +34,12 @@
       "scripts": [
         "../node_modules/jquery/dist/jquery.min.js",
         "../node_modules/popper.js/dist/umd/popper.min.js",
-        "../node_modules/bootstrap/dist/js/bootstrap.min.js"
+        "../node_modules/bootstrap/dist/js/bootstrap.min.js",
+        "../node_modules/highcharts/highcharts.js",
+        "../node_modules/highcharts/highcharts-more.js",
+        "../node_modules/highcharts/modules/solid-gauge.js",
+        "../node_modules/highcharts/modules/exporting.js",
+        "../node_modules/highcharts/modules/offline-exporting.js"
       ],
       "environmentSource": "environments/environment.ts",
       "environments": {

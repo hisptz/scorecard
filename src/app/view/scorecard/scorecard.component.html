@@ -323,7 +323,7 @@
             <td *ngFor="let per of periods_list"
                 style="font-size: 10px;max-width: 90px;overflow-wrap: break-word; cursor: pointer; padding: 0px;line-height: 10%;"
                 class="sans-pro"
-                (click)="loadPreview(null,indicator,current_orgunit.id,per)"
+                (click)="loadPreview(null,indicator,current_orgunit,per)"
                 title="{{ prepareTooltip(indicator,current_orgunit.id,per.id) }}"
             >
               <svg-item
@@ -333,7 +333,7 @@
                 [scorecard]="scorecard" [period]="per.id"
                 [contextMenu]="itemMenu"
                 [contextMenuSubject]="indicator"
-                (contextmenu)="onItemContextMenu($event, indicator)"
+                (contextmenu)="onItemContextMenu($event, indicator, current_orgunit,per )"
               >
               </svg-item>
             </td>
@@ -432,24 +432,29 @@
 </context-menu>
 
 <context-menu #itemMenu>
-  <ng-template contextMenuItem (execute)="loadPreview(null,$event.item,null,null)">
-    <i class="fa fa-bar-chart-o" aria-hidden="true"></i> Analyse
+  <ng-template contextMenuItem (execute)="loadPreview(null, $event.item.item, $event.item.ou, $event.item.pe)">
+    <i class="fa fa-bar-chart-o" aria-hidden="true"></i> Basic Analysis
   </ng-template>
-  <ng-template contextMenuItem divider="true"></ng-template>
-  <ng-template contextMenuItem (execute)="sortScoreCardFromColumn($event.item.indicators[0].id, true, orgunits, periods_list[0].id, false)">
-    <i class="fa fa-sort-amount-asc" aria-hidden="true"></i> Last 3 Month
+  <ng-template contextMenuItem [subMenu]="saySubMenu">
+    <i class="fa fa-line-chart" aria-hidden="true"></i> Trend Analysis
   </ng-template>
-  <ng-template contextMenuItem (execute)="sortScoreCardFromColumn($event.item.indicators[0].id, false, orgunits, periods_list[0].id, false)">
-    <i class="fa fa-sort-amount-desc" aria-hidden="true"></i> Last 6 Month
-  </ng-template>
-  <ng-template  contextMenuItem (execute)="hideClicked($event.item)">
-    <i class="fa fa-eye-slash" aria-hidden="true"></i> Last 12 Month
-  </ng-template>
-  <ng-template contextMenuItem (execute)="hideClicked($event.item, 'all')">
-    <i class="fa fa-eye" style="margin-left:4px" aria-hidden="true"></i> Last 4 Quarter
-  </ng-template>
-  <ng-template contextMenuItem (execute)="hideClicked($event.item, 'all')">
-    <i class="fa fa-eye" style="margin-left:4px" aria-hidden="true"></i> Last 5 Years
-  </ng-template>
+  <context-menu #saySubMenu>
+    <ng-template contextMenuItem (execute)="loadPreview(null, $event.item.item, $event.item.ou, null, {id:'LAST_3_MONTHS',name:'Last 3 Month'})">
+      <i class="fa fa-line-chart" aria-hidden="true"></i> Last 3 Month
+    </ng-template>
+    <ng-template contextMenuItem (execute)="loadPreview(null, $event.item.item, $event.item.ou, null, {id:'LAST_6_MONTHS',name:'Last 6 Month'})">
+      <i class="fa fa-line-chart" aria-hidden="true"></i> Last 6 Month
+    </ng-template>
+    <ng-template  contextMenuItem (execute)="loadPreview(null, $event.item.item, $event.item.ou, null, {id:'LAST_12_MONTHS',name:'Last 12 Month'})">
+      <i class="fa fa-line-chart" aria-hidden="true"></i> Last 12 Month
+    </ng-template>
+    <ng-template contextMenuItem (execute)="loadPreview(null, $event.item.item, $event.item.ou, null, {id:'LAST_4_QUARTERS',name:'Last 4 Quarter'})">
+      <i class="fa fa-line-chart" style="margin-left:4px" aria-hidden="true"></i> Last 4 Quarter
+    </ng-template>
+    <ng-template contextMenuItem (execute)="loadPreview(null, $event.item.item, $event.item.ou, null, {id:'LAST_5_YEARS',name:'Last 5 Years'})">
+      <i class="fa fa-line-chart" style="margin-left:4px" aria-hidden="true"></i> Last 5 Years
+    </ng-template>
+  </context-menu>
+
 </context-menu>
 

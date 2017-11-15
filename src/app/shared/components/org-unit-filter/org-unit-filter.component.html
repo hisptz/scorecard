@@ -1,4 +1,4 @@
-<div class="tree-input" title="Select starting organisation unit for your scorecard" appClickOutside (clickOutside)="showOrgTree = true">
+<div class="tree-input" appClickOutside (clickOutside)="showOrgTree = true">
     <div class="show_items" (click)="displayOrgTree()">
               <span *ngIf="!orgunit_tree_config.loading">
                   {{  getProperPreOrgunitName() }}

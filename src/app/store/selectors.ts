@@ -38,10 +38,6 @@ export const getFunctions = createSelector(getStoreData, (datastate) => {
   return datastate.functions;
 });
 
-export const getPreviewStatus = createSelector(getStoreData, (datastate) => {
-  return datastate.showPreview;
-});
-
 // Indicator preview selectors
 export const getPreviewOuModel = createSelector(getIndicatorPreviewData, ( previewData ) => {
   return previewData.ouModel;
@@ -81,6 +77,10 @@ export const getPreviewTable = createSelector(getIndicatorPreviewData, ( preview
 
 export const getPreviewLoading = createSelector(getIndicatorPreviewData, ( previewData ) => {
   return previewData.loading;
+});
+
+export const getShowModel = createSelector(getIndicatorPreviewData, ( previewData ) => {
+  return previewData.showModel;
 });
 
 

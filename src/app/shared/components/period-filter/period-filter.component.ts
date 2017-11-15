@@ -201,7 +201,7 @@ export class PeriodFilterComponent implements OnInit {
       this.onPeriodUpdate.emit({
         items: this.selected_periods,
         type: this.period_type,
-        starting_year: this.starting_year,
+        starting_year: this.year,
         name: 'pe',
         value: this.getPeriodsForAnalytics(this.selected_periods)
       });
@@ -209,7 +209,7 @@ export class PeriodFilterComponent implements OnInit {
       this.onPeriodChange.emit({
         items: this.selected_periods,
         type: this.period_type,
-        starting_year: this.starting_year,
+        starting_year: this.year,
         name: 'pe',
         value: this.getPeriodsForAnalytics(this.selected_periods)
       });

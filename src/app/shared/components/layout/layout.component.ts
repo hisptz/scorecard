@@ -32,6 +32,8 @@ export class LayoutComponent implements OnInit {
   dimensions: any;
   columnName: string;
   rowName: string;
+
+  showLayout: boolean = true;
   constructor(private dragulaService: DragulaService) {
     this.icons = {
       dx: 'assets/img/data.png',
@@ -54,6 +56,10 @@ export class LayoutComponent implements OnInit {
       this.rowName = 'Categories dimensions';
       this.columnName = 'Series dimensions';
     }
+  }
+
+  displayLayout() {
+    this.showLayout = !this.showLayout;
   }
 
   onDrop(event, dimension) {
