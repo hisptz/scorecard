@@ -7,7 +7,6 @@ import { ScorecardComponent } from './scorecard/scorecard.component';
 import { IndicatorCardComponent } from './indicator-card/indicator-card.component';
 import { SubtotalComponent } from './subtotal/subtotal.component';
 import { SvgItemComponent } from './svg-item/svg-item.component';
-import { MetadataDictionaryComponent } from './metadata-dictionary/metadata-dictionary.component';
 import { IndicatorTitleComponent } from './indicator-title/indicator-title.component';
 import { PeriodTitleComponent } from './period-title/period-title.component';
 import { DetailsComponent } from './details/details.component';
@@ -24,7 +23,6 @@ import { DragulaModule } from 'ng2-dragula';
     ViewComponent,
     ScorecardComponent,
     IndicatorCardComponent,
-    MetadataDictionaryComponent,
     SubtotalComponent,
     SvgItemComponent,
     IndicatorTitleComponent,

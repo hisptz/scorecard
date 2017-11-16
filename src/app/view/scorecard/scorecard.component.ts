@@ -689,8 +689,8 @@ export class ScorecardComponent implements OnInit, OnDestroy {
 
   // load a preview function
   loadPreview(holderGroup, indicator, ou, period, periods = null) {
-    console.log(ou)
     const selected_indicator = [];
+    let show_trend = false;
     if (holderGroup == null) {
       selected_indicator.push(indicator);
     } else {
@@ -727,6 +727,7 @@ export class ScorecardComponent implements OnInit, OnDestroy {
     }else {}
 
     if (periods) {
+      show_trend = true;
       periodObject.items = [periods];
       periodObject.value = periods.id;
       period_list = [periods];
@@ -743,7 +744,8 @@ export class ScorecardComponent implements OnInit, OnDestroy {
       functions: this.functions,
       hidden_columns: this.hidenColums,
       periodObject: periodObject,
-      selectedOrganisationUnit: selected_ou
+      selectedOrganisationUnit: selected_ou,
+      trend: show_trend
     });
   }
 

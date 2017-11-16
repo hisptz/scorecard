@@ -31,6 +31,7 @@ export class DetailsComponent implements OnInit {
   current_parameters: any = [];
   selectedOrganisationUnit: any;
   periodObject: any;
+  showTrend: boolean = false;
   @Input() analytics$: Observable<any>;
   @Input() chartObject$: Observable<any>;
   @Input() tableObject$: Observable<any>;
@@ -81,6 +82,7 @@ export class DetailsComponent implements OnInit {
     }]
   };
 
+  geoFeatures: any[] = [];
 
   chartTypes = CHART_TYPES;
   show_labels: boolean = false;
@@ -98,7 +100,6 @@ export class DetailsComponent implements OnInit {
   }
 
   ngOnInit() {
-    console.log(this.indicatorDetails);
     this.orgUnitModel = this.indicatorDetails.ou_model;
     this.selectedPeriod = this.indicatorDetails.period_list;
     this.periodType = this.indicatorDetails.pe_type;
@@ -108,11 +109,18 @@ export class DetailsComponent implements OnInit {
     this.hidden_columns = this.indicatorDetails.hidden_columns;
     this.selectedOrganisationUnit = this.indicatorDetails.selectedOrganisationUnit;
     this.periodObject = this.indicatorDetails.periodObject;
-    console.log(this.indicator);
+    this.showTrend = this.indicatorDetails.trend;
+    this.updateType('table');
+  }
+
+  updateChartType(type: string) {
+    this.currentChartType = type;
+    this.updateType('chart');
   }
 
   updateLayout(layoutModel) {
     this.layoutModel = layoutModel;
+    this.updateType(this.visualizer_config.type);
   }
 
   changeOrgUnit($event) {
@@ -220,6 +228,68 @@ export class DetailsComponent implements OnInit {
     new Angular2Csv(data, 'My Report', options);
   }
 
+  getStartingLayout(type): LayoutModel {
+    if (type === 'bottleneck') {
+      return {
+        rows: [{
+          name: 'Organisation Units',
+          value: 'ou'
+        }],
+        columns: [{
+          name: 'Data',
+          value: 'dx'
+        }, {
+          name: 'Period',
+          value: 'pe'
+        }],
+        filters: [],
+        excluded: [{
+          name: 'Excluded Dimension',
+          value: 'co'
+        }]
+      };
+    } else if (type === 'trend') {
+      return {
+        rows: [{
+          name: 'Data',
+          value: 'dx'
+        }],
+        columns: [ {
+          name: 'Period',
+          value: 'pe'
+        }],
+        filters: [{
+          name: 'Organisation Units',
+          value: 'ou'
+        }],
+        excluded: [{
+          name: 'Excluded Dimension',
+          value: 'co'
+        }]
+      };
+    }else {
+      return {
+        rows: [{
+          name: 'Organisation Units',
+          value: 'ou'
+        }],
+        columns: [ {
+          name: 'Period',
+          value: 'pe'
+        }],
+        filters: [{
+          name: 'Data',
+          value: 'dx'
+        }],
+        excluded: [{
+          name: 'Excluded Dimension',
+          value: 'co'
+        }]
+      };
+    }
+
+  }
+
 
   // a call that will change the view type
   updateType(type: string) {
@@ -235,8 +305,6 @@ export class DetailsComponent implements OnInit {
     // construct metadata array
     const indicatorsArray = [];
     const function_indicatorsArray = [];
-    const orgUnitsArray = [];
-    const periodArray = [];
 
     // check first if your supposed to load bottleneck indicators too for analysis
     let labels = null;
@@ -262,6 +330,7 @@ export class DetailsComponent implements OnInit {
       if (this.bottleneck_first_time) {
         type = 'column';
         this.current_visualisation = 'column';
+        this.layoutModel = this.getStartingLayout('bottleneck');
         // this.chart_settings = 'ou-dx';
         this.visualizer_config.type = 'chart';
         this.bottleneck_first_time = false;
@@ -277,47 +346,59 @@ export class DetailsComponent implements OnInit {
         }
       }
     }
-
+    if ( this.showTrend ) {
+      type = 'line';
+      this.currentChartType = 'line';
+      this.layoutModel = this.getStartingLayout('trend');
+      // this.chart_settings = 'ou-dx';
+      this.visualizer_config.type = 'chart';
+      this.showTrend = false;
+    }
+    this.details_indicators = indicatorsArray.join(';');
     // const config_array = this.chart_settings.split('-');
     if (type === 'table') {
+      this.layoutVisualizationType = 'TABLE';
       this.visualizer_config = {
         'type': 'table',
         'tableConfiguration': {
           'title': this.prepareCardTitle(this.indicator),
-          'rows': ['ou'],
-          'columns': ['dx', 'pe'],
+          'rows': this.layoutModel.rows.map((item) => item.value),
+          'columns': this.layoutModel.columns.map((item) => item.value),
           'labels': labels
         },
         'chartConfiguration': {
           'type': this.currentChartType,
           'show_labels': this.show_labels,
           'title': this.prepareCardTitle(this.indicator),
-          'xAxisType': 'pe',
-          'yAxisType': 'ou',
+          'xAxisType': this.layoutModel.columns[0].value,
+          'yAxisType': this.layoutModel.rows[0].value,
           'labels': labels
         }
       };
     }else if (type === 'csv') {
 
+    }else if (type === 'map') {
+      this.visualizer_config.type = 'map';
     } else if (type === 'info') {
-      this.details_indicators = indicatorsArray.join(';');
-      this.visualizer_config.type = 'info';
 
+      this.visualizer_config.type = 'info';
+      this.loading = false;
     }else {
+      this.layoutVisualizationType = 'CHART';
       this.visualizer_config = {
         'type': 'chart',
         'tableConfiguration': {
           'title': this.prepareCardTitle(this.indicator),
-          'rows': ['ou'],
-          'columns': ['pe'],
+          'rows': [this.layoutModel.rows[0].value],
+          'columns': [this.layoutModel.columns[0].value],
           'labels': labels
         },
         'chartConfiguration': {
           'type': this.currentChartType,
           'show_labels': this.show_labels,
           'title': this.prepareCardTitle(this.indicator),
-          'xAxisType': 'pe',
-          'yAxisType': 'ou',
+          'xAxisType': this.layoutModel.columns[0].value,
+          'yAxisType': this.layoutModel.rows[0].value,
           'labels': labels
         }
       };
@@ -327,6 +408,7 @@ export class DetailsComponent implements OnInit {
 
       this.loading = false;
     } else {
+
       if (this.checkIfParametersChanged(this.selectedOrganisationUnit.value, this.periodObject.value, indicatorsArray, function_indicatorsArray)) {
         this.error_occured = false;
         if (type === 'csv') {
@@ -340,7 +422,7 @@ export class DetailsComponent implements OnInit {
 
         // create an api analytics call
         if (indicatorsArray.length === labels.length ) {
-          const url = '../../../api/analytics.json?dimension=dx:' + indicatorsArray.join(';') + '&dimension=ou:' + this.selectedOrganisationUnit.value + '&dimension=pe:' + this.periodObject.value + '&displayProperty=NAME';
+          const url = 'analytics.json?dimension=dx:' + indicatorsArray.join(';') + '&dimension=ou:' + this.selectedOrganisationUnit.value + '&dimension=pe:' + this.periodObject.value + '&displayProperty=NAME';
           this.subscription = this.loadAnalytics(url).subscribe(
             (data) => {
               this.current_analytics_data = data;
@@ -361,7 +443,7 @@ export class DetailsComponent implements OnInit {
         }else {
           if (indicatorsArray.length !== 0) {
             let completed_functions = 0;
-            const url =  '../../../api/analytics.json?dimension=dx:' + indicatorsArray.join(';') + '&dimension=pe:' + this.periodObject.value + '&dimension=ou:' + this.selectedOrganisationUnit.value + '&displayProperty=NAME';
+            const url =  'analytics.json?dimension=dx:' + indicatorsArray.join(';') + '&dimension=pe:' + this.periodObject.value + '&dimension=ou:' + this.selectedOrganisationUnit.value + '&displayProperty=NAME';
             this.subscription = this.loadAnalytics(url).subscribe(
               (data) => {
                 analytics_calls.push(data);

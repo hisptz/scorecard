@@ -25,6 +25,14 @@ export class HttpClientService {
     }).map(this.responseHandler());
   }
 
+  get_from_base(url) {
+    const headers = new Headers();
+    this.createAuthorizationHeader(headers);
+    return this.http.get( url, {
+      headers: headers
+    }).map(this.responseHandler());
+  }
+
   post(url, data, options?) {
     const headers = new Headers();
     this.createAuthorizationHeader(headers, options);

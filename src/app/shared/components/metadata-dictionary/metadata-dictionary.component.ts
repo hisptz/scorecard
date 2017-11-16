@@ -2,7 +2,7 @@ import {Component, Input, OnInit, OnDestroy} from '@angular/core';
 import {Observable} from 'rxjs/Rx';
 import {Subscription} from 'rxjs/Subscription';
 import {Headers, Http, Response} from '@angular/http';
-import {HttpClientService} from '../../shared/services/http-client.service';
+import {HttpClientService} from '../../services/http-client.service';
 
 @Component({
   moduleId: module.id,
@@ -62,7 +62,7 @@ export class MetadataDictionaryComponent implements OnInit, OnDestroy {
               'numeratorDescription,denominatorDescription,denominator,numerator,annualized,decimals,' +
               'indicatorType[name],user[name],attributeValues[value,attribute[name]],indicatorGroups[name,indicators~size],' +
               'legendSet[name,symbolizer,legends~size],dataSets[name]';
-            this.subscription = self.get(indicatorUrl)
+            this.subscription = self.get_from_base(indicatorUrl)
 
               .subscribe( indicatorData => {
                   // console.log(this.dataElementAvailable(data.numerator));
@@ -133,7 +133,7 @@ export class MetadataDictionaryComponent implements OnInit, OnDestroy {
             let dataelementUrl = metadataLink + '.json?fields=:all,id,name,aggregationType,displayName,';
             dataelementUrl += 'categoryCombo[id,name,categories[id,name,categoryOptions[id,name]]],' +
               'dataSets[:all,!compulsoryDataElementOperands]';
-            this.subscription = self.get(dataelementUrl)
+            this.subscription = self.get_from_base(dataelementUrl)
               .subscribe(dataelement => {
                   this.dataelements.push(dataelement);
                   console.log(this.dataelements); // It brings undefined
@@ -154,7 +154,7 @@ export class MetadataDictionaryComponent implements OnInit, OnDestroy {
           } else if (metadataLink.indexOf('dataSets') >= 1) {
             const datasetUrl = metadataLink + '.json?fields=:all,user[:all],id,name,periodType,shortName,' +
               'categoryCombo[id,name,categories[id,name,categoryOptions[id,name]]]';
-            this.subscription = self.get(datasetUrl)
+            this.subscription = self.get_from_base(datasetUrl)
               .subscribe(dataset => {
                   this.datasets.push(dataset); // It brings undefined
                 },
@@ -172,7 +172,7 @@ export class MetadataDictionaryComponent implements OnInit, OnDestroy {
             this.isDataset = true;
           } else if (metadataLink.indexOf('programs') >= 1) {
             const eventUrl = metadataLink + '.json?fields=:all,programStages[:all,programStageDataElements[:all]]';
-            this.subscription = self.get(eventUrl)
+            this.subscription = self.get_from_base(eventUrl)
               .subscribe(event => {
                   this.events.push(event);
                 },
@@ -190,7 +190,7 @@ export class MetadataDictionaryComponent implements OnInit, OnDestroy {
             this.isEvents = true;
           } else if (metadataLink.indexOf('programIndicators') >= 1) {
             const programUrl = metadataLink + '.json?fields=:all,user[:all],program[:all]';
-            this.subscription = self.get(programUrl)
+            this.subscription = self.get_from_base(programUrl)
               .subscribe(progInd => {
                   const headers = new Headers();
                   headers.append('Content-Type', 'application/json;charset=UTF-8');
@@ -310,6 +310,18 @@ export class MetadataDictionaryComponent implements OnInit, OnDestroy {
     return uid;
   }
 
+  private HandleError(error: any) {
+    let errMsg: string;
+    if (error instanceof Response) {
+      const body = error.json() || '';
+      const err = body.error || JSON.stringify(body);
+      errMsg = `${error.status}-${error.statusText || ''} ${err}`;
+    } else {
+      errMsg = error.message ? error.message : error.string();
+    }
+    console.log(errMsg);
+    return Observable.throw(errMsg);
+  }
 
   ngOnDestroy() {
     this.subscription.unsubscribe();

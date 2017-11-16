@@ -75,6 +75,7 @@ export class LayoutComponent implements OnInit {
 
   updateLayout() {
     this.onLayoutUpdate.emit(this.layoutModel);
+    this.showLayout = true;
   }
 
   close() {

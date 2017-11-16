@@ -20,6 +20,7 @@ import {ContextMenuModule} from 'ngx-contextmenu';
 import {LayoutComponent} from './components/layout/layout.component';
 import {PlaceholderComponent} from './components/placeholder/placeholder.component';
 import {TableTemplateComponent} from './components/table-template/table-template.component';
+import {MetadataDictionaryComponent} from './components/metadata-dictionary/metadata-dictionary.component';
 
 @NgModule({
   imports: [
@@ -48,7 +49,8 @@ import {TableTemplateComponent} from './components/table-template/table-template
     FilterIndicatorByNamePipe,
     LayoutComponent,
     PlaceholderComponent,
-    TableTemplateComponent
+    TableTemplateComponent,
+    MetadataDictionaryComponent
   ],
   exports: [
     TreeModule,
@@ -71,7 +73,8 @@ import {TableTemplateComponent} from './components/table-template/table-template
     ContextMenuModule,
     LayoutComponent,
     PlaceholderComponent,
-    TableTemplateComponent
+    TableTemplateComponent,
+    MetadataDictionaryComponent
   ]
 })
 export class SharedModule { }
