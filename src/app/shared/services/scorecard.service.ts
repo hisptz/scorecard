@@ -1,50 +1,31 @@
 import { Injectable } from '@angular/core';
 import {Observable} from 'rxjs/Observable';
-import {Http, Response} from '@angular/http';
-// Statics
-import 'rxjs/add/observable/throw';
-
-// Operators
-import 'rxjs/add/operator/catch';
-import 'rxjs/add/operator/debounceTime';
-import 'rxjs/add/operator/distinctUntilChanged';
-import 'rxjs/add/operator/map';
-import 'rxjs/add/operator/switchMap';
-import 'rxjs/add/operator/toPromise';
 import { ScoreCard } from '../models/scorecard';
 import {DataService} from './data.service';
 import {Store} from '@ngrx/store';
 import {ApplicationState} from '../../store/application.state';
 import {AddScorecardAction, UpdateLoadingAction, UpdateLoadingPercentAction} from '../../store/actions/store.data.action';
-import {OrgUnitService} from './org-unit.service';
 import * as _ from 'lodash';
+import {HttpClientService} from './http-client.service';
 
 
 @Injectable()
 export class ScorecardService {
 
   _scorecards: ScoreCard[] = [];
-  private baseUrl: string;
 
   constructor(
-    private http: Http,
+    private http: HttpClientService,
     private dataService: DataService,
-    private orgunitService: OrgUnitService,
     private store: Store<ApplicationState>
-  ) {
-    this.baseUrl = '../../../';
-  }
+  ) { }
 
   loadAll(): Observable<any> {
-    return this.http.get(this.baseUrl + 'api/dataStore/scorecards')
-      .map((response: Response) => response.json())
-      .catch(this.handleError);
+    return this.http.get('dataStore/scorecards');
   }
 
   load(id: string ): Observable<any> {
-    return this.http.get(`${this.baseUrl}api/dataStore/scorecards/${id}`)
-      .map((response: Response) => response.json())
-      .catch(this.handleError);
+    return this.http.get(`dataStore/scorecards/${id}`);
   }
 
   getAllScoreCards(userInfo) {
@@ -108,22 +89,16 @@ export class ScorecardService {
   }
 
   create(scorecard: ScoreCard) {
-    return this.http.post(this.baseUrl + 'api/dataStore/scorecards/' + scorecard.id, scorecard.data)
-      .map((response: Response) => response.json())
-      .catch(this.handleError);
+    return this.http.post('dataStore/scorecards/' + scorecard.id, scorecard.data);
   }
 
   update(scorecard: ScoreCard) {
     console.log(JSON.stringify(scorecard));
-    return this.http.put(`../../../api/dataStore/scorecards/${scorecard.id}`, scorecard.data)
-      .map((response: Response) => response.json())
-      .catch(this.handleError);
+    return this.http.put(`dataStore/scorecards/${scorecard.id}`, scorecard.data);
   }
 
   remove(scorecard: ScoreCard) {
-    return this.http.delete(`../../../api/dataStore/scorecards/${scorecard.id}`)
-      .map((response: Response) => response.json())
-      .catch(this.handleError);
+    return this.http.delete(`dataStore/scorecards/${scorecard.id}`);
   }
 
   addRelatedIndicator(indicator_id, related_indicators) {
@@ -146,34 +121,15 @@ export class ScorecardService {
   }
 
   getRelatedIndicators(indicator_id) {
-    return this.http.get(`${this.baseUrl}api/dataStore/scorecardRelatedIndicators/${indicator_id}`)
-      .map((response: Response) => response.json())
-      .catch(this.handleError);
+    return this.http.get(`dataStore/scorecardRelatedIndicators/${indicator_id}`);
   }
 
   createRelatedIndicator(indicator_id, related_indicators) {
-    return this.http.post(this.baseUrl + 'api/dataStore/scorecardRelatedIndicators/' + indicator_id, related_indicators)
-      .map((response: Response) => response.json())
-      .catch(this.handleError);
+    return this.http.post('dataStore/scorecardRelatedIndicators/' + indicator_id, related_indicators);
   }
 
   updateRelatedIndicator(indicator_id, related_indicators) {
-    return this.http.put(this.baseUrl + 'api/dataStore/scorecardRelatedIndicators/' + indicator_id, related_indicators)
-      .map((response: Response) => response.json())
-      .catch(this.handleError);
-  }
-  private handleError (error: Response | any) {
-    // In a real world app, we might use a remote logging infrastructure
-    let errMsg: string;
-    if (error instanceof Response) {
-      const body = error.json() || '';
-      const err = body.error || JSON.stringify(body);
-      errMsg = `${error.status} - ${error.statusText || ''} ${err}`;
-    } else {
-      errMsg = error.message ? error.message : error.toString();
-    }
-    console.error(errMsg);
-    return Observable.throw(errMsg);
+    return this.http.put('dataStore/scorecardRelatedIndicators/' + indicator_id, related_indicators);
   }
 
   // generate a random list of Id for use as scorecard id

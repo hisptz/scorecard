@@ -1,7 +1,5 @@
-import {Component, OnInit, Input, Output, EventEmitter, ViewChild, AfterViewChecked} from '@angular/core';
-import { Response, Http } from '@angular/http';
+import {Component, OnInit, Input, Output, EventEmitter, ViewChild} from '@angular/core';
 import { TreeComponent, TREE_ACTIONS, IActionMapping } from 'angular-tree-component';
-import { Observable } from 'rxjs/Observable';
 import { MultiselectComponent } from './multiselect/multiselect.component';
 import { OrgUnitService } from '../../services/org-unit.service';
 
@@ -69,7 +67,6 @@ export class OrgUnitFilterComponent implements OnInit {
     {id: 'USER_ORGUNIT_GRANDCHILDREN', name: 'User sub-x2-units', shown: true}
   ];
   constructor(
-    private http: Http,
     private orgunitService: OrgUnitService
   ) {
      if (!this.orgunit_tree_config.hasOwnProperty('multiple_key')) {

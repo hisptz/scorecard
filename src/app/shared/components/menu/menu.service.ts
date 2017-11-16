@@ -1,5 +1,5 @@
 import {Injectable} from '@angular/core';
-import {Http, Response} from '@angular/http';
+import { HttpClient } from '@angular/common/http';
 import {Observable} from 'rxjs/Observable';
 import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/catch';
@@ -8,14 +8,12 @@ import {PREDEFINED_MENU_ITEMS} from './predifined-menu-items';
 @Injectable()
 export class MenuService {
 
-  constructor(private http: Http) {
+  constructor(private http: HttpClient) {
   }
 
   getSystemSettings(rootUrl: string): Observable<any> {
     return Observable.create(observer => {
       this.http.get(rootUrl + 'api/systemSettings.json')
-        .map((response: Response) => response.json())
-        .catch(this.handleError)
         .subscribe((settings: any) => {
           observer.next(settings);
           observer.complete();
@@ -29,9 +27,8 @@ export class MenuService {
   getUserInfo(rootUrl: string): Observable<any> {
     return Observable.create(observer => {
       this.http.get(rootUrl + 'api/me.json')
-        .map((response: Response) => response.json())
-        .catch(this.handleError)
         .subscribe((userInfo: any) => {
+        console.log(userInfo)
           observer.next(userInfo);
           observer.complete();
         }, () => {
@@ -44,8 +41,6 @@ export class MenuService {
   getMenuModules(rootUrl: string): Observable<any> {
     return Observable.create(observer => {
       this.http.get(rootUrl + 'dhis-web-commons/menu/getModules.action')
-        .map((response: Response) => response.json())
-        .catch(this.handleError)
         .subscribe((menuModuleResult: any) => {
           observer.next(this._sanitizeMenuItems(menuModuleResult.modules, rootUrl));
           observer.complete();

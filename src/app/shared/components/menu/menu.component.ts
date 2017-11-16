@@ -1,7 +1,6 @@
 import {Component, OnInit, Input} from '@angular/core';
 import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/catch';
-import {Http, Response} from '@angular/http';
 import {PROFILE_MENUS} from './profile-menus';
 import {menuBackgroundColors} from './background-colors';
 import {MenuService} from './menu.service';
@@ -29,7 +28,7 @@ export class MenuComponent implements OnInit {
   showSidebarApps: boolean;
   showSidebar: boolean;
 
-  constructor(private http: Http, private menuService: MenuService) {
+  constructor( private menuService: MenuService) {
     this.rootUrl = '../../../';
     this.backgroundColor = '#f5f5f5';
     this.searchWidth = 30;

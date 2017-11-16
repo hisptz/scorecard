@@ -3,17 +3,13 @@ import {ScorecardService} from '../../shared/services/scorecard.service';
 import {Subscription} from 'rxjs/Subscription';
 import {FilterService} from '../../shared/services/filter.service';
 import {Angular2Csv} from 'angular2-csv';
-import {FunctionService} from '../../shared/services/function.service';
 import {DataService} from '../../shared/services/data.service';
 import {HttpClientService} from '../../shared/services/http-client.service';
 import {VisualizerService} from '../../shared/services/visualizer.service';
 
 import * as _ from 'lodash';
 import {animate, state, style, transition, trigger} from '@angular/animations';
-import {ScoreCard} from '../../shared/models/scorecard';
 import {ContextMenuComponent, ContextMenuService} from 'ngx-contextmenu';
-import {Store} from '@ngrx/store';
-import {ApplicationState} from '../../store/application.state';
 
 @Component({
   selector: 'app-scorecard',
@@ -54,23 +50,17 @@ export class ScorecardComponent implements OnInit, OnDestroy {
   proccessed_percent = 0;
   loading: boolean = true;
   loading_message: string;
-  base_url: string;
   showSubScorecard: any[] = [];
   periods_list: any = [];
-  keep_options_open: boolean = true;
   indicator_loading: boolean[] = [];
   indicator_done_loading: boolean[] = [];
   has_error: boolean[] = [];
-  period_loading: boolean[] = [];
-  period_done_loading: boolean[] = [];
   old_proccessed_percent = 0;
   proccesed_indicators = 0;
   shown_records: any;
   show_sum_in_row: boolean = false;
-  // sorting scorecard by clicking the header(if two item in same list will use first item)
   current_sorting = true;
   sortAscending: boolean = true;
-  sorting_on_progress = [];
   sorting_period = '';
   hidenColums: any[] = [];
   organisationUnitName: string = '';
@@ -80,7 +70,6 @@ export class ScorecardComponent implements OnInit, OnDestroy {
   subscorecard: any;
   sub_unit: any;
   sub_model: any;
-  periodListFromAnalyicts: any;
 
   @ViewChild('indicatorMenu') public indicatorMenu: ContextMenuComponent;
   @ViewChild('itemMenu') public itemMenu: ContextMenuComponent;
@@ -89,8 +78,6 @@ export class ScorecardComponent implements OnInit, OnDestroy {
     private dataService: DataService,
     private filterService: FilterService,
     private scorecardService: ScorecardService,
-    private functionService: FunctionService,
-    private store: Store<ApplicationState>,
     private visualizerService: VisualizerService,
     private httpService: HttpClientService,
     private contextMenuService: ContextMenuService
@@ -104,7 +91,6 @@ export class ScorecardComponent implements OnInit, OnDestroy {
 
   // load scorecard after changes has occur
   loadScoreCard() {
-    console.log('functions', this.functions);
     this.showSubScorecard = [];
     this.periods_list = [];
     this.indicator_done_loading = [];

@@ -1,7 +1,6 @@
 import {
   Component, OnInit, Output, Input, EventEmitter
 } from '@angular/core';
-import {Http} from '@angular/http';
 
 import * as _ from 'lodash';
 
@@ -57,9 +56,7 @@ export class PeriodFilterComponent implements OnInit {
   year: number = new Date().getFullYear();
   period_type_config: Array<any>;
 
-  constructor(
-    private http: Http
-  ) {
+  constructor() {
     const date = new Date();
     date.setDate(0);
     this.period_tree_config.starting_year = date.getFullYear();
@@ -70,17 +67,8 @@ export class PeriodFilterComponent implements OnInit {
       this.period_tree_config.multiple_key = 'none';
     }
 
-    this.getSystemSettings().subscribe((value) => {
-      // TODO: Find a way to find the relative period dynamic
-      // this.activatePer({ id: value.keyAnalysisRelativePeriod, name: 'Last 12 Months' })
-      // this.activatePer({ id: '2015July', name: 'July 2015 - June 2016' })
-    });
   }
 
-  getSystemSettings() {
-    return this.http.get('../../../api/25/systemSettings')
-      .map(res => res.json() || {});
-  }
 
   ngOnInit() {
 

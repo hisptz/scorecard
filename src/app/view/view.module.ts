@@ -4,7 +4,6 @@ import { SharedModule } from '../shared/shared.module';
 import { Ng2HighchartsModule } from 'ng2-highcharts';
 import { view_routing } from './view.routing';
 import { ScorecardComponent } from './scorecard/scorecard.component';
-import { IndicatorCardComponent } from './indicator-card/indicator-card.component';
 import { SubtotalComponent } from './subtotal/subtotal.component';
 import { SvgItemComponent } from './svg-item/svg-item.component';
 import { IndicatorTitleComponent } from './indicator-title/indicator-title.component';
@@ -22,7 +21,6 @@ import { DragulaModule } from 'ng2-dragula';
   declarations: [
     ViewComponent,
     ScorecardComponent,
-    IndicatorCardComponent,
     SubtotalComponent,
     SvgItemComponent,
     IndicatorTitleComponent,

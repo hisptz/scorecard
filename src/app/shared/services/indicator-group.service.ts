@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import {Observable} from 'rxjs/Observable';
-import {Http, Response} from '@angular/http';
+import {HttpClientService} from './http-client.service';
 
 export interface IndicatorGroup {
   id: string;
@@ -14,7 +14,7 @@ export class IndicatorGroupService {
   private _indicatorGroups: any = null;
   private baseUrl: string;
 
-  constructor(private http: Http ) { }
+  constructor(private http: HttpClientService ) { }
 
   // get all indicator groups
   loadAll(): Observable<any> {
@@ -23,9 +23,7 @@ export class IndicatorGroupService {
         observer.next(this._indicatorGroups);
         observer.complete();
       }else {
-        this.http.get('../../../api/indicatorGroups.json?fields=id,name&paging=false')
-          .map((response: Response) => response.json())
-          .catch( this.handleError )
+        this.http.get('indicatorGroups.json?fields=id,name&paging=false')
           .subscribe((groups: any) => {
               this._indicatorGroups = groups;
               observer.next(this._indicatorGroups);
@@ -39,22 +37,7 @@ export class IndicatorGroupService {
   }
 
   load(id: string ): Observable<any> {
-    return this.http.get(`../../../api/indicatorGroups/${id}.json?fields=id,name,indicators[id,name,indicatorType[id,name]]`)
-      .map((response: Response) => response.json())
-      .catch(this.handleError);
+    return this.http.get(`indicatorGroups/${id}.json?fields=id,name,indicators[id,name,indicatorType[id,name]]`);
   }
 
-  private handleError (error: Response | any) {
-    // In a real world app, we might use a remote logging infrastructure
-    let errMsg: string;
-    if (error instanceof Response) {
-      const body = error.json() || '';
-      const err = body.error || JSON.stringify(body);
-      errMsg = `${error.status} - ${error.statusText || ''} ${err}`;
-    } else {
-      errMsg = error.message ? error.message : error.toString();
-    }
-    console.error(errMsg);
-    return Observable.throw(errMsg);
-  }
 }

@@ -1,39 +1,30 @@
 import {Injectable} from '@angular/core';
-
-import {Http, Response} from '@angular/http';
 import 'rxjs/Rx';
 import {Observable} from 'rxjs/Observable';
+import {HttpClientService} from './http-client.service';
 
 @Injectable()
 export class FilterService {
 
-  constructor(private http: Http) {
+  constructor(private http: HttpClientService) {
   }
 
   // Get available organisation units levels information
   getOrgunitLevelsInformation() {
-    return this.http.get('../../../api/organisationUnitLevels.json?fields=id')
-      .map((response: Response) => response.json())
-      .catch(this.handleError);
+    return this.http.get('organisationUnitLevels.json?fields=id');
   }
 
   // Get orgunits and children
   getOrgunitDetails(orgunit) {
-    return this.http.get('../../../api/organisationUnits/' + orgunit + '.json?fields=id,name,level,children[id,name,level]')
-      .map((response: Response) => response.json())
-      .catch(this.handleError);
+    return this.http.get('organisationUnits/' + orgunit + '.json?fields=id,name,level,children[id,name,level]');
   }
 
   // Get starting organisation Unit
   getInitialOrgunitsForTree(uid: string = null) {
     if (uid === null) {
-      return this.http.get('../../../api/organisationUnits.json?filter=level:eq:1&paging=false&fields=id,name,level,children[id,name,level]')
-        .map((response: Response) => response.json())
-        .catch(this.handleError);
+      return this.http.get('organisationUnits.json?filter=level:eq:1&paging=false&fields=id,name,level,children[id,name,level]');
     } else {
-      return this.http.get('../../../api/organisationUnits/' + uid + '.json?fields=id,name,level')
-        .map((response: Response) => response.json())
-        .catch(this.handleError);
+      return this.http.get('organisationUnits/' + uid + '.json?fields=id,name,level');
     }
   }
 

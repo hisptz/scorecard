@@ -1,24 +1,23 @@
 import { Injectable } from '@angular/core';
-import { Http, Response } from '@angular/http';
 import 'rxjs/Rx';
 import {Observable} from 'rxjs/Observable';
 import {Constants} from './costants';
+import {HttpClientService} from './http-client.service';
 
 @Injectable()
 export class DataService {
 
   user: any = null;
   user_groups: any = null;
-  constructor(private http: Http,
+  constructor(private http: HttpClientService,
               private constant: Constants) { }
 
   // Get current user information
   getUserInformation (): Observable<any> {
     return new Observable((observ) => {
       if ( this.user === null) {
-        this.http.get('../../../api/me.json?fields=id,name,userGroups,userCredentials[userRoles[authorities]]')
-          .map((response: Response) => response.json())
-          .catch( this.handleError ).subscribe(
+        this.http.get('me.json?fields=id,name,userGroups,userCredentials[userRoles[authorities]]')
+          .subscribe(
           (data) => {
             this.user = data;
             observ.next(data);
@@ -83,9 +82,8 @@ export class DataService {
   getUserGroupInformation (): Observable<any> {
     return Observable.create( (observ) => {
       if ( this.user_groups === null) {
-        this.http.get('../../../api/userGroups.json?fields=id,name&paging=false')
-          .map((response: Response) => response.json())
-          .catch( this.handleError ).subscribe(
+        this.http.get('userGroups.json?fields=id,name&paging=false')
+          .subscribe(
           (data) => {
             this.user_groups = data;
             observ.next(data);
@@ -128,9 +126,7 @@ export class DataService {
   }
 
   getIndicatorsRequest ( orgunits: string, period: string, indicator: string ) {
-    return this.http.get(this.constant.root_api + 'analytics.json?dimension=dx:' + indicator + '&dimension=ou:' + orgunits + '&dimension=pe:' + period + '&displayProperty=NAME')
-      .map((response: Response) => response.json())
-      .catch( this.handleError );
+    return this.http.get('analytics.json?dimension=dx:' + indicator + '&dimension=ou:' + orgunits + '&dimension=pe:' + period + '&displayProperty=NAME');
   }
 
   getIndicatorData ( orgunitId , period, indicatorsObject) {

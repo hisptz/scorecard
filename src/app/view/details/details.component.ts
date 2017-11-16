@@ -7,7 +7,6 @@ import * as selectors from '../../store/selectors';
 import {Angular2Csv} from 'angular2-csv';
 import {VisualizerService} from '../../shared/services/visualizer.service';
 import {Subscription} from 'rxjs/Subscription';
-import {Http} from '@angular/http/http';
 import * as _ from 'lodash';
 import {HttpClientService} from '../../shared/services/http-client.service';
 import {LayoutModel} from '../../shared/components/layout/layout-model';

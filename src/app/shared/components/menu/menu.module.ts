@@ -3,14 +3,14 @@ import { CommonModule } from '@angular/common';
 import { MenuComponent } from './menu.component';
 import {FilterPipe} from './filter.pipe';
 import {FormsModule} from '@angular/forms';
-import {HttpModule} from '@angular/http';
+import {HttpClientModule} from '@angular/common/http';
 import {MenuService} from './menu.service';
 
 @NgModule({
   imports: [
     CommonModule,
     FormsModule,
-    HttpModule
+    HttpClientModule
   ],
   declarations: [MenuComponent, FilterPipe],
   exports: [MenuComponent],

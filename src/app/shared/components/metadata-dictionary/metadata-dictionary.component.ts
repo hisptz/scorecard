@@ -1,7 +1,6 @@
 import {Component, Input, OnInit, OnDestroy} from '@angular/core';
 import {Observable} from 'rxjs/Rx';
 import {Subscription} from 'rxjs/Subscription';
-import {Headers, Http, Response} from '@angular/http';
 import {HttpClientService} from '../../services/http-client.service';
 
 @Component({
@@ -308,19 +307,6 @@ export class MetadataDictionaryComponent implements OnInit, OnDestroy {
     }
 
     return uid;
-  }
-
-  private HandleError(error: any) {
-    let errMsg: string;
-    if (error instanceof Response) {
-      const body = error.json() || '';
-      const err = body.error || JSON.stringify(body);
-      errMsg = `${error.status}-${error.statusText || ''} ${err}`;
-    } else {
-      errMsg = error.message ? error.message : error.string();
-    }
-    console.log(errMsg);
-    return Observable.throw(errMsg);
   }
 
   ngOnDestroy() {
