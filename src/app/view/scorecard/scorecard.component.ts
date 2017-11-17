@@ -663,6 +663,17 @@ export class ScorecardComponent implements OnInit, OnDestroy {
     this.sorting_column = (lower_level) ? 'none' : sortingColumn;
   }
 
+  sortBestWorst(type: any, sortingColumn, sortAscending, orguUnits, period: string, lower_level: boolean = true) {
+    if (type === 'all') {
+      this.sortScoreCardFromColumn('none', sortAscending, orguUnits, period, lower_level);
+      this.scorecard.data.show_rank = false;
+    }else {
+      this.scorecard.data.show_rank = true;
+      this.sortScoreCardFromColumn(sortingColumn, sortAscending, orguUnits, period, lower_level);
+    }
+    this.scorecard.data.shown_records = type;
+  }
+
   // hack to find a value of indicator for a specific orgunit
   private findOrgunitIndicatorValue(orgunit_id: string, indicator_id: string, period: string) {
     let val: number = 0;

@@ -415,10 +415,12 @@ export class CreateComponent implements OnInit, AfterViewInit, OnDestroy {
     }
     // this.getItemsFromGroups();
     let i = 0;
+    let current_holder_id = 0;
     for ( const item of this.scorecard.data.data_settings.indicator_holder_groups ) {
       i++;
       if (i === 1) {
         this.current_holder_group = item;
+        current_holder_id = this.current_holder_group.indicator_holder_ids[0];
       }else { continue; }
 
     }
@@ -430,7 +432,7 @@ export class CreateComponent implements OnInit, AfterViewInit, OnDestroy {
         }
       }
       j++;
-      if (j === 1) {
+      if (item.holder_id === current_holder_id) {
         this.current_indicator_holder = item;
       }else { continue; }
     }
@@ -488,15 +490,15 @@ export class CreateComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   onTitleChange(event) {
-    console.log('changed', event);
+
   }
 
   onTitleReady(event) {
-    console.log('ready', event);
+
   }
 
   onTitleBlur(event) {
-    console.log('blur', event);
+
   }
   // cancel scorecard creation process
   cancelCreate() {
@@ -740,7 +742,6 @@ export class CreateComponent implements OnInit, AfterViewInit, OnDestroy {
       this.addIndicatorHolder(this.current_indicator_holder);
       this.current_holder_group.id = this.current_holder_group_id;
       this.addHolderGroups(this.current_holder_group, this.current_indicator_holder);
-      console.log(indicator);
     }
 
 
@@ -963,7 +964,6 @@ export class CreateComponent implements OnInit, AfterViewInit, OnDestroy {
   updateIndicator(indicator: any): void {
     this.current_indicator_holder = indicator;
     this.need_for_indicator = true;
-    console.log('indicator:', this.current_indicator_holder);
     this.scorecard.data.data_settings.indicator_holder_groups.forEach( (group, groupIndex) => {
       if (group.indicator_holder_ids.indexOf(indicator.holder_id) > -1) {
         this.current_holder_group = group;
@@ -1082,7 +1082,6 @@ export class CreateComponent implements OnInit, AfterViewInit, OnDestroy {
         indicator.additional_label_values[this.newLabel] = '';
       }
     }
-    console.log(this.scorecard.data.data_settings);
   }
 
   getIndicatorLabel(indicator, label) {
@@ -1554,7 +1553,6 @@ export class CreateComponent implements OnInit, AfterViewInit, OnDestroy {
 
 
   transferDataSuccess($event, drop_area: string, object: any) {
-    console.log('droped here', $event);
     if (drop_area === 'group') {
       //  check if someone is trying to reorder items within the scorecard
 

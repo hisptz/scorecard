@@ -77,6 +77,7 @@ export class PeriodFilterComponent implements OnInit {
       this.changePeriodType();
       this.emitPeriod(false);
     }
+
     // this.getRelativePeriodText('LAST_5_YEARS');
   }
 

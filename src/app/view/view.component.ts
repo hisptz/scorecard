@@ -44,7 +44,7 @@ import * as previewActions from '../store/actions/indicator-preview.action';
         'background-color': 'rgba(255,255,255,1)',
         'border': '1px solid #ddd'
       })),
-      transition('notHovered <=> hoovered', animate('300ms'))
+      transition('notHovered <=> hoovered', animate('500ms'))
     ]),
     trigger('fadeInOut', [
       transition(':enter', [   // :enter is alias to 'void => *'
@@ -185,6 +185,9 @@ export class ViewComponent implements OnInit, AfterViewInit, OnDestroy {
         'type': 'report',
         'selected_user_orgunit': []
       };
+    }
+    if (this.scorecard.data.selected_periods.length === 0) {
+      this.scorecard.data.selected_periods = [{name: 'Last Quarter', id: 'LAST_QUARTER'}];
     }
     // attach average_selection if none is defined
     if (!this.scorecard.data.hasOwnProperty('average_selection')) {

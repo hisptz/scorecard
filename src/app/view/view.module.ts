@@ -10,11 +10,14 @@ import { IndicatorTitleComponent } from './indicator-title/indicator-title.compo
 import { PeriodTitleComponent } from './period-title/period-title.component';
 import { DetailsComponent } from './details/details.component';
 import { DragulaModule } from 'ng2-dragula';
+import {MapModule} from '../shared/components/map/map.module';
+import { MapContainerComponent } from './details/map-container/map-container.component';
 
 @NgModule({
   imports: [
     SharedModule,
     Ng2HighchartsModule,
+    MapModule,
     DragulaModule,
     view_routing
   ],
@@ -25,7 +28,8 @@ import { DragulaModule } from 'ng2-dragula';
     SvgItemComponent,
     IndicatorTitleComponent,
     PeriodTitleComponent,
-    DetailsComponent
+    DetailsComponent,
+    MapContainerComponent
   ]
 })
 export class ViewModule { }

@@ -76,14 +76,9 @@
         <div *ngIf="!loading && visualizer_config.type == 'table' && !error_occured">
           <app-table-template [tableObject]="tableData"></app-table-template>
         </div>
-        <!--<div *ngIf="!loading && visualizer_config.type == 'map' && !error_occured">-->
-          <!--<app-map-template *ngIf="indicator.mapObject" [mapObject]="indicator.mapObject"></app-map-template>-->
-          <!--<div class="lead" *ngIf="!indicator.mapObject">-->
-            <!--<h3 class="lead text-center">{{indicator.title}}</h3>-->
-            <!--<app-placeholder-->
-              <!--[loadingMessage]="'Preparing '+ selected_ou_name + ' ' + indicator.title + ' maps ...'"></app-placeholder>-->
-          <!--</div>-->
-        <!--</div>-->
+        <div *ngIf="!loading && visualizer_config.type == 'map' && !error_occured">
+          <app-map-container [analyticsObject]="current_analytics_data"></app-map-container>
+        </div>
 
 
         <div class="options-block"
@@ -123,7 +118,7 @@
         <button class="btn btn-sm cursor"
                 [ngClass]="{ 'btn-outline-success': (visualizer_config.type != 'map'),'btn-secondary':(visualizer_config.type == 'map')}"
                 (click)="updateType('map')"
-                [disabled]="(visualizer_config.type == 'map' && geoFeatures.length==0)"
+                [disabled]="(visualizer_config.type == 'map')"
         >
           <i class="fa fa-map"></i>
           Map
