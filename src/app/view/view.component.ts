@@ -17,6 +17,7 @@ import {FunctionService} from '../shared/services/function.service';
 import {PeriodFilterComponent} from '../shared/components/period-filter/period-filter.component';
 
 import * as previewActions from '../store/actions/indicator-preview.action';
+import 'rxjs/add/operator/first';
 
 @Component({
   selector: 'app-view',

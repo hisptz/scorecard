@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import {HttpClientService} from './http-client.service';
-import {Observable} from 'rxjs/Rx';
+import {Observable} from 'rxjs/Observable';
 import {FunctionObject} from '../models/function-object';
 import {User} from '../models/user';
 import {FunctionParameters} from '../models/function-parameters';

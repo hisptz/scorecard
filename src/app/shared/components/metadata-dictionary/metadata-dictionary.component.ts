@@ -1,7 +1,8 @@
 import {Component, Input, OnInit, OnDestroy} from '@angular/core';
-import {Observable} from 'rxjs/Rx';
+import {Observable} from 'rxjs/Observable';
 import {Subscription} from 'rxjs/Subscription';
 import {HttpClientService} from '../../services/http-client.service';
+import 'rxjs/add/observable/forkJoin';
 
 @Component({
   moduleId: module.id,
@@ -77,7 +78,7 @@ export class MetadataDictionaryComponent implements OnInit, OnDestroy {
                     'created,expiryDays&filter=dataElements.id:in:[' +
                     this.dataElementAvailable(indicatorData.denominator) + ']&paging=false)');
                   this.subscription = Observable.forkJoin([numeratorExp, numeratorDataset, denominatorExp, denominatorDataSet])
-                    .subscribe(results => {
+                    .subscribe((results:any) => {
                         const numerator = results[0].description;
                         const numeratorDataEl = results[1];
                         const denominator = results[2].description;

@@ -237,6 +237,7 @@ export class OrgUnitFilterComponent implements OnInit {
         node.toggleExpanded();
       }
     }, 0);
+
   }
 
   // a method to activate the model
@@ -283,6 +284,7 @@ export class OrgUnitFilterComponent implements OnInit {
 
   // add item to array of selected items when item is selected
   activateOrg = ($event) => {
+    console.log('naitwa bro')
     this.period_selector.reset();
     if (this.orgunit_model.selection_mode === 'Usr_orgUnit') {
       this.orgunit_model.selection_mode = 'orgUnit';

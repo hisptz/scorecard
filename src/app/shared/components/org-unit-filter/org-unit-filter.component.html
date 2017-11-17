@@ -95,8 +95,8 @@
             [nodes]="organisationunits"
             [focused]="true"
             [options]="customTemplateStringOrgunitOptions"
-            (onActivate)="activateOrg($event)"
-            (onDeactivate)="deactivateOrg($event)"
+            (activate)="activateOrg($event)"
+            (deactivate)="deactivateOrg($event)"
           >
             <ng-template #treeNodeTemplate let-node>
               <span (click)="updateModelOnSelect(node.data)" style="font-size: 12px">{{ node.data.name }}</span>
