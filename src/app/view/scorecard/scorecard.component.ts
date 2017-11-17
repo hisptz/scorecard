@@ -428,12 +428,16 @@ export class ScorecardComponent implements OnInit, OnDestroy {
     let counter = 0;
     for (const holder of this.scorecard.data.data_settings.indicator_holders) {
       for (const indicator of holder.indicators) {
-        if (this.hidenColums.indexOf(indicator.id) === -1) {
-          sum++;
+        for (const current_period of this.periods_list){
+          if (this.hidenColums.indexOf(indicator.id) === -1) {
+            sum++;
+          }
+          if (this.hidenColums.indexOf(indicator.id) === -1 && indicator.values[orgunit_id + '.' + current_period.id] === null) {
+            counter++;
+          }
         }
-        if (this.hidenColums.indexOf(indicator.id) === -1 && indicator.values[orgunit_id] === null) {
-          counter++;
-        }
+
+
       }
     }
     if (counter === sum && !this.scorecard.data.empty_rows) {
