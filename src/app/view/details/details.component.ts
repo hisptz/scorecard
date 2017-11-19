@@ -316,6 +316,7 @@ export class DetailsComponent implements OnInit {
         for (const item of holder.indicators) {
           if (this.hidden_columns.indexOf(item.id) === -1) {
             if (item.hasOwnProperty('bottleneck_indicators')) {
+
               // check first if bottleneck is groups or normal
               if ( item.bottleneck_indicators[0].hasOwnProperty('type') && item.bottleneck_indicators[0].type === 'group') {
                 for (const bottleneck of item.bottleneck_indicators) {
@@ -365,8 +366,13 @@ export class DetailsComponent implements OnInit {
       for (const holder of this.indicator) {
         for (const item of holder.indicators) {
           if (this.hidden_columns.indexOf(item.id) === -1) {
-            indicatorsArray.push(item.id);
-            labels.push({'id': item.id, 'name': item.title});
+            if (item.hasOwnProperty('calculation') && item.calculation === 'custom_function') {
+              function_indicatorsArray.push({...item, 'function': item.function_to_use});
+              labels.push({'id': item.id, 'name': item.title});
+            }else {
+              indicatorsArray.push(item.id);
+              labels.push({'id': item.id, 'name': item.title});
+            }
           }
         }
       }
@@ -445,8 +451,9 @@ export class DetailsComponent implements OnInit {
         }
         this.loading = false;
       }else {
-
         // create an api analytics call
+        console.log(indicatorsArray)
+        console.log(function_indicatorsArray)
         if (indicatorsArray.length === labels.length ) {
           const url = 'analytics.json?dimension=dx:' + indicatorsArray.join(';') + '&dimension=ou:' + this.selectedOrganisationUnit.value + '&dimension=pe:' + this.periodObject.value + '&displayProperty=NAME';
           this.subscription = this.loadAnalytics(url).subscribe(
