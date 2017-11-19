@@ -313,13 +313,18 @@ export class DetailsComponent implements OnInit {
         for (const item of holder.indicators) {
           if (this.hidden_columns.indexOf(item.id) === -1) {
             if (item.hasOwnProperty('bottleneck_indicators')) {
-              for (const bottleneck of item.bottleneck_indicators) {
-                if (bottleneck.hasOwnProperty('function')) {
-                  function_indicatorsArray.push(bottleneck);
-                  labels.push({'id': bottleneck.id, 'name': bottleneck.bottleneck_title});
-                }else {
-                  indicatorsArray.push(bottleneck.id);
-                  labels.push({'id': bottleneck.id, 'name': bottleneck.bottleneck_title});
+              // check first if bottleneck is groups or normal
+              if ( item.bottleneck_indicators[0].hasOwnProperty('type') && item.bottleneck_indicators[0].type === 'group') {
+
+              }else {
+                for (const bottleneck of item.bottleneck_indicators) {
+                  if (bottleneck.hasOwnProperty('function')) {
+                    function_indicatorsArray.push(bottleneck);
+                    labels.push({'id': bottleneck.id, 'name': bottleneck.bottleneck_title});
+                  }else {
+                    indicatorsArray.push(bottleneck.id);
+                    labels.push({'id': bottleneck.id, 'name': bottleneck.bottleneck_title});
+                  }
                 }
               }
             }
