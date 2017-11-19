@@ -165,6 +165,8 @@ export class ScorecardComponent implements OnInit, OnDestroy {
                         }
                         this.shown_records = this.orgunits.length;
                         this.indicator_loading[loading_key] = false;
+                        old_proccesed_indicators++;
+                        this.old_proccessed_percent = (old_proccesed_indicators / this.allIndicatorsLength) * 100;
                       },
                       error: (error) => {
                         this.errorLoadingIndicator( indicator );
@@ -175,6 +177,8 @@ export class ScorecardComponent implements OnInit, OnDestroy {
                     const execute = Function('parameters', use_function['function']);
                     execute(parameters);
                   }else { // set all values to default if the function cannot be found in store
+                    old_proccesed_indicators++;
+                    this.old_proccessed_percent = (old_proccesed_indicators / this.allIndicatorsLength) * 100;
                     this.doneLoadingIndicator( indicator, this.allIndicatorsLength, current_period );
                   }
                 } else {

@@ -580,7 +580,10 @@
       <!--<div class="container-fluid">-->
         <!--<span class="fa fa-cut pull-right" style="cursor: pointer" (click)="showBotleneckEditor(bottleneck_card.indicator)"></span>-->
       <!--</div>-->
-      <div style="padding: 15px; margin-right: 0px" class="row" >
+      <label *ngIf="bottleneck_card.indicator_ready && bottleneck_card.indicator.bottleneck_indicators.length == 0">
+        <input type="checkbox" [(ngModel)]="use_group_in_bottleneck"> Use Groups
+      </label>
+      <div style="padding: 15px; padding-top: 0px; margin-right: 0px" class="row" >
         <!--indicator groups-->
         <div class="col-sm-4" style="padding: 0px">
           <div class="thumbnail bottleneck_scorecard_details">
@@ -604,8 +607,9 @@
                 class="list-group-item selection_link"
                 *ngFor="let group of bottleneck_card.current_groups | filterByName:bottleneck_card.groupQuery | paginate: { id: 'bottleneck_cardgroups1', itemsPerPage: 6, currentPage: k }"
                 [ngClass]="{'listSelected': group.id == bottleneck_card.activeGroup}"
-                (click)="load_bottleneck_card_list(group.id, t.value)"
+                (click)="load_bottleneck_card_list(group, t.value)"
               >
+                <span class="fa fa-check-circle text-success" *ngIf="botteneckIndicatorExist(group)"></span>
                 {{ group.name }}
               </li>
             </ul>
@@ -613,7 +617,7 @@
           </div>
         </div>
         <!--indicators lists-->
-        <div class="col-sm-4" style="padding-left: 10px;padding-right: 10px">
+        <div class="col-sm-4" style="padding-left: 10px;padding-right: 10px" *ngIf="!use_group_in_bottleneck">
           <div class="thumbnail bottleneck_scorecard_details">
             <div *ngIf="bottleneck_card.listReady">
               <img src="balls-4.svg" style="height: 90px; padding-top: 20px" *ngIf="!bottleneck_card.done_loading_list">
@@ -629,7 +633,7 @@
                   [ngClass]="{'already_selected': botteneckIndicatorExist(item)}"
                   (click)="load_bottleneck_card_item(item)"
                 >
-                  <span class="glyphicon glyphicon-ok-circle text-success" *ngIf="botteneckIndicatorExist(item)"></span> {{ item.name }}
+                  <span class="fa fa-check-circle text-success" *ngIf="botteneckIndicatorExist(item)"></span> {{ item.name }}
                 </li>
               </ul>
               <pagination-controls  id="bottleneck_cardlist2" (pageChange)="n = $event" directionLinks="true" autoHide="true" previousLabel=" " nextLabel=" "></pagination-controls>
