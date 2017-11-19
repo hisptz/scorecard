@@ -293,6 +293,7 @@ export class DetailsComponent implements OnInit {
   // a call that will change the view type
   updateType(type: string) {
     const analytics_calls = [];
+    let dataGroups = null;
     // cancel the current call if still in progress when switching between charts
     if (this.subscription) {
       this.subscription.unsubscribe();
@@ -309,14 +310,29 @@ export class DetailsComponent implements OnInit {
     let labels = null;
     if (this.showBottleneck) {
       labels = [];
+      const groupCateries = [];
+      let useGroups = false;
       for (const holder of this.indicator) {
         for (const item of holder.indicators) {
           if (this.hidden_columns.indexOf(item.id) === -1) {
             if (item.hasOwnProperty('bottleneck_indicators')) {
               // check first if bottleneck is groups or normal
               if ( item.bottleneck_indicators[0].hasOwnProperty('type') && item.bottleneck_indicators[0].type === 'group') {
-
+                for (const bottleneck of item.bottleneck_indicators) {
+                  groupCateries.push({
+                    name: bottleneck.bottleneck_title,
+                    categories: bottleneck.items.map((i) => i.name)
+                  });
+                  useGroups = true;
+                  if (bottleneck.hasOwnProperty('function')) {
+                    function_indicatorsArray.push(...bottleneck.items);
+                  }else {
+                    indicatorsArray.push(...bottleneck.items.map((i) => i.id));
+                  }
+                  labels.push(...bottleneck.items.map((i) => { return {'id': i.id, 'name': i.name}; }));
+                }
               }else {
+                useGroups = true;
                 for (const bottleneck of item.bottleneck_indicators) {
                   if (bottleneck.hasOwnProperty('function')) {
                     function_indicatorsArray.push(bottleneck);
@@ -330,6 +346,11 @@ export class DetailsComponent implements OnInit {
             }
           }
         }
+      }
+      if (groupCateries.length === 0) {
+        dataGroups = null;
+      }else {
+        dataGroups = groupCateries;
       }
       if (this.bottleneck_first_time) {
         type = 'column';
@@ -403,7 +424,8 @@ export class DetailsComponent implements OnInit {
           'title': this.prepareCardTitle(this.indicator),
           'xAxisType': this.layoutModel.columns[0].value,
           'yAxisType': this.layoutModel.rows[0].value,
-          'labels': labels
+          'labels': labels,
+          'dataGroups': dataGroups
         }
       };
     }
