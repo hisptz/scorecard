@@ -5,17 +5,18 @@ import {
 import {ScorecardService} from '../shared/services/scorecard.service';
 import {ActivatedRoute} from '@angular/router';
 import {Subscription} from 'rxjs/Subscription';
+import { TourService } from 'ngx-tour-ng-bootstrap';
+import {Store} from '@ngrx/store';
 import {ScorecardComponent} from './scorecard/scorecard.component';
 import {animate, state, style, transition, trigger} from '@angular/animations';
 import {DataService} from '../shared/services/data.service';
 import {ApplicationState} from '../store/application.state';
-import {Store} from '@ngrx/store';
 import * as selectors from '../store/selectors';
 import {SetSelectedOrgunitAction, SetSelectedPeriodAction} from '../store/actions/store.data.action';
 import {Observable} from 'rxjs/Observable';
 import {FunctionService} from '../shared/services/function.service';
 import {PeriodFilterComponent} from '../shared/components/period-filter/period-filter.component';
-
+import tourSteps from '../shared/tourGuide/tour.view';
 import * as previewActions from '../store/actions/indicator-preview.action';
 
 @Component({
@@ -97,7 +98,8 @@ export class ViewComponent implements OnInit, AfterViewInit, OnDestroy {
               private dataService: DataService,
               private activatedRouter: ActivatedRoute,
               private functionService: FunctionService,
-              private store: Store<ApplicationState>
+              private store: Store<ApplicationState>,
+              public tourService: TourService
   ) {
     this.selectedOrganisationUnits$ = store.select( selectors.getSelectedOrgunit );
     this.selectedPeriod$ = this.store.select( selectors.getSelectedPeriod );
@@ -107,6 +109,13 @@ export class ViewComponent implements OnInit, AfterViewInit, OnDestroy {
         this.scorecardId = params['scorecardid'];
         this.scorecard = this.scorecardService.getEmptyScoreCard();
       });
+
+    this.tourService.initialize(tourSteps);
+
+  }
+
+  startTour() {
+    this.tourService.start();
   }
 
   ngOnInit() {

@@ -222,7 +222,7 @@
         <th *ngIf="scorecard.data.show_average_in_row"></th>
       </tr>
       <!--indicator titles-->
-      <tr>
+      <tr tourAnchor="view.scorecard">
         <th *ngIf="scorecard.data.show_rank"  style="width: 30px;vertical-align: bottom;" [attr.rowspan]="periods_list.length >1 ? 2 : 1">No#</th>
         <th style="vertical-align: bottom" (click)="sortScoreCardFromColumn('none', sortAscending, orgunits, periods_list[0].id, false)">
           <!--sorting icons-->

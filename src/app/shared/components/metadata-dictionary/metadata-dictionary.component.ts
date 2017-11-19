@@ -1,7 +1,6 @@
 import {Component, Input, OnInit, OnDestroy} from '@angular/core';
-import {Observable} from 'rxjs/Rx';
-import {Subscription} from 'rxjs/Subscription';
 import {HttpClientService} from '../../services/http-client.service';
+import {HttpClient, HttpHeaders} from '@angular/common/http';
 
 @Component({
   moduleId: module.id,
@@ -9,34 +8,27 @@ import {HttpClientService} from '../../services/http-client.service';
   templateUrl: './metadata-dictionary.component.html',
   styleUrls: ['./metadata-dictionary.component.css']
 })
-export class MetadataDictionaryComponent implements OnInit, OnDestroy {
-  indicators = [];
-  CompleteData = [];
-  dataelements = [];
-  dataelementsNumerator = [];
-  datasets = [];
-  events = [];
-  programInd = [];
-  isIndicator = false;
-  isDataelements = false;
-  isDataset = false;
-  isEvents = false;
-  isProgramInd = false;
-  showingLoading = false;
-  progressMessage = 'Preparing metadata dictionary';
+export class MetadataDictionaryComponent implements OnInit {
+  public indicators = [];
+  public dataelements = [];
+  public datasets = [];
+  public events = [];
+  public programInd = [];
+  public isIndicator = false;
+  public isDataelements = false;
+  public isDataset = false;
+  public isEvents = false;
+  public isProgramInd = false;
+  public showingLoading: boolean = false;
+  public progressMessage: string = 'Preparing metadata dictionary';
   @Input() metadataidentifiers: string;
-  subscription: Subscription;
-  public oneAtATime = true;
-  public isFirstOpen = false;
 
-  constructor(private http: HttpClientService) {
+  constructor(private http: HttpClientService, private httpClient: HttpClient) {
     this.indicators = [];
-    this.CompleteData = [];
     this.dataelements = [];
     this.datasets = [];
     this.events = [];
     this.programInd = [];
-    this.dataelementsNumerator = [];
   }
 
   ngOnInit() {
@@ -44,134 +36,88 @@ export class MetadataDictionaryComponent implements OnInit, OnDestroy {
     const uid = this.metadataidentifiers;
     console.log(this.metadataFromAnalyticsLink(uid));
     this.displayDetail(uid);
+
   }
 
   displayDetail(uid) {
     this.showingLoading = true;
     const self = this.http;
-    let count = 0;
-    const Completeindicators = [];
     this.metadataFromAnalyticsLink(uid).forEach(value => {
-      count++;
-      this.subscription = self.get('api/identifiableObjects/' + value + '.json')
-        .subscribe(data => {
+      self.get('identifiableObjects/' + value + '.json')
+        .subscribe((data: any) => {
           const metadataLink = data.href;
           if (metadataLink.indexOf('indicators') >= 1) {
-            const indicatorUrl = metadataLink + '.json?fields=:all,displayName,id,name,' +
-              'numeratorDescription,denominatorDescription,denominator,numerator,annualized,decimals,' +
-              'indicatorType[name],user[name],attributeValues[value,attribute[name]],indicatorGroups[name,indicators~size],' +
-              'legendSet[name,symbolizer,legends~size],dataSets[name]';
-            this.subscription = self.get_from_base(indicatorUrl)
-
-              .subscribe( indicatorData => {
-                  // console.log(this.dataElementAvailable(data.numerator));
+            const indicatorUrl = metadataLink + '.json?fields=:all,displayName,id,name,numeratorDescription,denominatorDescription,denominator,numerator,annualized,decimals,indicatorType[name],user[name],attributeValues[value,attribute[name]],indicatorGroups[name,indicators~size],legendSet[name,symbolizer,legends~size],dataSets[name]';
+            self.get_from_base(indicatorUrl)
+              .subscribe((indicatorData: any) => {
                   const indicatorObject = indicatorData;
-                  const numeratorExp = self.get('api/expressions/description?expression='
-                    + encodeURIComponent(indicatorData.numerator));
-                  const numeratorDataset = self.get('api/dataSets.json?fields=periodType,id,name,' +
-                    'timelyDays,formType,created,expiryDays&filter=dataElements.id:in:[' +
-                    this.dataElementAvailable(indicatorData.numerator) + ']&paging=false)');
-                  const denominatorExp = self.get('api/expressions/description?expression=' +
-                    encodeURIComponent(indicatorData.denominator));
-                  const denominatorDataSet = self.get('api/dataSets.json?fields=periodType,id,name,timelyDays,formType,' +
-                    'created,expiryDays&filter=dataElements.id:in:[' +
-                    this.dataElementAvailable(indicatorData.denominator) + ']&paging=false)');
-                  this.subscription = Observable.forkJoin([numeratorExp, numeratorDataset, denominatorExp, denominatorDataSet])
-                    .subscribe(results => {
-                        const numerator = results[0].description;
-                        const numeratorDataEl = results[1];
-                        const denominator = results[2].description;
-                        const denominatorDataEl = results[3];
-                        Completeindicators.push({
-                          object: indicatorObject,
-                          numeratorDaset: numeratorDataEl,
-                          denominatorDaset: denominatorDataEl,
-                          name: indicatorObject.name,
-                          uid: indicatorObject.id,
-                          denominatorDescription: indicatorObject.denominatorDescription,
-                          numeratorDescription: indicatorObject.numeratorDescription,
-                          numerator: numerator,
-                          denominator: denominator,
-                          indicatorType: indicatorObject.indicatorType,
-                          dataSets: indicatorObject.dataSets,
-                          numeratorForm: indicatorObject.numerator,
-                          demonitorForm: indicatorObject.denominator
-                        });
-                        this.CompleteData = Completeindicators;
-
-                      },
-                      error => {
-                        this.progressMessage = 'Sorry we are still looking what might be wrong';
-                      },
-                      () => {
-                        this.progressMessage = 'Compiling' + data.name + ' for consumptions';
-                        if (count === this.metadataFromAnalyticsLink(uid).length) {
-                          console.log(count);
-                          console.log(this.indicators = this.CompleteData);
-                          this.showingLoading = false;
-                        }
+                  self.get('expressions/description?expression=' + encodeURIComponent(indicatorData.numerator))
+                    .subscribe((numExp: any) => {
+                        const numerator = numExp.description;
+                        self.get('expressions/description?expression=' + encodeURIComponent(indicatorData.denominator))
+                          .subscribe((denoExp: any) => {
+                            const denominator = denoExp.description;
+                            this.indicators.push({
+                              object: indicatorObject,
+                              name: indicatorObject.name,
+                              uid: indicatorObject.id,
+                              denominatorDescription: indicatorObject.denominatorDescription,
+                              numeratorDescription: indicatorObject.numeratorDescription,
+                              numerator: numerator,
+                              denominator: denominator,
+                              indicatorType: indicatorObject.indicatorType,
+                              dataSets: indicatorObject.dataSets,
+                              numeratorForm: indicatorObject.numerator,
+                              demonitorForm: indicatorObject.denominator
+                            });
+                          });
 
                       }
                     );
                   this.progressMessage = 'Organising extracted metadata dictionary';
-
                 },
                 error => {
                   this.progressMessage = 'Sorry we are still looking what might be wrong';
-
                 },
                 () => {
                   this.progressMessage = 'Metadata dictionary ready for consumption';
-
                 }
               );
-
+            this.showingLoading = false;
             this.isIndicator = true;
-
           } else if (metadataLink.indexOf('dataElements') >= 1) {
-            let dataelementUrl = metadataLink + '.json?fields=:all,id,name,aggregationType,displayName,';
-            dataelementUrl += 'categoryCombo[id,name,categories[id,name,categoryOptions[id,name]]],' +
-              'dataSets[:all,!compulsoryDataElementOperands]';
-            this.subscription = self.get_from_base(dataelementUrl)
+            const dataelementUrl = metadataLink + '.json?fields=:all,id,name,aggregationType,displayName,categoryCombo[id,name,categories[id,name,categoryOptions[id,name]]],dataSets[:all,!compulsoryDataElementOperands]';
+            self.get_from_base(dataelementUrl)
               .subscribe(dataelement => {
                   this.dataelements.push(dataelement);
-                  console.log(this.dataelements); // It brings undefined
                 },
                 error => {
                   this.progressMessage = 'Sorry we are still looking what might be wrong';
                 },
                 () => {
-                  this.progressMessage = 'Compiling data for consumptions';
-                  if (count === this.metadataFromAnalyticsLink(uid).length) {
-                    console.log(count);
-                    this.showingLoading = false;
-                  }
+                  this.progressMessage = 'Metadata dictionary ready for consumption';
                 }
               );
             this.isDataelements = true;
-
+            this.showingLoading = false;
           } else if (metadataLink.indexOf('dataSets') >= 1) {
-            const datasetUrl = metadataLink + '.json?fields=:all,user[:all],id,name,periodType,shortName,' +
-              'categoryCombo[id,name,categories[id,name,categoryOptions[id,name]]]';
-            this.subscription = self.get_from_base(datasetUrl)
+            const datasetUrl = metadataLink + '.json?fields=:all,user[:all],id,name,periodType,shortName,categoryCombo[id,name,categories[id,name,categoryOptions[id,name]]]';
+            self.get_from_base(datasetUrl)
               .subscribe(dataset => {
-                  this.datasets.push(dataset); // It brings undefined
+                  this.datasets.push(dataset);
                 },
                 error => {
                   this.progressMessage = 'Sorry we are still looking what might be wrong';
                 },
                 () => {
-                  this.progressMessage = 'Compiling data for consumptions';
-                  if (count === this.metadataFromAnalyticsLink(uid).length) {
-                    console.log(count);
-                    this.showingLoading = false;
-                  }
+                  this.progressMessage = 'Metadata dictionary ready for consumption';
                 }
               );
             this.isDataset = true;
+            this.showingLoading = false;
           } else if (metadataLink.indexOf('programs') >= 1) {
             const eventUrl = metadataLink + '.json?fields=:all,programStages[:all,programStageDataElements[:all]]';
-            this.subscription = self.get_from_base(eventUrl)
+            self.get_from_base(eventUrl)
               .subscribe(event => {
                   this.events.push(event);
                 },
@@ -179,53 +125,46 @@ export class MetadataDictionaryComponent implements OnInit, OnDestroy {
                   this.progressMessage = 'Sorry we are still looking what might be wrong';
                 },
                 () => {
-                  this.progressMessage = 'Compiling data for consumptions';
-                  if (count === this.metadataFromAnalyticsLink(uid).length) {
-                    console.log(count);
-                    this.showingLoading = false;
-                  }
+                  this.progressMessage = 'Metadata dictionary ready for consumption';
                 }
               );
             this.isEvents = true;
+            this.showingLoading = false;
           } else if (metadataLink.indexOf('programIndicators') >= 1) {
             const programUrl = metadataLink + '.json?fields=:all,user[:all],program[:all]';
-            this.subscription = self.get_from_base(programUrl)
-              .subscribe(progInd => {
-                  const headers = new Headers();
+            self.get_from_base(programUrl)
+              .subscribe((progInd: any) => {
+                  const headers = new HttpHeaders();
                   headers.append('Content-Type', 'application/json;charset=UTF-8');
-                  const url = 'api/programIndicators/filter/description';
-                  const expr = 'api/programIndicators/expression/description';
+                  const url = 'programIndicators/filter/description';
+                  const expr = 'programIndicators/expression/description';
                   if (progInd.hasOwnProperty('filter')) {
-                    this.http.post(url, progInd.filter, {headers: headers})
+                    this.httpClient.post(url, progInd.filter, {headers: headers})
                       .subscribe(
-                        programDatadata => {
-                          this.http.post(expr, progInd.expression, {headers: headers})
+                        (progData: any) => {
+                          this.httpClient.post(expr, progInd.expression, {headers: headers})
                             .subscribe(
-                              expres => {
+                              (expres: any) => {
                                 this.programInd.push({
                                   object: progInd,
-                                  filterName: programDatadata.description,
+                                  filterName: progData.description,
                                   expressionName: expres.description
                                 });
-                                console.log(this.programInd);
                               },
                               error => {
                                 this.progressMessage = 'Sorry we are still looking what might be wrong';
                               },
                               () => {
-                                this.progressMessage = 'Compiling data for consumptions';
-                                if (count === this.metadataFromAnalyticsLink(uid).length) {
-                                  console.log(count);
-                                  this.showingLoading = false;
-                                }
+                                this.progressMessage = 'Metadata dictionary ready for consumption';
                               }
                             );
+
                         }
                       );
                   } else {
-                    this.http.post(expr, progInd.expression, {headers: headers})
+                    this.httpClient.post(expr, progInd.expression, {headers: headers})
                       .subscribe(
-                        expres => {
+                        (expres: any) => {
                           this.programInd.push({
                             object: progInd,
                             expressionName: expres.description
@@ -235,11 +174,7 @@ export class MetadataDictionaryComponent implements OnInit, OnDestroy {
                           this.progressMessage = 'Sorry we are still looking what might be wrong';
                         },
                         () => {
-                          this.progressMessage = 'Compiling data for consumptions';
-                          if (count === this.metadataFromAnalyticsLink(uid).length) {
-                            console.log(count);
-                            this.showingLoading = false;
-                          }
+                          this.progressMessage = 'Metadata dictionary ready for consumption';
                         }
                       );
                   }
@@ -249,16 +184,17 @@ export class MetadataDictionaryComponent implements OnInit, OnDestroy {
                 },
                 () => {
                   this.progressMessage = 'Metadata dictionary ready for consumption';
-
                 }
               );
             this.isProgramInd = true;
-            // this.showingLoading=false
+            this.showingLoading = false;
           }
 
         });
     });
+  }
 
+  getIndicatorProgramFilterExpression(filterExpression) {
 
   }
 
@@ -287,29 +223,4 @@ export class MetadataDictionaryComponent implements OnInit, OnDestroy {
 
   }
 
-  dataElementAvailable(data) {
-    let dataelementuid = [];
-    const separators = [' ', '\\\+', '-', '\\\(', '\\\)', '\\*', '/', ':', '\\\?'];
-    const numeratorDataelemnt = data.split(new RegExp(separators.join('|'), 'g'));
-    numeratorDataelemnt.forEach(sinngeDa => {
-      dataelementuid = this.dataElementWithCatOptionCheck(sinngeDa);
-    });
-    return dataelementuid.join();
-
-  }
-
-  dataElementWithCatOptionCheck(dx) {
-    const uid = [];
-    if (dx.indexOf('.') >= 1) {
-      uid.push((dx.replace(/#/g, '').replace(/{/g, '').replace(/}/g, '')).split('.')[0]);
-    } else {
-      uid.push((dx.replace(/#/g, '').replace(/{/g, '').replace(/}/g, '')));
-    }
-
-    return uid;
-  }
-
-  ngOnDestroy() {
-    this.subscription.unsubscribe();
-  }
 }

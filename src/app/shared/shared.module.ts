@@ -4,6 +4,7 @@ import { CommonModule } from '@angular/common';
 import { TreeModule } from 'angular-tree-component';
 import { ColorPickerModule } from 'ngx-color-picker';
 import { DndModule } from 'ng2-dnd';
+import {TourNgBootstrapModule} from 'ngx-tour-ng-bootstrap';
 import { ClickOutsideDirective } from './directives/click-outside.directive';
 import { FilterByNamePipe } from './pipes/filter-by-name.pipe';
 import { SafeHtmlPipe } from './pipes/safe-html.pipe';
@@ -30,6 +31,7 @@ import {MetadataDictionaryComponent} from './components/metadata-dictionary/meta
     DndModule.forRoot(),
     NgxPaginationModule,
     FormsModule,
+    TourNgBootstrapModule.forRoot(),
     ContextMenuModule.forRoot({
       useBootstrap4: true,
       autoFocus: true,
@@ -58,6 +60,7 @@ import {MetadataDictionaryComponent} from './components/metadata-dictionary/meta
     CommonModule,
     NgxPaginationModule,
     ColorPickerModule,
+    TourNgBootstrapModule,
     FilterByNamePipe,
     SafeHtmlPipe,
     DndModule,
