@@ -460,6 +460,10 @@ export class VisualizerService {
         name: yAxis.name, data: chartSeries
       });
     }
+    if (chartConfiguration.hasOwnProperty('dataGroups') && chartConfiguration.dataGroups !== null) {
+      chartObject.xAxis.categories = chartConfiguration.dataGroups;
+    }
+    console.log(JSON.stringify(chartObject));
     return chartObject;
   }
 

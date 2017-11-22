@@ -5,17 +5,18 @@ import {
 import {ScorecardService} from '../shared/services/scorecard.service';
 import {ActivatedRoute} from '@angular/router';
 import {Subscription} from 'rxjs/Subscription';
+import { TourService } from 'ngx-tour-ng-bootstrap';
+import {Store} from '@ngrx/store';
 import {ScorecardComponent} from './scorecard/scorecard.component';
 import {animate, state, style, transition, trigger} from '@angular/animations';
 import {DataService} from '../shared/services/data.service';
 import {ApplicationState} from '../store/application.state';
-import {Store} from '@ngrx/store';
 import * as selectors from '../store/selectors';
 import {SetSelectedOrgunitAction, SetSelectedPeriodAction} from '../store/actions/store.data.action';
 import {Observable} from 'rxjs/Observable';
 import {FunctionService} from '../shared/services/function.service';
 import {PeriodFilterComponent} from '../shared/components/period-filter/period-filter.component';
-
+import tourSteps from '../shared/tourGuide/tour.view';
 import * as previewActions from '../store/actions/indicator-preview.action';
 import 'rxjs/add/operator/first';
 
@@ -45,7 +46,7 @@ import 'rxjs/add/operator/first';
         'background-color': 'rgba(255,255,255,1)',
         'border': '1px solid #ddd'
       })),
-      transition('notHovered <=> hoovered', animate('300ms'))
+      transition('notHovered <=> hoovered', animate('500ms'))
     ]),
     trigger('fadeInOut', [
       transition(':enter', [   // :enter is alias to 'void => *'
@@ -98,7 +99,8 @@ export class ViewComponent implements OnInit, AfterViewInit, OnDestroy {
               private dataService: DataService,
               private activatedRouter: ActivatedRoute,
               private functionService: FunctionService,
-              private store: Store<ApplicationState>
+              private store: Store<ApplicationState>,
+              public tourService: TourService
   ) {
     this.selectedOrganisationUnits$ = store.select( selectors.getSelectedOrgunit );
     this.selectedPeriod$ = this.store.select( selectors.getSelectedPeriod );
@@ -108,6 +110,13 @@ export class ViewComponent implements OnInit, AfterViewInit, OnDestroy {
         this.scorecardId = params['scorecardid'];
         this.scorecard = this.scorecardService.getEmptyScoreCard();
       });
+
+    this.tourService.initialize(tourSteps);
+
+  }
+
+  startTour() {
+    this.tourService.start();
   }
 
   ngOnInit() {
@@ -186,6 +195,9 @@ export class ViewComponent implements OnInit, AfterViewInit, OnDestroy {
         'type': 'report',
         'selected_user_orgunit': []
       };
+    }
+    if (this.scorecard.data.selected_periods.length === 0) {
+      this.scorecard.data.selected_periods = [{name: 'Last Quarter', id: 'LAST_QUARTER'}];
     }
     // attach average_selection if none is defined
     if (!this.scorecard.data.hasOwnProperty('average_selection')) {

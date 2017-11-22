@@ -23,7 +23,7 @@ export class IndicatorGroupService {
         observer.next(this._indicatorGroups);
         observer.complete();
       }else {
-        this.http.get('indicatorGroups.json?fields=id,name&paging=false')
+        this.http.get('indicatorGroups.json?fields=id,name,indicators[id,name]&paging=false')
           .subscribe((groups: any) => {
               this._indicatorGroups = groups;
               observer.next(this._indicatorGroups);

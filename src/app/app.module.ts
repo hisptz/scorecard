@@ -4,7 +4,6 @@ import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import {HttpClientModule} from '@angular/common/http';
 import { ScoreCardRoutingModule } from './app-routing.module';
-
 import { AppComponent } from './app.component';
 import { HomeComponent } from './home/home.component';
 import { NgxPaginationModule } from 'ngx-pagination';
@@ -33,6 +32,7 @@ import {environment} from '../environments/environment';
 import { PlaceholderComponent } from './home/placeholder/placeholder.component';
 import {MenuModule} from './shared/components/menu/menu.module';
 import {VisualizerService} from './shared/services/visualizer.service';
+import {TourNgBootstrapModule} from 'ngx-tour-ng-bootstrap';
 @NgModule({
   declarations: [
     AppComponent,
@@ -49,6 +49,7 @@ import {VisualizerService} from './shared/services/visualizer.service';
     ReactiveFormsModule,
     ScoreCardRoutingModule,
     NgxPaginationModule,
+    TourNgBootstrapModule.forRoot(),
     StoreModule.forRoot(reducers, {
       initialState: getInitialState
     }),

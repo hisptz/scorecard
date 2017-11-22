@@ -143,6 +143,8 @@ export class CreateComponent implements OnInit, AfterViewInit, OnDestroy {
   group_type: string = 'indicators';
   bootleneck_group_type: string = 'indicators';
   percent_complete: number = 0;
+
+  use_group_in_bottleneck: false;
   constructor(private indicatorService: IndicatorGroupService,
               private datasetService: DatasetService,
               private dataElementService: DataElementGroupService,
@@ -247,7 +249,7 @@ export class CreateComponent implements OnInit, AfterViewInit, OnDestroy {
           this.indicatorGroups.push({
             id: group.id,
             name: group.name,
-            indicators: []
+            indicators: group.indicators
           });
         }
         this.current_groups = this.indicatorGroups;
@@ -258,7 +260,7 @@ export class CreateComponent implements OnInit, AfterViewInit, OnDestroy {
         this.done_loading_groups = true;
         this.bottleneck_card.done_loading_groups = true;
         this.load_list(this.current_groups[0].id, 'indicators');
-        this.load_bottleneck_card_list(this.bottleneck_card.current_groups[0].id, 'indicators');
+        this.load_bottleneck_card_list(this.bottleneck_card.current_groups[0], 'indicators');
       },
       error => {
         this.error_loading_groups.occurred = true;
@@ -415,10 +417,12 @@ export class CreateComponent implements OnInit, AfterViewInit, OnDestroy {
     }
     // this.getItemsFromGroups();
     let i = 0;
+    let current_holder_id = 0;
     for ( const item of this.scorecard.data.data_settings.indicator_holder_groups ) {
       i++;
       if (i === 1) {
         this.current_holder_group = item;
+        current_holder_id = this.current_holder_group.indicator_holder_ids[0];
       }else { continue; }
 
     }
@@ -430,7 +434,7 @@ export class CreateComponent implements OnInit, AfterViewInit, OnDestroy {
         }
       }
       j++;
-      if (j === 1) {
+      if (item.holder_id === current_holder_id) {
         this.current_indicator_holder = item;
       }else { continue; }
     }
@@ -488,15 +492,15 @@ export class CreateComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   onTitleChange(event) {
-    console.log('changed', event);
+
   }
 
   onTitleReady(event) {
-    console.log('ready', event);
+
   }
 
   onTitleBlur(event) {
-    console.log('blur', event);
+
   }
   // cancel scorecard creation process
   cancelCreate() {
@@ -740,7 +744,6 @@ export class CreateComponent implements OnInit, AfterViewInit, OnDestroy {
       this.addIndicatorHolder(this.current_indicator_holder);
       this.current_holder_group.id = this.current_holder_group_id;
       this.addHolderGroups(this.current_holder_group, this.current_indicator_holder);
-      console.log(indicator);
     }
 
 
@@ -963,7 +966,6 @@ export class CreateComponent implements OnInit, AfterViewInit, OnDestroy {
   updateIndicator(indicator: any): void {
     this.current_indicator_holder = indicator;
     this.need_for_indicator = true;
-    console.log('indicator:', this.current_indicator_holder);
     this.scorecard.data.data_settings.indicator_holder_groups.forEach( (group, groupIndex) => {
       if (group.indicator_holder_ids.indexOf(indicator.holder_id) > -1) {
         this.current_holder_group = group;
@@ -1082,7 +1084,6 @@ export class CreateComponent implements OnInit, AfterViewInit, OnDestroy {
         indicator.additional_label_values[this.newLabel] = '';
       }
     }
-    console.log(this.scorecard.data.data_settings);
   }
 
   getIndicatorLabel(indicator, label) {
@@ -1197,27 +1198,27 @@ export class CreateComponent implements OnInit, AfterViewInit, OnDestroy {
     if (current_type === 'indicators') {
       this.bottleneck_card.current_groups = this.indicatorGroups;
       if (this.bottleneck_card.current_groups.length !== 0) {
-        this.load_bottleneck_card_list(this.bottleneck_card.current_groups[0].id, current_type);
+        this.load_bottleneck_card_list(this.bottleneck_card.current_groups[0], current_type);
       }
     }else if (current_type === 'dataElements') {
       this.bottleneck_card.current_groups = this.dataElementGroups;
       if (this.bottleneck_card.current_groups.length !== 0) {
-        this.load_bottleneck_card_list(this.bottleneck_card.current_groups[0].id, current_type);
+        this.load_bottleneck_card_list(this.bottleneck_card.current_groups[0], current_type);
       }
     }else if (current_type === 'datasets') {
       this.bottleneck_card.current_groups = this.dataset_types;
       if (this.bottleneck_card.current_groups.length !== 0) {
-        this.load_bottleneck_card_list(this.bottleneck_card.current_groups[0].id, current_type);
+        this.load_bottleneck_card_list(this.bottleneck_card.current_groups[0], current_type);
       }
     }else if (current_type === 'programs') {
       this.bottleneck_card.current_groups = this.programs;
       if (this.bottleneck_card.current_groups.length !== 0) {
-        this.load_bottleneck_card_list(this.bottleneck_card.current_groups[0].id, current_type);
+        this.load_bottleneck_card_list(this.bottleneck_card.current_groups[0], current_type);
       }
     }else if (current_type === 'event') {
       this.bottleneck_card.current_groups = this.programs;
       if (this.bottleneck_card.current_groups.length !== 0) {
-        this.load_bottleneck_card_list(this.bottleneck_card.current_groups[0].id, current_type);
+        this.load_bottleneck_card_list(this.bottleneck_card.current_groups[0], current_type);
       }
     }else if (current_type === 'functions') {
       this.bottleneck_card.current_groups = this.functions;
@@ -1231,7 +1232,8 @@ export class CreateComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   //  load items to be displayed in a list of indicators/ data Elements / Data Sets
-  load_bottleneck_card_list(group_id, current_type): void {
+  load_bottleneck_card_list(selectedGroup, current_type): void {
+    const group_id = selectedGroup.id;
     this.bottleneck_card.listQuery = null;
     this.bottleneck_card.activeGroup = group_id;
     this.bottleneck_card.listReady = true;
@@ -1390,6 +1392,33 @@ export class CreateComponent implements OnInit, AfterViewInit, OnDestroy {
       }
     }else {
 
+    }
+
+    // if we need to add group as items
+    if (this.use_group_in_bottleneck) {
+      this.addGroupAsBottleneck(selectedGroup, this.bottleneck_card.current_listing, current_type);
+    }
+  }
+
+  addGroupAsBottleneck(group, list, type) {
+    if (this.botteneckIndicatorExist(group)) {
+      this.removeBottleneckIndicator(group);
+    }else {
+      if (this.bootleneck_group_type === 'type') {
+        group.bottleneck_title = group.name;
+        group.type = 'group';
+        group.baseline = null;
+        group.target = null;
+        group.items = list;
+        group.function = this.bottleneck_card.activeGroup;
+      } else {
+        group.bottleneck_title = group.name;
+        group.type = 'group';
+        group.baseline = null;
+        group.items = list;
+        group.target = null;
+      }
+      this.bottleneck_card.indicator.bottleneck_indicators.push(group);
     }
   }
 
@@ -1554,7 +1583,6 @@ export class CreateComponent implements OnInit, AfterViewInit, OnDestroy {
 
 
   transferDataSuccess($event, drop_area: string, object: any) {
-    console.log('droped here', $event);
     if (drop_area === 'group') {
       //  check if someone is trying to reorder items within the scorecard
 

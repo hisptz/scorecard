@@ -1,5 +1,6 @@
 import {AfterViewInit, Component, OnInit} from '@angular/core';
 import {Store} from '@ngrx/store';
+import { TourService } from 'ngx-tour-ng-bootstrap';
 import {ApplicationState} from '../store/application.state';
 import {ScorecardService} from '../shared/services/scorecard.service';
 import {DataService} from '../shared/services/data.service';
@@ -12,6 +13,7 @@ import * as selectors from '../store/selectors';
 import {OrgUnitService} from '../shared/services/org-unit.service';
 import {IndicatorGroupService} from '../shared/services/indicator-group.service';
 import {FunctionService} from '../shared/services/function.service';
+import tourSteps from '../shared/tourGuide/tour.home';
 
 @Component({
   selector: 'app-home',
@@ -81,7 +83,8 @@ export class HomeComponent implements OnInit, AfterViewInit {
     private functionService: FunctionService,
     private orgUnitService: OrgUnitService,
     private router: Router,
-    private indicatorService: IndicatorGroupService
+    private indicatorService: IndicatorGroupService,
+    public tourService: TourService
   ) {
     store.select(state => state.uiState).subscribe(uiState => console.log(uiState));
     this.scorecards$ = store.select(selectors.getScorecards);
@@ -90,6 +93,12 @@ export class HomeComponent implements OnInit, AfterViewInit {
     this.complete_percent$ = store.select(selectors.getLoadingPercent);
     this.loading_message = 'Loading Score cards...';
 
+    this.tourService.initialize(tourSteps);
+
+  }
+
+  startTour() {
+    this.tourService.start();
   }
 
   ngOnInit() {
@@ -161,8 +170,17 @@ export class HomeComponent implements OnInit, AfterViewInit {
     scorecard.hoverState = 'notHovered';
   }
 
-  changeView(type) {
-    this.viewStle = type;
+  changeView() {
+    if (this.viewStle === 'List') {
+      this.viewStle = 'Card';
+      this.viewTitle = 'Card View';
+    } else if (this.viewStle === 'Card') {
+      this.viewStle = 'Thumbnail';
+      this.viewTitle = 'Thumbnail View';
+    }else if (this.viewStle === 'Thumbnail') {
+      this.viewStle = 'List';
+      this.viewTitle = 'List View';
+    }
   }
 
 }

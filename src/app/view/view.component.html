@@ -1,3 +1,5 @@
+
+<tour-step-template></tour-step-template>
 <div class="container-fluid no-print">
   <div class="row">
     <div class="col-md-2 col-xs-12" style="padding-left: 0px; cursor: pointer;" [routerLink]="['']">
@@ -7,8 +9,16 @@
 
     </div>
     <div class="col-md-2 col-xs-12" style="margin-top: 14px">
-      <button class="btn btn-outline-secondary btn-sm pull-right cursor" [routerLink]="['']" style="height: 30px;margin-left: 5px">
+      <button  tourAnchor="view.home" class="btn btn-outline-secondary btn-sm pull-right cursor" [routerLink]="['']" style="height: 30px;margin-left: 5px">
         <i class="fa fa-home"></i> home</button>
+      <button
+        style="height: 30px;margin-right: 3px"
+        class="btn btn-outline-secondary btn-sm float-md-right cursor"
+        title="Get help"
+        (click)="startTour()"
+      >
+        <i class="fa fa-question-circle"></i>
+      </button>
     </div>
   </div>
 </div>
@@ -17,7 +27,7 @@
 <!--</p>-->
 <div id="options" class="container-fluid " style="margin-top: 20px" *ngIf="!loading">
   <div class="row no-print">
-    <div class="col-md-4 col-xs-12" style="padding-left: 0px; cursor: pointer;">
+    <div class="col-md-4 col-xs-12" style="padding-left: 0px; cursor: pointer;" tourAnchor="view.ou">
       <app-org-unit-filter
         [showUpdate]="true"
         [orgunit_model] = "scorecard.data.orgunit_settings"
@@ -25,7 +35,7 @@
         (onOrgUnitUpdate)= "updateOrgUnit($event)"
       ></app-org-unit-filter>
     </div>
-    <div  class="col-md-4 col-xs-12">
+    <div  class="col-md-4 col-xs-12" tourAnchor="view.pe">
       <app-period-filter
         #periodComponent
         [showUpdate]="true"
@@ -38,6 +48,7 @@
     <div class="col-md-4 col-xs-12">
       <!--Scorecard refresh button-->
       <button
+        tourAnchor="view.refresh"
         (mouseenter)="refreshHovered = true"
         (mouseleave)="refreshHovered = false"
         class="btn btn-outline-secondary btn-sm pull-right cursor"
@@ -46,7 +57,9 @@
         <span *ngIf="refreshHovered">Refresh</span>
       </button>
       <!--Excel download button-->
-      <button (mouseenter)="excelHovered = true"
+      <button
+        tourAnchor="view.excel"
+        (mouseenter)="excelHovered = true"
               (mouseleave)="excelHovered = false"
               class="btn btn-outline-secondary btn-sm pull-right cursor"
               style="height: 35px;margin-left: 3px"
@@ -57,6 +70,7 @@
       </button>
       <!--Printing button-->
       <button
+        tourAnchor="view.print"
         (mouseenter)="printHovered = true"
         (mouseleave)="printHovered = false"
         class="btn btn-outline-secondary btn-sm pull-right cursor"
@@ -68,6 +82,7 @@
       </button>
       <!--Editing button-->
       <button
+        tourAnchor="view.edit"
         (mouseenter)="editHovered = true"
         (mouseleave)="editHovered = false"
         class="btn btn-outline-secondary btn-sm pull-right cursor"
@@ -79,11 +94,13 @@
       </button>
       <!--Additional options for a scorecard-->
       <app-options
+
         *ngIf="scorecard"
         [mode]="'view'"
         [scorecard]="scorecard"
         (onOptionUpdate) = "optionUpdated($event)"
       ></app-options>
+
 
     </div>
   </div>
@@ -102,7 +119,7 @@
   </div>
 
   <div class="row">
-    <div class="col-sm-12">
+    <div class="col-sm-12" >
       <app-scorecard
         #childScoreCard
         [scorecard]="scorecard"

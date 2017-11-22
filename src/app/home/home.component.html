@@ -1,41 +1,39 @@
+<tour-step-template></tour-step-template>
 <div class="container-fluid">
   <div class="row">
-    <div class="col-md-2 col-xs-12" style="padding-left: 0px; cursor: pointer;" [routerLink]="['']">
-      <img src="scorecard.svg" style="height: 58px; width: 48px"> <span style="font-size: 20px"> Score Card</span>
+    <div class="col-md-2 col-xs-12" style="padding-left: 0px; cursor: pointer;" [routerLink]="['']" tourAnchor="home.start.tour" >
+      <img src="scorecard.svg" style="height: 58px; width: 48px" > <span style="font-size: 20px"> Score Card</span>
     </div>
     <div class="col-md-8 col-xs-12" style="margin-top: 14px">
-      <input type="search" class="form-control input-sm" placeholder="Search score card by name" [(ngModel)]="queryterm">
+      <input
+        tourAnchor="home.search"
+        type="search"
+        class="form-control input-sm"
+        placeholder="Search score card by name"
+        [(ngModel)]="queryterm">
     </div>
     <div class="col-md-2 col-xs-12 hidden-sm" style="margin-top: 14px">
-      <button style="height: 34px" class="btn btn-outline-secondary btn-sm float-md-right cursor" [routerLink]="['create','new','0']">
+      <button tourAnchor="home.create" style="height: 34px" class="btn btn-outline-secondary btn-sm float-md-right cursor" [routerLink]="['create','new','0']">
         <i class="fa fa-plus" aria-hidden="true"></i> Create
       </button>
       <button
         style="height: 34px;margin-right: 3px"
         class="btn btn-outline-secondary btn-sm float-md-right cursor"
-        [ngClass]="{'current': viewStle == 'Card'}"
-        title="Card View"
-        (click)="changeView('Card')"
+        title="{{viewTitle}}"
+        (click)="changeView()"
+        tourAnchor="home.listview"
       >
-        <i class="fa fa-th-large"></i>
+        <i class="fa fa-list" *ngIf="viewStle == 'Thumbnail'"></i>
+        <i class="fa fa-th-large" *ngIf="viewStle == 'List'"></i>
+        <i class="fa fa-th" *ngIf="viewStle == 'Card'"></i>
       </button>
       <button
-        style="height: 34px"
+        style="height: 34px;margin-right: 3px"
         class="btn btn-outline-secondary btn-sm float-md-right cursor"
-        [ngClass]="{'current': viewStle == 'Thumbnail'}"
-        title="Thumbnail View"
-        (click)="changeView('Thumbnail')"
+        title="Get help"
+        (click)="startTour()"
       >
-        <i class="fa fa-th"></i>
-      </button>
-      <button
-        style="height: 34px"
-        class="btn btn-outline-secondary btn-sm float-md-right cursor"
-        [ngClass]="{'current': viewStle == 'List'}"
-        title="List View"
-        (click)="changeView('List')"
-      >
-        <i class="fa fa-list"></i>
+        <i class="fa fa-question-circle"></i>
       </button>
     </div>
   </div>

@@ -38,6 +38,7 @@
         "../node_modules/highcharts/highcharts.js",
         "../node_modules/highcharts/highcharts-more.js",
         "../node_modules/highcharts/modules/solid-gauge.js",
+        "assets/grouped-categories.js",
         "../node_modules/highcharts/modules/exporting.js",
         "../node_modules/highcharts/modules/offline-exporting.js"
       ],

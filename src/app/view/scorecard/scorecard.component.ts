@@ -165,6 +165,8 @@ export class ScorecardComponent implements OnInit, OnDestroy {
                         }
                         this.shown_records = this.orgunits.length;
                         this.indicator_loading[loading_key] = false;
+                        old_proccesed_indicators++;
+                        this.old_proccessed_percent = (old_proccesed_indicators / this.allIndicatorsLength) * 100;
                       },
                       error: (error) => {
                         this.errorLoadingIndicator( indicator );
@@ -175,6 +177,8 @@ export class ScorecardComponent implements OnInit, OnDestroy {
                     const execute = Function('parameters', use_function['function']);
                     execute(parameters);
                   }else { // set all values to default if the function cannot be found in store
+                    old_proccesed_indicators++;
+                    this.old_proccessed_percent = (old_proccesed_indicators / this.allIndicatorsLength) * 100;
                     this.doneLoadingIndicator( indicator, this.allIndicatorsLength, current_period );
                   }
                 } else {
@@ -428,12 +432,16 @@ export class ScorecardComponent implements OnInit, OnDestroy {
     let counter = 0;
     for (const holder of this.scorecard.data.data_settings.indicator_holders) {
       for (const indicator of holder.indicators) {
-        if (this.hidenColums.indexOf(indicator.id) === -1) {
-          sum++;
+        for (const current_period of this.periods_list){
+          if (this.hidenColums.indexOf(indicator.id) === -1) {
+            sum++;
+          }
+          if (this.hidenColums.indexOf(indicator.id) === -1 && indicator.values[orgunit_id + '.' + current_period.id] === null) {
+            counter++;
+          }
         }
-        if (this.hidenColums.indexOf(indicator.id) === -1 && indicator.values[orgunit_id] === null) {
-          counter++;
-        }
+
+
       }
     }
     if (counter === sum && !this.scorecard.data.empty_rows) {
@@ -657,6 +665,17 @@ export class ScorecardComponent implements OnInit, OnDestroy {
       this.orgunits = _.orderBy(this.orgunits, [sortingColumn, 'name'], [sortAscending, 'asc']);
     }
     this.sorting_column = (lower_level) ? 'none' : sortingColumn;
+  }
+
+  sortBestWorst(type: any, sortingColumn, sortAscending, orguUnits, period: string, lower_level: boolean = true) {
+    if (type === 'all') {
+      this.sortScoreCardFromColumn('none', sortAscending, orguUnits, period, lower_level);
+      this.scorecard.data.show_rank = false;
+    }else {
+      this.scorecard.data.show_rank = true;
+      this.sortScoreCardFromColumn(sortingColumn, sortAscending, orguUnits, period, lower_level);
+    }
+    this.scorecard.data.shown_records = type;
   }
 
   // hack to find a value of indicator for a specific orgunit

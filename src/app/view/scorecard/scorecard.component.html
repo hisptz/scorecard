@@ -222,7 +222,7 @@
         <th *ngIf="scorecard.data.show_average_in_row"></th>
       </tr>
       <!--indicator titles-->
-      <tr>
+      <tr tourAnchor="view.scorecard">
         <th *ngIf="scorecard.data.show_rank"  style="width: 30px;vertical-align: bottom;" [attr.rowspan]="periods_list.length >1 ? 2 : 1">No#</th>
         <th style="vertical-align: bottom" (click)="sortScoreCardFromColumn('none', sortAscending, orgunits, periods_list[0].id, false)">
           <!--sorting icons-->
@@ -423,6 +423,34 @@
   <ng-template contextMenuItem (execute)="sortScoreCardFromColumn($event.item.indicators[0].id, false, orgunits, periods_list[0].id, false)">
     <i class="fa fa-sort-amount-desc" aria-hidden="true"></i> Sort Desc
   </ng-template>
+
+  <ng-template contextMenuItem [subMenu]="orderSubmenu">
+    <i class="fa fa-sort" aria-hidden="true"></i> Best/Worst
+  </ng-template>
+  <context-menu #orderSubmenu>
+    <ng-template contextMenuItem (execute)="sortBestWorst('all', $event.item.indicators[0].id, false, orgunits, periods_list[0].id, false)">
+      <i class="fa fa-list" aria-hidden="true"></i> All
+    </ng-template>
+    <ng-template contextMenuItem (execute)="sortBestWorst(3, $event.item.indicators[0].id, false, orgunits, periods_list[0].id, false)">
+      <i class="fa fa-sort-numeric-desc" style="margin-left:4px" aria-hidden="true"></i> Top Three
+    </ng-template>
+    <ng-template  contextMenuItem (execute)="sortBestWorst(5, $event.item.indicators[0].id, false, orgunits, periods_list[0].id, false)">
+      <i class="fa fa-sort-numeric-desc" aria-hidden="true"></i> Top Five
+    </ng-template>
+    <ng-template contextMenuItem (execute)="sortBestWorst(10, $event.item.indicators[0].id, false, orgunits, periods_list[0].id, false)">
+      <i class="fa fa-sort-numeric-desc" aria-hidden="true"></i> Top Ten
+    </ng-template>
+    <ng-template contextMenuItem (execute)="sortBestWorst(3, $event.item.indicators[0].id, true, orgunits, periods_list[0].id, false)">
+      <i class="fa fa-sort-numeric-asc" style="margin-left:4px" aria-hidden="true"></i> Last Three
+    </ng-template>
+    <ng-template  contextMenuItem (execute)="sortBestWorst(5, $event.item.indicators[0].id, true, orgunits, periods_list[0].id, false)">
+      <i class="fa fa-sort-numeric-asc" aria-hidden="true"></i> Last Five
+    </ng-template>
+    <ng-template contextMenuItem (execute)="sortBestWorst(10, $event.item.indicators[0].id, true, orgunits, periods_list[0].id, false)">
+      <i class="fa fa-sort-numeric-asc" aria-hidden="true"></i> Last Ten
+    </ng-template>
+  </context-menu>
+
   <ng-template *ngIf="getItemsFromGroups().length !== 1" contextMenuItem (execute)="hideClicked($event.item)">
     <i class="fa fa-eye-slash" aria-hidden="true"></i> Hide
   </ng-template>

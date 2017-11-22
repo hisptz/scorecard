@@ -293,6 +293,7 @@ export class DetailsComponent implements OnInit {
   // a call that will change the view type
   updateType(type: string) {
     const analytics_calls = [];
+    let dataGroups = null;
     // cancel the current call if still in progress when switching between charts
     if (this.subscription) {
       this.subscription.unsubscribe();
@@ -309,22 +310,48 @@ export class DetailsComponent implements OnInit {
     let labels = null;
     if (this.showBottleneck) {
       labels = [];
+      const groupCateries = [];
+      let useGroups = false;
       for (const holder of this.indicator) {
         for (const item of holder.indicators) {
           if (this.hidden_columns.indexOf(item.id) === -1) {
             if (item.hasOwnProperty('bottleneck_indicators')) {
-              for (const bottleneck of item.bottleneck_indicators) {
-                if (bottleneck.hasOwnProperty('function')) {
-                  function_indicatorsArray.push(bottleneck);
-                  labels.push({'id': bottleneck.id, 'name': bottleneck.bottleneck_title});
-                }else {
-                  indicatorsArray.push(bottleneck.id);
-                  labels.push({'id': bottleneck.id, 'name': bottleneck.bottleneck_title});
+
+              // check first if bottleneck is groups or normal
+              if ( item.bottleneck_indicators[0].hasOwnProperty('type') && item.bottleneck_indicators[0].type === 'group') {
+                for (const bottleneck of item.bottleneck_indicators) {
+                  groupCateries.push({
+                    name: bottleneck.bottleneck_title,
+                    categories: bottleneck.items.map((i) => i.name)
+                  });
+                  useGroups = true;
+                  if (bottleneck.hasOwnProperty('function')) {
+                    function_indicatorsArray.push(...bottleneck.items);
+                  }else {
+                    indicatorsArray.push(...bottleneck.items.map((i) => i.id));
+                  }
+                  labels.push(...bottleneck.items.map((i) => { return {'id': i.id, 'name': i.name}; }));
+                }
+              }else {
+                useGroups = true;
+                for (const bottleneck of item.bottleneck_indicators) {
+                  if (bottleneck.hasOwnProperty('function')) {
+                    function_indicatorsArray.push(bottleneck);
+                    labels.push({'id': bottleneck.id, 'name': bottleneck.bottleneck_title});
+                  }else {
+                    indicatorsArray.push(bottleneck.id);
+                    labels.push({'id': bottleneck.id, 'name': bottleneck.bottleneck_title});
+                  }
                 }
               }
             }
           }
         }
+      }
+      if (groupCateries.length === 0) {
+        dataGroups = null;
+      }else {
+        dataGroups = groupCateries;
       }
       if (this.bottleneck_first_time) {
         type = 'column';
@@ -339,8 +366,13 @@ export class DetailsComponent implements OnInit {
       for (const holder of this.indicator) {
         for (const item of holder.indicators) {
           if (this.hidden_columns.indexOf(item.id) === -1) {
-            indicatorsArray.push(item.id);
-            labels.push({'id': item.id, 'name': item.title});
+            if (item.hasOwnProperty('calculation') && item.calculation === 'custom_function') {
+              function_indicatorsArray.push({...item, 'function': item.function_to_use});
+              labels.push({'id': item.id, 'name': item.title});
+            }else {
+              indicatorsArray.push(item.id);
+              labels.push({'id': item.id, 'name': item.title});
+            }
           }
         }
       }
@@ -398,7 +430,8 @@ export class DetailsComponent implements OnInit {
           'title': this.prepareCardTitle(this.indicator),
           'xAxisType': this.layoutModel.columns[0].value,
           'yAxisType': this.layoutModel.rows[0].value,
-          'labels': labels
+          'labels': labels,
+          'dataGroups': dataGroups
         }
       };
     }
@@ -418,8 +451,9 @@ export class DetailsComponent implements OnInit {
         }
         this.loading = false;
       }else {
-
         // create an api analytics call
+        console.log(indicatorsArray)
+        console.log(function_indicatorsArray)
         if (indicatorsArray.length === labels.length ) {
           const url = 'analytics.json?dimension=dx:' + indicatorsArray.join(';') + '&dimension=ou:' + this.selectedOrganisationUnit.value + '&dimension=pe:' + this.periodObject.value + '&displayProperty=NAME';
           this.subscription = this.loadAnalytics(url).subscribe(
