@@ -21,8 +21,7 @@ export class Constants {
   }
 
   load() {
-    return this.http.get('manifest.webapp')
-      .map((response: Response) => response.json());
+    return this.http.get('manifest.webapp');
   }
 
   // load system version

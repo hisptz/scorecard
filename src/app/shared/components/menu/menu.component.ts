@@ -1,6 +1,4 @@
 import {Component, OnInit, Input} from '@angular/core';
-import 'rxjs/add/operator/map';
-import 'rxjs/add/operator/catch';
 import {PROFILE_MENUS} from './profile-menus';
 import {menuBackgroundColors} from './background-colors';
 import {MenuService} from './menu.service';

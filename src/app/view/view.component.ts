@@ -17,8 +17,7 @@ import {Observable} from 'rxjs/Observable';
 import {FunctionService} from '../shared/services/function.service';
 import {PeriodFilterComponent} from '../shared/components/period-filter/period-filter.component';
 import tourSteps from '../shared/tourGuide/tour.view';
-import * as previewActions from '../store/actions/indicator-preview.action';
-import 'rxjs/add/operator/first';
+import { first } from 'rxjs/operators';
 
 @Component({
   selector: 'app-view',
