@@ -45,7 +45,7 @@
       }"
       (mouseleave)="reduceSearch($event)"
     >
-      <div id="menu-inner-list-block">
+      <div *ngIf="(apps | filter: filteredApp).length !== 0" id="menu-inner-list-block">
         <a
           *ngFor="let app of  apps | filter: filteredApp"
           [href]="app.defaultAction"
@@ -53,6 +53,9 @@
           <img  alt="" [src]="app.icon">
           <div class="app-menu-name">{{app.displayName}}</div>
         </a>
+      </div>
+      <div id="menu-inner-list-block-no-match" *ngIf="(apps | filter: filteredApp).length == 0">
+        <p>No match found!</p>
       </div>
       <div id="menu-app-management-block">
         <a
@@ -64,6 +67,14 @@
       </div>
     </div>
   </div>
+  <a (click)="toggleSearch($event)" id="menu-toggle-link">
+    <svg
+    class="menu-toggle-icon"
+    viewBox="0 0 24 24"
+  >
+    <path d="M4 8h4V4H4v4zm6 12h4v-4h-4v4zm-6 0h4v-4H4v4zm0-6h4v-4H4v4zm6 0h4v-4h-4v4zm6-10v4h4V4h-4zm-6 4h4V4h-4v4zm6 6h4v-4h-4v4zm0 6h4v-4h-4v4z"></path>
+  </svg>
+  </a>
   <div
     id="menu-profile-block"
   >
@@ -116,7 +127,7 @@
       (click)="toggleSideBar($event)"
     >
       <svg
-        id="menu-toggle-icon"
+        class="menu-toggle-icon"
         viewBox="0 0 24 24"
       >
         <path d="M4 8h4V4H4v4zm6 12h4v-4h-4v4zm-6 0h4v-4H4v4zm0-6h4v-4H4v4zm6 0h4v-4h-4v4zm6-10v4h4V4h-4zm-6 4h4V4h-4v4zm6 6h4v-4h-4v4zm0 6h4v-4h-4v4z"></path>

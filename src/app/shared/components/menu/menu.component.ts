@@ -26,7 +26,7 @@ export class MenuComponent implements OnInit {
   showSidebarApps: boolean;
   showSidebar: boolean;
 
-  constructor( private menuService: MenuService) {
+  constructor(private menuService: MenuService) {
     this.rootUrl = '../../../';
     this.backgroundColor = '#f5f5f5';
     this.searchWidth = 30;
@@ -105,17 +105,30 @@ export class MenuComponent implements OnInit {
     return abbreviatedName.join('');
   }
 
-  widdenSearch(e) {
-    e.stopPropagation();
+  widdenSearch(e?) {
+    if (e) {
+      e.stopPropagation();
+    }
     this.searchWidth = 67;
     this.showApps = !this.showApps;
   }
 
-  reduceSearch(e) {
-    e.stopPropagation();
+  reduceSearch(e?) {
+    if (e) {
+      e.stopPropagation();
+    }
     document.getElementById('menu-search-input').blur();
     this.searchWidth = 30;
     this.showApps = !this.showApps;
+  }
+
+  toggleSearch(e) {
+    e.stopPropagation();
+    if (this.showApps) {
+      this.reduceSearch();
+    } else {
+      this.widdenSearch();
+    }
   }
 
   toggleSidebarMenus(e) {

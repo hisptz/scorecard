@@ -1,5 +1,5 @@
 import {Injectable} from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import {HttpClient} from '@angular/common/http';
 import {Observable} from 'rxjs/Observable';
 import {PREDEFINED_MENU_ITEMS} from './predifined-menu-items';
 
@@ -26,7 +26,6 @@ export class MenuService {
     return Observable.create(observer => {
       this.http.get(rootUrl + 'api/me.json')
         .subscribe((userInfo: any) => {
-        console.log(userInfo)
           observer.next(userInfo);
           observer.complete();
         }, () => {
@@ -47,25 +46,6 @@ export class MenuService {
           observer.complete();
         });
     });
-  }
-
-  private handleError(error: Response | any) {
-    // In a real world app, we might use a remote logging infrastructure
-    let errMsg: string;
-    if (error instanceof Response) {
-      errMsg = error.toString();
-    } else {
-      const newErrorObject: any = Object.assign({}, error);
-      let sanitizedError = newErrorObject.message ?
-        newErrorObject.message : newErrorObject._body ? newErrorObject._body : newErrorObject.toString();
-      try {
-        sanitizedError = (new Function('return ' + sanitizedError))();
-        errMsg = sanitizedError.message;
-      } catch (e) {
-        errMsg = sanitizedError;
-      }
-    }
-    return Observable.throw(errMsg);
   }
 
   private _sanitizeMenuItems(menuItems: any[], rootUrl: string): any {

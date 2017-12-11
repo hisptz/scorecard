@@ -1,7 +1,9 @@
 export interface UserGroup {
   id: string;
   name: string;
-  users: {
+  title?: string;
+  edit?: boolean;
+  users?: {
     id: string
   };
 }

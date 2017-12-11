@@ -4,11 +4,13 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule, PreloadAllModules } from '@angular/router';
 import {HomeComponent} from './home/home.component';
+import {CreateComponent} from "./create/create.component";
+import {ViewComponent} from "./view/view.component";
 
 const routes: Routes = [
   { path: '', component: HomeComponent , pathMatch: 'full' },
-  { path: 'create', loadChildren: 'app/create/create.module#CreateModule' },
-  { path: 'view', loadChildren: 'app/view/view.module#ViewModule' },
+  { path: 'create/:type/:scorecardid', component: CreateComponent },
+  { path: 'view/:scorecardid', component: ViewComponent },
   { path: '**', redirectTo: 'HomeComponent' }
 ];
 
