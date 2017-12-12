@@ -1,4 +1,33 @@
 {
-  "Title": "Translation example",
-  "Intro": "Hello I am Arthur, I am 42 years old."
+  "Score Card": "Score Card",
+  "Search score card by name": "Search score card by name",
+  "Create": "Create",
+  "View": "View",
+  "Delete": "Delete",
+  "Open": "Open",
+  "Edit": "Edit",
+  "Cancel": "Cancel",
+  "Deleting Scorecard...": "Deleting Scorecard...",
+  "Something went wrong, Scorecard was not deleted": "Something went wrong, Scorecard was not deleted",
+  "New Scorecard": "New Scorecard",
+  "Get help": "Get help",
+  "Loading score cards":"Loading score cards",
+  "Title": "Scorecard",
+  "list_view": "List View",
+  "card_view": "Card View",
+  "thumbnail_view": "Thumbnail View",
+
+
+  "Welcome to Scorecard App!":"Welcome to Scorecard App!",
+  "Create a score card instantly, over tea break": "Create a score card instantly, over tea break...",
+  "Click create new, Write your score card a title and description": "Click create new, Write your score card a title and description",
+  "Write group header name for indicators you will create in next step": "Write group header name for indicators you will create in next step",
+  "Select indicator group and click indicator to add to the group": "Select indicator group and click indicator to add to the group",
+  "Edit title to change title to use on heading": "Edit title to change title to use on heading",
+  "Enter effective gap to show increase/decrease from last period": "Enter effective gap to show increase/decrease from last period",
+  "Set minimum and maximum range for each color code": "Set minimum and maximum range for each color code",
+  "Click Add another to add another indicator in next column in the group": "Click \"Add another\" to add another indicator in next column in the group",
+  "Select the second indicator to add indicator in the same group": "Select the second indicator to add indicator in the same group",
+  "Click Add another in Group row to add next group": "Click \"Add another\" in Group row to add next group"
+
 }

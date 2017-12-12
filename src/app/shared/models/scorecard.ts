@@ -5,6 +5,16 @@ import {OrgUnitModel} from './org-unit-model';
 export interface ScoreCard {
   id: string;
   name: string;
+  description?: string;
+  view_details?: {
+    can_see: boolean,
+    can_edit: boolean,
+    deleting: boolean,
+    hoverState: string,
+    confirm_deleting: boolean,
+    deleted: boolean,
+    error_deleting: boolean
+  },
   data: ScorecardData | any;
 }
 export interface ScorecardData {

@@ -1,4 +1,32 @@
 {
+  "Score Card": "fiche d'évaluation",
+  "Search score card by name": "Rechercher tableau de bord par nom",
+  "Create": "Créer",
+  "View": "Vue",
+  "Delete": "Effacer",
+  "Open": "Ouvrir",
+  "Edit": "modifier",
+  "Cancel": "Annuler",
+  "Deleting Scorecard...": "Suppression de Scorecard ...",
+  "Something went wrong, Scorecard was not deleted": "Quelque chose s'est mal passé, Scorecard n'a pas été supprimé",
+  "New Scorecard": "Nouveau tableau de bord",
+  "Get help": "Obtenir de l'aide",
+  "Loading score cards":"Chargement des cartes de score",
   "Title": "Exemple de traduction",
-  "Intro": "Bonjour je m'appelle Arthur, j'ai 42 ans."
+  "Intro": "Bonjour je m'appelle Arthur, j'ai 42 ans.",
+  "list_view": "Vue de liste",
+  "card_view": "Affichange de la carte",
+  "thumbnail_view": "Vue miniature",
+
+  "Welcome to Scorecard App!":"Bienvenue sur Scorecard App!",
+  "Create a score card instantly, over tea break": "Créer une carte de score instantanément, sur une pause thé...",
+  "Click create new, Write your score card a title and description": "Cliquez sur créer un nouveau, écrivez votre carte de score un titre et une description",
+  "Write group header name for indicators you will create in next step": "Écrivez le nom de l'en-tête du groupe pour les indicateurs que vous allez créer à l'étape suivante",
+  "Select indicator group and click indicator to add to the group": "Sélectionnez le groupe d'indicateurs et cliquez sur l'indicateur pour l'ajouter au groupe",
+  "Edit title to change title to use on heading": "Modifier le titre pour changer le titre à utiliser sur le titre",
+  "Enter effective gap to show increase/decrease from last period": "Entrer l'écart effectif pour montrer l'augmentation / diminution de la dernière période",
+  "Set minimum and maximum range for each color code": "Définir la plage minimale et maximale pour chaque code de couleur",
+  "Click Add another to add another indicator in next column in the group": "Cliquez sur \"Ajouter un autre\" pour ajouter un autre indicateur dans la colonne suivante du groupe",
+  "Select the second indicator to add indicator in the same group": "Sélectionnez le deuxième indicateur pour ajouter un indicateur dans le même groupe",
+  "Click Add another in Group row to add next group": "Cliquez sur \"Ajouter un autre\" dans la ligne Groupe pour ajouter le groupe suivant"
 }

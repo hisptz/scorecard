@@ -1,8 +1,136 @@
-<p>
-  home works!
-</p>
-<h1 translate>Title</h1>
+<tour-step-template></tour-step-template>
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-md-2 col-xs-12" style="padding-left: 0px; cursor: pointer;" [routerLink]="['']" tourAnchor="home.start.tour" >
+      <img src="scorecard.svg" style="height: 58px; width: 48px" >
+      <span style="font-size: 20px" [translate]="'Score Card'"> </span>
+    </div>
+    <div class="col-md-8 col-xs-12" style="margin-top: 14px">
+      <input
+        tourAnchor="home.search"
+        type="search"
+        class="form-control input-sm"
+        placeholder="{{'Search score card by name' | translate}}"
+        [(ngModel)]="queryterm">
+    </div>
+    <div class="col-md-2 col-xs-12 hidden-sm" style="margin-top: 14px">
+      <button tourAnchor="home.create" style="height: 34px" class="btn btn-outline-secondary btn-sm float-md-right cursor" [routerLink]="['create','new','0']">
+        <i class="fa fa-plus" aria-hidden="true"></i> {{ 'Create' | translate }}
+      </button>
+      <button
+        style="height: 34px;margin-right: 3px"
+        class="btn btn-outline-secondary btn-sm float-md-right cursor"
+        title="{{viewTitle$ | async}}"
+        (click)="changeView()"
+        tourAnchor="home.listview"
+      >
+        <i class="fa fa-list" *ngIf="viewStle == 'Thumbnail'"></i>
+        <i class="fa fa-th-large" *ngIf="viewStle == 'List'"></i>
+        <i class="fa fa-th" *ngIf="viewStle == 'Card'"></i>
+      </button>
+      <button
+        style="height: 34px;margin-right: 3px"
+        class="btn btn-outline-secondary btn-sm float-md-right cursor"
+        title="{{ 'Get help' | translate }}"
+        (click)="startTour()"
+      >
+        <i class="fa fa-question-circle"></i>
+      </button>
+    </div>
+  </div>
+</div>
 
-<div>
-  {{ 'Intro' | translate }}
+
+<!--if there is no scorecard created-->
+<!--<div class="container-fluid" style="padding-left: 0px; border-top: 1px solid blanchedalmond; margin-top: 20px; padding-top: 23px">-->
+<div class="container-fluid" style="padding-left: 0px; border-top: 1px solid blanchedalmond;margin-top: 15px" *ngIf="(scorecards$ | async).length == 0 && !(loading$ | async)">
+  <app-description></app-description>
+</div>
+
+
+<!--if the scorecards are being loaded-->
+<div
+  class="container-fluid"
+  style="padding-left: 0px; border-top: 1px solid blanchedalmond; margin-top: 20px; padding-top: 23px"
+  *ngIf="(scorecards$ | async).length == 0 && (loading$ | async)"
+>
+  <div class="well well-lg ">
+    <h5 class="text-center">
+      <img src="balls-3.svg" style="height: 70px"/>
+      <span [translate]="'Loading score cards'">Loading score cards...</span>
+      ...
+    </h5>
+    <app-placeholder></app-placeholder>
+  </div>
+</div>
+
+
+<!--Loading indicator to show percentage completion of loading scorecard-->
+<div
+  class="container-fluid"
+  style="padding-top: 20px;padding-left: 0px; border-top: 1px solid blanchedalmond; margin-top: 20px; padding-top: 23px"
+  *ngIf="(scorecards$ | async).length != 0" >
+  <div [@hiddenItem] = "(loading$ | async)?'notHidden':'hidden'">
+    <h5 class="text-center">
+      <img src="balls-3.svg" style="height: 70px"/>
+      <span [translate]="'Loading score cards'">Loading score cards</span>
+      ( {{ complete_percent$ | async }}% )
+    </h5>
+    <div class="progress" style="margin-bottom: 5px">
+      <div
+        class="progress-bar progress-bar-striped progress-bar-animated"
+        role="progressbar"
+        [attr.aria-valuenow]="complete_percent$ | async"
+        [attr.aria-valuemin]="0"
+        [attr.aria-valuemax]="100"
+        [style.width]="(complete_percent$ | async)+'%'"
+      ></div>
+    </div>
+  </div>
+</div>
+
+<!--card view for scorecards-->
+<div *ngIf="viewStle == 'Card'">
+  <div class="card-deck">
+
+    <div
+      class="card scorecard_details col-sm-12 col-md-4 text-center cursor"
+      *ngFor="let scorecard of (scorecards$ | async) | scoreCardFilter: queryterm | paginate: paginationconfiguration "
+      [@visibilityChanged]="(current_hovered_scorecard$ | async) === scorecard.id ? 'hoovered': 'notHovered'"
+      (mouseenter) ="mouseEnter(scorecard.id)"
+      (mouseleave) ="mouseLeave()"
+      (click)="viewcorecard(scorecard,$event)"
+    >
+      <app-scorecard-detail
+        [scorecard]="scorecard"
+      ></app-scorecard-detail>
+    </div>
+  </div>
+
+  <div class="row justify-content-center" style="margin-top: 25px">
+    <pagination-template #nm="paginationApi" [id]="paginationconfiguration.id" (pageChange)="paginationconfiguration.currentPage = $event">
+      <nav aria-label="Page navigation example">
+        <ul class="pagination ">
+          <li class="page-item" [class.disabled]="nm.isFirstPage()">
+            <a class="page-link" style="cursor: pointer" (click)="nm.previous()" aria-label="Previous">
+              <span aria-hidden="true">&laquo;</span>
+              <span class="sr-only">Previous</span>
+            </a>
+          </li>
+          <li class="page-item"
+              *ngFor="let page of nm.pages"
+              [class.active]="nm.getCurrent() === page.value"
+          ><a class="page-link" style="cursor: pointer" (click)="nm.setCurrent(page.value)">
+            {{ page.label }}
+          </a></li>
+          <li class="page-item" [class.disabled]="nm.isLastPage()">
+            <a class="page-link" style="cursor: pointer" (click)="nm.next()" aria-label="Next">
+              <span aria-hidden="true">&raquo;</span>
+              <span class="sr-only">Next</span>
+            </a>
+          </li>
+        </ul>
+      </nav>
+    </pagination-template>
+  </div>
 </div>

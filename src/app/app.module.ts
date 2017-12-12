@@ -6,6 +6,8 @@ import { HttpClientModule, HttpClient } from '@angular/common/http';
 import { NgxPaginationModule } from 'ngx-pagination';
 import { TourNgBootstrapModule } from 'ngx-tour-ng-bootstrap';
 import { ServiceWorkerModule } from '@angular/service-worker';
+import { StoreModule } from '@ngrx/store';
+import { RouterStateSerializer, StoreRouterConnectingModule } from '@ngrx/router-store';
 
 import { TranslateModule, TranslateLoader } from '@ngx-translate/core';
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
@@ -16,8 +18,21 @@ import { HomeComponent } from './home/home.component';
 import { MenuModule } from './shared/components/menu/menu.module';
 
 import { environment } from '../environments/environment';
-import {CreateModule} from "./create/create.module";
-import {ViewModule} from "./view/view.module";
+import { CreateModule } from './create/create.module';
+import { ViewModule } from './view/view.module';
+import { reducers } from './store/reducers';
+import { DataService } from './shared/services/data.service';
+import { ScorecardService } from './shared/services/scorecard.service';
+import { HttpClientService } from './shared/services/http-client.service';
+import { EffectsModule } from '@ngrx/effects';
+import { effects } from './store/effects';
+import { CustomSerializer } from './store/reducers/router.reducer';
+import { StoreDevtoolsModule } from '@ngrx/store-devtools';
+import { PlaceholderComponent } from './home/placeholder/placeholder.component';
+import { DescriptionComponent } from './home/description/description.component';
+import { ScorecardDetailComponent } from './home/scorecard-detail/scorecard-detail.component';
+import {ScoreCardFilterPipe} from "./home/score-card-filter.pipe";
+
 // Add a function, that returns a “TranslateHttpLoader” and export it (needed by AoT)
 export function HttpLoaderFactory(http: HttpClient) {
   return new TranslateHttpLoader(http);
@@ -27,7 +42,11 @@ export function HttpLoaderFactory(http: HttpClient) {
 @NgModule({
   declarations: [
     AppComponent,
-    HomeComponent
+    HomeComponent,
+    PlaceholderComponent,
+    DescriptionComponent,
+    ScorecardDetailComponent,
+    ScoreCardFilterPipe
   ],
   imports: [
     BrowserModule,
@@ -39,6 +58,9 @@ export function HttpLoaderFactory(http: HttpClient) {
     ScoreCardRoutingModule,
     NgxPaginationModule,
     TourNgBootstrapModule.forRoot(),
+    StoreModule.forRoot(reducers),
+    StoreRouterConnectingModule,
+    EffectsModule.forRoot(effects),
     ServiceWorkerModule.register('/ngsw-worker.js', { enabled: environment.production }),
     TranslateModule.forRoot({
       loader: {
@@ -48,10 +70,14 @@ export function HttpLoaderFactory(http: HttpClient) {
       }
     }),
     CreateModule,
-    ViewModule
+    ViewModule,
+    !environment.production ? StoreDevtoolsModule.instrument({maxAge: 20}) : []
   ],
   providers: [
-
+    { provide: RouterStateSerializer, useClass: CustomSerializer },
+    DataService,
+    ScorecardService,
+    HttpClientService
   ],
   bootstrap: [AppComponent]
 })
