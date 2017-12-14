@@ -1,6 +1,10 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs/Observable';
 import {HttpClientService} from './http-client.service';
+import {ApplicationState} from '../../store/reducers';
+import {Store} from '@ngrx/store';
+import * as orgunitActions from '../../store/actions/orgunits.actions';
+import {DataService} from "./data.service";
 
 @Injectable()
 export class OrgUnitService {
@@ -11,7 +15,11 @@ export class OrgUnitService {
   orgunit_groups: any[] = [];
   initial_orgunits: any[] = [];
   user_information: any = null;
-  constructor(private http: HttpClientService) { }
+  constructor(
+    private http: HttpClientService,
+    private store: Store<ApplicationState>,
+    private dataService: DataService
+  ) { }
 
   // Get current user information
   getUserInformation (priority = null) {
@@ -23,7 +31,7 @@ export class OrgUnitService {
         observer.next(this.user_information);
         observer.complete();
       }else {
-        this.http.get(url)
+        this.dataService.getUserInformation()
           .subscribe((useInfo) => {
               this.user_information = useInfo;
               observer.next(this.user_information);
@@ -122,6 +130,9 @@ export class OrgUnitService {
         });
       }
     }
+    this.store.dispatch(new orgunitActions.DoneLoadingOrganisationUnitItem(
+      {key: 'user_orgunits', value: orgunits }
+    ));
     return orgunits;
   }
 
@@ -184,8 +195,11 @@ export class OrgUnitService {
         observer.complete();
       }else {
         this.http.get('organisationUnitLevels.json?fields=id,name,level&order=level:asc')
-          .subscribe((levels) => {
+          .subscribe((levels: any) => {
             this.orgunit_levels = levels;
+            this.store.dispatch(new orgunitActions.DoneLoadingOrganisationUnitItem(
+              {key: 'levels', value: levels.organisationUnitLevels }
+            ));
             observer.next(this.orgunit_levels);
             observer.complete();
           },
@@ -206,6 +220,9 @@ export class OrgUnitService {
         this.http.get('organisationUnitGroups.json?fields=id,name&paging=false')
           .subscribe((groups: any) => {
               this.orgunit_groups = groups.organisationUnitGroups;
+              this.store.dispatch(new orgunitActions.DoneLoadingOrganisationUnitItem(
+                {key: 'groups', value: this.orgunit_groups }
+              ));
               observer.next(this.orgunit_groups);
               observer.complete();
             },
@@ -231,6 +248,15 @@ export class OrgUnitService {
         this.http.get('organisationUnits.json?fields=' + fields + '&filter=id:in:[' + orgunits.join(',') + ']&paging=false')
           .subscribe((nodes: any) => {
             this.nodes = nodes.organisationUnits;
+            this.store.dispatch(new orgunitActions.DoneLoadingOrganisationUnitItem(
+              {key: 'nodes', value: this.nodes }
+            ));
+            this.store.dispatch(new orgunitActions.DoneLoadingOrganisationUnitItem(
+              {key: 'loading', value: false }
+            ));
+            this.store.dispatch(new orgunitActions.DoneLoadingOrganisationUnitItem(
+              {key: 'loaded', value: true }
+            ));
             observer.next(this.nodes);
             observer.complete();
           }, error => {

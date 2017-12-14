@@ -11,6 +11,7 @@ import * as createActions from '../../store/actions/create.actions';
 import {SetHomeLoadingPercent} from '../../store/actions/ui.actions';
 import {getScorecardEntites} from '../../store/selectors/scorecard.selectors';
 import {take, tap, filter} from 'rxjs/operators';
+import {getUser} from "../../store/selectors/static-data.selectors";
 
 
 @Injectable()
@@ -39,34 +40,36 @@ export class ScorecardService {
         // this.store.dispatch(new AddScorecardAction( scorecard ));
       });
     }else {
-      this.dataService.getUserInformation().subscribe(
+      this.store.select(getUser).subscribe(
         (userInfo) => {
-          this.loadAll().subscribe(
-            ( scorecards ) => {
-              let scorecard_count = 0;
-              scorecards.forEach((scorecard) => {
-                // loading scorecard details
-                this.load(scorecard).subscribe(
-                  (scorecard_details) => {
-                    const can_see = this.checkForUserGroupInScorecard(scorecard_details, userInfo).see;
-                    const can_edit = this.checkForUserGroupInScorecard(scorecard_details, userInfo).edit;
-                    this.addScorecardToStore(scorecard, scorecard_details, can_see, can_edit);
-                    this.dataService.sortArrOfObjectsByParam(this._scorecards, 'name', true);
-                    scorecard_count++;
-                    this.doneLoadingScorecard(scorecard_count, scorecards);
-                  },
-                  // catch error if anything happens when loading scorecard details
-                  detail_error => {
-                    this.doneLoadingScorecard(scorecard_count, scorecards);
-                  }
-                );
-              });
-            },
-            // catch error when there is no scorecard
-            error => {
-              this.store.dispatch(new scorecardActions.LoadScorecardsFail(error));
-            }
-          );
+          if (userInfo) {
+            this.loadAll().subscribe(
+              ( scorecards ) => {
+                let scorecard_count = 0;
+                scorecards.forEach((scorecard) => {
+                  // loading scorecard details
+                  this.load(scorecard).subscribe(
+                    (scorecard_details) => {
+                      const can_see = this.checkForUserGroupInScorecard(scorecard_details, userInfo).see;
+                      const can_edit = this.checkForUserGroupInScorecard(scorecard_details, userInfo).edit;
+                      this.addScorecardToStore(scorecard, scorecard_details, can_see, can_edit);
+                      this.dataService.sortArrOfObjectsByParam(this._scorecards, 'name', true);
+                      scorecard_count++;
+                      this.doneLoadingScorecard(scorecard_count, scorecards);
+                    },
+                    // catch error if anything happens when loading scorecard details
+                    detail_error => {
+                      this.doneLoadingScorecard(scorecard_count, scorecards);
+                    }
+                  );
+                });
+              },
+              // catch error when there is no scorecard
+              error => {
+                this.store.dispatch(new scorecardActions.LoadScorecardsFail(error));
+              }
+            );
+          }
         }
       );
     }

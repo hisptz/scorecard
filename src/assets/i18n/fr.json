@@ -2,10 +2,12 @@
   "Score Card": "fiche d'évaluation",
   "Search score card by name": "Rechercher tableau de bord par nom",
   "Create": "Créer",
+  "Add": "Ajouter",
   "View": "Vue",
   "Delete": "Effacer",
   "Open": "Ouvrir",
   "Edit": "modifier",
+  "Update": "Mettre à jour",
   "Save": "sauvegarder",
   "Cancel": "Annuler",
   "Create a new scorecard": "Créer une nouvelle carte de score",
@@ -22,6 +24,22 @@
   "list_view": "Vue de liste",
   "card_view": "Affichange de la carte",
   "thumbnail_view": "Vue miniature",
+
+  "Select Period": "Sélectionnez une période",
+  "Select period type": "Sélectionnez le type de période",
+  "Prev Year": "Année précédente",
+  "Next Year": "L'année prochaine",
+  "clear all": "tout effacer",
+  "Available": "Disponible",
+  "Selected": "Choisi",
+  "Click to select": "Cliquez pour sélectionner",
+  "Click to update": "Cliquez pour mettre à jour",
+  "Remove all selections": "Supprimer toutes les sélections",
+  "Select all": "Tout sélectionner",
+  "Click to deselect": "Cliquez pour désélectionner",
+  "Select starting period for your scorecard": "Sélectionnez la période de départ pour votre tableau de bord",
+  "and items more": "et {{value}} de plus",
+  "Loading Organisation Units": "Chargement des unités d'organisation ...",
 
   "Options":"Options",
   "Show": "Montrer",
@@ -53,5 +71,8 @@
   "Set minimum and maximum range for each color code": "Définir la plage minimale et maximale pour chaque code de couleur",
   "Click Add another to add another indicator in next column in the group": "Cliquez sur \"Ajouter un autre\" pour ajouter un autre indicateur dans la colonne suivante du groupe",
   "Select the second indicator to add indicator in the same group": "Sélectionnez le deuxième indicateur pour ajouter un indicateur dans le même groupe",
-  "Click Add another in Group row to add next group": "Cliquez sur \"Ajouter un autre\" dans la ligne Groupe pour ajouter le groupe suivant"
+  "Click Add another in Group row to add next group": "Cliquez sur \"Ajouter un autre\" dans la ligne Groupe pour ajouter le groupe suivant",
+
+  "Please Confirm, indicators will be deleted too": "Veuillez confirmer, les indicateurs seront également supprimés",
+  "Add new Indicator next to the current active indicator": "Ajouter un nouvel indicateur à côté de l'indicateur actif actuel"
 }

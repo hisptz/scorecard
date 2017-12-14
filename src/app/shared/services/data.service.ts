@@ -22,7 +22,7 @@ export class DataService {
   getUserInformation (): Observable<any> {
     return new Observable((observ) => {
       if ( this.user === null) {
-        this.http.get('me.json?fields=id,name,userGroups,userCredentials[userRoles[authorities]]')
+        this.http.get('me.json?fields=id,name,userGroups,userCredentials[userRoles[authorities]],dataViewOrganisationUnits[id,name,level],organisationUnits[id,name,level]')
           .subscribe(
           (data) => {
             this.user = data;
@@ -39,6 +39,10 @@ export class DataService {
         observ.complete();
       }
     });
+  }
+
+  getUser() {
+    this.getUserInformation().subscribe();
   }
 
   // Get current user information
@@ -67,6 +71,10 @@ export class DataService {
         observ.complete();
       }
     });
+  }
+
+  getUserGroups() {
+    this.getUserGroupInformation().subscribe();
   }
 
 

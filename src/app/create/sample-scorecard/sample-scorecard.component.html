@@ -4,8 +4,8 @@
     <th dnd-droppable (onDropSuccess)="transferDataSuccess($event,'new',null)">
       <app-sharing
         [scorecard]="scorecard"
-        [userGroups]="userGroups"
-        [group_loading]="group_loading"
+        [userGroups]="user_groups$ | async"
+        [group_loading]="!( group_loading$ | async )"
       ></app-sharing>
     </th>
     <!--holder groups stays here-->
@@ -25,20 +25,35 @@
               (click)="deleting[indicator_holder_group.id] = true"
         ></span>
         <p *ngIf="indicator_holder_group.id != 1 && deleting[indicator_holder_group.id]">
-          Please Confirm, indicators will be deleted too.<br>
-          <button class="btn btn-xs btn-warning" (click)="deleting[indicator_holder_group.id] = false">
+          <span [translate]="'Please Confirm, indicators will be deleted too'">
+            Please Confirm, indicators will be deleted too.
+            </span>
+          <br>
+          <button
+            class="btn btn-xs btn-warning"
+            (click)="deleting[indicator_holder_group.id] = false"
+            [translate]="'Cancel'"
+          >
             cancel
           </button>
-          <button class="btn btn-xs btn-danger" (click)="deleteGroup(indicator_holder_group)">
-            delete
+          <button
+            class="btn btn-xs btn-danger"
+            (click)="deleteGroup(indicator_holder_group)"
+            [translate]="'Delete'"
+          >  delete
           </button>
         </p>
       </div>
     </th>
     <!--add holder groups-->
     <th style="width: 60px" dnd-droppable (onDropSuccess)="transferDataSuccess($event,'new-group',null)">
-      <button class="btn btn-sm btn-outline-secondary cursor" *ngIf="need_for_group" (click)="createGroup()">
-        <i class="fa fa-plus"></i> Add
+      <button
+        class="btn btn-sm btn-outline-secondary cursor"
+        *ngIf="need_for_group$ | async"
+        (click)="createGroup()"
+      >
+        <i class="fa fa-plus"></i>
+        <span [translate]="'Add'"> Add</span>
       </button>
     </th>
   </tr>
@@ -54,7 +69,7 @@
       <!--end of period configuration-->
     </td>
     <td *ngFor="let indicator of getItemsFromGroups()" style="padding: 5px;font-size: 10px;width:90px;max-width: 90px;overflow-wrap: break-word;cursor: pointer;" class="sans-pro"
-        title="Click to update {{ getIndicatorTitle(indicator) }}"
+        title="{{'Click to update' | translate}} {{ getIndicatorTitle(indicator) }}"
         [ngClass]="{'current':current_indicator.holder_id == indicator.holder_id}"
         (click)="updateIndicator(indicator)"
         dnd-droppable (onDropSuccess)="transferDataSuccess($event,'table_data',indicator)"
@@ -66,30 +81,35 @@
     </td>
     <th style="width: 60px">
       <button
-        title="Add new Indicator next to the current active indicator"
+        title="{{ 'Add new Indicator next to the current active indicator' | translate }}"
         class="btn btn-sm btn-outline-secondary cursor"
-        *ngIf="need_for_indicator"
-        (click)="enableAddIndicator(current_indicator_holder.holder_id)"
+        *ngIf="need_for_indicator$ | async"
+        (click)="enableAddIndicator(scorecard)"
       >
-        <i class="fa fa-plus"></i> Add
+        <i class="fa fa-plus"></i>
+        Add
       </button>
     </th>
   </tr>
   <tr>
-    <td style="vertical-align: middle;" dnd-droppable (onDropSuccess)="transferDataSuccess($event,'new',null)">
+    <td style="vertical-align:bottom" dnd-droppable (onDropSuccess)="transferDataSuccess($event,'new',null)">
 
       <!--organisation unit tree-->
       <app-org-unit-filter
+        *ngIf="!(orgunit_loading$ | async)"
         [orgunit_model] = "scorecard.data.orgunit_settings"
         [showUpdate]="false"
         (onOrgUnitModelUpdate) = "updateOrgUnitModel($event)"
       ></app-org-unit-filter>
+      <p *ngIf="(orgunit_loading$ | async)" class="orgunit-placeholer">
+        <span [translate]="'Loading Organisation Units'">Loading Organisation Units...</span>
+      </p>
       <!--end of organisation unit tree-->
     </td>
     <th *ngFor="let indicator of holders_list"
         style="font-size: 10px;max-width: 90px;overflow-wrap: break-word; cursor: pointer; padding: 0px;line-height: 10%"
         class="sans-pro" [ngClass]="{'current': current_indicator.holder_id == indicator.holder_id}"
-        title="Click to Update {{ getIndicatorTitle(indicator) }}"
+        title="{{'Click to update' | translate}} {{ getIndicatorTitle(indicator) }}"
         (click)="updateIndicator(indicator)">
       <svg *ngIf="indicator.indicators.length == 2" viewbox="0 0 90 35" width="90" height="35">
         <polygon points="0 0 90 0 90 0 0 35" [attr.fill]="assignBgColor(indicator.indicators[0],indicator.indicators[0].value)" style="stroke:#CAC0C0;stroke-width:0.4"/>

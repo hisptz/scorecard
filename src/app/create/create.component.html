@@ -8,6 +8,8 @@
 
   <app-sample-scorecard
     [scorecard]="scorecard$ | async"
+    [current_holder_group]="current_holder_group$ | async"
+    [current_indicator]="current_indicator_holder$ | async"
   ></app-sample-scorecard>
 
   <app-data-selection></app-data-selection>

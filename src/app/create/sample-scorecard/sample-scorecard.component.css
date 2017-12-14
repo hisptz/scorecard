@@ -3,3 +3,28 @@
   box-shadow: 0 0 10px rgba(0,0,0,0.1);
   background-color: rgba(0,0,0,0.3);
 }
+
+.orgunit-placeholer{
+  position: relative;
+  float: left;
+  display: inline-block;
+  text-align: center;
+  cursor: pointer;
+  border: 1px solid #c6c6c6;
+  padding: 8px 8px;
+  margin: 0px;
+  font-size: 14px;
+  min-height: 35px!important;
+  border-radius: 4px;
+  color: #555;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  -o-user-select: none;
+  user-select: none;
+  white-space: normal;
+  background-color: #fff;
+  background-image: linear-gradient(#fff,#f7f7f7);
+  width: 420px;
+  height: 34px;
+}

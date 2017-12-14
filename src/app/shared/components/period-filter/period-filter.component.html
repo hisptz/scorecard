@@ -1,4 +1,4 @@
-<div class="tree-input" title="Select starting period for your scorecard" appClickOutside (clickOutside)="showPerTree = true">
+<div class="tree-input" title="{{'Select starting period for your scorecard' | translate}}" appClickOutside (clickOutside)="showPerTree = true">
   <div>
     <div class="show_items" (click)="displayPerTree()">
             <span *ngIf="selected_periods.length > 2">
@@ -10,7 +10,7 @@
             <!--{{ selected_periods[1].name }} selected-->
             <!--<a (click)="deactivatePer(selected_periods[1]);$event.stopPropagation()" class="removeorgunit" >x</a>-->
           <!--</span>-->
-              <span class="selected-item">
+              <span class="selected-item" [translate]="'and items more'" [translateParams]="{value: selected_periods.length -1 }">
             and {{ selected_periods.length -1 }} more
           </span>
         </span>
@@ -20,10 +20,10 @@
                 <a (click)="deactivatePer(item);$event.stopPropagation()" class="removeorgunit" >x</a>
               </span>
             </span>
-      <span class="no-selection"*ngIf="selected_periods.length == 0">Select Period</span>
+      <span class="no-selection"*ngIf="selected_periods.length == 0" [translate]="'Select Period'">Select Period</span>
       <i class="fa fa-caret-down pull-right"></i>
       <span  *ngIf="selected_periods.length > 2 " class="pull-right">
-            <span class="selected-item cursor" style="cursor: pointer" (click)="deselectAllItems()" style="opacity: 0.7">X clear all</span>
+            <span class="selected-item cursor" style="cursor: pointer" (click)="deselectAllItems()" style="opacity: 0.7" [translate]="'clear all'">X clear all</span>
           </span>
     </div>
   <div class="tree-view" [ngClass]="{'hiddenTree':showPerTree}">
@@ -33,7 +33,7 @@
           <!--period type selection-->
           <div class="col-sm-6" style="padding-left:3px; margin-bottom: 5px">
             <select id="periodType" [(ngModel)]="period_type" class="form-control input-sm" style="height: 25px; padding: 3px; font-size: 10px" (change)="changePeriodType()">
-              <option value="" disabled="disabled" selected="selected">Select period type</option>
+              <option value="" disabled="disabled" selected="selected" [translate]="'Select period type'">Select period type</option>
               <option *ngFor="let period of period_type_config"  [value]="period.value">{{ period.name }}</option>
             </select>
           </div>
@@ -42,10 +42,10 @@
             <div class="btn-group btn-group-sm pull-right">
               <button type="button" class="btn btn-outline-secondary btn-sm cursor" (click)="pushPeriodBackward()" style="height: 25px;font-size: 10px">
                 <i class="fa fa-angle-double-left"></i>
-                Prev Year
+                <span [translate]="'Prev Year'"> Prev Year</span>
               </button>
               <button type="button" class="btn btn-outline-secondary btn-sm cursor" (click)="pushPeriodForward()" style="height: 25px;font-size: 10px">
-                Next Year
+                <span [translate]="'Next Year'"> Next Year</span>
                 <i class="fa fa-angle-double-right"></i>
               </button>
             </div>
@@ -60,16 +60,25 @@
             <!--available periods-->
             <div class="col-sm-6" style="padding-top:8px;padding-left:3px;border-right: 1px solid rgba(0,0,0,0.1); text-align: left;font-size: 11px;max-height: 30px">
               <ul class="list-inline data-header-list">
-                <li><b>Available <span class="fadeOut">({{periods.length - getSelectedItemsToRemove() }})</span></b>
-                <span class="pull-right pointer direction-arrows"><a (click)="selectAllItems()" title="Select all"><i class="fa fa-angle-double-right"></i></a></span>
+                <li>
+                  <b>
+                    <span [translate]="'Available'"> Available </span>
+                    <span class="fadeOut">({{periods.length - getSelectedItemsToRemove() }})</span>
+                  </b>
+                <span class="pull-right pointer direction-arrows"><a (click)="selectAllItems()" title="{{'Select all' | translate}}"><i class="fa fa-angle-double-right"></i></a></span>
                 </li>
               </ul>
             </div>
             <!--selected periods-->
             <div class="col-sm-6" style="padding-top:8px;padding-right:3px; text-align: right;font-size: 11px">
               <ul class="list-inline data-header-list">
-                <li class="pull-right"><b>Selected <span class="fadeOut">({{selected_periods.length }})</span></b></li>
-                <span class="pull-left pointer direction-arrows"><a (click)="deselectAllItems()" title="Remove all selections"><i class="fa fa-angle-double-left"></i></a></span>
+                <li class="pull-right">
+                  <b>
+                    <span [translate]="'Selected'"> Selected</span>
+                    <span class="fadeOut">({{selected_periods.length }})</span>
+                  </b>
+                  </li>
+                <span class="pull-left pointer direction-arrows"><a (click)="deselectAllItems()" title="{{'Remove all selections' | translate}}"><i class="fa fa-angle-double-left"></i></a></span>
               </ul>
             </div>
           </div>
@@ -81,7 +90,7 @@
               <li *ngFor="let period of periods"
                   class="period" (click)="activatePer(period)"
                   [ngClass]="{'hiddenTree': checkPeriodAvailabilty(period,selected_periods)}"
-                  title="Click to select"
+                  title="{{'Click to select' | translate}}"
               >
                 {{ period.name }}
               </li>
@@ -91,7 +100,7 @@
             <ul class="nav nav-pills flex-column">
               <li *ngFor="let period of selected_periods"
                   class="period" (click)="deactivatePer(period);$event.stopPropagation()"
-                  title="Click to deselect"
+                  title="{{'Click to deselect' | translate}}"
                   dnd-droppable (onDropSuccess)="transferDataSuccess($event,period)"
               >
                 <div dnd-draggable [dragEnabled]="true" [dragData]="period">{{ period.name }}</div>
@@ -102,7 +111,8 @@
       </div>
       <div class="col-sm-12" style="padding:0px;margin-top: 5px;border-top:1px solid rgba(0,0,0,0.3)" *ngIf="showUpdate">
         <button class="btn btn-outline-secondary btn-sm pull-right cursor" style="margin-top: 5px" (click)="updatePeriods()" >
-          <i class="fa fa-refresh"></i> Update
+          <i class="fa fa-refresh"></i>
+          <span [translate]="'Update'"> Update</span> Update
         </button>
       </div>
     </div>

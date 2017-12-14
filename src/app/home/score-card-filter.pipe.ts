@@ -18,7 +18,7 @@ export class ScoreCardFilterPipe implements PipeTransform {
         return _.sortBy(value.filter((item) => {
           let found = true;
           splitData.split(' ').forEach((str) => {
-            if (item.name.toLowerCase().indexOf(str.toLowerCase()) === -1) {
+            if (item.name.toLowerCase().indexOf(str.toLowerCase()) === -1 && item.description.toLowerCase().indexOf(str.toLowerCase()) === -1) {
               found = false;
             }
           });

@@ -22,7 +22,9 @@
                    <a (click)="deActivateNode(item.id,orgtree,$event)" class="removeorgunit">x</a>
                 </span>
               </span>
-        <span class="no-selection"*ngIf="orgunit_model.selected_orgunits.length == 0 && !orgunit_tree_config.loading && orgunit_model.selection_mode != 'Usr_orgUnit'">{{ orgunit_tree_config.placeholder }}</span>
+        <span class="no-selection" *ngIf="orgunit_model.selected_orgunits.length == 0 && !orgunit_tree_config.loading && orgunit_model.selected_user_orgunit.length == 0">
+          {{ orgunit_tree_config.placeholder }}
+        </span>
 
       <i class="fa fa-caret-down pull-right"></i>
       <span  *ngIf="orgunit_model.selected_orgunits.length > 3" class="pull-right">
@@ -69,16 +71,34 @@
           </div>
           <!--org_unit_groups-->
           <div class="col-sm-9" style="padding-right: 0px; margin-bottom: 5px" *ngIf="orgunit_model.selection_mode == 'Group'">
-            <app-multiselect [placeholder]="'Select Organisation units group'" [selected_items]="orgunit_model.selected_groups" [items]="orgunit_model.orgunit_groups" (onSelected)="setSelectedGroups($event)"></app-multiselect>
+            <app-multiselect
+              [placeholder]="'Select Organisation units group'"
+              [selected_items]="orgunit_model.selected_groups"
+              [items]="orgunit_model.orgunit_groups"
+              (onSelected)="setSelectedGroups($event)">
+            </app-multiselect>
           </div>
           <!--user_org_unit-->
           <div class="col-sm-9" style="padding-right: 0px; margin-bottom: 5px" [ngClass]="{'hiddenTree': orgunit_model.selection_mode != 'orgUnit'}">
-            <app-multiselect #period_selector [placeholder]="'Select Organisation Unit'" [items]="user_orgunits_types" (onSelected)="setSelectedUserOrg($event)"></app-multiselect>
+            <app-multiselect
+              #period_selector
+              [placeholder]="'Select Organisation Unit'"
+              [selected_items]="orgunit_model.selected_user_orgunit"
+              [items]="user_orgunits_types"
+              (onSelected)="setSelectedUserOrg($event)">
+            </app-multiselect>
 
           </div>
           <!--org_unit_levels-->
           <div class="col-sm-9" style="padding-right: 0px; margin-bottom: 5px" *ngIf="orgunit_model.selection_mode == 'Level'">
-            <app-multiselect [prefix]="'Level: '" [prefix_multiple]="'Levels: '" [placeholder]="'Select Organisation units levels'" [selected_items]="orgunit_model.selected_levels" [items]="orgunit_model.orgunit_levels | filterLevel:organisationunits[0]:orgunit_model.selected_orgunits" (onSelected)="setSelectedLevels($event)"></app-multiselect>
+            <app-multiselect
+              [prefix]="'Level: '"
+              [prefix_multiple]="'Levels: '"
+              [placeholder]="'Select Organisation units levels'"
+              [selected_items]="orgunit_model.selected_levels"
+              [items]="orgunit_model.orgunit_levels | filterLevel:organisationunits[0]:orgunit_model.selected_orgunits"
+              (onSelected)="setSelectedLevels($event)">
+            </app-multiselect>
 
           </div>
           <!--<div class="search-area">-->

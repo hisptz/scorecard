@@ -30,7 +30,7 @@ export function staticDataReducer (
       return {...state, userGroups: action.payload, userGroups_loaded: true };
     }
 
-    case(dataActions.LOAD_USERS_DONE): {
+    case(dataActions.LOAD_USER_DONE): {
       return {...state, user: action.payload, user_loaded: true };
     }
 
@@ -41,3 +41,11 @@ export function staticDataReducer (
   }
   return state;
 }
+
+
+export const getUserGroups = (state: StaticDataState) => state.userGroups;
+export const getUserGroupsLoaded = (state: StaticDataState) => state.userGroups_loaded;
+export const getUser = (state: StaticDataState) => state.user;
+export const getUserLoaded = (state: StaticDataState) => state.user_loaded;
+export const getFunctions = (state: StaticDataState) => state.functions;
+export const getFunctionsLoaded = (state: StaticDataState) => state.functions_loaded;

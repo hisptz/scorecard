@@ -6,24 +6,27 @@ import { Routes, RouterModule, PreloadAllModules } from '@angular/router';
 import { HomeComponent } from './home/home.component';
 import { CreateComponent } from './create/create.component';
 import { ViewComponent } from './view/view.component';
-import { ScorecardExistsGuards } from './guards';
+import {ScorecardExistsGuards} from './guards';
+import {UserExistsGuards} from './guards/user.exists';
 
 const routes: Routes = [
   {
     path: '',
+    canActivate: [UserExistsGuards],
     component: HomeComponent ,
     pathMatch: 'full'
   },
   {
     path: 'edit/:scorecardid',
-    canActivate: [ScorecardExistsGuards],
+    canActivate: [UserExistsGuards, ScorecardExistsGuards],
     component: CreateComponent },
   {
     path: 'create',
+    canActivate: [UserExistsGuards],
     component: CreateComponent },
   {
     path: 'view/:scorecardid',
-    canActivate: [ScorecardExistsGuards],
+    canActivate: [UserExistsGuards, ScorecardExistsGuards],
     component: ViewComponent },
   {
     path: '**',

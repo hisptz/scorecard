@@ -11,7 +11,7 @@ import { OrgUnitService } from '../../services/org-unit.service';
 export class OrgUnitFilterComponent implements OnInit {
   // the object that will carry the output value you can send one from outside to config start values
   @Input() orgunit_model: any =  {
-    selection_mode: 'Usr_orgUnit',
+    selection_mode: 'orgUnit',
     selected_levels: [],
     show_update_button: true,
     selected_groups: [],
@@ -23,7 +23,6 @@ export class OrgUnitFilterComponent implements OnInit {
     selected_user_orgunit: []
   };
   initial_usr_orgunit = [];
-
   // The organisation unit configuration object This will have to come from outside.
   @Input() orgunit_tree_config: any = {
     show_search : true,
@@ -62,7 +61,7 @@ export class OrgUnitFilterComponent implements OnInit {
   customTemplateStringOrgunitOptions: any;
 
   user_orgunits_types: Array<any> = [
-    {id: 'USER_ORGUNIT', name: 'User Admin Unit', shown: true},
+    {id: 'USER_ORGUNIT', name: 'User orgunit', shown: true},
     {id: 'USER_ORGUNIT_CHILDREN', name: 'User sub-units', shown: true},
     {id: 'USER_ORGUNIT_GRANDCHILDREN', name: 'User sub-x2-units', shown: true}
   ];
@@ -143,9 +142,6 @@ export class OrgUnitFilterComponent implements OnInit {
                 const level = this.orgunitService.getUserHighestOrgUnitlevel( userOrgunit );
                 this.orgunit_model.user_orgunits = this.orgunitService.getUserOrgUnits( userOrgunit );
                 this.orgunitService.user_orgunits = this.orgunitService.getUserOrgUnits( userOrgunit );
-                if (this.orgunit_model.selection_mode === 'Usr_orgUnit') {
-                  this.orgunit_model.selected_orgunits = this.orgunit_model.user_orgunits;
-                }
                 const all_levels = data.pager.total;
                 const orgunits = this.orgunitService.getuserOrganisationUnitsWithHighestlevel( level, userOrgunit );
                 const use_level = parseInt(all_levels) - (parseInt(level) - 1);
@@ -167,8 +163,11 @@ export class OrgUnitFilterComponent implements OnInit {
                         for (const active_orgunit of this.orgunit_model.selected_orgunits) {
                           this.activateNode(active_orgunit.id, this.orgtree, true);
                         }
+                        if (this.orgunit_model.selected_user_orgunit.length !== 0) {
+                          this.emit(false);
+                        }
                         // backup to make sure that always there is default organisation unit
-                        if (this.orgunit_model.selected_orgunits.length === 0) {
+                        if (this.orgunit_model.selected_orgunits.length === 0 && this.orgunit_model.selected_user_orgunit.length === 0) {
                           for (const active_orgunit of this.orgunit_model.user_orgunits) {
                             this.activateNode(active_orgunit.id, this.orgtree, true);
                           }
@@ -309,7 +308,7 @@ export class OrgUnitFilterComponent implements OnInit {
     Object.keys(mapper).forEach(function(orgUnits) {
       arrayed_org_units.push(mapper[orgUnits]);
     });
-
+    console.log(this.orgunit_model);
     if (showUpdate) {
       this.onOrgUnitUpdate.emit({
         orgunit_model: this.orgunit_model,

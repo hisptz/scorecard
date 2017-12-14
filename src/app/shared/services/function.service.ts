@@ -55,7 +55,7 @@ export class FunctionService {
 
   }
 
-  loadFunctions() {
+  getAllFunctions() {
     this.getAll().subscribe( );
   }
   get(id) {

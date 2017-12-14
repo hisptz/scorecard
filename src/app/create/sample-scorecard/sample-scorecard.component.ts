@@ -2,10 +2,14 @@ import {ChangeDetectionStrategy, Component, EventEmitter, Input, OnInit, Output}
 import {ScoreCard} from '../../shared/models/scorecard';
 import {UserGroup} from '../../shared/models/user-group';
 import * as _ from 'lodash';
-import {Store} from "@ngrx/store";
-import {ApplicationState} from "../../store/reducers";
-import {IndicatorHolder} from "../../shared/models/indicator-holder";
-import {IndicatorHolderGroup} from "../../shared/models/indicator-holders-group";
+import {Store} from '@ngrx/store';
+import {ApplicationState} from '../../store/reducers';
+import {IndicatorHolder} from '../../shared/models/indicator-holder';
+import {IndicatorHolderGroup} from '../../shared/models/indicator-holders-group';
+import {Observable} from 'rxjs/Observable';
+import * as orgunitSelector from '../../store/selectors/orgunits.selectors';
+import * as dataSelector from '../../store/selectors/static-data.selectors';
+import * as createSelector from '../../store/selectors/create.selectors';
 
 @Component({
   selector: 'app-sample-scorecard',
@@ -16,17 +20,27 @@ import {IndicatorHolderGroup} from "../../shared/models/indicator-holders-group"
 export class SampleScorecardComponent implements OnInit {
 
   @Input() scorecard: ScoreCard;
-  @Input() userGroups: UserGroup[] = [];
-  @Input() need_for_group: boolean = false;
-  @Input() need_for_indicator: boolean = false;
   @Input() current_indicator: IndicatorHolder = null;
   @Input() current_holder_group: IndicatorHolderGroup = null;
   @Input() holders_list: IndicatorHolder[] = [];
   @Output() onSharing = new EventEmitter();
   @Output() onPeriodUpdate = new EventEmitter();
   @Output() onOrgUnitUpdate = new EventEmitter();
-  constructor(private store: Store<ApplicationState>) {
 
+  user_groups$: Observable<UserGroup[]>;
+  group_loading$: Observable<boolean>;
+  orgunit_loading$: Observable<boolean>;
+  need_for_group$: Observable<boolean>;
+  need_for_indicator$: Observable<boolean>;
+  deleting: string[] = [];
+
+  group_loading: boolean = false;
+  constructor(private store: Store<ApplicationState>) {
+    this.orgunit_loading$ = store.select(orgunitSelector.getOrgunitLoading);
+    this.user_groups$ = store.select(dataSelector.getUserGroups);
+    this.group_loading$ = store.select(dataSelector.getUserGroupsLoaded);
+    this.need_for_group$ = store.select(createSelector.getNeedForGroup);
+    this.need_for_indicator$ = store.select(createSelector.getNeedForIndicator);
   }
 
   ngOnInit() {
@@ -46,6 +60,14 @@ export class SampleScorecardComponent implements OnInit {
 
   //  this will enable updating of indicator
   updateIndicator(indicator: any): void {
+
+  }
+
+  enableAddIndicator(indicator) {
+
+  }
+
+  deleteGroup(group) {
 
   }
 

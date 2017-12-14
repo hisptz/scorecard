@@ -35,6 +35,7 @@ import {ScoreCardFilterPipe} from './home/score-card-filter.pipe';
 
 import * as fromGuards from './guards';
 import {OrgUnitService} from "./shared/services/org-unit.service";
+import {FunctionService} from "./shared/services/function.service";
 
 // Add a function, that returns a “TranslateHttpLoader” and export it (needed by AoT)
 export function HttpLoaderFactory(http: HttpClient) {
@@ -74,7 +75,7 @@ export function HttpLoaderFactory(http: HttpClient) {
     }),
     CreateModule,
     ViewModule,
-    !environment.production ? StoreDevtoolsModule.instrument({maxAge: 20}) : []
+    !environment.production ? StoreDevtoolsModule.instrument({maxAge: 100}) : []
   ],
   providers: [
     { provide: RouterStateSerializer, useClass: CustomSerializer },
@@ -82,6 +83,7 @@ export function HttpLoaderFactory(http: HttpClient) {
     ScorecardService,
     HttpClientService,
     OrgUnitService,
+    FunctionService,
     ...fromGuards.guards
   ],
   bootstrap: [AppComponent]
