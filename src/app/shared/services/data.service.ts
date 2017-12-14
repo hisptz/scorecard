@@ -1,14 +1,22 @@
 import { Injectable } from '@angular/core';
-import {Observable} from 'rxjs/Observable';
-import {Constants} from './costants';
-import {HttpClientService} from './http-client.service';
+import { Observable } from 'rxjs/Observable';
+import { HttpClientService } from './http-client.service';
+import { ApplicationState } from '../../store/reducers';
+import { Store } from '@ngrx/store';
+import {
+  LoadUserGroupsDone, LoadUserGroupsFail, LoadUsersDone,
+  LoadUsersFail
+} from '../../store/actions/static-data.actions';
 
 @Injectable()
 export class DataService {
 
   user: any = null;
-  user_groups: any = null;
-  constructor(private http: HttpClientService) { }
+  user_groups: any[] = [];
+  constructor(
+    private http: HttpClientService,
+    private store: Store<ApplicationState>
+  ) { }
 
   // Get current user information
   getUserInformation (): Observable<any> {
@@ -18,9 +26,11 @@ export class DataService {
           .subscribe(
           (data) => {
             this.user = data;
+            this.store.dispatch(new LoadUsersDone(this.user));
             observ.next(data);
             observ.complete();
           }, error => {
+              this.store.dispatch(new LoadUsersFail(error));
             observ.error();
           }
         );
@@ -34,14 +44,21 @@ export class DataService {
   // Get current user information
   getUserGroupInformation (): Observable<any> {
     return Observable.create( (observ) => {
-      if ( this.user_groups === null) {
+      if ( this.user_groups.length === 0) {
         this.http.get('userGroups.json?fields=id,name&paging=false')
           .subscribe(
           (data) => {
-            this.user_groups = data;
+            this.user_groups.push({
+              id: 'all',
+              name: 'Public',
+              title: 'This will be accessible to everyone in the system accessing the scorecard'
+            });
+            this.user_groups = [...this.user_groups, ...data.userGroups];
+            this.store.dispatch(new LoadUserGroupsDone(this.user_groups));
             observ.next(data);
             observ.complete();
           }, error => {
+            this.store.dispatch(new LoadUserGroupsFail(error));
             observ.error();
           }
         );

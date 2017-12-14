@@ -1,3 +1,15 @@
-<p>
-  create works!
-</p>
+<div class="container-fluid">
+  <app-create-header
+    [scorecard]="scorecard$ | async"
+    (onGoHomePage)="goToHomePage()"
+    (onCancel)="cancelSaving()"
+    (onSave)="saveScorecard()"
+  ></app-create-header>
+
+  <app-sample-scorecard
+    [scorecard]="scorecard$ | async"
+  ></app-sample-scorecard>
+
+  <app-data-selection></app-data-selection>
+
+</div>

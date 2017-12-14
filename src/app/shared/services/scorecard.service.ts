@@ -5,9 +5,12 @@ import { Store } from '@ngrx/store';
 import * as _ from 'lodash';
 import { HttpClientService } from './http-client.service';
 import { DataService } from './data.service';
-import {ApplicationState} from '../../store/reducers';
+import {ApplicationState, getRouterState} from '../../store/reducers';
 import * as scorecardActions from '../../store/actions/scorecard.actions';
+import * as createActions from '../../store/actions/create.actions';
 import {SetHomeLoadingPercent} from '../../store/actions/ui.actions';
+import {getScorecardEntites} from '../../store/selectors/scorecard.selectors';
+import {take, tap, filter} from 'rxjs/operators';
 
 
 @Injectable()
@@ -69,6 +72,27 @@ export class ScorecardService {
     }
   }
 
+  // get the scorecard to be created
+  getCreatedScorecard() {
+    this.store.select(getRouterState).first().subscribe(
+      (route) => {
+        console.log(route)
+        if (route.state.url === '/create') {
+          const scorecard = this.getEmptyScoreCard();
+          this.store.dispatch(new createActions.SetCreatedScorecard(scorecard));
+        }else {
+          const scorecardId = route.state.params.scorecardid;
+          this.store.select(getScorecardEntites).first().subscribe(
+            scorecards => {
+              if (scorecards) {
+                this.store.dispatch(new createActions.SetCreatedScorecard(scorecards[scorecardId]));
+              }
+            });
+        }
+      }
+    );
+  }
+
   doneLoadingScorecard(scorecard_count, scorecards) {
     this.store.dispatch(new SetHomeLoadingPercent(Math.floor((scorecard_count / scorecards.length) * 100)));
     // set loading equal to false when all scorecards are loaded
@@ -83,15 +107,8 @@ export class ScorecardService {
       name: scorecard_details.header.title,
       description: scorecard_details.header.description,
       data: scorecard_details,
-      view_details: {
-        can_see: can_see,
-        can_edit: can_edit,
-        deleting: false,
-        hoverState: 'notHovered',
-        confirm_deleting: false,
-        deleted: false,
-        error_deleting: false
-      }
+      can_edit: can_edit,
+
     };
     if ( can_see ) {
       this.store.dispatch(new scorecardActions.LoadScorecardSuccess(scorecard_item));
@@ -159,6 +176,8 @@ export class ScorecardService {
     return {
       id: this.makeid(),
       name: '',
+      description: '',
+      can_edit: true,
       data: {
         'orgunit_settings': {
           'selection_mode': 'Usr_orgUnit',

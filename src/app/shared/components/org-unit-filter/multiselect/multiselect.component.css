@@ -1,0 +1,144 @@
+.hiddenTree{
+  display: none;
+}
+li{
+  cursor: pointer;
+}
+
+.selected{
+  background-color: rgba(0,0,0,0.1);
+}
+
+.tree-view {
+  text-align: left;
+  background-color: #fff;
+  position: absolute;
+  z-index: 999;
+  border: 1px solid rgba(0, 0, 0, .15);
+  border-radius: 4px;
+  -webkit-box-shadow: 0 6px 12px rgba(0, 0, 0, .175);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, .175);
+  width: 98%;
+  margin-right: 30px;
+  max-height: 360px;
+  overflow: auto;
+  padding: 10px 5px;
+  margin-top: 31px;
+}
+
+.hiddenTree{
+  display: none;
+}
+
+.tree-area::-webkit-scrollbar {
+  width: 5px;
+}
+
+.tree-area::-webkit-scrollbar-track {
+  -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.2);
+  border-radius: 10px;
+}
+
+.tree-area::-webkit-scrollbar-thumb {
+  border-radius: 10px;
+  -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.2);
+}
+
+.tree-area{
+  max-height: 270px;
+  overflow: hidden;
+  width: 100%;
+}
+.tree-area:hover{
+  overflow: auto;
+}
+
+.tree-area{
+  max-height: 210px;
+  overflow: hidden;
+  width: 100%;
+}
+
+.tree-area{
+  overflow: auto;
+}
+
+.tree-view::-webkit-scrollbar {
+  width: 5px;
+}
+
+.tree-view::-webkit-scrollbar-track {
+  -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.2);
+  border-radius: 10px;
+}
+
+.tree-view::-webkit-scrollbar-thumb {
+  border-radius: 10px;
+  -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.2);
+}
+
+.tree-view input{
+  border-radius: 2px;
+  border: 1px solid #ccc;
+  height: 26px;
+  font-size: 14px;
+  width: 100%;
+  padding-left: 7px;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+  color: #888;
+  margin: 0 0 8px;
+}
+
+.show_items{
+  position: relative;
+  float: left;
+  display: inline-block;
+  text-align: center;
+  cursor: pointer;
+  border: 1px solid #c6c6c6;
+  padding: 4px 8px;
+  font-size: 14px;
+  min-height: 30px!important;
+  border-radius: 4px;
+  color: #555;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  -o-user-select: none;
+  user-select: none;
+  white-space: normal;
+  background-color: #fff;
+  background-image: linear-gradient(#fff,#f7f7f7);
+  width: 100%;
+  height: 30px;
+}
+
+span.selected-item {
+  background: inherit;
+  border: 1px solid #888888;
+  border-radius: 3px;
+  padding: 3px 5px 3px 5px;
+  margin-right: 2px;
+  cursor: text;
+  font-size: 11px;
+
+}
+
+.selected-item-close {
+  width: 20px;
+  cursor: pointer;
+  font-weight: 700;
+  display: inline-block;
+  padding: 2px;
+  text-align: center;
+  font-size: xx-small;
+}
+.removeitem{
+  cursor: pointer;
+}
+
+.removeitem:hover{
+  font-size: 1.1em;
+}

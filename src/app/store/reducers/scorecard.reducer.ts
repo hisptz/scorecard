@@ -1,5 +1,5 @@
 import {ScoreCard} from '../../shared/models/scorecard';
-import * as scorecardActions from '../actions/scorecard.actions'
+import * as scorecardActions from '../actions/scorecard.actions';
 
 export interface ScorecardState {
   entities: {[id: string]: ScoreCard};
@@ -53,6 +53,17 @@ export function scorecardReducer(
         [scorecard.id]: scorecard,
       };
 
+
+      return {
+        ...state,
+        entities,
+      };
+    }
+
+    // this will be called once a scorecard has been removed successful
+    case scorecardActions.REMOVE_SCORECARD_SUCCESS: {
+      const scorecard = action.payload;
+      const { [scorecard.id]: removed, ...entities } = state.entities;
 
       return {
         ...state,

@@ -2,19 +2,13 @@ import {Legend} from './legend';
 import {User} from './user';
 import {UserGroup} from './user-group';
 import {OrgUnitModel} from './org-unit-model';
+import {IndicatorHolder} from './indicator-holder';
+import {IndicatorHolderGroup} from './indicator-holders-group';
 export interface ScoreCard {
   id: string;
   name: string;
   description?: string;
-  view_details?: {
-    can_see: boolean,
-    can_edit: boolean,
-    deleting: boolean,
-    hoverState: string,
-    confirm_deleting: boolean,
-    deleted: boolean,
-    error_deleting: boolean
-  },
+  can_edit?: boolean;
   data: ScorecardData | any;
 }
 export interface ScorecardData {
@@ -46,8 +40,8 @@ export interface ScorecardData {
       definitions: any[]
     };
     data_settings: {
-      indicator_holders: any[],
-      indicator_holder_groups: any[]
+      indicator_holders: IndicatorHolder[],
+      indicator_holder_groups: IndicatorHolderGroup[]
     };
     additional_labels?: any[];
     footer?: {

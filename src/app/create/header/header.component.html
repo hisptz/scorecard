@@ -1,0 +1,46 @@
+<div class="container-fluid">
+  <div class="row">
+    <div
+      class="col-md-2 col-xs-12"
+      style="padding-left: 0px; cursor: pointer;"
+      (click)="goToHomePage()">
+      <img src="scorecard.svg" style="height: 58px; width: 48px">
+      <span style="font-size: 20px" [translate]="'Score Card'"> Score Card</span>
+    </div>
+    <div  class="col-md-7 col-xs-12">
+      <h3 class="text-center" style="margin-top: 8px">
+        <small *ngIf="scorecard.name == ''" [translate]="'Create a new scorecard'">
+          Create a new scorecard
+        </small>
+        <small *ngIf="scorecard.name != ''">
+          {{ scorecard.name }}
+        </small>
+      </h3>
+    </div>
+    <div class="col-md-3 col-xs-12" style="margin-top: 10px">
+      <button
+        class="btn btn-outline-info btn-sm pull-right cursor"
+        (click)="save()"
+        style="height: 35px;margin-left: 5px"
+        title="{{ 'Save the Changes'| translate }}"
+      >
+        <i class="fa fa-floppy-o text-info"></i>
+        <span [translate]="'Save'">Save</span>
+      </button>
+      <button
+        class="btn btn-outline-warning btn-sm pull-right cursor"
+        (click)="cancel()"
+        style="height: 35px;margin-left: 5px"
+        title="{{ 'Cancel and Go Back' | translate }}"
+      >
+        <i class="fa fa-ban"></i>
+        <span [translate]="'Cancel'">Cancel</span>
+      </button>
+      <app-options
+        *ngIf="scorecard"
+        [scorecard]="scorecard"
+        (onOptionUpdate) = "optionUpdated($event)"
+      ></app-options>
+    </div>
+  </div>
+</div>

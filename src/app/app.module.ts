@@ -31,7 +31,10 @@ import { StoreDevtoolsModule } from '@ngrx/store-devtools';
 import { PlaceholderComponent } from './home/placeholder/placeholder.component';
 import { DescriptionComponent } from './home/description/description.component';
 import { ScorecardDetailComponent } from './home/scorecard-detail/scorecard-detail.component';
-import {ScoreCardFilterPipe} from "./home/score-card-filter.pipe";
+import {ScoreCardFilterPipe} from './home/score-card-filter.pipe';
+
+import * as fromGuards from './guards';
+import {OrgUnitService} from "./shared/services/org-unit.service";
 
 // Add a function, that returns a “TranslateHttpLoader” and export it (needed by AoT)
 export function HttpLoaderFactory(http: HttpClient) {
@@ -77,7 +80,9 @@ export function HttpLoaderFactory(http: HttpClient) {
     { provide: RouterStateSerializer, useClass: CustomSerializer },
     DataService,
     ScorecardService,
-    HttpClientService
+    HttpClientService,
+    OrgUnitService,
+    ...fromGuards.guards
   ],
   bootstrap: [AppComponent]
 })

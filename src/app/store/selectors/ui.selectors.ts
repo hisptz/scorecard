@@ -8,4 +8,3 @@ export const getViewStyle = createSelector(getUiState, fromUiState.getViewStyle)
 
 export const getHomeLoadingPercent = createSelector(getUiState, fromUiState.getHomeLoadingPercent);
 
-export const getHoveredScorecard = createSelector(getUiState, fromUiState.getHoveredScorecard);

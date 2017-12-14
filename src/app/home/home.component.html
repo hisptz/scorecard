@@ -14,7 +14,10 @@
         [(ngModel)]="queryterm">
     </div>
     <div class="col-md-2 col-xs-12 hidden-sm" style="margin-top: 14px">
-      <button tourAnchor="home.create" style="height: 34px" class="btn btn-outline-secondary btn-sm float-md-right cursor" [routerLink]="['create','new','0']">
+      <button
+        tourAnchor="home.create" style="height: 34px"
+        class="btn btn-outline-secondary btn-sm float-md-right cursor"
+        (click)="createNew()">
         <i class="fa fa-plus" aria-hidden="true"></i> {{ 'Create' | translate }}
       </button>
       <button
@@ -96,13 +99,15 @@
     <div
       class="card scorecard_details col-sm-12 col-md-4 text-center cursor"
       *ngFor="let scorecard of (scorecards$ | async) | scoreCardFilter: queryterm | paginate: paginationconfiguration "
-      [@visibilityChanged]="(current_hovered_scorecard$ | async) === scorecard.id ? 'hoovered': 'notHovered'"
+      [@visibilityChanged]="current_hovered_scorecard === scorecard.id ? 'hoovered': 'notHovered'"
       (mouseenter) ="mouseEnter(scorecard.id)"
       (mouseleave) ="mouseLeave()"
       (click)="viewcorecard(scorecard,$event)"
     >
       <app-scorecard-detail
         [scorecard]="scorecard"
+        (onScorecardDelete)= "clearSearchInput()"
+        [viewType]="viewStle"
       ></app-scorecard-detail>
     </div>
   </div>
@@ -132,5 +137,46 @@
         </ul>
       </nav>
     </pagination-template>
+  </div>
+</div>
+
+<!--View style is List-->
+<div  *ngIf="viewStle == 'List'">
+  <ul class="list-group">
+    <li
+      class="list-group-item cursor"
+      *ngFor="let scorecard of (scorecards$ | async) | scoreCardFilter: queryterm"
+      [@visibilityChanged]="current_hovered_scorecard === scorecard.id ? 'hoovered': 'notHovered'"
+      (mouseenter) ="mouseEnter(scorecard)"
+      (mouseleave) ="mouseLeave(scorecard)"
+      (click)="viewcorecard(scorecard,$event)"
+      style="padding-bottom: 40px"
+    >
+      <app-scorecard-detail
+        [scorecard]="scorecard"
+        (onScorecardDelete)= "clearSearchInput()"
+        [viewType]="viewStle"
+      ></app-scorecard-detail>
+    </li>
+  </ul>
+</div>
+
+<!--view style is thumbnail-->
+<div class="row"  *ngIf="viewStle == 'Thumbnail'">
+
+  <div
+    class="col-sm-6"
+    *ngFor="let scorecard of (scorecards$ | async) | scoreCardFilter: queryterm"
+    [@visibilityChanged]="current_hovered_scorecard === scorecard.id ? 'hoovered': 'notHovered'"
+    (mouseenter) ="mouseEnter(scorecard)"
+    (mouseleave) ="mouseLeave(scorecard)"
+    (click)="viewcorecard(scorecard,$event)"
+    style="padding-bottom: 40px"
+  >
+    <app-scorecard-detail
+      [scorecard]="scorecard"
+      (onScorecardDelete)= "clearSearchInput()"
+      [viewType]="viewStle"
+    ></app-scorecard-detail>
   </div>
 </div>

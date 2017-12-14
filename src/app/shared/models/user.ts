@@ -1,3 +1,6 @@
 export interface User {
-  id: String;
+  id: string;
+  name?: string;
+  userGroups?: any;
+  userCredentials?: any;
 }

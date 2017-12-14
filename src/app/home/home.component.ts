@@ -59,8 +59,8 @@ export class HomeComponent implements OnInit {
   loaded$: Observable<boolean>;
   complete_percent$: Observable<number>;
   viewTitle$: Observable<string>;
-  current_hovered_scorecard$: Observable<string>;
   viewStle = 'Card';
+  current_hovered_scorecard = '';
   queryterm = '';
 
   paginationconfiguration: PaginationInstance = {
@@ -82,7 +82,6 @@ export class HomeComponent implements OnInit {
     this.loading$ = store.select(scorecardSelector.getScorecardLoading);
     this.loaded$ = store.select(scorecardSelector.getScorecardLoaded);
 
-    this.current_hovered_scorecard$ = store.select(uiSelectors.getHoveredScorecard);
     this.store.dispatch(new scorecardAction.LoadScorecards());
 
     this.tourService.initialize(tourSteps);
@@ -91,31 +90,31 @@ export class HomeComponent implements OnInit {
   ngOnInit() {
   }
 
-  openScorecardForEditing(scorecard, event ) {
-    this.store.dispatch(new Go({
-      path: ['create', 'edit', scorecard.id],
-    }));
+
+  viewcorecard(scorecard, event ) {
+    this.store.dispatch(new Go({  path: ['view', scorecard.id] }));
     event.stopPropagation();
   }
 
-  viewcorecard(scorecard, event ) {
-    this.store.dispatch(new Go({
-      path: ['view', scorecard.id],
-    }));
-    event.stopPropagation();
+  createNew() {
+    this.store.dispatch(new Go({ path: ['create'] }));
   }
 
   mouseEnter(scorecardId) {
-    this.store.dispatch(new uiAction.SetHoveredScorecard(scorecardId));
+    this.current_hovered_scorecard = scorecardId;
   }
 
   mouseLeave() {
-    this.store.dispatch(new uiAction.SetHoveredScorecard(''));
+    this.current_hovered_scorecard = '';
   }
 
   startTour() {
     this.translate.use('en');
     this.tourService.start();
+  }
+
+  clearSearchInput(){
+    this.queryterm = '';
   }
 
 

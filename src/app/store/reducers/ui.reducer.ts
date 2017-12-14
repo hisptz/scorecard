@@ -35,13 +35,6 @@ export function uiReducer(
       };
     }
 
-    case (fromuiaction.SET_HOVERED_SCORECARD): {
-      return {
-        ...state,
-        current_hovered_scorecard: action.payload
-      };
-    }
-
     case (fromuiaction.SET_VIEW_STYLE): {
       return {
         ...state,
@@ -56,4 +49,3 @@ export function uiReducer(
 export const getViewTitle = (state: UiState) => state.view_title;
 export const getViewStyle = (state: UiState) => state.view_style;
 export const getHomeLoadingPercent = (state: UiState) => state.home_loading_percent;
-export const getHoveredScorecard = (state: UiState) => state.current_hovered_scorecard;
