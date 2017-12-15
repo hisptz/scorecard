@@ -12,6 +12,55 @@
     [current_indicator]="current_indicator_holder$ | async"
   ></app-sample-scorecard>
 
-  <app-data-selection></app-data-selection>
+
+  <div
+    class="container-fluid warning-wrapper" *ngIf="show_title_warning$ | async">
+    <span
+      class="text-muted"
+      [translate]="'Write the title, Description and start by picking indicators for your scorecard'"
+    >
+      Write the title, Description and start by picking indicators for your scorecard.
+    </span>
+  </div>
+
+  <div
+    class="container-fluid" class="warning-wrapper">
+    <div
+      class="alert alert-danger"
+      style="margin: 0px; padding: 10px" role="alert"
+      *ngIf="errorSavingData"
+      [translate]="'Make sure to write the title, Description and pick at least one indicators for your score card'"
+    >
+      Make sure to write the title, Description and pick at least one indicators for your score card.
+    </div>
+  </div>
+
+  <div class="container-fluid" style="font-size: 11px">
+    <div class="row">
+      <!--basic details of the scorecard-->
+      <div class="col-sm-3 no-left-padding1">
+        <app-basic-details
+          [scorecard]="scorecard$ | async"
+          [legendset_definitions]="legendset_definitions$ | async"
+          [additional_labels]="additional_labels$ | async"
+          [indicator_holders]="indicator_holders$ | async"
+          [header]="scorecard_header$ | async"
+        >
+        </app-basic-details>
+      </div>
+
+      <!--data selection area-->
+      <div class="col-sm-4 scorecard_details">
+        <app-data-selection></app-data-selection>
+      </div>
+
+      <!--item details-->
+      <div class="col-sm-5 no-left-padding1 singleItem" style="padding-right: 0px">
+        <app-item-details></app-item-details>
+      </div>
+    </div>
+  </div>
+
+
 
 </div>

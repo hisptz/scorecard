@@ -1,26 +1,153 @@
 import {ScoreCard} from '../../shared/models/scorecard';
 import * as createActions from '../actions/create.actions';
+import * as _ from 'lodash';
 import {IndicatorHolder} from '../../shared/models/indicator-holder';
+import {User} from '../../shared/models/user';
+import {UserGroup} from '../../shared/models/user-group';
+import {OrgUnitModel} from '../../shared/models/org-unit-model';
+import {Legend} from '../../shared/models/legend';
 import {IndicatorHolderGroup} from '../../shared/models/indicator-holders-group';
 
+
 export interface CreatedScorecardState {
-  scorecard: ScoreCard;
+  id: string;
   need_for_group: boolean;
+  can_edit: boolean;
   current_indicator_holder: IndicatorHolder;
   current_group: IndicatorHolderGroup;
   next_group_id: number;
   next_holder_id: number;
   need_for_indicator: boolean;
+  show_title_editor: boolean;
+  orgunit_settings: OrgUnitModel;
+  average_selection: string;
+  shown_records: string;
+  show_average_in_row: boolean;
+  show_average_in_column: boolean;
+  periodType: string;
+  selected_periods: any[];
+  show_data_in_column: boolean;
+  show_score: boolean;
+  show_rank: boolean;
+  rank_position_last: boolean;
+  header: {
+    title: string,
+    sub_title: string,
+    description: string,
+    show_arrows_definition: boolean,
+    show_legend_definition: boolean,
+    template: {
+      display: boolean,
+      content: string
+    }
+  };
+  legendset_definitions: Legend[];
+  highlighted_indicators: {
+    display: false,
+    definitions: any[]
+  };
+  indicator_holders: IndicatorHolder[];
+  indicator_holder_groups: IndicatorHolderGroup[];
+  additional_labels: any[];
+  footer: {
+    display_generated_date: string,
+    display_title: boolean,
+    sub_title: string,
+    description: string,
+    template: string
+  };
+  indicator_dataElement_reporting_rate_selection: string;
+  user: User;
+  user_groups: UserGroup[];
 }
 
-export const InitialCreateState = {
-  scorecard: null,
+export const InitialCreateState: CreatedScorecardState = {
+  id: '',
   need_for_group: false,
+  can_edit: true,
   current_indicator_holder: null,
   current_group: null,
   next_group_id: null,
   next_holder_id: null,
-  need_for_indicator: false
+  need_for_indicator: false,
+  show_title_editor: false,
+  orgunit_settings: {
+    selection_mode: 'Usr_orgUnit',
+    selected_levels: [],
+    show_update_button: true,
+    selected_groups: [],
+    orgunit_levels: [],
+    orgunit_groups: [],
+    selected_orgunits: [],
+    user_orgunits: [],
+    type: 'report',
+    selected_user_orgunit: []
+  },
+  average_selection: 'all',
+  shown_records: 'all',
+  show_average_in_row: false,
+  show_average_in_column: false,
+  periodType: 'Quarterly',
+  selected_periods: [{
+    id: '2017Q1',
+    name: 'January - March 2017'
+  }],
+  show_data_in_column: false,
+  show_score: false,
+  show_rank: false,
+  rank_position_last: true,
+  header: {
+    title: '',
+    sub_title: '',
+    description: '',
+    show_arrows_definition: true,
+    show_legend_definition: true,
+    template: {
+      display: false,
+      content: ''
+    }
+  },
+  legendset_definitions: [
+    {
+      color: '#008000',
+      definition: 'Target achieved / on track'
+    },
+    {
+      color: '#FFFF00',
+      definition: 'Progress, but more effort required'
+    },
+    {
+      color: '#FF0000',
+      definition: 'Not on track'
+    },
+    {
+      color: '#D3D3D3',
+      definition: 'N/A',
+      default: true
+    },
+    {
+      color: '#FFFFFF',
+      definition: 'No data',
+      default: true
+    }
+  ],
+  highlighted_indicators: {
+    display: false,
+    definitions: []
+  },
+  indicator_holders: [],
+  indicator_holder_groups: [],
+  additional_labels: [],
+  footer: {
+    display_generated_date: '',
+    display_title: false,
+    sub_title: '',
+    description: '',
+    template: ''
+  },
+  indicator_dataElement_reporting_rate_selection: 'Indicators',
+  user: null,
+  user_groups: []
 };
 
 export function createReducer(
@@ -31,7 +158,7 @@ export function createReducer(
   switch (action.type) {
     case (createActions.SET_CREATED_SCORECARD): {
       const scorecard = action.payload;
-      return {...state, scorecard  };
+      return {...state, ...scorecard  };
     }
 
     case (createActions.SET_CURRENT_GROUP): {
@@ -61,15 +188,36 @@ export function createReducer(
     case (createActions.SET_ITEM): {
       return {...state, [action.payload.key]: action.payload.value };
     }
+
+    case (createActions.SET_LEGEND): {
+      const legendset_definitions = action.payload;
+      return {...state, legendset_definitions };
+    }
+
+    case (createActions.SET_HEADER): {
+      const header = action.payload;
+      return {...state, header };
+    }
+
+    case (createActions.SET_HOLDERS): {
+      const  indicator_holders = action.payload;
+      return {...state, indicator_holders };
+    }
+
+    case (createActions.SET_ADDITIONAL_LABELS): {
+      const  additional_labels = action.payload;
+      return {...state, additional_labels };
+    }
+
   }
   return state;
 }
 
 
-export const getCreatedScorecard = (state: CreatedScorecardState) => state.scorecard;
 export const getNeedForGroup = (state: CreatedScorecardState) => state.need_for_group;
 export const getNeedForIndicator = (state: CreatedScorecardState) => state.need_for_indicator;
 export const getCurrentIndicatorHolder = (state: CreatedScorecardState) => state.current_indicator_holder;
 export const getCurrentGroup = (state: CreatedScorecardState) => state.current_group;
 export const getNextGroupId = (state: CreatedScorecardState) => state.next_group_id;
 export const getNextHolderId = (state: CreatedScorecardState) => state.next_holder_id;
+export const getShowTitleEditor = (state: CreatedScorecardState) => state.show_title_editor;

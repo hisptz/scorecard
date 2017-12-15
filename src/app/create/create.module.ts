@@ -5,6 +5,11 @@ import { CKEditorModule } from 'ng2-ckeditor';
 import { CreateHeaderComponent } from './header/header.component';
 import { DataSelectionComponent } from './data-selection/data-selection.component';
 import { SampleScorecardComponent } from './sample-scorecard/sample-scorecard.component';
+import { BasicDetailsComponent } from './basic-details/basic-details.component';
+import { LegendComponent } from './legend/legend.component';
+import { ItemDetailsComponent } from './item-details/item-details.component';
+import { BottleneckComponent } from './bottleneck/bottleneck.component';
+import { TitleAreaComponent } from './title-area/title-area.component';
 
 @NgModule({
   imports: [
@@ -15,6 +20,11 @@ import { SampleScorecardComponent } from './sample-scorecard/sample-scorecard.co
     CreateComponent,
     CreateHeaderComponent,
     DataSelectionComponent,
-    SampleScorecardComponent]
+    SampleScorecardComponent,
+    BasicDetailsComponent,
+    LegendComponent,
+    ItemDetailsComponent,
+    BottleneckComponent,
+    TitleAreaComponent]
 })
 export class CreateModule { }

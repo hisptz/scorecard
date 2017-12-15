@@ -12,6 +12,7 @@ import {SetHomeLoadingPercent} from '../../store/actions/ui.actions';
 import {getScorecardEntites} from '../../store/selectors/scorecard.selectors';
 import {take, tap, filter} from 'rxjs/operators';
 import {getUser} from "../../store/selectors/static-data.selectors";
+import {CreatedScorecardState} from "../../store/reducers/create.reducer";
 
 
 @Injectable()
@@ -82,13 +83,13 @@ export class ScorecardService {
         console.log(route)
         if (route.state.url === '/create') {
           const scorecard = this.getEmptyScoreCard();
-          this.store.dispatch(new createActions.SetCreatedScorecard(scorecard));
+          this.store.dispatch(new createActions.SetCreatedScorecard(this.getScorecardForCreation(scorecard)));
         }else {
           const scorecardId = route.state.params.scorecardid;
           this.store.select(getScorecardEntites).first().subscribe(
             scorecards => {
               if (scorecards) {
-                this.store.dispatch(new createActions.SetCreatedScorecard(scorecards[scorecardId]));
+                this.store.dispatch(new createActions.SetCreatedScorecard(this.getScorecardForCreation(scorecards[scorecardId])));
               }
             });
         }
@@ -341,4 +342,39 @@ export class ScorecardService {
   }
 
 
+  // prepare a scorecard for adding to creation state
+  getScorecardForCreation(scorecard: ScoreCard): CreatedScorecardState {
+    return {
+      id: scorecard.id,
+      need_for_group: false,
+      can_edit: scorecard.can_edit,
+      current_indicator_holder: null,
+      current_group: null,
+      next_group_id: null,
+      next_holder_id: null,
+      need_for_indicator: false,
+      show_title_editor: false,
+      orgunit_settings: scorecard.data.orgunit_settings,
+      average_selection: scorecard.data.average_selection,
+      shown_records: scorecard.data.shown_records,
+      show_average_in_row: scorecard.data.show_average_in_row,
+      show_average_in_column: scorecard.data.show_average_in_column,
+      periodType: scorecard.data.periodType,
+      selected_periods: scorecard.data.selected_periods,
+      show_data_in_column: scorecard.data.show_data_in_column,
+      show_score: scorecard.data.show_score,
+      show_rank: scorecard.data.show_rank,
+      rank_position_last: scorecard.data.rank_position_last,
+      header: scorecard.data.header,
+      legendset_definitions: scorecard.data.legendset_definitions,
+      highlighted_indicators: scorecard.data.highlighted_indicators,
+      indicator_holders: scorecard.data.data_settings.indicator_holders,
+      indicator_holder_groups: scorecard.data.data_settings.indicator_holder_groups,
+      additional_labels: scorecard.data.additional_labels,
+      footer: scorecard.data.footer,
+      indicator_dataElement_reporting_rate_selection: scorecard.data.indicator_dataElement_reporting_rate_selection,
+      user: scorecard.data.user,
+      user_groups: scorecard.data.user_groups
+    };
+  }
 }

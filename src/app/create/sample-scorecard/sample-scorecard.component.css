@@ -28,3 +28,10 @@
   width: 420px;
   height: 34px;
 }
+
+
+.scorecard_table{
+  max-width: 100%;
+  overflow: auto;
+  width: 100%;
+}

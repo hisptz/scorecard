@@ -1,12 +1,12 @@
 export interface OrgUnitModel {
-  selection_mode?: string;
-  selected_level?: string;
-  show_update_button?: boolean;
-  selected_group?: string;
+  selection_mode?: 'Usr_orgUnit';
+  selected_levels?: any[];
+  show_update_button?: true;
+  selected_groups?: any[];
   orgunit_levels?: any[];
   orgunit_groups?: any[];
   selected_orgunits?: any[];
   user_orgunits?: any[];
-  type?: string; // can be 'data_entry'
-  selected_user_orgunit?: string[];
+  type?: 'report';
+  selected_user_orgunit?: any[];
 }

@@ -15,10 +15,10 @@ import { TourNgBootstrapModule } from 'ngx-tour-ng-bootstrap';
 import { ContextMenuModule } from 'ngx-contextmenu';
 import { OptionsComponent } from './components/options/options.component';
 import { TranslateModule } from '@ngx-translate/core';
-import {OrgUnitFilterComponent} from "./components/org-unit-filter/org-unit-filter.component";
-import {PeriodFilterComponent} from "./components/period-filter/period-filter.component";
-import {SharingComponent} from "./components/sharing/sharing.component";
-import {MultiselectComponent} from "./components/org-unit-filter/multiselect/multiselect.component";
+import { OrgUnitFilterComponent } from './components/org-unit-filter/org-unit-filter.component';
+import { PeriodFilterComponent } from './components/period-filter/period-filter.component';
+import { SharingComponent } from './components/sharing/sharing.component';
+import { MultiselectComponent } from './components/org-unit-filter/multiselect/multiselect.component';
 
 @NgModule({
   imports: [

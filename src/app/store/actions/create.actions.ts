@@ -2,6 +2,7 @@ import { Action } from '@ngrx/store';
 import { ScoreCard } from '../../shared/models/scorecard';
 import { IndicatorHolderGroup } from '../../shared/models/indicator-holders-group';
 import { IndicatorHolder } from '../../shared/models/indicator-holder';
+import {CreatedScorecardState} from '../reducers/create.reducer';
 
 export const SET_CREATED_SCORECARD = '[Create] Set Created Scorecard';
 export const GET_SCORECARD_TO_CREATE = '[Create] Get Scorecard to create';
@@ -12,12 +13,16 @@ export const SET_NEXT_HOLDER_ID = '[Create] Set Next Holder Id';
 export const SET_NEED_FOR_INDICATOR = '[Create] Set Need for Indicator';
 export const SET_NEED_FOR_GROUP = '[Create] Set Need for Group';
 
-export const SET_ITEM = '[Create] Set Item';
+export const SET_ITEM = '[Create] Set configuration Item';
+export const SET_LEGEND = '[Create] Set Legend';
+export const SET_HEADER = '[Create] Set Header';
+export const SET_HOLDERS = '[Create] Set Holders';
+export const SET_ADDITIONAL_LABELS = '[Create] Set Additional Labels';
 
 
 export class SetCreatedScorecard implements Action {
   readonly type = SET_CREATED_SCORECARD;
-  constructor(public payload: ScoreCard) {}
+  constructor(public payload: CreatedScorecardState) {}
 }
 
 export class SetCurrentIndicatorHolder implements Action {
@@ -55,6 +60,27 @@ export class SetItem implements Action {
   constructor(public payload: {key: any, value: any}) {}
 }
 
+export class SetLegend implements Action {
+  readonly type = SET_LEGEND;
+  constructor(public payload: any) {}
+}
+
+export class SetHeader implements Action {
+  readonly type = SET_HEADER;
+  constructor(public payload: any) {}
+}
+
+export class SetHolders implements Action {
+  readonly type = SET_HOLDERS;
+  constructor(public payload: any) {}
+}
+
+export class SetAdditionalLabels implements Action {
+  readonly type = SET_ADDITIONAL_LABELS;
+  constructor(public payload: any) {}
+}
+
+
 export class GetScorecardToCreate implements Action {
   readonly type = GET_SCORECARD_TO_CREATE;
 }
@@ -69,4 +95,8 @@ export type Actions =
   | SetNextHolderId
   | SetNeedForIndicator
   | SetNeedForGroup
-  | SetItem;
+  | SetItem
+  | SetLegend
+  | SetHeader
+  | SetHolders
+  | SetAdditionalLabels;

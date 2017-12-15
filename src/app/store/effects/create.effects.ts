@@ -7,9 +7,7 @@ import { of } from 'rxjs/observable/of';
 import {map, switchMap, catchError, tap} from 'rxjs/operators';
 import {Store} from '@ngrx/store';
 import {ApplicationState} from '../reducers';
-import {getCreatedScorecard} from '../reducers/create.reducer';
 import {ScorecardService} from '../../shared/services/scorecard.service';
-import {ScoreCard} from '../../shared/models/scorecard';
 
 @Injectable()
 export class CreateEffects {

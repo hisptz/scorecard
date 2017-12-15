@@ -11,6 +11,7 @@ import { Back, Go } from '../store/actions/router.action';
 import { IndicatorHolder } from '../shared/models/indicator-holder';
 import { IndicatorHolderGroup } from '../shared/models/indicator-holders-group';
 import { LoadOrganisationUnitItem } from '../store/actions/orgunits.actions';
+import {Legend} from "../shared/models/legend";
 
 @Component({
   selector: 'app-create',
@@ -26,6 +27,15 @@ export class CreateComponent implements OnInit {
   next_indicator_holder_id$: Observable<number>;
   next_holder_group_id$: Observable<number>;
   holder_list$: Observable<IndicatorHolder[]>;
+
+  show_title_warning$: Observable<boolean>;
+
+  additional_labels$: Observable<any>;
+  indicator_holders$: Observable<IndicatorHolder[]>;
+  legendset_definitions$: Observable<Legend[]>;
+  scorecard_header$: Observable<any>;
+
+  errorSavingData: boolean = false;
   constructor(private store: Store<ApplicationState>) {
     // load needed data
     this.store.dispatch(new createActions.GetScorecardToCreate());
@@ -39,6 +49,12 @@ export class CreateComponent implements OnInit {
     this.next_indicator_holder_id$ = this.store.select(createSelectors.getNextHolderId);
     this.next_holder_group_id$ = this.store.select(createSelectors.getNextGroupId);
     this.holder_list$ = this.store.select(createSelectors.getHoldersList);
+    this.show_title_warning$ = this.store.select(createSelectors.getTitleWarning);
+
+    this.additional_labels$ = this.store.select(createSelectors.getAdditionalLabels);
+    this.indicator_holders$ = this.store.select(createSelectors.getIndicatorHolders);
+    this.legendset_definitions$ = this.store.select(createSelectors.getLegendSetDefinition);
+    this.scorecard_header$ = this.store.select(createSelectors.getHeader);
   }
 
   ngOnInit() {
