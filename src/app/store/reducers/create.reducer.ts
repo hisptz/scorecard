@@ -65,8 +65,17 @@ export const InitialCreateState: CreatedScorecardState = {
   id: '',
   need_for_group: false,
   can_edit: true,
-  current_indicator_holder: null,
-  current_group: null,
+  current_indicator_holder: {
+    'holder_id': 1,
+    'indicators': []
+  },
+  current_group: {
+    'id': 1,
+    'name': 'Default',
+    'indicator_holder_ids': [],
+    'background_color': '#ffffff',
+    'holder_style': null
+  },
   next_group_id: null,
   next_holder_id: null,
   need_for_indicator: false,
@@ -166,7 +175,7 @@ export function createReducer(
     }
 
     case (createActions.SET_CURRENT_INDICATOR_HOLDER): {
-      return {...state, current_indicator_holder: action.payload };
+      return {...state, current_indicator_holder: {...action.payload} };
     }
 
     case (createActions.SET_NEXT_GROUP_ID): {
@@ -202,6 +211,11 @@ export function createReducer(
     case (createActions.SET_HOLDERS): {
       const  indicator_holders = action.payload;
       return {...state, indicator_holders };
+    }
+
+    case (createActions.SET_HOLDER_GROUPS): {
+      const  indicator_holder_groups = action.payload;
+      return {...state, indicator_holder_groups };
     }
 
     case (createActions.SET_ADDITIONAL_LABELS): {

@@ -6,6 +6,7 @@
   "Add": "Ajouter",
   "View": "Vue",
   "Delete": "Effacer",
+  "Remove": "Retirer",
   "Open": "Ouvrir",
   "Close": "Fermer",
   "Edit": "modifier",
@@ -104,6 +105,26 @@
   "Additional labels": "Étiquettes supplémentaires",
   "click Deleting this legend will reset legend definition for all indicators delete": "La suppression de cette légende réinitialise la définition de la légende pour tous les indicateurs",
   "Adding new legend will reset legend definition for all indicators": "L'ajout d'une nouvelle légende réinitialise la définition de la légende pour tous les indicateurs",
-  "click to add new label example, source of data for indicator":"Cliquez pour ajouter un nouvel exemple d'étiquette, source de données pour l'indicateur"
+  "click to add new label example, source of data for indicator":"Cliquez pour ajouter un nouvel exemple d'étiquette, source de données pour l'indicateur",
+
+  "Pair With Current": "Jumeler avec le courant",
+  "No items for a selected group": "Aucun élément pour un groupe sélectionné",
+  "Custom Functions":"Fonctions personnalisées",
+  "Event Data Items":"Éléments de données d'événement",
+  "Program Indicators":"Indicateurs de programme",
+  "Data Sets":"Ensembles de données",
+  "Data Elements":"Éléments de données",
+  "Indicators":"Éléments de données",
+
+  "Name":"prénom",
+  "Weight": "Poids",
+  "Display arrows": "Afficher les flèches",
+  "High is good":"High est bon",
+  "Show Colors": "Afficher les couleurs",
+  "Min":"Min",
+  "Max": "Max",
+  "Related/Bottleneck indicators":"Indicateurs connexes / de goulot d'étranglement",
+  "activate up/down arrow if difference between previous and present value exceeds":"activer la flèche haut / bas si la différence entre la valeur précédente et la valeur actuelle dépasse",
+  "If you want to have two data items in the same column just select the second data item from the list on the left": "Si vous souhaitez avoir deux éléments de données dans la même colonne, sélectionnez simplement le deuxième élément de données dans la liste de gauche"
 
 }

@@ -17,6 +17,7 @@ export const SET_ITEM = '[Create] Set configuration Item';
 export const SET_LEGEND = '[Create] Set Legend';
 export const SET_HEADER = '[Create] Set Header';
 export const SET_HOLDERS = '[Create] Set Holders';
+export const SET_HOLDER_GROUPS = '[Create] Set Holder Groups';
 export const SET_ADDITIONAL_LABELS = '[Create] Set Additional Labels';
 
 
@@ -75,6 +76,11 @@ export class SetHolders implements Action {
   constructor(public payload: any) {}
 }
 
+export class SetHoldersGroups implements Action {
+  readonly type = SET_HOLDER_GROUPS;
+  constructor(public payload: any) {}
+}
+
 export class SetAdditionalLabels implements Action {
   readonly type = SET_ADDITIONAL_LABELS;
   constructor(public payload: any) {}
@@ -99,4 +105,5 @@ export type Actions =
   | SetLegend
   | SetHeader
   | SetHolders
+  | SetHoldersGroups
   | SetAdditionalLabels;

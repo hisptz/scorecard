@@ -6,6 +6,7 @@
   "Add": "Add",
   "View": "View",
   "Delete": "Delete",
+  "Remove": "Remove",
   "Open": "Open",
   "Close": "Close",
   "Save": "Save",
@@ -81,7 +82,7 @@
   "Set minimum and maximum range for each color code": "Set minimum and maximum range for each color code",
   "Click Add another to add another indicator in next column in the group": "Click \"Add another\" to add another indicator in next column in the group",
   "Select the second indicator to add indicator in the same group": "Select the second indicator to add indicator in the same group",
-  "Click Add another in Group row to add next group": "Click \"Add another\" in Group row to add next group"
+  "Click Add another in Group row to add next group": "Click \"Add another\" in Group row to add next group",
 
   "Only You": "Only You",
   "customize header":"customize header",
@@ -103,6 +104,25 @@
   "Additional labels": "Additional labels",
   "click Deleting this legend will reset legend definition for all indicators delete": "click Deleting this legend will reset legend definition for all indicators delete",
   "Adding new legend will reset legend definition for all indicators": "Adding new legend will reset legend definition for all indicators",
-  "click to add new label example, source of data for indicator":"click to add new label example, source of data for indicator"
+  "click to add new label example, source of data for indicator":"click to add new label example, source of data for indicator",
 
+  "Pair With Current": "Pair With Current",
+  "No items for a selected group": "No items for a selected group",
+  "Custom Functions":"Custom Functions",
+  "Event Data Items":"Event Data Items",
+  "Program Indicators":"Program Indicators",
+  "Data Sets":"Data Sets",
+  "Data Elements":"Data Elements",
+  "Indicators":"Indicators",
+
+  "Name":"Name",
+  "Weight": "Weight",
+  "Display arrows": "Display arrows",
+  "High is good":"High est bon",
+  "Show Colors": "Show Colors",
+  "Min":"Min",
+  "Max": "Max",
+  "Related/Bottleneck indicators":"Related/Bottleneck indicators",
+  "activate up/down arrow if difference between previous and present value exceeds":"activate up/down arrow if difference between previous and present value exceeds",
+  "If you want to have two data items in the same column just select the second data item from the list on the left": "If you want to have two data items in the same column just select the second data item from the list on the left"
 }

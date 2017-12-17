@@ -26,16 +26,20 @@ export class CreateComponent implements OnInit {
   current_holder_group$: Observable<IndicatorHolderGroup>;
   next_indicator_holder_id$: Observable<number>;
   next_holder_group_id$: Observable<number>;
-  holder_list$: Observable<IndicatorHolder[]>;
+  ordered_holder_list$: Observable<IndicatorHolder[]>;
 
   show_title_warning$: Observable<boolean>;
 
   additional_labels$: Observable<any>;
   indicator_holders$: Observable<IndicatorHolder[]>;
+  indicator_holder_groups$: Observable<IndicatorHolderGroup[]>;
   legendset_definitions$: Observable<Legend[]>;
   scorecard_header$: Observable<any>;
 
   errorSavingData: boolean = false;
+
+  group_type: string = '';
+  active_group: string = '';
   constructor(private store: Store<ApplicationState>) {
     // load needed data
     this.store.dispatch(new createActions.GetScorecardToCreate());
@@ -48,11 +52,12 @@ export class CreateComponent implements OnInit {
     this.current_holder_group$ = this.store.select(createSelectors.getCurrentGroup);
     this.next_indicator_holder_id$ = this.store.select(createSelectors.getNextHolderId);
     this.next_holder_group_id$ = this.store.select(createSelectors.getNextGroupId);
-    this.holder_list$ = this.store.select(createSelectors.getHoldersList);
+    this.ordered_holder_list$ = this.store.select(createSelectors.getHoldersList);
     this.show_title_warning$ = this.store.select(createSelectors.getTitleWarning);
 
     this.additional_labels$ = this.store.select(createSelectors.getAdditionalLabels);
     this.indicator_holders$ = this.store.select(createSelectors.getIndicatorHolders);
+    this.indicator_holder_groups$ = this.store.select(createSelectors.getHolderGroups);
     this.legendset_definitions$ = this.store.select(createSelectors.getLegendSetDefinition);
     this.scorecard_header$ = this.store.select(createSelectors.getHeader);
   }
@@ -71,5 +76,9 @@ export class CreateComponent implements OnInit {
   saveScorecard() {
     console.log('Save scorecard');
   }
+
+  onGroupActivate(event){ this.active_group = event}
+
+  onGroupTypeChange(event ){this.group_type = event }
 
 }

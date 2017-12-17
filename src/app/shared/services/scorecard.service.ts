@@ -11,8 +11,10 @@ import * as createActions from '../../store/actions/create.actions';
 import {SetHomeLoadingPercent} from '../../store/actions/ui.actions';
 import {getScorecardEntites} from '../../store/selectors/scorecard.selectors';
 import {take, tap, filter} from 'rxjs/operators';
-import {getUser} from "../../store/selectors/static-data.selectors";
-import {CreatedScorecardState} from "../../store/reducers/create.reducer";
+import {getUser} from '../../store/selectors/static-data.selectors';
+import {CreatedScorecardState} from '../../store/reducers/create.reducer';
+import {IndicatorObject} from '../models/indicator-object';
+import {IndicatorHolder} from '../models/indicator-holder';
 
 
 @Injectable()
@@ -80,7 +82,6 @@ export class ScorecardService {
   getCreatedScorecard() {
     this.store.select(getRouterState).first().subscribe(
       (route) => {
-        console.log(route)
         if (route.state.url === '/create') {
           const scorecard = this.getEmptyScoreCard();
           this.store.dispatch(new createActions.SetCreatedScorecard(this.getScorecardForCreation(scorecard)));
@@ -267,7 +268,7 @@ export class ScorecardService {
   }
 
   // define a default indicator structure
-  getIndicatorStructure(name: string, id: string, legendset: any = null, tittle: string = null): any {
+  getIndicatorStructure(name: string, id: string, legendset: any = null, tittle: string = null): IndicatorObject {
     if ( tittle == null) {
       tittle = name;
     }
@@ -348,8 +349,17 @@ export class ScorecardService {
       id: scorecard.id,
       need_for_group: false,
       can_edit: scorecard.can_edit,
-      current_indicator_holder: null,
-      current_group: null,
+      current_indicator_holder: {
+        'holder_id': this.getStartingIndicatorId(scorecard.data.data_settings.indicator_holders),
+        'indicators': []
+      },
+      current_group: {
+        'id': this.getStartingGroupHolderId(scorecard.data.data_settings.indicator_holder_groups),
+        'name': 'Default',
+        'indicator_holder_ids': [],
+        'background_color': '#ffffff',
+        'holder_style': null
+      },
       next_group_id: null,
       next_holder_id: null,
       need_for_indicator: false,
@@ -377,4 +387,262 @@ export class ScorecardService {
       user_groups: scorecard.data.user_groups
     };
   }
+
+  // get the starting id for the indicator holder
+  getStartingIndicatorId(indicator_holders): number {
+    let last_id = 1;
+    for (const holder of indicator_holders) {
+      if ( holder.holder_id > last_id) {
+        last_id = holder.holder_id;
+      }
+    }
+    return last_id;
+  }
+
+  // try to deduce last number needed to start adding holder group
+  getStartingGroupHolderId(indicator_holder_groups): number {
+    let last_id = 1;
+    for (const group of indicator_holder_groups) {
+      if ( group.id > last_id) {
+        last_id = group.id;
+      }
+    }
+    return last_id;
+  }
+
+
+  //  check if the indicator is already added in a scorecard
+  indicatorExist(holders, indicator): boolean {
+    let check = false;
+    for ( const holder of holders ) {
+      for ( const indicatorValue of holder.indicators ) {
+        if (indicator && indicatorValue.id === indicator.id ) {
+          check = true;
+        }
+      }
+    }
+    return check;
+  }
+
+  // find the position of the selected Indicator
+  findSelectedIndicatorIndex(current_id, group) {
+    let i = 0; let index = group.indicator_holder_ids.length;
+    for ( const item of group.indicator_holder_ids ) {
+      i++;
+      if ( item === current_id ) {
+        index = i;
+      }
+    }
+    return index;
+  }
+
+  // use to deduce the indicator legend set from the scorecard glabal set
+  getIndicatorLegendSet(legendset_definitions) {
+    const legend_length = legendset_definitions.length - 2;
+    const indicator_legend = [];
+    let initial_value = 100;
+
+    for (const legend of legendset_definitions ) {
+      if (!legend.hasOwnProperty('default')) {
+        indicator_legend.push(
+          {
+            color: legend.color,
+            min: initial_value - Math.round(100 / legend_length),
+            max: initial_value
+          }
+        );
+      }
+      initial_value = initial_value - Math.round(100 / legend_length);
+    }
+    return indicator_legend;
+  }
+
+  // add an indicator holder to a scorecard
+  addIndicatorHolder(indicator_holder, indicator_holders_list): IndicatorHolder[] {
+    let add_new = true;
+    const indicator_holders = indicator_holders_list.slice();
+    for ( let holder of indicator_holders ) {
+      if (holder.holder_id === indicator_holder.holder_id) {
+        holder = indicator_holder;
+        add_new = false;
+      }
+    }
+    if (add_new) {
+      indicator_holders.push(indicator_holder);
+    }
+    return indicator_holders;
+  }
+
+// add a group of holders to a scorecard
+  addHolderGroups( indicator_holder_groups, holder_group, holder, current_id: any = null ): void {
+    this.store.dispatch(new createActions.SetNeedForGroup(true));
+    let add_new = true;
+    for ( const group of indicator_holder_groups ) {
+      if (group.id === holder_group.id) {
+        if ( group.indicator_holder_ids.indexOf(holder.holder_id) === -1 ) {
+          const index = this.findSelectedIndicatorIndex( current_id, group );
+          group.indicator_holder_ids.splice(index, 0, holder.holder_id);
+        }
+        add_new = false;
+      }
+    }
+    if (add_new) {
+      // TODO: check what this is doing --->> this.deleting[holder_group.id] = false;
+      if ( holder_group.indicator_holder_ids.indexOf(holder.holder_id) === -1 ) {
+        holder_group.indicator_holder_ids.push(holder.holder_id);
+      }
+      indicator_holder_groups.push(holder_group);
+    }
+    this.store.dispatch(new createActions.SetHoldersGroups(indicator_holder_groups.slice()));
+  }
+
+  // enable adding of new Indicator
+  enableAddIndicator( indicator_holders_list, indicator_holder_group_list, current_holder_group, current_id: any = null ): void {
+    const current_group_id = this.getStartingIndicatorId(indicator_holders_list) + 1;
+    const current_indicator_holder = {
+      'holder_id': current_group_id,
+      'indicators': []
+    };
+
+    this.cleanUpEmptyColumns(indicator_holders_list, indicator_holder_group_list);
+
+    this.store.dispatch(new createActions.SetNeedForIndicator(false));
+    const indicator_holders = this.addIndicatorHolder(current_indicator_holder, indicator_holders_list);
+    this.store.dispatch(new createActions.SetHolders(indicator_holders));
+    this.store.dispatch(new createActions.SetCurrentIndicatorHolder(current_indicator_holder));
+    this.addHolderGroups(indicator_holder_group_list, current_holder_group, current_indicator_holder, current_id);
+  }
+
+
+  //  pass through the scorecard and delete all empty rows
+  cleanUpEmptyColumns(indicator_holders_list, indicator_holder_group_list) {
+    let deleted_id = null;
+    const indicator_holders = indicator_holders_list.slice();
+    const indicator_holder_groups = indicator_holder_group_list.slice();
+    indicator_holders.forEach((item, index) => {
+      if (item.indicators.length === 0) {
+        deleted_id = item.holder_id;
+        indicator_holders.splice(index, 1);
+      }
+    });
+
+    indicator_holder_groups.forEach( (group, groupIndex) => {
+      group.indicator_holder_ids.forEach((item, index) => {
+        if (item === deleted_id) {
+          group.indicator_holder_ids.splice(index, 1);
+        }
+        if (group.indicator_holder_ids.length === 0) {
+          indicator_holder_groups.splice(groupIndex, 1);
+        }
+      });
+    });
+    this.store.dispatch(new createActions.SetHolders(indicator_holders));
+    this.store.dispatch(new createActions.SetHoldersGroups(indicator_holder_groups));
+  }
+
+  //  function to remove the indicator holder group form the scorecard
+  deleteGroup(holderGroup, indicator_holders_list, indicator_holder_groups_list) {
+    const indicator_holders = indicator_holders_list.slice();
+    const indicator_holder_groups = indicator_holder_groups_list.slice();
+    for ( const holder of holderGroup.indicator_holder_ids ) {
+      indicator_holders.forEach((item, index) => {
+        if (item.holder_id === holder) {
+          indicator_holders.splice(index, 1);
+        }
+      });
+    }
+    indicator_holder_groups.forEach((item, index) => {
+      if (item.id === holderGroup.id) {
+        indicator_holder_groups.splice(index, 1);
+      }
+    });
+    this.store.dispatch(new createActions.SetHolders(indicator_holders));
+    this.store.dispatch(new createActions.SetHoldersGroups(indicator_holder_groups));
+  }
+
+  //  deleting indicator from score card
+  deleteIndicator(indicator_to_delete, indicator_holders, indicator_holder_groups): void {
+    indicator_holders.forEach((holder, holder_index) => {
+      holder.indicators.forEach((indicator, indicator_index) => {
+        if ( indicator.id === indicator_to_delete.id) {
+          holder.indicators.splice(indicator_index, 1);
+        }
+      });
+    });
+    this.cleanUpEmptyColumns(indicator_holders, indicator_holder_groups);
+  }
+
+  //  this will enable updating of indicator
+  setCurrentIndicator(indicator: any, indicator_holder_groups, indicator_holders): void {
+    const current_indicator_holder = indicator;
+    let current_holder_group = null;
+    this.store.dispatch(new createActions.SetNeedForIndicator(true));
+    indicator_holder_groups.forEach( (group, groupIndex) => {
+      if (group.indicator_holder_ids.indexOf(indicator.holder_id) > -1) {
+        current_holder_group = group;
+      }
+    });
+    this.store.dispatch(new createActions.SetCurrentIndicatorHolder(current_indicator_holder));
+    this.store.dispatch(new createActions.SetCurrentGroup(current_holder_group));
+    this.cleanUpEmptyColumns(indicator_holders, indicator_holder_groups);
+  }
+
+  // load a single item for use in a score card
+  load_item(
+    item,
+    indicator_holders,
+    indicator_holder_groups,
+    current_indicator_holder,
+    current_holder_group,
+    legendset_definitions,
+    additional_labels,
+    group_type,
+    active_group,
+    pair = false,
+    from_drag = false
+  ): void {
+    if (this.indicatorExist(indicator_holders, item)) {
+      if (!from_drag) {
+        this.deleteIndicator(item, indicator_holders, indicator_holder_groups);
+      }
+    } else {
+      const starting_legend = this.getIndicatorLegendSet(legendset_definitions);
+      const indicator = this.getIndicatorStructure(item.name, item.id, starting_legend);
+      if (group_type === 'functions') {
+        indicator.calculation = 'custom_function';
+        indicator.function_to_use = active_group;
+      }
+      indicator.value = Math.floor(Math.random() * 60) + 40;
+      const random = Math.floor(Math.random() * 6) + 1;
+      if (random % 2 === 0) {
+        indicator.showTopArrow = true;
+      } else {
+        indicator.showBottomArrow = true;
+      }
+      // ensure indicator has all additinal labels
+      for (const label of additional_labels) {
+        indicator.additional_label_values[label] = '';
+      }
+      // this.current_indicator_holder.holder_id = this.current_group_id;
+      if (current_indicator_holder.indicators.length < 2 && pair) {
+        current_indicator_holder.indicators.push(indicator);
+      } else {
+        const current_group_id = this.getStartingIndicatorId(indicator_holders) + 1;
+        current_indicator_holder = {
+          'holder_id': current_group_id,
+          'indicators': []
+        };
+        current_indicator_holder.indicators.push(indicator);
+        this.store.dispatch(new createActions.SetNeedForIndicator(false));
+        this.cleanUpEmptyColumns(indicator_holders, indicator_holder_groups);
+      }
+      const new_indicator_holders = this.addIndicatorHolder(current_indicator_holder, indicator_holders);
+      this.store.dispatch(new createActions.SetHolders(new_indicator_holders));
+      this.store.dispatch(new createActions.SetCurrentIndicatorHolder(current_indicator_holder));
+      this.store.dispatch(new createActions.SetNeedForIndicator(true));
+      this.addHolderGroups(indicator_holder_groups, current_holder_group, current_indicator_holder);
+    }
+  }
+
 }
+

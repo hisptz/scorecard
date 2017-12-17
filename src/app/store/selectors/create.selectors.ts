@@ -51,7 +51,7 @@ export const getDataSettings = createSelector(getDataSection, (data: ScorecardDa
 
 export const getIndicatorHolders = createSelector(getDataSettings, (data) => data.indicator_holders);
 
-export const getHolderGroup = createSelector(getDataSettings, (data) => data.indicator_holder_groups);
+export const getHolderGroups = createSelector(getDataSettings, (data) => data.indicator_holder_groups);
 
 export const getAdditionalLabels = createSelector(getDataSection, (data: ScorecardData) => data.additional_labels);
 
@@ -61,8 +61,10 @@ export const getUser = createSelector(getDataSection, (data: ScorecardData) => d
 
 export const getUserGroups = createSelector(getDataSection, (data: ScorecardData) => data.user_groups);
 
+export const getShowScore = createSelector(getDataSection, (data: ScorecardData) => data.show_score);
+
 export const getHoldersList  = createSelector(
-  getHolderGroup,
+  getHolderGroups,
   getIndicatorHolders,
   (holderGroups, indicatorHolders) => {
     const indicators_list = [];
@@ -77,5 +79,6 @@ export const getHoldersList  = createSelector(
     }
     return indicators_list;
   });
+
 
 

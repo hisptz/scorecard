@@ -15,7 +15,6 @@ import * as createActions from '../../store/actions/create.actions';
 })
 export class BasicDetailsComponent implements OnInit {
 
-  @Input() scorecard: ScoreCard;
   @Input() additional_labels: any;
   @Input() indicator_holders: IndicatorHolder[] = [];
   @Input() legendset_definitions: Legend[] = [];
@@ -33,7 +32,7 @@ export class BasicDetailsComponent implements OnInit {
 
   //  remove a set of legend
   showDeleteWarnig(index) {
-    if ( this.scorecard.data.data_settings.indicator_holders.length === 0) {
+    if ( this.indicator_holders.length === 0) {
       this.deleteLegand(index);
     }else {
       this.show_delete_legend[index] = true;
@@ -93,7 +92,7 @@ export class BasicDetailsComponent implements OnInit {
 
   //  add a legend set
   showAddWarning() {
-    if ( this.scorecard.data.data_settings.indicator_holders.length === 0) {
+    if ( this.indicator_holders.length === 0) {
       this.addLegend();
     }else {
       this.show_add_legend = true;
@@ -144,7 +143,7 @@ export class BasicDetailsComponent implements OnInit {
 
   findFirstDefaultLegend() {
     let i = 0; let index = 0;
-    for ( const item of this.scorecard.data.legendset_definitions ) {
+    for ( const item of this.legendset_definitions ) {
       if ( item.hasOwnProperty('default') ) {
         index = i - 1;
       }

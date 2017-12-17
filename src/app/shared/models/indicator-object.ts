@@ -21,6 +21,6 @@ export interface IndicatorObject {
   };
   label_settings?: {
     display: boolean;
-    font_size: number
+    font_size: string
   };
 }

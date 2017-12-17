@@ -5,7 +5,6 @@
     [legendset_definitions]="scorecard.data.legendset_definitions"
     [show_legend_definition]="scorecard.data.header.show_legend_definition"
   ></app-title-area>
-  {{ scorecard.data.additional_labels | json }}
 </div>
 <div class="container-fluid no-left-padding" >
   <div class="scorecard_table" tourAnchor="create.sample">
@@ -21,7 +20,7 @@
         </th>
         <!--holder groups stays here-->
         <th
-          *ngFor="let indicator_holder_group of scorecard.data.data_settings.indicator_holder_groups"
+          *ngFor="let indicator_holder_group of indicator_holder_groups"
           dnd-droppable (onDropSuccess)="transferDataSuccess($event,'group',indicator_holder_group)"
           style="font-size: 9px; padding: 5px"
           [attr.colspan]="indicator_holder_group.indicator_holder_ids.length"
@@ -29,9 +28,14 @@
           [ngClass]="{'current': current_holder_group.id == indicator_holder_group.id}"
         >
           <div dnd-draggable [dragEnabled]="true" [dragData]="indicator_holder_group">
-            <input type="text" [(ngModel)]="indicator_holder_group.name" class="group-text">
+            <input
+              type="text"
+              [(ngModel)]="indicator_holder_group.name"
+              class="group-text"
+              [value]="indicator_holder_group.name"
+              (input)="updateGroupName()">
             <span *ngIf="indicator_holder_group.id != 1 && !deleting[indicator_holder_group.id]"
-                  class="glyphicon glyphicon-trash text-danger"
+                  class="fa fa-trash text-danger"
                   style="cursor: pointer; padding-left: 5px"
                   (click)="deleting[indicator_holder_group.id] = true"
             ></span>
@@ -79,7 +83,7 @@
           ></app-period-filter>
           <!--end of period configuration-->
         </td>
-        <td *ngFor="let indicator of getItemsFromGroups()" style="padding: 5px;font-size: 10px;width:90px;max-width: 90px;overflow-wrap: break-word;cursor: pointer;" class="sans-pro"
+        <td *ngFor="let indicator of holders_list$ | async" style="padding: 5px;font-size: 10px;width:90px;max-width: 90px;overflow-wrap: break-word;cursor: pointer;" class="sans-pro"
             title="{{'Click to update' | translate}} {{ getIndicatorTitle(indicator) }}"
             [ngClass]="{'current':current_indicator.holder_id == indicator.holder_id}"
             (click)="updateIndicator(indicator)"
@@ -95,10 +99,10 @@
             title="{{ 'Add new Indicator next to the current active indicator' | translate }}"
             class="btn btn-sm btn-outline-secondary cursor"
             *ngIf="need_for_indicator$ | async"
-            (click)="enableAddIndicator(scorecard)"
+            (click)="enableAddIndicator()"
           >
             <i class="fa fa-plus"></i>
-            Add
+            <span [translate]="'Add'"> Add</span>
           </button>
         </th>
       </tr>
@@ -117,7 +121,7 @@
           </p>
           <!--end of organisation unit tree-->
         </td>
-        <th *ngFor="let indicator of holders_list"
+        <th *ngFor="let indicator of holders_list$ | async"
             style="font-size: 10px;max-width: 90px;overflow-wrap: break-word; cursor: pointer; padding: 0px;line-height: 10%"
             class="sans-pro" [ngClass]="{'current': current_indicator.holder_id == indicator.holder_id}"
             title="{{'Click to update' | translate}} {{ getIndicatorTitle(indicator) }}"
@@ -163,7 +167,7 @@
       </tr>
       <tr *ngFor="let label of scorecard.data.additional_labels">
         <th>{{ label }}</th>
-        <th *ngFor="let indicator of getItemsFromGroups()"
+        <th *ngFor="let indicator of holders_list$ | async"
             style="font-size: 10px;max-width: 90px;overflow-wrap: break-word; cursor: pointer; line-height: 80%;padding: 0px"
             class="sans-pro" [ngClass]="{'current':current_indicator.holder_id == indicator.holder_id}"
         >

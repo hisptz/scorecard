@@ -10,6 +10,12 @@
     [scorecard]="scorecard$ | async"
     [current_holder_group]="current_holder_group$ | async"
     [current_indicator]="current_indicator_holder$ | async"
+    [indicator_holders]="indicator_holders$ | async"
+    [indicator_holder_groups]="indicator_holder_groups$ | async"
+    [legendset_definitions]="legendset_definitions$ | async"
+    [additional_labels]="additional_labels$ | async"
+    [group_type]="group_type"
+    [active_group]="active_group"
   ></app-sample-scorecard>
 
 
@@ -40,7 +46,6 @@
       <!--basic details of the scorecard-->
       <div class="col-sm-3 no-left-padding1">
         <app-basic-details
-          [scorecard]="scorecard$ | async"
           [legendset_definitions]="legendset_definitions$ | async"
           [additional_labels]="additional_labels$ | async"
           [indicator_holders]="indicator_holders$ | async"
@@ -51,12 +56,29 @@
 
       <!--data selection area-->
       <div class="col-sm-4 scorecard_details">
-        <app-data-selection></app-data-selection>
+        <app-data-selection
+          [scorecard]="scorecard$ | async"
+          [indicator_holders]="indicator_holders$ | async"
+          [indicator_holder_groups]="indicator_holder_groups$ | async"
+          [ordered_holder_list]="ordered_holder_list$ | async"
+          [legendset_definitions]="legendset_definitions$ | async"
+          [additional_labels]="additional_labels$ | async"
+          [current_indicator_holder]="current_indicator_holder$ | async"
+          [current_holder_group]="current_holder_group$ | async"
+          (onGroupActivate)="onGroupActivate($event)"
+          (onGroupTypeChange)="onGroupTypeChange($event)"
+        ></app-data-selection>
       </div>
 
       <!--item details-->
       <div class="col-sm-5 no-left-padding1 singleItem" style="padding-right: 0px">
-        <app-item-details></app-item-details>
+        <app-item-details
+          [indicator_holders]="indicator_holders$ | async"
+          [indicator_holder_groups]="indicator_holder_groups$ | async"
+          [current_indicator_holder]="current_indicator_holder$ | async"
+          [legendset_definitions]="legendset_definitions$ | async"
+          [additional_labels]="additional_labels$ | async"
+        ></app-item-details>
       </div>
     </div>
   </div>

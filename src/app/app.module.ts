@@ -34,8 +34,13 @@ import { ScorecardDetailComponent } from './home/scorecard-detail/scorecard-deta
 import {ScoreCardFilterPipe} from './home/score-card-filter.pipe';
 
 import * as fromGuards from './guards';
-import {OrgUnitService} from "./shared/services/org-unit.service";
-import {FunctionService} from "./shared/services/function.service";
+import {OrgUnitService} from './shared/services/org-unit.service';
+import {FunctionService} from './shared/services/function.service';
+import {IndicatorGroupService} from './shared/services/indicator-group.service';
+import {DataElementGroupService} from './shared/services/data-element-group.service';
+import {ProgramIndicatorsService} from './shared/services/program-indicators.service';
+import {DatasetService} from './shared/services/dataset.service';
+import {EventDataService} from './shared/services/event-data.service';
 
 // Add a function, that returns a “TranslateHttpLoader” and export it (needed by AoT)
 export function HttpLoaderFactory(http: HttpClient) {
@@ -84,6 +89,11 @@ export function HttpLoaderFactory(http: HttpClient) {
     HttpClientService,
     OrgUnitService,
     FunctionService,
+    IndicatorGroupService,
+    DataElementGroupService,
+    ProgramIndicatorsService,
+    DatasetService,
+    EventDataService,
     ...fromGuards.guards
   ],
   bootstrap: [AppComponent]
