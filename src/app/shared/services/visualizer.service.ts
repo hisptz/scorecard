@@ -480,7 +480,7 @@ export class VisualizerService {
     const data = [];
     const chartObject = this.drawOtherCharts(analyticsObject, chartConfiguration);
     for (const value of chartObject.series) {
-      const obj = {name: value.name};
+      const obj = {organisationunit: value.name};
       let i = 0;
       for (const val of chartObject.xAxis.categories) {
         obj[val] = value.data[i];

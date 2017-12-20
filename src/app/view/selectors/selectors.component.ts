@@ -29,6 +29,8 @@ export class SelectorsComponent implements OnInit {
   editHovered = false;
 
   @Output() onOrgunitChange = new EventEmitter();
+  @Output() onDownloadCsv = new EventEmitter();
+  @Output() onUpdate = new EventEmitter();
   constructor(
     private store: Store<ApplicationState>
   ) {
@@ -78,9 +80,11 @@ export class SelectorsComponent implements OnInit {
       };
       this.store.dispatch(new viewActions.SetSelectedOu(selected_ou));
     }
+    this.onUpdate.emit();
   }
   updatePeriod(event) {
     this.store.dispatch(new viewActions.SetSelectedPe(event));
+    this.onUpdate.emit();
   }
   changePeriod(event) {
     this.store.dispatch(new viewActions.SetSelectedPe(event));
@@ -91,11 +95,11 @@ export class SelectorsComponent implements OnInit {
   }
 
   loadScoreCard() {
-
+    this.onUpdate.emit();
   }
 
   downloadXls() {
-
+    this.onDownloadCsv.emit();
   }
 
   // invoke a default browser print function

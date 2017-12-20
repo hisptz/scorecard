@@ -10,6 +10,7 @@ import {IndicatorHolderGroup} from '../../shared/models/indicator-holders-group'
 
 
 export interface CreatedScorecardState {
+  action_type?: string,
   id: string;
   need_for_group: boolean;
   can_edit: boolean;
@@ -63,6 +64,7 @@ export interface CreatedScorecardState {
 }
 
 export const InitialCreateState: CreatedScorecardState = {
+  action_type: 'create',
   id: '',
   need_for_group: false,
   can_edit: true,
@@ -196,6 +198,10 @@ export function createReducer(
       return {...state, need_for_group: action.payload };
     }
 
+    case (createActions.SET_EDDITING_HEADER): {
+      return {...state, show_title_editor: action.payload };
+    }
+
     case (createActions.SET_ITEM): {
       return {...state, [action.payload.key]: action.payload.value };
     }
@@ -237,3 +243,4 @@ export const getCurrentGroup = (state: CreatedScorecardState) => state.current_g
 export const getNextGroupId = (state: CreatedScorecardState) => state.next_group_id;
 export const getNextHolderId = (state: CreatedScorecardState) => state.next_holder_id;
 export const getShowTitleEditor = (state: CreatedScorecardState) => state.show_title_editor;
+export const getActionType = (state: CreatedScorecardState) => state.action_type;

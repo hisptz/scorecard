@@ -4,6 +4,7 @@
     <app-org-unit-filter
       *ngIf="!(orgunit_loading$ | async)"
       [orgunit_model] = "orgunit_settings$ | async"
+      [showUpdate]="true"
       (onOrgUnitChange)= "changeOrgUnit($event)"
       (onOrgUnitUpdate)= "updateOrgUnit($event)"
     ></app-org-unit-filter>

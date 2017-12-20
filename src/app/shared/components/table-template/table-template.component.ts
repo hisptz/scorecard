@@ -1,9 +1,10 @@
-import {Component, Input, OnInit} from '@angular/core';
+import {ChangeDetectionStrategy, Component, Input, OnInit} from '@angular/core';
 
 @Component({
   moduleId: module.id,
   selector: 'app-table-template',
   templateUrl: './table-template.component.html',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   styleUrls: ['./table-template.component.css']
 })
 export class TableTemplateComponent implements OnInit {

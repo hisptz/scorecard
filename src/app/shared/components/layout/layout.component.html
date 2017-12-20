@@ -6,7 +6,7 @@
     <div class="container-fluid">
       <div class="row">
         <div class="col-sm-12">
-          <h5><b>Table / Chart Layout</b></h5>
+          <h5><b [translate]="'Table / Chart Layout'">Table / Chart Layout</b></h5>
           <table class="table table-bordered" style="font-size: 12px">
             <tr >
               <!--<td rowspan="2" dnd-droppable (onDropSuccess)="onDrop($event,'excluded')">-->
@@ -21,7 +21,7 @@
                 class="dimension-drops"
               >
                 <div>
-                  <label>Filters</label>
+                  <label [translate]="'Filters'">Filters</label>
                 </div>
                 <div
                   class="draggable"
@@ -39,7 +39,8 @@
                 class="dimension-drops"
               >
                 <div>
-                  <label>{{(visualizationType === 'CHART') ? 'Series dimensions': 'Column dimensions' }}</label>
+                  <label *ngIf="visualizationType === 'CHART'">{{'Series dimensions' | translate }}</label>
+                  <label *ngIf="visualizationType !== 'CHART'">{{'Column dimensions' | translate }}</label>
                 </div>
                 <div
                   class="draggable"
@@ -59,7 +60,8 @@
                 class="dimension-drops"
               >
                 <div>
-                  <label>{{(visualizationType === 'CHART') ? 'Categories dimensions': 'Row dimensions' }}</label>
+                  <label *ngIf="visualizationType === 'CHART'">{{'Categories dimensions' | translate }}</label>
+                  <label *ngIf="visualizationType !== 'CHART'">{{'Row dimensions' | translate }}</label>
                 </div>
                 <div
                   class="draggable"
@@ -78,7 +80,12 @@
         </div>
         <div class="col-sm-12">
           <div class="pull-right">
-            <button class="btn btn-default btn-sm" (click)="updateLayout()"><i class="fa fa-refresh"></i>Update</button>
+            <button
+              class="btn btn-default btn-sm"
+              (click)="updateLayout()">
+              <i class="fa fa-refresh"></i>
+              <span [translate]="'Update'"> Update</span>
+            </button>
             <!--<button class="btn btn-default btn-sm" (click)="close()"><i class="fa fa-times"></i>Close</button>-->
           </div>
         </div>

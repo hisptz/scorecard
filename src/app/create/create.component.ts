@@ -12,6 +12,8 @@ import { IndicatorHolder } from '../shared/models/indicator-holder';
 import { IndicatorHolderGroup } from '../shared/models/indicator-holders-group';
 import { LoadOrganisationUnitItem } from '../store/actions/orgunits.actions';
 import {Legend} from '../shared/models/legend';
+import tourSteps from '../shared/tourGuide/tour.view';
+import { TourService } from 'ngx-tour-ng-bootstrap';
 
 @Component({
   selector: 'app-create',
@@ -56,6 +58,8 @@ export class CreateComponent implements OnInit {
   scorecard_name$: Observable<string>;
   options$: Observable<any>;
   can_edit$: Observable<any>;
+  show_editor$: Observable<boolean>;
+  action_type$: Observable<string>;
   errorSavingData: boolean = false;
 
   group_type: string = '';
@@ -64,8 +68,10 @@ export class CreateComponent implements OnInit {
 
   show_bottleneck_indicators: boolean = false;
   bottleneck_card_indicator: any = {};
+  header: any;
 
-  constructor(private store: Store<ApplicationState>) {
+  constructor(private store: Store<ApplicationState>,
+              public tourService: TourService) {
     // load needed data
     this.store.dispatch(new createActions.GetScorecardToCreate());
     this.store.dispatch(new dataActions.LoadFunction());
@@ -75,6 +81,17 @@ export class CreateComponent implements OnInit {
     this.scorecard$ = this.store.select(createSelectors.getScorecardToCreate);
     this.store.select(createSelectors.getIndicatorHolders).subscribe(
       (holders) => this.indicator_holders = holders);
+    this.store.select(createSelectors.getHeader).subscribe(
+      (header) => {
+        this.header = {
+          'title': header.title,
+          'sub_title': header.sub_title,
+          'description': header.description,
+          'show_arrows_definition': header.show_arrows_definition,
+          'show_legend_definition': header.show_legend_definition,
+          'template': header.template
+        };
+      });
     this.current_indicator_holder$ = this.store.select(createSelectors.getCurrentIndicatorHolder);
     this.current_holder_group$ = this.store.select(createSelectors.getCurrentGroup);
     this.next_indicator_holder_id$ = this.store.select(createSelectors.getNextHolderId);
@@ -90,6 +107,14 @@ export class CreateComponent implements OnInit {
     this.scorecard_name$ = this.store.select(createSelectors.getName);
     this.options$ = this.store.select(createSelectors.getOptions);
     this.can_edit$ = this.store.select(createSelectors.getCanEdit);
+    this.show_editor$ = this.store.select(createSelectors.getShowTitleEditor);
+    this.action_type$ = this.store.select(createSelectors.getActionType);
+    this.tourService.initialize(tourSteps);
+
+  }
+
+  startTour() {
+    this.tourService.start();
   }
 
   ngOnInit() {
@@ -104,7 +129,7 @@ export class CreateComponent implements OnInit {
   }
 
   saveScorecard() {
-    console.log('Save scorecard');
+
   }
 
   onGroupActivate(event) { this.active_group = event; }
@@ -116,7 +141,6 @@ export class CreateComponent implements OnInit {
    * @param indicator
    */
   showBotleneckEditor(indicator) {
-    console.log(this.indicator_holders)
     this.bottleneck_card_indicator = indicator;
     this.show_bottleneck_indicators = !this.show_bottleneck_indicators;
   }
@@ -131,9 +155,36 @@ export class CreateComponent implements OnInit {
       }
     }
     setTimeout(() => {
-      console.log(holders)
       this.store.dispatch(new createActions.SetHolders(holders));
-    })
+    });
     this.show_bottleneck_indicators = !this.show_bottleneck_indicators;
+  }
+
+  hideTextEditor() {
+    this.store.dispatch(new createActions.SetEdditingHeader(false));
+  }
+
+
+  onTitleChange(event) {
+    const header = {
+      'title': this.header.title,
+      'sub_title': this.header.sub_title,
+      'description': this.header.description,
+      'show_arrows_definition': this.header.show_arrows_definition,
+      'show_legend_definition': this.header.show_legend_definition,
+      'template': {
+        display: true,
+        content: event
+      }
+    };
+    this.store.dispatch(new createActions.SetHeader(header));
+  }
+
+  onTitleReady(event) {
+    console.log(event);
+  }
+
+  onTitleBlur(event) {
+    console.log(event);
   }
 }

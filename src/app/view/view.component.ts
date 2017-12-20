@@ -1,4 +1,4 @@
-import {ChangeDetectionStrategy, Component, OnInit} from '@angular/core';
+import {ChangeDetectionStrategy, Component, OnInit, ViewChild} from '@angular/core';
 import {Store} from '@ngrx/store';
 import {Observable} from 'rxjs/Observable';
 import {animate, state, style, transition, trigger} from '@angular/animations';
@@ -14,6 +14,9 @@ import {Go} from '../store/actions/router.action';
 import {LoadOrganisationUnitItem} from '../store/actions/orgunits.actions';
 import {getFunctions, getFunctionsLoaded} from '../store/selectors/static-data.selectors';
 import * as orgunitSelector from '../store/selectors/orgunits.selectors';
+import {ScorecardComponent} from './scorecard/scorecard.component';
+import tourSteps from '../shared/tourGuide/tour.view';
+import { TourService } from 'ngx-tour-ng-bootstrap';
 
 @Component({
   selector: 'app-view',
@@ -77,9 +80,14 @@ export class ViewComponent implements OnInit {
   hoverState = 'notHovered';
   indicatorDetails = null;
   showPreview = false;
+
+  @ViewChild(ScorecardComponent)
+  private childScoreCard: ScorecardComponent;
+
   constructor(
     private store: Store<ApplicationState>,
-    private scorecardService: ScorecardService
+    private scorecardService: ScorecardService,
+    public tourService: TourService
   ) {
     this.store.dispatch(new viewActions.GetScorecardToView());
     this.store.dispatch(new LoadOrganisationUnitItem());
@@ -98,6 +106,13 @@ export class ViewComponent implements OnInit {
     this.functions$ = this.store.select(getFunctions);
     this.functions_loaded$ = this.store.select(getFunctionsLoaded);
     this.orgunit_loading$ = store.select(orgunitSelector.getOrgunitLoading);
+
+    this.tourService.initialize(tourSteps);
+
+  }
+
+  startTour() {
+    this.tourService.start();
   }
 
   ngOnInit() {
@@ -122,6 +137,14 @@ export class ViewComponent implements OnInit {
 
   setOrgunitNodes(event) {
     this.organisation_unit_nodes = event.orgtree;
+  }
+
+  downloadCsv() {
+    this.childScoreCard.downloadCSV();
+  }
+
+  loadScorecard() {
+    this.childScoreCard.loadScoreCard();
   }
 
 

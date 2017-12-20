@@ -86,13 +86,13 @@ export class ScorecardService {
       (route) => {
         if (route.state.url === '/create') {
           const scorecard = this.getEmptyScoreCard();
-          this.store.dispatch(new createActions.SetCreatedScorecard(this.getScorecardForCreation(scorecard)));
+          this.store.dispatch(new createActions.SetCreatedScorecard(this.getScorecardForCreation(scorecard, 'create')));
         }else {
           const scorecardId = route.state.params.scorecardid;
           this.store.select(getScorecardEntites).first().subscribe(
             scorecards => {
               if (scorecards) {
-                this.store.dispatch(new createActions.SetCreatedScorecard(this.getScorecardForCreation(scorecards[scorecardId])));
+                this.store.dispatch(new createActions.SetCreatedScorecard(this.getScorecardForCreation(scorecards[scorecardId], 'edit')));
               }
             });
         }
@@ -129,8 +129,7 @@ export class ScorecardService {
       name: scorecard_details.header.title,
       description: scorecard_details.header.description,
       data: scorecard_details,
-      can_edit: can_edit,
-
+      can_edit: can_edit
     };
     if ( can_see ) {
       this.store.dispatch(new scorecardActions.LoadScorecardSuccess(scorecard_item));
@@ -361,9 +360,10 @@ export class ScorecardService {
 
 
   // prepare a scorecard for adding to creation state
-  getScorecardForCreation(scorecard: ScoreCard): CreatedScorecardState {
+  getScorecardForCreation(scorecard: ScoreCard, type: string): CreatedScorecardState {
     scorecard = this.sanitize_scorecard(scorecard);
     return {
+      action_type: type,
       id: scorecard.id,
       need_for_group: false,
       can_edit: scorecard.can_edit,
@@ -443,7 +443,7 @@ export class ScorecardService {
       show_data_in_column: scorecard.data.show_data_in_column,
       show_score: scorecard.data.show_score,
       show_rank: scorecard.data.show_rank,
-      empty_rows: scorecard.data.hasOwnProperty('empty_rows') ? scorecard.data.empty_rows : false,
+      empty_rows: scorecard.data.empty_rows,
       rank_position_last: scorecard.data.rank_position_last,
       header: scorecard.data.header,
       legendset_definitions: scorecard.data.legendset_definitions,
@@ -850,7 +850,7 @@ export class ScorecardService {
             const use_key = orgunit_id + '.' + per.id;
             if (hidenColums.indexOf(indicator.id) === -1 && indicator.values[use_key] !== null) {
               counter++;
-              sum = sum + parseFloat(indicator.values[use_key]);
+              sum += (!isNaN(indicator.values[use_key])) ? parseFloat(indicator.values[use_key]) : 0;
             }
           }
         }
@@ -861,7 +861,7 @@ export class ScorecardService {
         for (const indicator of holder.indicators) {
           if (hidenColums.indexOf(indicator.id) === -1 && indicator.values[use_key] !== null) {
             counter++;
-            sum = sum + parseFloat(indicator.values[use_key]);
+            sum += (!isNaN(indicator.values[use_key])) ? parseFloat(indicator.values[use_key]) : 0;
           }
         }
       }
@@ -884,7 +884,7 @@ export class ScorecardService {
             const usekey = orgunit.id + '.' + period;
             if (usekey in indicator.values && indicator.values[usekey] !== null) {
               n++;
-              sum = sum + parseFloat(indicator.values[usekey]);
+              sum += (!isNaN(indicator.values[usekey])) ? parseFloat(indicator.values[usekey]) : 0;
             }
           }
         }

@@ -28,16 +28,20 @@
   </tr>
   <!--indicator titles-->
   <tr>
-    <th *ngIf="scorecard.data.show_rank"  style="width: 30px;vertical-align: bottom;" [attr.rowspan]="periods_list.length >1 ? 2 : 1">No#</th>
+    <th *ngIf="scorecard.data.show_rank"  style="width: 30px;vertical-align: bottom;" [attr.rowspan]="periods_list.length >1 ? 2 : 1" [translate]="'No#'">No#</th>
     <th style="vertical-align: bottom" (click)="sortScoreCardFromColumn('none', sortAscending, orgunits, periods_list[0].id, false)">
       <!--sorting icons-->
-      <input type="text" class="form-control form-control-sm no-print" [(ngModel)]="searchQuery" placeholder="Search for orgunits here">
+      <input
+        type="text"
+        class="form-control form-control-sm no-print"
+        [(ngModel)]="searchQuery"
+        placeholder="{{ 'Search for orgunits here' | translate }}">
       <span class="fa fa-sort-up pull-right pull-right text-muted" *ngIf="!current_sorting && sorting_column == 'none' && scorecard.data.data_settings.indicator_holder_groups.length == 1"></span>
       <span class="fa fa-sort-down pull-right pull-right text-muted" *ngIf="current_sorting && sorting_column == 'none' && scorecard.data.data_settings.indicator_holder_groups.length == 1"></span>
     </th>
     <td *ngFor="let indicator of indicator_holders_list" class="indicator_title"
-        style="line-height: 140%; padding: 0px;vertical-align: bottom;"
-        title="Click to Sort By {{ getIndicatorTitle(indicator) }} {{ indicator.indicators[0].bottleneck_indicators.length == 0 ? '': ', This indicator has bottleneck analysis' }}"
+        style="line-height: 140%; padding: 0px;vertical-align: bottom; position: relative"
+        title="{{ 'Click to Sort By' | translate }} {{ getIndicatorTitle(indicator) }} {{ indicator.indicators[0].bottleneck_indicators.length == 0 ? '': ', This indicator has bottleneck analysis' }}"
         (click)="sortScoreCardFromColumn(indicator.indicators[0].id, sortAscending, orgunits, periods_list[0].id, false)"
         (dblclick)="loadPreview(null,indicator,null,null)"
         [attr.colspan]="periods_list.length"
@@ -48,8 +52,8 @@
         (mouseenter) ="mouseEnter(indicator)"
         (mouseleave) ="mouseLeave(indicator)"
     >
-      <div dnd-draggable [dragEnabled]="true" [dragData]="indicator" style="padding: 8px">
-        <i *ngIf="has_bottleneck[indicator.indicators[0].id]" class="fa fa-info-circle"></i>
+      <i title="This indicator has bottleneck analysis, Click any of the cell" *ngIf="indicator.indicators[0].bottleneck_indicators.length != 0" class="fa fa-bar-chart-o" style="position: absolute; top:1px;right: 1px; opacity: 0.5"></i>
+      <div dnd-draggable [dragEnabled]="true" [dragData]="indicator" style="padding: 8px;">
         <app-indicator-title
           [indicator]="indicator"
           [indicator_done_loading]="indicator_done_loading"
@@ -70,7 +74,7 @@
       [attr.rowspan]="periods_list.length >1 ? 2 : 1"
       style="vertical-align: bottom;"
     >
-      Average
+      <span [translate]="'Average'"> Average</span>
       <!--sorting icons-->
       <span class="fa fa-sort-up pull-right  pull-right text-muted" *ngIf="!current_sorting && sorting_column == 'avg'"></span>
       <span class="fa fa-sort-down pull-right  pull-right text-muted" *ngIf="current_sorting && sorting_column == 'avg'"></span>
@@ -85,7 +89,7 @@
     <ng-container *ngFor="let indicator of indicator_holders_list">
       <td *ngFor="let per of periods_list" class="indicator_title"
           style="line-height: 140%"
-          title="Click to Sort By {{ indicator.title }}"
+          title="{{ 'Click to Sort By' | translate }} {{ indicator.title }}"
           (click)="sortScoreCardFromColumn(indicator.indicators[0].id, sortAscending, orgunits, per.id, false)"
           (dblclick)="loadPreview(null,indicator,null,per)"
       >
@@ -164,7 +168,8 @@
         <h3
           class="text-center text-muted"
           *ngIf="!children_available[current_orgunit.id]">
-          {{ current_orgunit.name }} has no Children
+          {{ current_orgunit.name }}
+          <span [translate]="'has no Children'"> has no Children</span>
         </h3>
         <app-scorecard
           *ngIf="children_available[current_orgunit.id]"
@@ -196,7 +201,7 @@
   <!--Average column-->
   <tr *ngIf="scorecard.data.show_average_in_column" style="height: 35px; max-height: 35px; overflow-y: hidden; line-height: 80%">
     <th *ngIf="scorecard.data.show_rank" style="width: 30px"></th>
-    <th>Average</th>
+    <th [translate]="'Average'">Average</th>
     <ng-container *ngFor="let indicator of indicator_holders_list">
       <th *ngFor="let per of periods_list" style="width: 90px;max-width: 90px;line-height: 10%;padding: 0px">
         <app-subtotal [indicator]="indicator" [orgunits]="orgunits" [scorecard]="scorecard" [calculation]="'avg'" [indicator_list]="getVisibleIndicators(indicator)" [period]="per.id"></app-subtotal>
@@ -222,73 +227,104 @@
 </table>
 
 <context-menu #indicatorMenu>
+  <ng-template contextMenuItem (execute)="loadPreview(null,$event.item,null,null, null, true)"  let-item>
+     <span *ngIf="item.indicators[0].bottleneck_indicators.length != 0">
+          <i class="fa fa-bar-chart"></i>
+          <span [translate]="'Bottleneck Analysis'"> Bottleneck Analysis</span>
+        </span>
+  </ng-template>
   <ng-template contextMenuItem (execute)="loadPreview(null,$event.item,null,null)">
-    <i class="fa fa-bar-chart-o" aria-hidden="true"></i> Analyse
+    <i class="fa fa-bar-chart-o" aria-hidden="true"></i>
+    <span [translate]="'Basic Analysis'"> Analyse</span>
   </ng-template>
   <ng-template contextMenuItem (execute)="sortScoreCardFromColumn($event.item.indicators[0].id, true, orgunits, periods_list[0].id, false)">
-    <i class="fa fa-sort-amount-asc" aria-hidden="true"></i> Sort Asc
+    <i class="fa fa-sort-amount-asc" aria-hidden="true"></i>
+    <span [translate]="'Sort Asc'">Sort Asc </span>
   </ng-template>
   <ng-template contextMenuItem (execute)="sortScoreCardFromColumn($event.item.indicators[0].id, false, orgunits, periods_list[0].id, false)">
-    <i class="fa fa-sort-amount-desc" aria-hidden="true"></i> Sort Desc
+    <i class="fa fa-sort-amount-desc" aria-hidden="true"></i>
+    <span [translate]="'Sort Desc'"> Sort Desc</span>
   </ng-template>
 
   <ng-template contextMenuItem [subMenu]="orderSubmenu">
-    <i class="fa fa-sort" aria-hidden="true"></i> Best/Worst
+    <i class="fa fa-sort" aria-hidden="true"></i>
+    <span [translate]="'Best/Worst'" >Best/Worst</span>
   </ng-template>
   <context-menu #orderSubmenu>
     <ng-template contextMenuItem (execute)="sortBestWorst('all', $event.item.indicators[0].id, false, orgunits, periods_list[0].id, false)">
-      <i class="fa fa-list" aria-hidden="true"></i> All
+      <i class="fa fa-list" aria-hidden="true"></i>
+      <span [translate]="'All'"> All</span>
     </ng-template>
     <ng-template contextMenuItem (execute)="sortBestWorst(3, $event.item.indicators[0].id, false, orgunits, periods_list[0].id, false)">
-      <i class="fa fa-sort-numeric-desc" style="margin-left:4px" aria-hidden="true"></i> Top Three
+      <i class="fa fa-sort-numeric-desc" style="margin-left:4px" aria-hidden="true"></i>
+      <span [translate]="'Top Three'"> Top Three</span>
     </ng-template>
     <ng-template  contextMenuItem (execute)="sortBestWorst(5, $event.item.indicators[0].id, false, orgunits, periods_list[0].id, false)">
-      <i class="fa fa-sort-numeric-desc" aria-hidden="true"></i> Top Five
+      <i class="fa fa-sort-numeric-desc" aria-hidden="true"></i>
+      <span [translate]="'Top Five'"> Top Five</span>
     </ng-template>
     <ng-template contextMenuItem (execute)="sortBestWorst(10, $event.item.indicators[0].id, false, orgunits, periods_list[0].id, false)">
-      <i class="fa fa-sort-numeric-desc" aria-hidden="true"></i> Top Ten
+      <i class="fa fa-sort-numeric-desc" aria-hidden="true"></i>
+      <span [translate]="'Top Te'"> Top Ten</span>
     </ng-template>
     <ng-template contextMenuItem (execute)="sortBestWorst(3, $event.item.indicators[0].id, true, orgunits, periods_list[0].id, false)">
       <i class="fa fa-sort-numeric-asc" style="margin-left:4px" aria-hidden="true"></i> Last Three
     </ng-template>
     <ng-template  contextMenuItem (execute)="sortBestWorst(5, $event.item.indicators[0].id, true, orgunits, periods_list[0].id, false)">
-      <i class="fa fa-sort-numeric-asc" aria-hidden="true"></i> Last Five
+      <i class="fa fa-sort-numeric-asc" aria-hidden="true"></i>
+      <span [translate]="'Last Five'"> Last Five</span>
     </ng-template>
     <ng-template contextMenuItem (execute)="sortBestWorst(10, $event.item.indicators[0].id, true, orgunits, periods_list[0].id, false)">
-      <i class="fa fa-sort-numeric-asc" aria-hidden="true"></i> Last Ten
+      <i class="fa fa-sort-numeric-asc" aria-hidden="true"></i>
+      <span [translate]="'Last Ten'"> Last Ten</span>
     </ng-template>
   </context-menu>
 
   <ng-template *ngIf="indicator_holders_list.length !== 1" contextMenuItem (execute)="hideClicked($event.item)">
-    <i class="fa fa-eye-slash" aria-hidden="true"></i> Hide
+    <i class="fa fa-eye-slash" aria-hidden="true"></i>
+    <span [translate]="'Hide'">Hide</span>
   </ng-template>
   <ng-template  *ngIf="hidenColums.length !== 0" contextMenuItem (execute)="hideClicked($event.item, 'all')">
-    <i class="fa fa-eye" style="margin-left:4px" aria-hidden="true"></i> Show All
+    <i class="fa fa-eye" style="margin-left:4px" aria-hidden="true"></i>
+    <span [translate]="'Show All'">Show All</span>
   </ng-template>
 </context-menu>
 
 <context-menu #itemMenu>
+  <ng-template contextMenuItem (execute)="loadPreview(null, $event.item.item, $event.item.ou, $event.item.pe, null, true)"  let-item>
+    <span *ngIf="item.item.indicators[0].bottleneck_indicators.length != 0">
+          <i class="fa fa-bar-chart"></i>
+          <span [translate]="'Bottleneck Analysis'"> Bottleneck Analysis</span>
+        </span>
+  </ng-template>
   <ng-template contextMenuItem (execute)="loadPreview(null, $event.item.item, $event.item.ou, $event.item.pe)">
-    <i class="fa fa-bar-chart-o" aria-hidden="true"></i> Basic Analysis
+    <i class="fa fa-bar-chart-o" aria-hidden="true"></i>
+    <span [translate]="'Basic Analysis'">Basic Analysis</span>
   </ng-template>
   <ng-template contextMenuItem [subMenu]="saySubMenu">
-    <i class="fa fa-line-chart" aria-hidden="true"></i> Trend Analysis
+    <i class="fa fa-line-chart" aria-hidden="true"></i>
+    <span [translate]="'Trend Analysis'">Trend Analysis</span>
   </ng-template>
   <context-menu #saySubMenu>
     <ng-template contextMenuItem (execute)="loadPreview(null, $event.item.item, $event.item.ou, null, {id:'LAST_3_MONTHS',name:'Last 3 Month'})">
-      <i class="fa fa-line-chart" aria-hidden="true"></i> Last 3 Month
+      <i class="fa fa-line-chart" aria-hidden="true"></i>
+      <span [translate]="'Last 3 Month'">Last 3 Month</span>
     </ng-template>
     <ng-template contextMenuItem (execute)="loadPreview(null, $event.item.item, $event.item.ou, null, {id:'LAST_6_MONTHS',name:'Last 6 Month'})">
-      <i class="fa fa-line-chart" aria-hidden="true"></i> Last 6 Month
+      <i class="fa fa-line-chart" aria-hidden="true"></i>
+      <span [translate]="'Last 6 Month'">Last 6 Month</span>
     </ng-template>
     <ng-template  contextMenuItem (execute)="loadPreview(null, $event.item.item, $event.item.ou, null, {id:'LAST_12_MONTHS',name:'Last 12 Month'})">
-      <i class="fa fa-line-chart" aria-hidden="true"></i> Last 12 Month
+      <i class="fa fa-line-chart" aria-hidden="true"></i>
+      <span [translate]="'Last 12 Month'">Last 12 Month</span>
     </ng-template>
     <ng-template contextMenuItem (execute)="loadPreview(null, $event.item.item, $event.item.ou, null, {id:'LAST_4_QUARTERS',name:'Last 4 Quarter'})">
-      <i class="fa fa-line-chart" style="margin-left:4px" aria-hidden="true"></i> Last 4 Quarter
+      <i class="fa fa-line-chart" style="margin-left:4px" aria-hidden="true"></i>
+      <span [translate]="'Last 4 Quarter'">Last 4 Quarter</span>
     </ng-template>
     <ng-template contextMenuItem (execute)="loadPreview(null, $event.item.item, $event.item.ou, null, {id:'LAST_5_YEARS',name:'Last 5 Years'})">
-      <i class="fa fa-line-chart" style="margin-left:4px" aria-hidden="true"></i> Last 5 Years
+      <i class="fa fa-line-chart" style="margin-left:4px" aria-hidden="true"></i>
+      <span [translate]="'Last 5 Years'">Last 5 Years</span>
     </ng-template>
   </context-menu>
 

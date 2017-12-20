@@ -174,7 +174,7 @@ export function viewReducer(
     case (viewActions.SET_SCORECARD_OPTIONS): {
       const options = {
         show_rank: action.payload.show_rank,
-        empty_rows: action.payload.empty_row,
+        empty_rows: action.payload.empty_rows,
         show_average_in_column: action.payload.show_average_in_column,
         show_average_in_row: action.payload.show_average_in_row,
         average_selection: action.payload.average_selection,

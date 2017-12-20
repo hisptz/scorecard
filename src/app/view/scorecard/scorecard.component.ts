@@ -317,6 +317,8 @@ export class ScorecardComponent implements OnInit, OnDestroy {
       data.push(dataobject);
     }
 
+    console.log(data);
+
     const options = {
       fieldSeparator: ',',
       quoteStrings: '\'',
@@ -325,7 +327,7 @@ export class ScorecardComponent implements OnInit, OnDestroy {
       showTitle: false
     };
 
-    new Angular2Csv(data, 'My Report', options);
+    new Angular2Csv(data, 'My Report', {headers: Object.keys(data[0])});
   }
 
 
@@ -536,7 +538,7 @@ export class ScorecardComponent implements OnInit, OnDestroy {
 
   // load a preview function
   loadPreview(event) {
-    const { holderGroup, indicator, ou, period, periods } = event;
+    const { holderGroup, indicator, ou, period, periods, bottleneck } = event;
     const selected_indicator = [];
     let show_trend = false;
     if (holderGroup == null) {
@@ -591,7 +593,8 @@ export class ScorecardComponent implements OnInit, OnDestroy {
       hidden_columns: this.hidenColums,
       periodObject: periodObject,
       selectedOrganisationUnit: selected_ou,
-      trend: show_trend
+      trend: show_trend,
+      bottleneck
     });
   }
 
@@ -866,7 +869,8 @@ export class ScorecardComponent implements OnInit, OnDestroy {
   }
 
 
-  hideClicked( item , type = null) {
+  hideClicked( event ) {
+    const { item , type } = event;
     if (type) {
       this.hidenColums = [];
     }else {

@@ -18,8 +18,8 @@
 
   <div *ngIf="orgunits.length != 0">
     <!--scorecard table orgunit on the left data on top-->
-    <app-basic-view
-      *ngIf="!scorecard.data.show_data_in_column"
+    <div [ngClass]="{ 'hide_no_group': scorecard.data.show_data_in_column}">
+      <app-basic-view
       [scorecard]="scorecard"
       [indicator_holders_list]="getItemsFromGroups()"
       [children_available]="children_available"
@@ -45,12 +45,41 @@
       (onLoadChildrenData)="loadChildrenData($event)"
       (onSortBestWorst)="sortBestWorst($event)"
       (onLoadPreview)="loadPreview($event)"
+      (onHideClicked)="hideClicked($event)"
     ></app-basic-view>
+    </div>
 
     <!--scorecard table data in the top orgunit on left-->
-    <app-inverted-view
-      *ngIf="scorecard.data.show_data_in_column"
+    <div [ngClass]="{ 'hide_no_group': !scorecard.data.show_data_in_column}">
+      <app-inverted-view
+      [scorecard]="scorecard"
+      [indicator_holders_list]="getItemsFromGroups()"
+      [children_available]="children_available"
+      [current_sorting]="current_sorting"
+      [functions]="functions"
+      [has_error]="has_error"
+      [hidenColums]="hidenColums"
+      [indicator_done_loading]="indicator_done_loading"
+      [indicator_loading]="indicator_loading"
+      [old_proccessed_percent]="old_proccessed_percent"
+      [orgunits]="orgunits"
+      [periods_list]="periods_list"
+      [selectedPeriod]="selectedPeriod"
+      [showSubScorecard]="showSubScorecard"
+      [sortAscending]="sortAscending"
+      [sorting_column]="sorting_column"
+      [sorting_period]="sorting_period"
+      [sub_model]="sub_model"
+      [subscorecard]="subscorecard"
+      [organisation_unit_nodes]="organisation_unit_nodes"
+      (onSortScoreCardFromColumn)="sortScoreCardFromColumn($event)"
+      (onDragItemSuccessfull)="dragItemSuccessfull($event)"
+      (onLoadChildrenData)="loadChildrenData($event)"
+      (onSortBestWorst)="sortBestWorst($event)"
+      (onLoadPreview)="loadPreview($event)"
+      (onHideClicked)="hideClicked($event)"
       ></app-inverted-view>
+    </div>
   </div>
 
   <div class="text-center" *ngIf="orgunits.length == 0">

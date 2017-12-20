@@ -1,11 +1,14 @@
 
 <app-view-header
  (onGoHomePage)="goToHomePage()"
+ (onTourStart)="startTour()"
 ></app-view-header>
 
 <div id="options" class="container-fluid " style="margin-top: 20px" *ngIf="(loaded$ | async)">
   <app-selectors
     (onOrgunitChange)="setOrgunitNodes($event)"
+    (onDownloadCsv)="downloadCsv()"
+    (onUpdate)="loadScorecard()"
   ></app-selectors>
 </div>
 

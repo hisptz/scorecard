@@ -107,18 +107,18 @@
                   <i class="fa fa-trash-o text-danger"></i>
                 </a>
               </p>
-              <label>Display Name</label>
+              <label [translate]="'Display Name'">Display Name</label>
               <input class="form-control form-control-sm" [(ngModel)]="item.bottleneck_title">
             </div>
             <div class="container-fluid" style="padding: 0px">
               <div class="row">
                 <div class="col-sm-6" style="padding-left: 0px">
-                  <label>Baseline</label>
-                  <input class="form-control form-control-sm" [(ngModel)]="item.baseline" placeholder="Baseline">
+                  <label [translate]="'Baseline'">Baseline</label>
+                  <input class="form-control form-control-sm" [(ngModel)]="item.baseline" placeholder="{{ 'Baseline' | translate}}">
                 </div>
                 <div class="col-sm-6" style="padding-right: 0px">
-                  <label>Target</label>
-                  <input class="form-control form-control-sm" [(ngModel)]="item.target" placeholder="Target">
+                  <label [translate]="'Target'">Target</label>
+                  <input class="form-control form-control-sm" [(ngModel)]="item.target" placeholder="{{ 'Target' | translate}}">
                 </div>
               </div>
             </div>
@@ -128,7 +128,12 @@
       </div>
     </div>
     <div class="container-fluid" style="padding: 0px">
-      <button class="btn btn-outline-secondary pull-right cursor" (click)="showBotleneckEditor(indicator)"> <i class="fa fa-check"></i> Done </button>
+      <button
+        class="btn btn-outline-secondary pull-right cursor"
+        (click)="showBotleneckEditor(indicator)">
+        <i class="fa fa-check"></i>
+        <span [translate]="'Done'"> Done </span>
+      </button>
     </div>
   </div>
 

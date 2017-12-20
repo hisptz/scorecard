@@ -35,7 +35,7 @@
         <button
           style="height: 35px"
           class="btn btn-sm btn-outline-secondary btn-block"
-          title="click to refresh information"
+          title="{{ 'click to refresh information' | translate }}"
           (click)="updateType(visualizer_config.type)"
         >
           <i class="fa fa-refresh"></i>
@@ -56,7 +56,7 @@
         <div class="lead" *ngIf="loading && !error_occured">
           <h3 class="lead text-center">{{prepareCardTitle(indicator)}}</h3>
           <app-placeholder
-            [loadingMessage]="'Getting  data ...'"></app-placeholder>
+            [loadingMessage]="'Getting  data' | translate"></app-placeholder>
         </div>
         <app-metadata-dictionary
           [metadataidentifiers]="details_indicators"
@@ -89,8 +89,11 @@
 
         <!--error handling-->
         <div class="lead text-warning" *ngIf="error_occured">
-          <i class="fa fa-warning"></i> Sorry, something went wrong while fetching data! make sure you have internet
+          <i class="fa fa-warning"></i>
+          <span [translate]="'Sorry, something went wrong while fetching data! make sure you have internet connection and try to reload the page'">
+          Sorry, something went wrong while fetching data! make sure you have internet
           connection and try to reload the page
+          </span>
         </div>
       </div>
 
@@ -98,13 +101,14 @@
         <button class="btn btn-sm cursor"
                 [ngClass]="{ 'btn-outline-success': (visualizer_config.type != 'table'),'btn-secondary':(visualizer_config.type == 'table') }"
                 (click)="updateType('table')">
-          <i class="fa fa-table"></i> Table
+          <i class="fa fa-table"></i>
+          <span [translate]="'Table'"> Table</span>
         </button>
         <button class="btn btn-sm cursor"
                 [ngClass]="{ 'btn-outline-success': (visualizer_config.type != 'chart' || showBottleneck),'btn-secondary':(visualizer_config.type == 'chart' && !showBottleneck) }"
                 (click)="updateType('chart')">
           <img [src]="'assets/img/'+currentChartType+'.png'" class="chart-option-icon" alt="" style="margin: 0px">
-          Chart
+          <span [translate]="'Chart'"> Chart</span>
         </button>
         <button class="btn btn-sm cursor"
                 [ngClass]="{ 'btn-outline-success': (visualizer_config.type != 'map'),'btn-secondary':(visualizer_config.type == 'map')}"
@@ -112,10 +116,11 @@
                 [disabled]="(visualizer_config.type == 'map')"
         >
           <i class="fa fa-map"></i>
-          Map
+          <span [translate]="'Map'"> Map</span>
         </button>
         <a class="btn btn-outline-success btn-sm cursor" (click)="updateType('csv')" >
-          <i class="fa fa-file-excel-o"></i> Excel
+          <i class="fa fa-file-excel-o"></i>
+          <span [translate]="'Excel'"></span>Excel
         </a>
         <a
           class="btn btn-sm cursor"
@@ -123,7 +128,9 @@
           [ngClass]="{ 'btn-outline-info': (visualizer_config.type != 'info'),'btn-secondary':(visualizer_config.type == 'info') }"
         >
           <i class="fa fa-info-circle" [ngClass]="{ 'text-white':(visualizer_config.type == 'info') }"></i>
-          <span [ngClass]="{ 'text-white':(visualizer_config.type == 'info') }">Info</span>
+          <span [ngClass]="{ 'text-white':(visualizer_config.type == 'info') }" [translate]="'Info'">
+            Info
+          </span>
         </a>
         <!--bootleneck analysis switching-->
 
@@ -135,7 +142,7 @@
         >
           <i class="fa fa-road" [ngClass]="{ 'text-white':(showBottleneck) }"></i>
 
-          <span [ngClass]="{ 'text-white':(showBottleneck) }">Bottleneck Analysis</span>
+          <span [ngClass]="{ 'text-white':(showBottleneck) }" [translate]="'Bottleneck Analysis'">Bottleneck Analysis</span>
         </a>
       </div>
     </div>

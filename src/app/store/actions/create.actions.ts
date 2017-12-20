@@ -19,6 +19,7 @@ export const SET_HEADER = '[Create] Set Header';
 export const SET_HOLDERS = '[Create] Set Holders';
 export const SET_HOLDER_GROUPS = '[Create] Set Holder Groups';
 export const SET_ADDITIONAL_LABELS = '[Create] Set Additional Labels';
+export const SET_EDDITING_HEADER = '[Create] Set Editing Haader';
 
 
 export class SetCreatedScorecard implements Action {
@@ -86,6 +87,10 @@ export class SetAdditionalLabels implements Action {
   constructor(public payload: any) {}
 }
 
+export class SetEdditingHeader implements Action {
+  readonly type = SET_EDDITING_HEADER;
+  constructor(public payload: boolean) {}
+}
 
 export class GetScorecardToCreate implements Action {
   readonly type = GET_SCORECARD_TO_CREATE;
@@ -106,4 +111,5 @@ export type Actions =
   | SetHeader
   | SetHolders
   | SetHoldersGroups
-  | SetAdditionalLabels;
+  | SetAdditionalLabels
+  | SetEdditingHeader;

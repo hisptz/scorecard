@@ -16,6 +16,7 @@ export const getCurrentGroup = createSelector(getCreateadState, fromCreate.getCu
 export const getNextGroupId = createSelector(getCreateadState, fromCreate.getNextGroupId);
 export const getNextHolderId = createSelector(getCreateadState, fromCreate.getNextHolderId);
 export const getShowTitleEditor = createSelector(getCreateadState, fromCreate.getShowTitleEditor);
+export const getActionType = createSelector(getCreateadState, fromCreate.getActionType);
 
 export const getTitleWarning = createSelector(
   getScorecardToCreate,

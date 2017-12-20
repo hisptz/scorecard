@@ -20,6 +20,7 @@ export function createScorecardFromStore(scorecardState: CreatedScorecardState |
         'show_data_in_column': scorecardState.show_data_in_column,
         'show_score': scorecardState.show_score,
         'show_rank': scorecardState.show_rank,
+        'empty_rows': scorecardState.empty_rows,
         'rank_position_last': scorecardState.rank_position_last,
         'header': scorecardState.header,
         'legendset_definitions': scorecardState.legendset_definitions,
@@ -43,7 +44,7 @@ export function getScorecardOptions(data: ScorecardData) {
   return {
     show_legend_definition: data.header.show_legend_definition,
     show_rank: data.show_rank,
-    empty_rows: data.hasOwnProperty('empty_rows') ? data.empty_rows : false,
+    empty_rows: data.empty_rows,
     show_average_in_column: data.show_average_in_column,
     show_average_in_row: data.show_average_in_row,
     average_selection: data.average_selection,

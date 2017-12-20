@@ -38,6 +38,7 @@ export class BasicViewComponent implements OnInit {
   @Output() onLoadChildrenData = new EventEmitter();
   @Output() onSortBestWorst = new EventEmitter();
   @Output() onLoadPreview = new EventEmitter();
+  @Output() onHideClicked = new EventEmitter();
 
   show_sum_in_row: boolean = false;
   show_sum_in_column: boolean = false;
@@ -99,8 +100,8 @@ export class BasicViewComponent implements OnInit {
     return this.scorecardService.getIndicatorTitle(holder, this.hidenColums);
   }
 
-  loadPreview(holderGroup, indicator, ou, period, periods = null) {
-    this.onLoadPreview.emit({holderGroup, indicator, ou, period, periods});
+  loadPreview(holderGroup, indicator, ou, period, periods = null, bottleneck = false) {
+    this.onLoadPreview.emit({holderGroup, indicator, ou, period, periods, bottleneck});
   }
 
   loadPreviewFromChild(event) {
@@ -200,5 +201,9 @@ export class BasicViewComponent implements OnInit {
 
   mouseLeave(indicator) {
     this.has_bottleneck[indicator.indicators[0].id] = false;
+  }
+
+  hideClicked( item , type = null) {
+    this.onHideClicked.emit({ item , type});
   }
 }

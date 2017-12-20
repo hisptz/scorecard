@@ -97,7 +97,8 @@ export class DetailsComponent implements OnInit {
     this.selectedOrganisationUnit = this.indicatorDetails.selectedOrganisationUnit;
     this.periodObject = this.indicatorDetails.periodObject;
     this.showTrend = this.indicatorDetails.trend;
-    this.updateType('table');
+    this.showBottleneck = this.indicatorDetails.bottleneck;
+    this.updateType((this.showBottleneck) ? '' : 'table');
   }
 
   updateChartType(type: string) {
@@ -212,7 +213,7 @@ export class DetailsComponent implements OnInit {
       showTitle: false
     };
 
-    new Angular2Csv(data, 'My Report', options);
+    new Angular2Csv(data, 'My Report', {headers: Object.keys(data[0])});
   }
 
   getStartingLayout(type): LayoutModel {

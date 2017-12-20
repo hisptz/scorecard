@@ -42,10 +42,13 @@ export class SubtotalComponent implements OnInit {
         for ( const indicator of holder.indicators ) {
           if (use_key in indicator.values && indicator.id === indicator_id && indicator.values[use_key] != null) {
             counter++;
-            sum = sum + parseFloat(indicator.values[use_key]);
+            sum += (!isNaN(indicator.values[use_key])) ? parseFloat(indicator.values[use_key]) : 0;
           }
         }
       }
+    }
+    if ( counter === 0) {
+      return (0 / 1 ).toFixed(2);
     }
     return (sum / counter).toFixed(2);
   }
@@ -61,7 +64,7 @@ export class SubtotalComponent implements OnInit {
       for ( const holder of scorecard.data.data_settings.indicator_holders ) {
         for ( const indicator of holder.indicators ) {
           if (use_key in indicator.values && indicator.id === indicator_id && indicator.values[use_key] != null) {
-            sum = sum + parseFloat(indicator.values[use_key]);
+            sum = (!isNaN(indicator.values[use_key])) ? parseFloat(indicator.values[use_key]) : 0;
           }
         }
       }

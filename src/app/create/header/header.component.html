@@ -23,6 +23,7 @@
         (click)="save()"
         style="height: 35px;margin-left: 5px"
         title="{{ 'Save the Changes'| translate }}"
+        [disabled]="scorecard.description == '' || scorecard.name == ''"
       >
         <i class="fa fa-floppy-o text-info"></i>
         <span [translate]="'Save'">Save</span>
@@ -41,6 +42,25 @@
         [options]="options"
         (onOptionUpdate) = "optionUpdated($event)"
       ></app-options>
+      <button
+      style="height: 34px;margin-right: 3px"
+      class="btn btn-outline-secondary btn-sm float-md-right cursor"
+      title="Get help"
+      (click)="startTour()"
+    >
+      <i class="fa fa-question-circle"></i>
+    </button>
+      <h6
+        class="pull-right"
+        *ngIf="saving_scorecard">
+        <img src="balls-4.svg" style="height: 50px;">
+        Saving score card Information, Please wait...
+      </h6>
+      <h6
+        class="pull-right text-danger"
+        *ngIf="saving_error">
+        Something went wrong, Saving score card Information failed
+      </h6>
     </div>
   </div>
 </div>

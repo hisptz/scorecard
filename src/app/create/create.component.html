@@ -7,11 +7,14 @@
 
 <div class="container-fluid" *ngIf="can_edit$ | async">
   <app-create-header
+    [scorecard]="scorecard$ | async"
+    [action_type]="action_type$ | async"
     [name]="scorecard_name$ | async"
     [options]="options$ | async"
     (onGoHomePage)="goToHomePage()"
     (onCancel)="cancelSaving()"
     (onSave)="saveScorecard()"
+    (onStartTour)="sta"
   ></app-create-header>
 
   <app-sample-scorecard
@@ -111,5 +114,26 @@
       </div>
     </div>
   </div>
+
+  <div class="custom_header_details" [ngClass]="{'hiddendiv': !(show_editor$ | async)}">
+    <div class="indicator_dialog">
+      <div class="custom-header-content">
+        <span class="glyphicon glyphicon-remove pull-right" style="cursor: pointer" (click)="hideTextEditor()"></span>
+        <div style="padding: 15px">
+          <ckeditor
+            [(ngModel)]="header.template.content"
+            [config]="{uiColor: '#99000'}"
+            [readonly]="false"
+            (change)="onTitleChange($event)"
+            (ready)="onTitleReady($event)"
+            (blur)="onTitleBlur($event)"
+            debounce="300">
+          </ckeditor>
+          <button class="btn btn-sm btn-secondary pull-right cursor" (click)="hideTextEditor()"> <i class="fa fa-check"></i> Done </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
 
 </div>
