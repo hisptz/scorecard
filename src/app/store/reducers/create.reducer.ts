@@ -29,6 +29,7 @@ export interface CreatedScorecardState {
   show_data_in_column: boolean;
   show_score: boolean;
   show_rank: boolean;
+  empty_rows: boolean;
   rank_position_last: boolean;
   header: {
     title: string,
@@ -104,6 +105,7 @@ export const InitialCreateState: CreatedScorecardState = {
   show_data_in_column: false,
   show_score: false,
   show_rank: false,
+  empty_rows: false,
   rank_position_last: true,
   header: {
     title: '',

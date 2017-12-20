@@ -1,0 +1,129 @@
+<div class="text-center scrollable" *ngIf="showingLoading">
+  <p>{{progressMessage}}</p>
+</div>
+
+<div id="accordion" class="scrollable" role="tablist" *ngIf="!showingLoading">
+  <!--If indicators-->
+  <div class="card" *ngFor="let indicator of indicators">
+    <div class="card-header" role="tab" id="{{'#heading'+indicator.id }}">
+      <h5 class="mb-0">
+        <a data-toggle="collapse" href="{{'#indicator'+indicator.id }}" aria-expanded="true" [attr.aria-controls]="'#indicator'+indicator.id">
+          {{indicator.name}}
+        </a>
+      </h5>
+    </div>
+
+    <div id="{{'#indicator'+indicator.id }}" class="collapse show" role="tabpanel" [attr.aria-labelledby]="'#heading'+indicator.id" data-parent="#accordion">
+      <div class="card-body">
+        <h5 class="alert alert-info"> <span class="glyphicon glyphicon-hand-right"></span> Introduction to {{indicator.name}} </h5>
+        <p><strong>{{indicator.name}}</strong> is a <strong>{{indicator.indicatorType.name}} </strong> indicator, <span *ngIf="indicator.object.numeratorDescription"> with the numerator described as <strong>{{indicator.object.numeratorDescription}}</strong></span> <span *ngIf="indicator.object.denominatorDescription"> and denominator described as <strong>{{indicator.object.denominatorDescription}}</strong></span> </p>
+        <p *ngIf="indicator.object.annualized==true"><span>It’s figure is annualized to support analysis in less than year period(monthly,quarterly,semi-annually)</span> </p>
+        <p>Numerator is calculated from <strong>{{indicator.numerator}}</strong> originating from <span *ngFor="let dataset of indicator.numeratorDaset.dataSets"> <strong>{{dataset.name}},</strong>that is collected <strong>{{dataset.periodType}}</strong> with deadline for submission after <strong>{{dataset.timelyDays}} days </strong></span></p>
+        <p>Denominator is calculated from <strong>{{indicator.denominator}}</strong> originating from <span *ngFor="let dataset of indicator.denominatorDaset.dataSets"> <strong>{{dataset.name}},</strong>that is collected <strong>{{dataset.periodType}}</strong> with deadline for submission after <strong>{{dataset.timelyDays}} days, </strong> </span></p>
+
+        <div *ngIf="indicator.object.indicatorGroups && indicator.object.indicatorGroups.length > 0">
+          <p>It It belongs <span *ngFor="let indgroup of indicator.object.indicatorGroups"> <strong>{{indgroup.name}}</strong> with <strong>{{indgroup.indicators}}</strong> other related indicators, </span></p>
+        </div>
+        <div *ngIf="indicator.object.attributeValues && indicator.object.attributeValues.length > 0">
+          <p> Other related details associated with this indicators includes: <span *ngFor="let attr of indicator.object.attributeValues"> <strong>{{attr.attribute.name}}: {{attr.value}}</strong></span></p>
+        </div>
+        <div *ngIf="indicator.object.legendSet">
+          <p>It makes use of:<strong>{{indicator.object.legendSet.name}}</strong> legend set for analysis with <strong>{{indicator.object.legendSet.legends}} Classes </strong> using <strong>{{indicator.object.legendSet.symbolizer}} for analysis</strong></p>
+        </div>
+        <div *ngIf="indicator.object.user">
+          <p>This indicator was <strong> first created </strong> in the system on <strong>{{indicator.object.created | date }} by {{indicator.object.user.name}}</strong> </p>
+        </div>      </div>
+    </div>
+  </div>
+
+  <!--If data elements-->
+  <div class="card" *ngFor="let dataelement of dataelements">
+    <div class="card-header" role="tab" id="{{'#heading'+dataelement.id }}">
+      <h5 class="mb-0">
+        <a data-toggle="collapse" href="{{'#indicator'+dataelement.id }}" aria-expanded="true" [attr.aria-controls]="'#indicator'+dataelement.id">
+          {{dataelement.name}}
+        </a>
+      </h5>
+    </div>
+
+    <div id="{{'#indicator'+dataelement.id }}" class="collapse show" role="tabpanel" [attr.aria-labelledby]="'#heading'+dataelement.id" data-parent="#accordion">
+      <div class="card-body">
+        <h5 class="alert alert-info"><span class="glyphicon glyphicon-hand-right"></span> {{dataelement.name}} Introduction</h5>
+        <p> This {{dataelement.name}} of this method of data aggregation <strong>{{dataelement.aggregationType}}</strong> created at <a class="text-success" title="Created by ">{{dataelement.created| date}}</a> is only taking <strong>{{dataelement.domainType}}</strong> data.As the culture of helping user not enntering unregnonized data,there fore its only taking <strong>{{dataelement.valueType}}</strong> values from the user input</p>
+        <p *ngIf="dataelement.categoryCombo.name!='default'"><strong>{{dataelement.name}}</strong> consists of <strong>{{dataelement.categoryCombo.name}}</strong> category combitions of <strong *ngFor="let cat of dataelement.categoryCombo.categories let i = index">(<span *ngFor="let catoptions of cat.categoryOptions let j = index">{{catoptions.name}},</span>) of the {{cat.name}} Category, </strong></p>
+
+        <div *ngIf="dataelement.dataSets && dataelement.dataSets.length > 0">
+          <h5 class="alert alert-info"><span class="glyphicon glyphicon-hand-right"></span> {{dataelement.name}} Sources</h5>
+          <p>More than <strong>{{dataelement.dataSets.length}}</strong> dataset ie <strong *ngFor="let dataset of dataelement.dataSets">{{dataset.name}},</strong> use this {{dataelement.name}} Data Element
+            <span *ngIf="dataelement.dataElementGroups && dataelement.dataElementGroups.length > 0">and it belongs to <strong *ngFor="let datgroup of dataelement.dataElementGroups">{{datgroup.name}} Group,</strong></span></p>
+          <p *ngFor="let datasource of dataelement.dataSets"><strong>{{datasource.name}}</strong> Data set with reporting frequency <strong>{{datasource.periodType }}</strong> which is only ontime when get collected before <b>{{datasource.timelyDays}} days</b> from the previous <span *ngIf="datasource.periodType=='Monthly'">Month</span><span *ngIf="datasource.periodType=='Quarterly'">Quarter</span> <span *ngIf="datasource.indicators && datasource.indicators.length > 0">and it has <strong>{{datasource.indicators.length}} Indicators</strong></span>,<span *ngIf="datasource.dataElements && datasource.dataElements.length > 0">and it has <strong>{{datasource.dataElements.length}} Dataelements</strong></span>
+            <span *ngIf="datasource.organisationUnits && datasource.organisationUnits.length > 0">Like <strong>{{datasource.organisationUnits.length}} Health facilities report this form {{datasource.periodType }}</strong></span>
+          </p>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!--If dataset-->
+  <div class="card" *ngFor="let dataset of datasets">
+    <div class="card-header" role="tab" id="{{'#heading'+dataset.id }}">
+      <h5 class="mb-0">
+        <a data-toggle="collapse" href="{{'#indicator'+dataset.id }}" aria-expanded="true" [attr.aria-controls]="'#indicator'+dataset.id">
+          {{dataset.name}}
+        </a>
+      </h5>
+    </div>
+
+    <div id="{{'#indicator'+dataset.id }}" class="collapse show" role="tabpanel" [attr.aria-labelledby]="'#heading'+dataset.id" data-parent="#accordion">
+      <div class="card-body">
+        <h5 class="alert alert-info"><span class="glyphicon glyphicon-hand-right"></span> {{dataset.name}} Introduction</h5>
+        <p>{{dataset.name}} of the <strong>{{dataset.formType}}</strong> Form created at <strong>{{dataset.created| date}} by {{dataset.user.name}}</strong> <span *ngIf="dataset.categoryCombo.name!='default'"> With <strong>{{dataset.categoryCombo.name}}</strong> Dimension which is divided into <strong *ngFor=" let cat of dataset.categoryCombo.categories"><span *ngFor="let opt of cat.categoryOptions"> {{opt.name}}, </span></strong></span></p>
+        <p><strong>{{dataset.name}}</strong> Data set with reporting frequency <strong>{{dataset.periodType }}</strong> which is only ontime when get collected before <strong>{{dataset.timelyDays}} days</strong> from the previous <span *ngIf="dataset.periodType=='Monthly'">Month</span><span *ngIf="dataset.periodType=='Quarterly'">Quarter</span> <span *ngIf="dataset.indicators && dataset.indicators.length > 0">and it has <strong>{{dataset.indicators.length}} Indicators</strong></span>,<span *ngIf="dataset.dataElements && dataset.dataElements.length > 0">and it has <strong>{{dataset.dataElements.length}} Dataelements</strong></span>
+          <span *ngIf="dataset.organisationUnits && dataset.organisationUnits.length > 0">At the moment <strong>{{dataset.organisationUnits.length}} Health facilities report this form {{dataset.periodType }}</strong></span>
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <!--If events-->
+  <div class="card" *ngFor="let event of events">
+    <div class="card-header" role="tab" id="{{'#heading'+event.id }}">
+      <h5 class="mb-0">
+        <a data-toggle="collapse" href="{{'#indicator'+event.id }}" aria-expanded="true" [attr.aria-controls]="'#indicator'+event.id">
+          {{event.name}}
+        </a>
+      </h5>
+    </div>
+
+    <div id="{{'#indicator'+event.id }}" class="collapse show" role="tabpanel" [attr.aria-labelledby]="'#heading'+event.id" data-parent="#accordion">
+      <div class="card-body">
+        <h5 class="alert alert-info"><span class="glyphicon glyphicon-hand-right"></span> {{event.name}} Introduction</h5>
+        <p *ngIf="event.programType=='WITHOUT_REGISTRATION'">{{event.name}} This is a single events without registration program(anonymous program or SEWoR) its used for serving health cases without registering any information into the system. This {{event.name}} have only one stage called <strong *ngFor="let stage of event.programStages">{{stage.name}}</strong> Normally this stage defines which actions should be taken at each stage </p>
+        <p><strong>{{event.name}}</strong> Program with <strong *ngFor="let stage of event.programStages">{{stage.name }}</strong> have nearly <strong *ngFor="let stage of event.programStages"><span *ngIf="stage.programStageDataElements && stage.programStageDataElements.length >0">{{stage.programStageDataElements.length}} Data Elements</span></strong>  <span *ngIf="event.programIndicators && event.programIndicators.length >0"> and <strong>{{event.programIndicators.length}} Program Indicators</strong> Which is the expression based on dataelements and attributes of the tracked entities which can be used to calculate values based on the formula</span></p>
+      </div>
+    </div>
+  </div>
+
+  <!--If program Indicators-->
+  <div class="card" *ngFor="let prog of programInd">
+    <div class="card-header" role="tab" id="{{'#heading'+prog.id }}">
+      <h5 class="mb-0">
+        <a data-toggle="collapse" href="{{'#indicator'+prog.id }}" aria-expanded="true" [attr.aria-controls]="'#indicator'+prog.id">
+          {{prog.name}}
+        </a>
+      </h5>
+    </div>
+
+    <div id="{{'#indicator'+prog.id }}" class="collapse show" role="tabpanel" [attr.aria-labelledby]="'#heading'+prog.id" data-parent="#accordion">
+      <div class="card-body">
+        <h5 class="alert alert-info"><span class="glyphicon glyphicon-hand-right"></span> {{prog.object.name}} Introduction</h5>
+        <p><strong>{{prog.object.name}} </strong> Program Indicator.This is expressions based on data elements and attributes of tracked entities which can be used to calculate values based on a formula.Program indicators consist of an aggregation type of <strong>{{prog.object.aggregationType}}</strong>,an expression of <strong>{{prog.expressionName}}</strong> and filter of <strong>{{prog.filterName}}</strong></p>
+        <p>This <strong>{{prog.object.name}}</strong> Program Indicator is evaluated based on the assigned aggregation type,The order of evaluation is as follows </p>
+        <p *ngIf="prog.filterName">1.This <strong>{{prog.filterName}}</strong> filter will filter the events which become part of the evaluation / aggregation routine.</p>
+        <p *ngIf="prog.expressionName">2.This <strong>{{prog.expressionName}}</strong> expression will be evaluated per event.</p>
+        <p>3.<strong>{{prog.object.aggregationType}}</strong> All evaluated expression values will be aggregated according to the aggregation type of the program indicator.</p>
+      </div>
+    </div>
+  </div>
+</div>

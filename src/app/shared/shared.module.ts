@@ -19,6 +19,7 @@ import { OrgUnitFilterComponent } from './components/org-unit-filter/org-unit-fi
 import { PeriodFilterComponent } from './components/period-filter/period-filter.component';
 import { SharingComponent } from './components/sharing/sharing.component';
 import { MultiselectComponent } from './components/org-unit-filter/multiselect/multiselect.component';
+import {ClickOutsideDirective} from "./directives/click-outside.directive";
 
 @NgModule({
   imports: [
@@ -36,6 +37,7 @@ import { MultiselectComponent } from './components/org-unit-filter/multiselect/m
     })
   ],
   declarations: [
+    ClickOutsideDirective,
     FilterByNamePipe,
     FilterLevelPipe,
     FilterIndicatorByNamePipe,

@@ -1,0 +1,34 @@
+<tour-step-template></tour-step-template>
+<div class="container-fluid no-print">
+  <div class="row">
+    <div
+      class="col-md-2 col-xs-12"
+      style="padding-left: 0px; cursor: pointer;"
+      (click)="goToHomePage()">
+      <img src="scorecard.svg" style="height: 58px; width: 48px">
+      <span style="font-size: 20px" [translate]="'Score Card'"> Score Card</span>
+    </div>
+    <div  class="col-md-8 col-xs-12">
+
+    </div>
+    <div class="col-md-2 col-xs-12" style="margin-top: 14px">
+      <button
+        tourAnchor="view.home"
+        class="btn btn-outline-secondary
+        btn-sm pull-right cursor"
+        (click)="goToHomePage()"
+        style="height: 30px;margin-left: 5px">
+        <i class="fa fa-home"></i>
+        <span [translate]="'Home'"> home</span>
+      </button>
+      <button
+        style="height: 30px;margin-right: 3px"
+        class="btn btn-outline-secondary btn-sm float-md-right cursor"
+        title="{{ 'Get help' | translate }}"
+        (click)="startTour()"
+      >
+        <i class="fa fa-question-circle"></i>
+      </button>
+    </div>
+  </div>
+</div>

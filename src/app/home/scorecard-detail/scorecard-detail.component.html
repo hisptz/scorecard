@@ -42,9 +42,11 @@
       class="icons"
        *ngIf="confirm_deleting"
       style="padding: 5px; font-size: 12px"
-      [translate]="'Are you sure you want to delete this score card?'"
+
     >
-      Are you sure you want to delete this score card?
+      <span [translate]="'Are you sure you want to delete this score card?'">
+        Are you sure you want to delete this score card?
+      </span>
       <button
         class="btn btn-sm btn-outline-danger cursor"
         (click)="deleteScoreCard(scorecard,$event)"

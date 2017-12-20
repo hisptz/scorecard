@@ -130,9 +130,7 @@ export class OrgUnitService {
         });
       }
     }
-    this.store.dispatch(new orgunitActions.DoneLoadingOrganisationUnitItem(
-      {key: 'user_orgunits', value: orgunits }
-    ));
+    this.store.dispatch(new orgunitActions.DoneLoadingUserOrganisationUnits( orgunits ));
     return orgunits;
   }
 
@@ -197,8 +195,8 @@ export class OrgUnitService {
         this.http.get('organisationUnitLevels.json?fields=id,name,level&order=level:asc')
           .subscribe((levels: any) => {
             this.orgunit_levels = levels;
-            this.store.dispatch(new orgunitActions.DoneLoadingOrganisationUnitItem(
-              {key: 'levels', value: levels.organisationUnitLevels }
+            this.store.dispatch(new orgunitActions.DoneLoadingOrganisationUnitLevels(
+              levels.organisationUnitLevels
             ));
             observer.next(this.orgunit_levels);
             observer.complete();
@@ -220,9 +218,7 @@ export class OrgUnitService {
         this.http.get('organisationUnitGroups.json?fields=id,name&paging=false')
           .subscribe((groups: any) => {
               this.orgunit_groups = groups.organisationUnitGroups;
-              this.store.dispatch(new orgunitActions.DoneLoadingOrganisationUnitItem(
-                {key: 'groups', value: this.orgunit_groups }
-              ));
+              this.store.dispatch(new orgunitActions.DoneLoadingOrganisationUnitGroups(this.orgunit_groups ));
               observer.next(this.orgunit_groups);
               observer.complete();
             },
@@ -242,21 +238,15 @@ export class OrgUnitService {
   getAllOrgunitsForTree1 (fields = null, orgunits = null) {
     return Observable.create(observer => {
       if (this.nodes != null) {
+        this.store.dispatch(new orgunitActions.DoneLoadingOrganisationUnitItem());
         observer.next(this.nodes);
         observer.complete();
       } else {
         this.http.get('organisationUnits.json?fields=' + fields + '&filter=id:in:[' + orgunits.join(',') + ']&paging=false')
           .subscribe((nodes: any) => {
             this.nodes = nodes.organisationUnits;
-            this.store.dispatch(new orgunitActions.DoneLoadingOrganisationUnitItem(
-              {key: 'nodes', value: this.nodes }
-            ));
-            this.store.dispatch(new orgunitActions.DoneLoadingOrganisationUnitItem(
-              {key: 'loading', value: false }
-            ));
-            this.store.dispatch(new orgunitActions.DoneLoadingOrganisationUnitItem(
-              {key: 'loaded', value: true }
-            ));
+            this.store.dispatch(new orgunitActions.DoneLoadingOrganisationUnits( this.nodes ));
+            this.store.dispatch(new orgunitActions.DoneLoadingOrganisationUnitItem());
             observer.next(this.nodes);
             observer.complete();
           }, error => {

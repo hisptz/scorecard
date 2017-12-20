@@ -1,7 +1,4 @@
-import {
-  DONE_LOADING_ORGANASATION_UNIT_ITEMS, LOAD_ORGANASATION_UNIT_ITEMS,
-  OrgunitsActions
-} from '../actions/orgunits.actions';
+import * as orgunitActions from '../actions/orgunits.actions';
 
 export interface OrgunitState {
   groups: any[];
@@ -23,16 +20,36 @@ export const InitialOrgunitState: OrgunitState = {
 
 export function orgunitReducer (
   state = InitialOrgunitState,
-  action: OrgunitsActions
+  action: orgunitActions.OrgunitsActions
 ): OrgunitState {
   switch (action.type) {
 
-    case ( LOAD_ORGANASATION_UNIT_ITEMS ): {
+    case ( orgunitActions.LOAD_ORGANASATION_UNIT_ITEMS ): {
       return {...state, loading: true };
     }
 
-    case ( DONE_LOADING_ORGANASATION_UNIT_ITEMS ): {
-      return {...state, [action.payload.key]: action.payload.value };
+    case ( orgunitActions.DONE_LOADING_ORGANASATION_UNIT_ITEMS ): {
+      return {...state, loading: false, loaded: true };
+    }
+
+    case ( orgunitActions.DONE_LOADING_ORGANASATION_UNITS ): {
+      const nodes = action.payload;
+      return {...state, nodes };
+    }
+
+    case ( orgunitActions.DONE_LOADING_ORGANASATION_UNIT_GROUPS ): {
+      const groups = action.payload;
+      return {...state, groups };
+    }
+
+    case ( orgunitActions.DONE_LOADING_ORGANASATION_UNIT_LEVELS ): {
+      const levels = action.payload;
+      return {...state, levels };
+    }
+
+    case ( orgunitActions.DONE_LOADING_USER_ORGANASATION_UNITS ): {
+      const user_orgunits = action.payload;
+      return {...state, user_orgunits };
     }
   }
   return state;

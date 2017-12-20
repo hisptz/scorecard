@@ -1,0 +1,22 @@
+<div [innerHTML]="template_content | safeHtml"></div>
+<h3 class="text-center">
+  <span *ngIf="!template_content">{{ scorecard_title }} &nbsp;</span>
+  {{ organisation_unit_title || '' }}&nbsp;&nbsp;&nbsp;
+  <span> {{ period_title || '' }} </span>
+</h3>
+
+<!--legend area-->
+<div class="row legend" style="margin-bottom: 10px" *ngIf="show_legend_definition">
+  <div class="col-sm-2 legendItem" *ngFor="let legend of legendset_definitions">
+    <table>
+      <tr>
+        <td style="padding-left: 0px;height: 25px;width: 50px">
+          <svg viewbox="0 0 50 25" width="50" height="25" style="border: 1px solid #014b5a">
+            <polygon points="0 0 50 0 50 25 0 25" [attr.fill]="legend.color"/>
+          </svg>
+        </td>
+        <td style="font-size: 10px;padding-left: 5px">{{ legend.definition}}</td>
+      </tr>
+    </table>
+  </div>
+</div>

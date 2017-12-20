@@ -8,6 +8,7 @@ import {ScorecardService} from '../../shared/services/scorecard.service';
 import {FunctionService} from '../../shared/services/function.service';
 import {DataService} from '../../shared/services/data.service';
 import {OrgUnitService} from '../../shared/services/org-unit.service';
+import {GET_SCORECARD_TO_VIEW} from "../actions/view.actions";
 
 @Injectable()
 export class ScorecardEffects {
@@ -24,6 +25,13 @@ export class ScorecardEffects {
   loadScorecard$ = this.actions$.ofType(scorecardActions.LOAD_SCORECARDS).pipe(
     tap(() => {
       this.scorecardService.getAllScoreCards();
+    })
+  );
+
+  @Effect({ dispatch: false })
+  loadScorecardToView$ = this.actions$.ofType(GET_SCORECARD_TO_VIEW).pipe(
+    tap(() => {
+      this.scorecardService.getViewedScorecard();
     })
   );
 

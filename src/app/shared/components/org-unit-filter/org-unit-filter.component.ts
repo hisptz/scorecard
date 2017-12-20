@@ -319,6 +319,7 @@ export class OrgUnitFilterComponent implements OnInit {
         orgtree: this.orgtree,
         value: this.getOrgUnitsForAnalytics(this.orgunit_model, this.pickChildren)
       });
+
       this.onOrgUnitModelUpdate.emit(this.orgunit_model);
     }else {
       this.onOrgUnitChange.emit({

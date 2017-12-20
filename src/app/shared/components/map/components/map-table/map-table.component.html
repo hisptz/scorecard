@@ -1,0 +1,39 @@
+<div>
+  <!-- Nav tabs -->
+  <ul class="nav nav-tabs" role="tablist">
+    <li role="presentation" class="{{activeLink[header]}}"
+        *ngFor="let header of tableContents.headers;let i = index">
+      <a style="cursor: pointer;padding: 4px!important;" role="tab" (click)="activetLayer(header)">{{readableName(header)}}</a>
+    </li>
+  </ul>
+  <!-- Tab panes -->
+  <div class="tab-content" style="height:2.5vh;">
+    <div role="tabpanel" class="tab-pane active">
+      <table class="table table-responsive">
+        <thead>
+        <tr>
+          <th style="text-align:center;">No.</th>
+          <th style="text-align:center;">Organisation Unit</th>
+          <th style="text-align:center;">Value</th>
+          <th style="text-align:center;">Class Interval</th>
+          <th style="text-align:center;">Color</th>
+        </tr>
+        </thead>
+      </table>
+    </div>
+  </div>
+  <div class="tab-content" style="height:20vh;overflow-y:auto;">
+    <div role="tabpanel" class="tab-pane active">
+      <table class="table table-responsive table-bordered">
+        <tbody>
+        <tr *ngFor="let row of tableContents.rows[activeLayer];let dataIndex = index;">
+          <td>{{dataIndex+1}}</td>
+          <td *ngFor="let column of row; let columnIndex = index;" [ngStyle]="{backgroundColor:getBackgroundColor(columnIndex,column),textAlign:'center'}">{{column}}</td>
+        </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+

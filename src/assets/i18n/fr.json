@@ -1,6 +1,7 @@
 {
   "Score Card": "fiche d'évaluation",
   "Search score card by name": "Rechercher tableau de bord par nom",
+  "Home": "Accueil",
   "Search": "Chercher",
   "Create": "Créer",
   "Add": "Ajouter",
@@ -125,6 +126,11 @@
   "Max": "Max",
   "Related/Bottleneck indicators":"Indicateurs connexes / de goulot d'étranglement",
   "activate up/down arrow if difference between previous and present value exceeds":"activer la flèche haut / bas si la différence entre la valeur précédente et la valeur actuelle dépasse",
-  "If you want to have two data items in the same column just select the second data item from the list on the left": "Si vous souhaitez avoir deux éléments de données dans la même colonne, sélectionnez simplement le deuxième élément de données dans la liste de gauche"
+  "If you want to have two data items in the same column just select the second data item from the list on the left": "Si vous souhaitez avoir deux éléments de données dans la même colonne, sélectionnez simplement le deuxième élément de données dans la liste de gauche",
+
+  "Refresh":"Rafraîchir",
+  "Download Excel": "Télécharger Excel",
+  "Excel": "Exceller",
+  "Print":"Impression"
 
 }

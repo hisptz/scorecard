@@ -9,11 +9,11 @@
     </div>
     <div  class="col-md-7 col-xs-12">
       <h3 class="text-center" style="margin-top: 8px">
-        <small *ngIf="scorecard.name == ''" [translate]="'Create a new scorecard'">
+        <small *ngIf="name == ''" [translate]="'Create a new scorecard'">
           Create a new scorecard
         </small>
-        <small *ngIf="scorecard.name != ''">
-          {{ scorecard.name }}
+        <small *ngIf="name != ''">
+          {{ name }}
         </small>
       </h3>
     </div>
@@ -37,8 +37,8 @@
         <span [translate]="'Cancel'">Cancel</span>
       </button>
       <app-options
-        *ngIf="scorecard"
-        [scorecard]="scorecard"
+        *ngIf="options"
+        [options]="options"
         (onOptionUpdate) = "optionUpdated($event)"
       ></app-options>
     </div>

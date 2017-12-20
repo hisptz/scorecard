@@ -5,7 +5,7 @@ import * as fromCreate from '../reducers/create.reducer';
 import { getCreateadState } from '../reducers';
 
 import * as _ from 'lodash';
-import {createScorecardFromStore} from './createScorecardFromMetadataHelper';
+import {createScorecardFromStore, getScorecardOptions} from './createScorecardFromMetadataHelper';
 
 export const getScorecardToCreate = createSelector(getCreateadState, createScorecardFromStore);
 
@@ -29,17 +29,19 @@ export const getTitleWarning = createSelector(
 // Base selectors
 export const getDataSection = createSelector(getScorecardToCreate, (scorecard: ScoreCard) => scorecard.data);
 
+export const getCanEdit = createSelector(getScorecardToCreate, (scorecard: ScoreCard) => scorecard.can_edit);
+
 export const getOrgUnitSettings = createSelector(getDataSection, (data: ScorecardData) => data.orgunit_settings);
 
-export const getOptions = createSelector(getDataSection, (data: ScorecardData) => {
-
-});
+export const getOptions = createSelector(getDataSection, getScorecardOptions );
 
 export const getPeriodType = createSelector(getDataSection, (data: ScorecardData) => data.periodType);
 
 export const getSelectedPeriod = createSelector(getDataSection, (data: ScorecardData) => data.selected_periods);
 
 export const getHeader = createSelector(getDataSection, (data: ScorecardData) => data.header);
+
+export const getName = createSelector(getHeader, (data) => data.title);
 
 export const getHeaderTemplete = createSelector(getHeader, (data) => data.template);
 

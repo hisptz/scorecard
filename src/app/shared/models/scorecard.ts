@@ -22,6 +22,7 @@ export interface ScorecardData {
     show_data_in_column?: boolean;
     show_score?: boolean;
     show_rank?: boolean;
+    empty_rows?: boolean;
     rank_position_last?: boolean;
     header: {
       title: string,

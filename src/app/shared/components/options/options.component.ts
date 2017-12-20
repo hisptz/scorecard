@@ -24,27 +24,15 @@ import {animate, state, style, transition, trigger} from '@angular/animations';
 })
 export class OptionsComponent implements OnInit {
 
-  @Input() scorecard: any;
+  @Input() options: any = null;
   @Input() mode = 'edit';
   @Output() onOptionUpdate: EventEmitter<any> = new EventEmitter<any>();
 
   showAdditionalOptions: boolean = true;
-  options: any = null;
   constructor() { }
 
   ngOnInit() {
-    this.options = {
-      show_legend_definition: this.scorecard.data.header.show_legend_definition,
-      show_rank: this.scorecard.data.show_rank,
-      empty_rows: this.scorecard.data.empty_rows,
-      show_average_in_column: this.scorecard.data.show_average_in_column,
-      show_average_in_row: this.scorecard.data.show_average_in_row,
-      average_selection: this.scorecard.data.average_selection,
-      shown_records: this.scorecard.data.shown_records,
-      show_score: this.scorecard.data.show_score,
-      show_arrows_definition: this.scorecard.data.header.show_arrows_definition,
-      show_data_in_column: this.scorecard.data.show_data_in_column
-    };
+
   }
 
   showOptions() {

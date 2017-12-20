@@ -244,20 +244,24 @@ export class SampleScorecardComponent implements OnInit {
         }
 
       }else {
+
         const last_holder_position = ( object.indicator_holder_ids.length === 0 ) ? 0 : object.indicator_holder_ids.length - 1;
         this.updateIndicator(this.getHolderById(object.indicator_holder_ids[last_holder_position]));
-        this.enableAddIndicator(this.current_indicator.holder_id);
-        this.scorecardService.load_item(
-          $event.dragData,
-          this.indicator_holders,
-          this.indicator_holder_groups,
-          this.current_indicator,
-          this.current_holder_group,
-          this.legendset_definitions,
-          this.additional_labels,
-          this.group_type,
-          this.active_group
-        );
+
+        setTimeout(() => {
+          this.enableAddIndicator(this.current_indicator.holder_id);
+          this.scorecardService.load_item(
+            $event.dragData,
+            this.indicator_holders,
+            this.indicator_holder_groups,
+            this.current_indicator,
+            this.current_holder_group,
+            this.legendset_definitions,
+            this.additional_labels,
+            this.group_type,
+            this.active_group
+          );
+        },20);
       }
     }else if (drop_area === 'table_data') {
       //  check if someone is trying to reorder items within the scorecard
@@ -306,18 +310,19 @@ export class SampleScorecardComponent implements OnInit {
       }else if ($event.dragData.hasOwnProperty('indicator_holder_ids')) {
 
       }else {
-        console.log
-        this.scorecardService.load_item(
-          $event.dragData,
-          this.indicator_holders,
-          this.indicator_holder_groups,
-          this.current_indicator,
-          this.current_holder_group,
-          this.legendset_definitions,
-          this.additional_labels,
-          this.group_type,
-          this.active_group
-        );
+        setTimeout(() => {
+          this.scorecardService.load_item(
+            $event.dragData,
+            this.indicator_holders,
+            this.indicator_holder_groups,
+            this.current_indicator,
+            this.current_holder_group,
+            this.legendset_definitions,
+            this.additional_labels,
+            this.group_type,
+            this.active_group
+          );
+        }, 20);
       }
     }else {
       if ( $event.dragData.hasOwnProperty('holder_id') ) {

@@ -8,6 +8,7 @@ import { DataService } from './data.service';
 import {ApplicationState, getRouterState} from '../../store/reducers';
 import * as scorecardActions from '../../store/actions/scorecard.actions';
 import * as createActions from '../../store/actions/create.actions';
+import * as viewActions from '../../store/actions/view.actions';
 import {SetHomeLoadingPercent} from '../../store/actions/ui.actions';
 import {getScorecardEntites} from '../../store/selectors/scorecard.selectors';
 import {take, tap, filter} from 'rxjs/operators';
@@ -15,6 +16,7 @@ import {getUser} from '../../store/selectors/static-data.selectors';
 import {CreatedScorecardState} from '../../store/reducers/create.reducer';
 import {IndicatorObject} from '../models/indicator-object';
 import {IndicatorHolder} from '../models/indicator-holder';
+import {ViewScorecardState} from '../../store/reducers/view.reducer';
 
 
 @Injectable()
@@ -94,6 +96,21 @@ export class ScorecardService {
               }
             });
         }
+      }
+    );
+  }
+
+  // get the scorecard to be viewed
+  getViewedScorecard() {
+    this.store.select(getRouterState).first().subscribe(
+      (route) => {
+          const scorecardId = route.state.params.scorecardid;
+          this.store.select(getScorecardEntites).first().subscribe(
+            scorecards => {
+              if (scorecards) {
+                this.store.dispatch(new viewActions.SetViewdScorecard(this.getScorecardForViewing(scorecards[scorecardId])));
+              }
+            });
       }
     );
   }
@@ -345,21 +362,13 @@ export class ScorecardService {
 
   // prepare a scorecard for adding to creation state
   getScorecardForCreation(scorecard: ScoreCard): CreatedScorecardState {
+    scorecard = this.sanitize_scorecard(scorecard);
     return {
       id: scorecard.id,
       need_for_group: false,
       can_edit: scorecard.can_edit,
-      current_indicator_holder: {
-        'holder_id': this.getStartingIndicatorId(scorecard.data.data_settings.indicator_holders),
-        'indicators': []
-      },
-      current_group: {
-        'id': this.getStartingGroupHolderId(scorecard.data.data_settings.indicator_holder_groups),
-        'name': 'Default',
-        'indicator_holder_ids': [],
-        'background_color': '#ffffff',
-        'holder_style': null
-      },
+      current_indicator_holder: this.deduceStartingIndicatorHolder(scorecard).current_indicator_holder,
+      current_group:  this.deduceStartingIndicatorHolder(scorecard).current_group,
       next_group_id: null,
       next_holder_id: null,
       need_for_indicator: false,
@@ -374,6 +383,7 @@ export class ScorecardService {
       show_data_in_column: scorecard.data.show_data_in_column,
       show_score: scorecard.data.show_score,
       show_rank: scorecard.data.show_rank,
+      empty_rows: scorecard.data.hasOwnProperty('empty_rows') ? scorecard.data.empty_rows : false,
       rank_position_last: scorecard.data.rank_position_last,
       header: scorecard.data.header,
       legendset_definitions: scorecard.data.legendset_definitions,
@@ -386,6 +396,145 @@ export class ScorecardService {
       user: scorecard.data.user,
       user_groups: scorecard.data.user_groups
     };
+  }
+
+  deduceStartingIndicatorHolder(scorecard: ScoreCard) {
+    if (scorecard.data.data_settings.indicator_holders.length === 0) {
+      return {
+        current_indicator_holder: {
+          'holder_id': this.getStartingIndicatorId(scorecard.data.data_settings.indicator_holders),
+          'indicators': []
+        },
+        current_group: {
+          'id': this.getStartingGroupHolderId(scorecard.data.data_settings.indicator_holder_groups),
+          'name': 'Default',
+          'indicator_holder_ids': [],
+          'background_color': '#ffffff',
+          'holder_style': null
+        },
+      };
+    }else {
+      return {
+        current_indicator_holder: _.find(
+          scorecard.data.data_settings.indicator_holders,
+          { holder_id: scorecard.data.data_settings.indicator_holder_groups[0].indicator_holder_ids[0] }
+          ),
+        current_group: scorecard.data.data_settings.indicator_holder_groups[0]
+      };
+    }
+  }
+
+  // prepare a scorecard for for adding in viewing state
+  getScorecardForViewing(scorecard: ScoreCard): ViewScorecardState {
+    scorecard = this.sanitize_scorecard(scorecard);
+    return {
+      active_scorecards: {
+        [scorecard.id]: scorecard
+      },
+      id: scorecard.id,
+      can_edit: scorecard.can_edit,
+      orgunit_settings: scorecard.data.orgunit_settings,
+      average_selection: scorecard.data.average_selection,
+      shown_records: scorecard.data.shown_records,
+      show_average_in_row: scorecard.data.show_average_in_row,
+      show_average_in_column: scorecard.data.show_average_in_column,
+      periodType: scorecard.data.periodType,
+      selected_periods: scorecard.data.selected_periods,
+      show_data_in_column: scorecard.data.show_data_in_column,
+      show_score: scorecard.data.show_score,
+      show_rank: scorecard.data.show_rank,
+      empty_rows: scorecard.data.hasOwnProperty('empty_rows') ? scorecard.data.empty_rows : false,
+      rank_position_last: scorecard.data.rank_position_last,
+      header: scorecard.data.header,
+      legendset_definitions: scorecard.data.legendset_definitions,
+      highlighted_indicators: scorecard.data.highlighted_indicators,
+      indicator_holders: scorecard.data.data_settings.indicator_holders,
+      indicator_holder_groups: scorecard.data.data_settings.indicator_holder_groups,
+      additional_labels: scorecard.data.additional_labels,
+      footer: scorecard.data.footer,
+      indicator_dataElement_reporting_rate_selection: scorecard.data.indicator_dataElement_reporting_rate_selection,
+      user: scorecard.data.user,
+      user_groups: scorecard.data.user_groups,
+      loading: true,
+      loading_percent: 0,
+      orgunit: null,
+      period: null,
+      showModel: false,
+    };
+  }
+
+  sanitize_scorecard(scorecard) {
+    if (!scorecard.data.hasOwnProperty('orgunit_settings')) {
+      scorecard.data.orgunit_settings = {
+        'selection_mode': 'Usr_orgUnit',
+        'selected_levels': [],
+        'show_update_button': true,
+        'selected_groups': [],
+        'orgunit_levels': [],
+        'orgunit_groups': [],
+        'selected_orgunits': [],
+        'user_orgunits': [],
+        'type': 'report',
+        'selected_user_orgunit': []
+      };
+    }else if (!scorecard.data.orgunit_settings.hasOwnProperty('selected_orgunits')) {
+      scorecard.data.orgunit_settings = {
+        'selection_mode': 'Usr_orgUnit',
+        'selected_levels': [],
+        'show_update_button': true,
+        'selected_groups': [],
+        'orgunit_levels': [],
+        'orgunit_groups': [],
+        'selected_orgunits': [],
+        'user_orgunits': [],
+        'type': 'report',
+        'selected_user_orgunit': []
+      };
+    }else if (!this.isArray(scorecard.data.orgunit_settings.selected_levels)) {
+      scorecard.data.orgunit_settings = {
+        'selection_mode': 'Usr_orgUnit',
+        'selected_levels': [],
+        'show_update_button': true,
+        'selected_groups': [],
+        'orgunit_levels': [],
+        'orgunit_groups': [],
+        'selected_orgunits': [],
+        'user_orgunits': [],
+        'type': 'report',
+        'selected_user_orgunit': []
+      };
+    }
+    if (scorecard.data.selected_periods.length === 0) {
+      scorecard.data.selected_periods = [{name: 'Last Quarter', id: 'LAST_QUARTER'}];
+    }
+    // attach average_selection if none is defined
+    if (!scorecard.data.hasOwnProperty('average_selection')) {
+      scorecard.data.average_selection = 'all';
+    }
+    // attach shown_records if none is defined
+    if (!scorecard.data.hasOwnProperty('shown_records')) {
+      scorecard.data.shown_records = 'all';
+    }
+    // attach show_average_in_row if none is defined
+    if (!scorecard.data.hasOwnProperty('show_average_in_row')) {
+      scorecard.data.show_average_in_row = false;
+    }
+    // attach show_average_in_column if none is defined
+    if (!scorecard.data.hasOwnProperty('show_average_in_column')) {
+      scorecard.data.show_average_in_column = false;
+    }
+    // attach a property empty row if none is defined
+    if (!scorecard.data.hasOwnProperty('empty_rows')) {
+      scorecard.data.empty_rows = true;
+    }
+    if (!scorecard.data.hasOwnProperty('show_data_in_column')) {
+      scorecard.data.show_data_in_column = false;
+    }
+    return scorecard;
+  }
+
+  isArray(o) {
+    return Object.prototype.toString.call(o) === '[object Array]';
   }
 
   // get the starting id for the indicator holder
@@ -409,7 +558,6 @@ export class ScorecardService {
     }
     return last_id;
   }
-
 
   //  check if the indicator is already added in a scorecard
   indicatorExist(holders, indicator): boolean {
@@ -582,8 +730,8 @@ export class ScorecardService {
         current_holder_group = group;
       }
     });
-    this.store.dispatch(new createActions.SetCurrentIndicatorHolder(current_indicator_holder));
     this.store.dispatch(new createActions.SetCurrentGroup(current_holder_group));
+    this.store.dispatch(new createActions.SetCurrentIndicatorHolder(current_indicator_holder));
     this.cleanUpEmptyColumns(indicator_holders, indicator_holder_groups);
   }
 
@@ -616,8 +764,10 @@ export class ScorecardService {
       const random = Math.floor(Math.random() * 6) + 1;
       if (random % 2 === 0) {
         indicator.showTopArrow = true;
+        indicator.showBottomArrow = false;
       } else {
         indicator.showBottomArrow = true;
+        indicator.showTopArrow = false;
       }
       // ensure indicator has all additinal labels
       for (const label of additional_labels) {
@@ -642,6 +792,128 @@ export class ScorecardService {
       this.store.dispatch(new createActions.SetNeedForIndicator(true));
       this.addHolderGroups(indicator_holder_groups, current_holder_group, current_indicator_holder);
     }
+  }
+
+  // helper function to dynamical provide colspan attribute for a group
+  getGroupColspan(group_holders, indicator_holders, periods_list, hidenColums ) {
+    return _.filter(indicator_holders, (holder: any) => {
+      return _.includes(group_holders, holder.holder_id)
+        && _.difference(_.map(holder.indicators, ((indicator: any) => indicator.id)), hidenColums).length !== 0;
+    }).length * periods_list.length;
+  }
+
+  // A function used to decouple indicator list and prepare them for a display
+  getSubscorecardColspan(scorecard: ScoreCard, periods_list, hidenColums) {
+    let indicators_list = 0;
+    for (const holder_group of scorecard.data.data_settings.indicator_holder_groups) {
+      indicators_list += this.getGroupColspan(holder_group.indicator_holder_ids, scorecard.data.data_settings.indicator_holders, periods_list, hidenColums);
+    }
+    if (scorecard.data.show_sum_in_row) {
+      indicators_list++;
+    }
+    if (scorecard.data.show_average_in_row) {
+      indicators_list++;
+    }
+    if (scorecard.data.show_rank) {
+      indicators_list++;
+    }
+    return indicators_list + 1;
+  }
+
+  // simplify title displaying by switching between two or on indicator
+  getIndicatorTitle(holder, hidenColums): string {
+    return _.map(_.filter(holder.indicators, (indicator: any) => hidenColums.indexOf(indicator.id) === -1), (indicator: any) => indicator.title).join(' / ');
+  }
+
+  // helper function to set label value( helpful when there is more than one indicator)
+  getIndicatorLabel(indicator, label, hidenColums) {
+    const labels = [];
+    for (const data of indicator.indicators) {
+      if (data.additional_label_values[label] !== null && data.additional_label_values[label] !== '' && hidenColums.indexOf(data.id) === -1) {
+        labels.push(data.additional_label_values[label]);
+      }
+    }
+    return labels.join(' / ');
+  }
+
+  /**
+   * finding the row average
+   * @param orgunit_id
+   */
+  findRowAverage(orgunit_id, periods_list, period, indicator_holders, hidenColums) {
+    let sum = 0;
+    let counter = 0;
+    if (period === null) {
+      for (const holder of indicator_holders) {
+        for (const indicator of holder.indicators) {
+          for (const per of periods_list) {
+            const use_key = orgunit_id + '.' + per.id;
+            if (hidenColums.indexOf(indicator.id) === -1 && indicator.values[use_key] !== null) {
+              counter++;
+              sum = sum + parseFloat(indicator.values[use_key]);
+            }
+          }
+        }
+      }
+    } else {
+      const use_key = orgunit_id + '.' + period;
+      for (const holder of indicator_holders) {
+        for (const indicator of holder.indicators) {
+          if (hidenColums.indexOf(indicator.id) === -1 && indicator.values[use_key] !== null) {
+            counter++;
+            sum = sum + parseFloat(indicator.values[use_key]);
+          }
+        }
+      }
+    }
+
+    return (sum / counter).toFixed(2);
+  }
+
+  /**
+   * finding the row average
+   * @param orgunit_id
+   */
+  findRowTotalAverage(orgunits, period, indicator_holders, hidenColums) {
+    let sum = 0;
+    let n = 0;
+    for (const holder of indicator_holders) {
+      for (const indicator of holder.indicators) {
+        if (hidenColums.indexOf(indicator.id) === -1) {
+          for (const orgunit of orgunits) {
+            const usekey = orgunit.id + '.' + period;
+            if (usekey in indicator.values && indicator.values[usekey] !== null) {
+              n++;
+              sum = sum + parseFloat(indicator.values[usekey]);
+            }
+          }
+        }
+      }
+    }
+    return (sum / n).toFixed(2);
+  }
+
+  /**
+   * finding the row average
+   * @param orgunit_id
+   */
+  findRowTotalSum(orgunits, period, indicator_holders, hidenColums) {
+    let sum = 0;
+    let n = 0;
+    for (const holder of indicator_holders) {
+      for (const indicator of holder.indicators) {
+        if (hidenColums.indexOf(indicator.id) === -1) {
+          for (const orgunit of orgunits) {
+            const use_key = orgunit.id + '.' + period;
+            if (orgunit.id in indicator.values && indicator.values[use_key] !== null) {
+              n++;
+              sum = sum + parseFloat(indicator.values[use_key]);
+            }
+          }
+        }
+      }
+    }
+    return sum;
   }
 
 }

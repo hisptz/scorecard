@@ -1,3 +1,41 @@
-<div class="col-md-2 col-xs-12" style="padding-left: 0px; cursor: pointer;" [routerLink]="['']">
-  <img src="scorecard.svg" style="height: 58px; width: 48px"> <span style="font-size: 20px"> Score Card</span>
+
+<app-view-header
+ (onGoHomePage)="goToHomePage()"
+></app-view-header>
+
+<div id="options" class="container-fluid " style="margin-top: 20px" *ngIf="(loaded$ | async)">
+  <app-selectors
+    (onOrgunitChange)="setOrgunitNodes($event)"
+  ></app-selectors>
+</div>
+
+<div class="container-fluid">
+  <div class="ourmodel"
+       [@visibilityChanged]="hoverState || 'notHovered'"
+  >
+    <p><a class="btn btn-light btn-sm pull-right" (click)="closeModel()"><i class="fa fa-close"></i> </a></p>
+    <app-details
+      *ngIf="showPreview"
+      [indicatorDetails]="indicatorDetails"
+
+    ></app-details>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-sm-12"  tourAnchor="view.scorecard">
+    <app-scorecard
+      *ngIf="(functions_loaded$ | async) && (metadata_ready$ | async)"
+      #childScoreCard
+      [scorecard]="scorecard$ | async"
+      [selectedOrganisationUnit]="selectedOrganisationUnits$ | async"
+      [selectedPeriod]="selectedPeriod$ | async"
+      [functions]="functions$ | async"
+      [organisation_unit_nodes]="organisation_unit_nodes"
+      (show_details)="loadPreview($event)"
+    ></app-scorecard>
+
+    <h1 class="text-center" *ngIf="!(functions_loaded$ | async) || !(metadata_ready$ | async)">
+      <img src="assets/img/balls-3.svg">Getting scorecard ready</h1>
+  </div>
 </div>

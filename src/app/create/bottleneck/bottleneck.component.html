@@ -1,3 +1,136 @@
-<p>
-  bottleneck works!
-</p>
+<div class="container-fluid" style="font-size: 11px">
+  <div class="row">
+    <div class="col-sm-7 scorecard_details">
+      <div class="row ">
+        <div class="col-sm-12" style="padding: 0px">
+          <div class="form-group">
+            <ul class="list-inline" style="margin-bottom: 0px">
+              <li class="list-inline-item">
+                <a (click)="group_type='indicators';switchType('indicators')" class="cursor btn btn-sm {{group_type=='indicators' ? 'btn-info' : 'btn-outline-secondary'}}" title="Click to see All Data">
+                  <span [translate]="'Indicators'">Indicators</span>
+                </a>
+              </li>
+              <li class="list-inline-item">
+                <a (click)="group_type='dataElements';switchType('dataElements')" class="cursor btn btn-sm {{group_type=='dataElements' ? 'btn-info' : 'btn-outline-secondary'}}" title="Click to see All Data">
+                  <span [translate]="'Data Elements'">Data Elements</span>
+                </a>
+              </li>
+              <li class="list-inline-item">
+                <a (click)="group_type='datasets';switchType('datasets')" class="cursor btn btn-sm {{group_type=='datasets' ? 'btn-info' : 'btn-outline-secondary'}}" title="Click to see All Data">
+                  <span [translate]="'Data Sets'">Data Sets</span>
+                </a>
+              </li>
+              <li class="list-inline-item">
+                <a (click)="group_type='programs';switchType('programs')" class="cursor btn btn-sm {{group_type=='programs' ? 'btn-info' : 'btn-outline-secondary'}}" title="Click to see All Data">
+                  <span [translate]="'Program Indicators'">Program Indicators</span>
+                </a>
+              </li>
+              <li class="list-inline-item">
+                <a (click)="group_type='event';switchType('event')" class="cursor btn btn-sm {{group_type=='event' ? 'btn-info' : 'btn-outline-secondary'}}" title="Click to see All Data">
+                  <span [translate]="'Event Data Items'">Event Data Items</span>
+                </a>
+              </li>
+              <li class="list-inline-item" >
+                <a (click)="group_type='functions';switchType('functions')" class="cursor btn btn-sm {{group_type=='functions' ? 'btn-info' : 'btn-outline-secondary'}}" title="Click to see All Data">
+                  <span [translate]="'Custom Functions'">Custom Functions</span>
+                </a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <!--Group selection-->
+        <div class="col-sm-6 no-left-padding1">
+          <div class="thumbnail scorecard_details2">
+            <!--<h4 style="margin-top: 0px;margin-bottom: 1px">Data Type</h4>-->
+            <img src="balls-4.svg" style="height: 70px; padding-top: 20px" *ngIf="!done_loading_groups">
+            <div class="form-group" *ngIf="done_loading_groups">
+              <input type="text" class="form-control form-control-sm" placeholder="Search group by name" style="height: 25px;padding-left: 2px; font-size: 11px" [(ngModel)]="groupQuery">
+            </div>
+            <ul class="list-group" *ngIf="done_loading_groups">
+              <li
+                class="list-group-item selection_link"
+                *ngFor="let group of current_groups | filterByName:groupQuery | paginate: { id: 'groups1', itemsPerPage: 8, currentPage: p }"
+                [ngClass]="{'listSelected': group.id == activeGroup}"
+                (click)="load_list(group, group_type)"
+              >
+                <span class="fa fa-check-circle text-success" *ngIf="botteneckIndicatorExist(group)"></span>
+                {{ group.name }}
+              </li>
+            </ul>
+            <pagination-controls  id="groups1" (pageChange)="p = $event" directionLinks="true" autoHide="true" previousLabel=" " nextLabel=" "></pagination-controls>
+          </div>
+
+        </div>
+
+        <!--item listing-->
+        <div class="col-sm-6 no-left-padding1">
+          <div class="thumbnail scorecard_details2" *ngIf="!use_group_in_bottleneck">
+            <div *ngIf="listReady">
+              <img src="balls-4.svg" style="height: 90px; padding-top: 20px" *ngIf="!done_loading_list">
+              <h5 class="text-danger" *ngIf="error_loading_list.occurred">{{ error_loading_list.message }}</h5>
+              <div class="form-group" *ngIf="done_loading_list">
+                <input type="text" class="form-control form-control-sm" placeholder="Search Item by name" style="height: 25px;padding-left: 2px; font-size: 11px" [(ngModel)]="listQuery">
+              </div>
+              <p *ngIf="done_loading_list && current_listing.length == 0" [translate]="'No items for a selected group'">No items for a selected group</p>
+              <ul class="list-group" *ngIf="done_loading_list">
+                <li
+                  class="list-group-item selection_link"
+                  *ngFor="let item of current_listing | filterByName:listQuery | paginate: { id: 'list1', itemsPerPage: 8, currentPage: r }"
+                  [ngClass]="{'already_selected': botteneckIndicatorExist(item)}"
+                  (click)="load_item(item)"
+                >
+                  <i class="fa fa-check-circle-o text-success" *ngIf="botteneckIndicatorExist(item)"></i> {{ item.name }}
+                </li>
+              </ul>
+              <pagination-controls  id="list1" (pageChange)="r = $event" directionLinks="true" autoHide="true" previousLabel=" " nextLabel=" "></pagination-controls>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+    <div class="col-sm-5" style="padding: 0px">
+      <label *ngIf="indicator.bottleneck_indicators.length == 0">
+        <input  type="checkbox" [(ngModel)]="use_group_in_bottleneck"> Use Groups
+      </label>
+      <div class="thumbnail bottleneck_scorecard_details">
+        <ul class="list-group">
+          <li
+            class="list-group-item"
+            *ngFor="let item of indicator.bottleneck_indicators | paginate: { id: 'list3', itemsPerPage: 6, currentPage: r }"
+          >
+            <div style="margin-left: -15px;margin-right: -15px">
+              <p>{{ item.name }}
+                <a style="padding-right: 5px" (click)="removeBottleneckIndicator(item)" title="Remove from list" class="remove-bottleneck pull-right">
+                  <i class="fa fa-trash-o text-danger"></i>
+                </a>
+              </p>
+              <label>Display Name</label>
+              <input class="form-control form-control-sm" [(ngModel)]="item.bottleneck_title">
+            </div>
+            <div class="container-fluid" style="padding: 0px">
+              <div class="row">
+                <div class="col-sm-6" style="padding-left: 0px">
+                  <label>Baseline</label>
+                  <input class="form-control form-control-sm" [(ngModel)]="item.baseline" placeholder="Baseline">
+                </div>
+                <div class="col-sm-6" style="padding-right: 0px">
+                  <label>Target</label>
+                  <input class="form-control form-control-sm" [(ngModel)]="item.target" placeholder="Target">
+                </div>
+              </div>
+            </div>
+          </li>
+        </ul>
+        <pagination-controls  id="list3" (pageChange)="r = $event" directionLinks="true" autoHide="true" previousLabel=" " nextLabel=" "></pagination-controls>
+      </div>
+    </div>
+    <div class="container-fluid" style="padding: 0px">
+      <button class="btn btn-outline-secondary pull-right cursor" (click)="showBotleneckEditor(indicator)"> <i class="fa fa-check"></i> Done </button>
+    </div>
+  </div>
+
+
+</div>

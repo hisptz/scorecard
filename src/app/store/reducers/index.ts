@@ -6,6 +6,7 @@ import {RouterStateUrl} from './router.reducer';
 import {CreatedScorecardState, createReducer} from "./create.reducer";
 import {staticDataReducer, StaticDataState} from "./static-data.reducer";
 import {orgunitReducer, OrgunitState} from "./orgunits.reducer";
+import {viewReducer, ViewScorecardState} from "./view.reducer";
 
 export  interface ApplicationState {
   scorecards: ScorecardState;
@@ -13,6 +14,7 @@ export  interface ApplicationState {
   staticData: StaticDataState;
   orgunits: OrgunitState;
   createdScorecard: CreatedScorecardState;
+  viewedScorecard: ViewScorecardState;
   routerReducer: fromRouter.RouterReducerState<RouterStateUrl>;
 }
 export const reducers: ActionReducerMap<ApplicationState> = {
@@ -21,6 +23,7 @@ export const reducers: ActionReducerMap<ApplicationState> = {
   staticData: staticDataReducer,
   orgunits: orgunitReducer,
   createdScorecard: createReducer,
+  viewedScorecard: viewReducer,
   routerReducer: fromRouter.routerReducer,
 };
 
@@ -34,6 +37,8 @@ export const getUiState = createFeatureSelector<UiState>('uiState');
 export const getScorecardState = createFeatureSelector<ScorecardState>('scorecards');
 
 export const getCreateadState = createFeatureSelector<CreatedScorecardState>('createdScorecard');
+
+export const getViewedState = createFeatureSelector<ViewScorecardState>('viewedScorecard');
 
 export const getStaticData = createFeatureSelector<StaticDataState>('staticData');
 

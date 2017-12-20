@@ -9,7 +9,8 @@ import {ScoreCard} from '../../shared/models/scorecard';
 })
 export class CreateHeaderComponent implements OnInit {
 
-  @Input() scorecard: ScoreCard;
+  @Input() name: string;
+  @Input() options: any;
   @Output() onGoHomePage = new EventEmitter();
   @Output() onCancel = new EventEmitter();
   @Output() onSave = new EventEmitter();
@@ -28,6 +29,10 @@ export class CreateHeaderComponent implements OnInit {
 
   cancel() {
     this.onCancel.emit();
+  }
+
+  optionUpdated(event) {
+
   }
 
 }

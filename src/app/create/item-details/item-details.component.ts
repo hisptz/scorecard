@@ -1,4 +1,4 @@
-import {Component, Input, OnInit} from '@angular/core';
+import {ChangeDetectionStrategy, Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {ScorecardService} from '../../shared/services/scorecard.service';
 import {Store} from "@ngrx/store";
 import {ApplicationState} from "../../store/reducers";
@@ -10,6 +10,7 @@ import * as _ from 'lodash'
 @Component({
   selector: 'app-item-details',
   templateUrl: './item-details.component.html',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   styleUrls: ['./item-details.component.css']
 })
 export class ItemDetailsComponent implements OnInit {
@@ -20,6 +21,7 @@ export class ItemDetailsComponent implements OnInit {
   @Input() indicator_holder_groups;
   @Input() legendset_definitions;
   @Input() additional_labels;
+  @Output() onShowBottleneckEditor = new EventEmitter();
 
   show_score$: Observable<boolean>;
   constructor(
@@ -37,7 +39,7 @@ export class ItemDetailsComponent implements OnInit {
   }
 
   showBotleneckEditor(indicator) {
-
+    this.onShowBottleneckEditor.emit(indicator);
   }
 
   updateIndicatorDetails(indicator) {
