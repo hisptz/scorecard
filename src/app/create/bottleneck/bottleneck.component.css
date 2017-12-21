@@ -1,4 +1,8 @@
-
+.switcher {
+  border-bottom: 0px;
+  border-bottom-left-radius: 0px;
+  border-bottom-right-radius: 0px;
+}
 /*bottleneck Indicator selection arrea*/
 .bottleneck_scorecard_details {
   width: auto;
@@ -147,7 +151,7 @@ label{
 /*bottleneck Indicator selection arrea*/
 .bottleneck_scorecard_details {
   width: auto;
-  height: 429px;
+  height: 450px;
   position: relative;
   padding-top: 10px;
   overflow: hidden;

@@ -188,6 +188,16 @@ export class BottleneckComponent implements OnInit {
     }
   }
 
+  clear(type) {
+    if (type === 'items' && this.use_group_in_bottleneck) {
+      this.indicator.bottleneck_indicators = [];
+    }
+    if (type === 'groups' && !this.use_group_in_bottleneck) {
+      this.indicator.bottleneck_indicators = [];
+    }
+
+
+  }
 
   //  check if the indicator is already added in a scorecard
   indicatorExist(holders, indicator): boolean {

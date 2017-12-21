@@ -41,12 +41,14 @@ import {DataElementGroupService} from './shared/services/data-element-group.serv
 import {ProgramIndicatorsService} from './shared/services/program-indicators.service';
 import {DatasetService} from './shared/services/dataset.service';
 import {EventDataService} from './shared/services/event-data.service';
-import {VisualizerService} from "./shared/services/visualizer.service";
-import {FilterService} from "./shared/services/filter.service";
+import {VisualizerService} from './shared/services/visualizer.service';
+import {FilterService} from './shared/services/filter.service';
 
 // Add a function, that returns a “TranslateHttpLoader” and export it (needed by AoT)
 export function HttpLoaderFactory(http: HttpClient) {
-  return new TranslateHttpLoader(http);
+  return new TranslateHttpLoader(http,
+    './assets/i18n/',
+    '.json');
 }
 
 
@@ -72,7 +74,7 @@ export function HttpLoaderFactory(http: HttpClient) {
     StoreModule.forRoot(reducers),
     StoreRouterConnectingModule,
     EffectsModule.forRoot(effects),
-    ServiceWorkerModule.register('/ngsw-worker.js', { enabled: environment.production }),
+    ServiceWorkerModule.register('ngsw-worker.js', { enabled: environment.production }),
     TranslateModule.forRoot({
       loader: {
         provide: TranslateLoader,

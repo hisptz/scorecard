@@ -5,7 +5,7 @@ import {Observable} from 'rxjs/Observable';
 import * as viewSelectors from '../../store/selectors/view.selectors';
 import * as viewActions from '../../store/actions/view.actions';
 import {Go} from '../../store/actions/router.action';
-import * as orgunitSelector from "../../store/selectors/orgunits.selectors";
+import * as orgunitSelector from '../../store/selectors/orgunits.selectors';
 
 @Component({
   selector: 'app-selectors',
@@ -65,7 +65,7 @@ export class SelectorsComponent implements OnInit {
     }
   }
   updateOrgUnit(event) {
-    this.onOrgunitChange.emit(event)
+    this.onOrgunitChange.emit(event);
     const items = event.items.map((item) => {
       return {
         id: item.id, name: item.name

@@ -57,7 +57,7 @@ export class CreateHeaderComponent implements OnInit {
 
     //  post the data
     this.saving_scorecard = true;
-    if (this.action_type === 'save') {
+    if (this.action_type === 'create') {
       this.scorecardService.create(this.scorecard).subscribe(
         (data) => {
           this.saving_scorecard = false;

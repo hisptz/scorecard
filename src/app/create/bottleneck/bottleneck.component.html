@@ -1,5 +1,17 @@
 <div class="container-fluid" style="font-size: 11px">
   <div class="row">
+    <div class="col-sm-12" style="margin-bottom: 2px;padding-left: 0px; border-bottom: 1px solid rgba(0,0,0,0.3)">
+      <button
+        class="btn btn-outline-secondary switcher"
+        (click)="clear('items');use_group_in_bottleneck = false"
+        [ngClass]="{ 'btn-outline-secondary': use_group_in_bottleneck,'btn-secondary': !use_group_in_bottleneck }"
+      >Use Individual Items</button>
+      <button
+        class="btn switcher"
+        (click)="clear('groups'); use_group_in_bottleneck = true; "
+        [ngClass]="{ 'btn-outline-secondary': !use_group_in_bottleneck,'btn-secondary': use_group_in_bottleneck }"
+      >Use Groups</button>
+    </div>
     <div class="col-sm-7 scorecard_details">
       <div class="row ">
         <div class="col-sm-12" style="padding: 0px">
@@ -41,6 +53,8 @@
       </div>
       <div class="row">
         <!--Group selection-->
+        <div class="col-sm-6 no-left-padding1" *ngIf="use_group_in_bottleneck">
+        </div>
         <div class="col-sm-6 no-left-padding1">
           <div class="thumbnail scorecard_details2">
             <!--<h4 style="margin-top: 0px;margin-bottom: 1px">Data Type</h4>-->
@@ -65,8 +79,8 @@
         </div>
 
         <!--item listing-->
-        <div class="col-sm-6 no-left-padding1">
-          <div class="thumbnail scorecard_details2" *ngIf="!use_group_in_bottleneck">
+        <div class="col-sm-6 no-left-padding1" *ngIf="!use_group_in_bottleneck">
+          <div class="thumbnail scorecard_details2" >
             <div *ngIf="listReady">
               <img src="balls-4.svg" style="height: 90px; padding-top: 20px" *ngIf="!done_loading_list">
               <h5 class="text-danger" *ngIf="error_loading_list.occurred">{{ error_loading_list.message }}</h5>
@@ -92,9 +106,6 @@
       </div>
     </div>
     <div class="col-sm-5" style="padding: 0px">
-      <label *ngIf="indicator.bottleneck_indicators.length == 0">
-        <input  type="checkbox" [(ngModel)]="use_group_in_bottleneck"> Use Groups
-      </label>
       <div class="thumbnail bottleneck_scorecard_details">
         <ul class="list-group">
           <li
