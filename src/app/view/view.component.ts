@@ -26,7 +26,7 @@ import { TourService } from 'ngx-tour-ng-bootstrap';
     trigger('visibilityChanged', [
       state('notHovered' , style({
         'transform': 'scale(0, 0)',
-        'position': 'absolute',
+        'position': 'fixed',
         'top': '100px',
         'box-shadow': '0 0 0px rgba(0,0,0,0.0)',
         'background-color': 'rgba(0,0,0,0.0)',
@@ -36,7 +36,7 @@ import { TourService } from 'ngx-tour-ng-bootstrap';
         'min-height': '580px',
         'width': '90%',
         'left': '5%',
-        'position': 'absolute',
+        'position': 'fixed',
         'top': '100px',
         'z-index': '100',
         '-webkit-box-shadow': '0 0 10px rgba(0,0,0,0.2)',
@@ -44,7 +44,7 @@ import { TourService } from 'ngx-tour-ng-bootstrap';
         'background-color': 'rgba(255,255,255,1)',
         'border': '1px solid #ddd'
       })),
-      transition('notHovered <=> hoovered', animate('500ms'))
+      transition('notHovered <=> hoovered', animate('100ms'))
     ]),
     trigger('fadeInOut', [
       transition(':enter', [   // :enter is alias to 'void => *'

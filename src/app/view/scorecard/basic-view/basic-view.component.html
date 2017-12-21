@@ -41,7 +41,7 @@
     </th>
     <td *ngFor="let indicator of indicator_holders_list" class="indicator_title"
         style="line-height: 140%; padding: 0px;vertical-align: bottom; position: relative"
-        title="{{ 'Click to Sort By' | translate }} {{ getIndicatorTitle(indicator) }} {{ indicator.indicators[0].bottleneck_indicators.length == 0 ? '': ', This indicator has bottleneck analysis' }}"
+        title="{{ 'Click to Sort By' | translate }} {{ getIndicatorTitle(indicator) }} {{ indicator.indicators[0].bottleneck_indicators.length == 0 ? '': ', For bottleneck analysis, right click any of the cellse' }}"
         (click)="sortScoreCardFromColumn(indicator.indicators[0].id, sortAscending, orgunits, periods_list[0].id, false)"
         (dblclick)="loadPreview(null,indicator,null,null)"
         [attr.colspan]="periods_list.length"
@@ -52,7 +52,7 @@
         (mouseenter) ="mouseEnter(indicator)"
         (mouseleave) ="mouseLeave(indicator)"
     >
-      <i title="This indicator has bottleneck analysis, Click any of the cell" *ngIf="indicator.indicators[0].bottleneck_indicators.length != 0" class="fa fa-bar-chart-o" style="position: absolute; top:1px;right: 1px; opacity: 0.5"></i>
+      <i title="For bottleneck analysis, right click any of the cells" *ngIf="indicator.indicators[0].bottleneck_indicators.length != 0" class="fa fa-bar-chart-o" style="position: absolute; top:1px;right: 1px; opacity: 0.5"></i>
       <div dnd-draggable [dragEnabled]="true" [dragData]="indicator" style="padding: 8px;">
         <app-indicator-title
           [indicator]="indicator"

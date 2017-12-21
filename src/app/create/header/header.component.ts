@@ -20,6 +20,7 @@ export class CreateHeaderComponent implements OnInit {
 
   @Input() scorecard: ScoreCard;
   @Input() name: string;
+  @Input() position: string;
   @Input() options: any;
   @Input() action_type: any;
   @Output() onGoHomePage = new EventEmitter();

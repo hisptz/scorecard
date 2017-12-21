@@ -1,3 +1,4 @@
+<tour-step-template></tour-step-template>
 <div class="container-fluid" *ngIf="!(can_edit$ | async)">
   <h1 class="text-center" style="margin-top: 50px">You have no permission to edit this scorecard</h1>
   <h1 class="text-center">
@@ -9,12 +10,13 @@
   <app-create-header
     [scorecard]="scorecard$ | async"
     [action_type]="action_type$ | async"
+    [position]="'top'"
     [name]="scorecard_name$ | async"
     [options]="options$ | async"
     (onGoHomePage)="goToHomePage()"
     (onCancel)="cancelSaving()"
     (onSave)="saveScorecard()"
-    (onStartTour)="sta"
+    (onStartTour)="startTour()"
   ></app-create-header>
 
   <app-sample-scorecard
@@ -135,5 +137,16 @@
     </div>
   </div>
 
+  <app-create-header
+    [scorecard]="scorecard$ | async"
+    [action_type]="action_type$ | async"
+    [position]="'bottom'"
+    [name]="scorecard_name$ | async"
+    [options]="options$ | async"
+    (onGoHomePage)="goToHomePage()"
+    (onCancel)="cancelSaving()"
+    (onSave)="saveScorecard()"
+  ></app-create-header>
 
 </div>
+

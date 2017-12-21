@@ -48,8 +48,8 @@
 
     <!--chart labels switching-->
     <label *ngIf="visualizer_config.type == 'chart'">
-      &nbsp;&nbsp;&nbsp;&nbsp;<input type="checkbox" [(ngModel)]="show_labels" (change)="updateType(visualizer_config.type)">
-      Chart Labels
+      &nbsp;&nbsp;&nbsp;&nbsp;<input type="checkbox" [(ngModel)]="show_labels" (change)="updateType((showBottleneck) ? '' : visualizer_config.type)">
+      <span [translate]="'Chart Labels'" >Chart Labels</span>
     </label>
     <div class="card" style="width: 100%; position: absolute; bottom: 5px; top:80px">
       <div class="card-body">

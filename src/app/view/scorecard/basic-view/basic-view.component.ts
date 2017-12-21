@@ -38,6 +38,7 @@ export class BasicViewComponent implements OnInit {
   @Output() onLoadChildrenData = new EventEmitter();
   @Output() onSortBestWorst = new EventEmitter();
   @Output() onLoadPreview = new EventEmitter();
+  @Output() onLoadPreviewFromChild = new EventEmitter();
   @Output() onHideClicked = new EventEmitter();
 
   show_sum_in_row: boolean = false;
@@ -105,8 +106,7 @@ export class BasicViewComponent implements OnInit {
   }
 
   loadPreviewFromChild(event) {
-    const {holderGroup, indicator, ou, period, periods} = event;
-    this.onLoadPreview.emit({holderGroup, indicator, ou, period, periods});
+    this.onLoadPreviewFromChild.emit(event);
   }
 
   dragItemSuccessfull($event, drop_area: string, object: any) {

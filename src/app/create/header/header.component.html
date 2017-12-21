@@ -3,12 +3,14 @@
     <div
       class="col-md-2 col-xs-12"
       style="padding-left: 0px; cursor: pointer;"
-      (click)="goToHomePage()">
-      <img src="scorecard.svg" style="height: 58px; width: 48px">
-      <span style="font-size: 20px" [translate]="'Score Card'"> Score Card</span>
+      (click)="goToHomePage()"
+      [tourAnchor]="position === 'top'? 'home.start.tour' : 'home.tour'"
+    >
+      <img src="scorecard.svg" style="height: 58px; width: 48px" *ngIf="position === 'top'">
+      <span style="font-size: 20px" [translate]="'Score Card'" *ngIf="position === 'top'"> Score Card</span>
     </div>
     <div  class="col-md-7 col-xs-12">
-      <h3 class="text-center" style="margin-top: 8px">
+      <h3 class="text-center" style="margin-top: 8px"  *ngIf="position === 'top'">
         <small *ngIf="name == ''" [translate]="'Create a new scorecard'">
           Create a new scorecard
         </small>
@@ -24,6 +26,7 @@
         style="height: 35px;margin-left: 5px"
         title="{{ 'Save the Changes'| translate }}"
         [disabled]="scorecard.description == '' || scorecard.name == ''"
+        [tourAnchor]="position === 'top'? 'create.save' : 'crear'"
       >
         <i class="fa fa-floppy-o text-info"></i>
         <span [translate]="'Save'">Save</span>
@@ -33,21 +36,23 @@
         (click)="cancel()"
         style="height: 35px;margin-left: 5px"
         title="{{ 'Cancel and Go Back' | translate }}"
+        [tourAnchor]="position === 'top'? 'create.cancel' : 'create.cancel1'"
       >
         <i class="fa fa-ban"></i>
         <span [translate]="'Cancel'">Cancel</span>
       </button>
       <app-options
-        *ngIf="options"
+        *ngIf="options && position === 'top'"
         [options]="options"
         (onOptionUpdate) = "optionUpdated($event)"
       ></app-options>
       <button
-      style="height: 34px;margin-right: 3px"
-      class="btn btn-outline-secondary btn-sm float-md-right cursor"
-      title="Get help"
-      (click)="startTour()"
-    >
+        *ngIf="position === 'top'"
+        style="height: 34px;margin-right: 3px"
+        class="btn btn-outline-secondary btn-sm float-md-right cursor"
+        title="Get help"
+        (click)="startTour()"
+      >
       <i class="fa fa-question-circle"></i>
     </button>
       <h6

@@ -12,7 +12,7 @@ import { IndicatorHolder } from '../shared/models/indicator-holder';
 import { IndicatorHolderGroup } from '../shared/models/indicator-holders-group';
 import { LoadOrganisationUnitItem } from '../store/actions/orgunits.actions';
 import {Legend} from '../shared/models/legend';
-import tourSteps from '../shared/tourGuide/tour.view';
+import tourSteps from '../shared/tourGuide/tour.create';
 import { TourService } from 'ngx-tour-ng-bootstrap';
 
 @Component({

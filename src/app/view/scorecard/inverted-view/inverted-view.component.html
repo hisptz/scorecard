@@ -86,8 +86,11 @@
         <td *ngFor="let per of periods_list"
             style="font-size: 10px;max-width: 90px;overflow-wrap: break-word; cursor: pointer; padding: 0px;line-height: 10%;"
             class="sans-pro"
-            (click)="loadPreview(null,indicator,current_orgunit.id,per)"
+            (click)="loadPreview(null,indicator,current_orgunit,per)"
             title="{{ prepareTooltip(indicator,current_orgunit.id, per.id) }}"
+            [contextMenu]="itemMenu"
+            [contextMenuSubject]="indicator"
+            (contextmenu)="onItemContextMenu($event, indicator, current_orgunit,per )"
         >
           <svg-item [indicator]="indicator" [current_orgunit]="current_orgunit" [indicator_list]="getVisibleIndicators(indicator)" [scorecard]="scorecard" [period]="per.id"></svg-item>
         </td>
@@ -109,7 +112,17 @@
       <td [attr.colspan]="getSubscorecardColspan()" style="background-color: rgba(0,0,0,0.1)">
         <!--Internal score card-->
         <h3 class="text-center text-muted" *ngIf="!children_available[indicator.indicators[0].id]">This indicator has no related indicators</h3>
-
+        <app-scorecard
+          *ngIf="children_available[indicator.indicators[0].id]"
+          #childScoreCard
+          [scorecard]="subscorecard"
+          [selectedOrganisationUnit]="sub_model"
+          [selectedPeriod]="selectedPeriod"
+          [functions]="functions"
+          [organisation_unit_nodes]="organisation_unit_nodes"
+          [is_children]="true"
+          (show_details)="loadPreviewFromChild($event)"
+        ></app-scorecard>
       </td>
     </tr>
   </ng-container>
@@ -161,3 +174,42 @@
   </ng-template>
 </context-menu>
 
+<context-menu #itemMenu>
+  <ng-template contextMenuItem (execute)="loadPreview(null, $event.item.item, $event.item.ou, $event.item.pe, null, true)"  let-item>
+    <span *ngIf="item.item.indicators[0].bottleneck_indicators.length != 0">
+          <i class="fa fa-bar-chart"></i>
+          <span [translate]="'Bottleneck Analysis'"> Bottleneck Analysis</span>
+        </span>
+  </ng-template>
+  <ng-template contextMenuItem (execute)="loadPreview(null, $event.item.item, $event.item.ou, $event.item.pe)">
+    <i class="fa fa-bar-chart-o" aria-hidden="true"></i>
+    <span [translate]="'Basic Analysis'">Basic Analysis</span>
+  </ng-template>
+  <ng-template contextMenuItem [subMenu]="saySubMenu">
+    <i class="fa fa-line-chart" aria-hidden="true"></i>
+    <span [translate]="'Trend Analysis'">Trend Analysis</span>
+  </ng-template>
+  <context-menu #saySubMenu>
+    <ng-template contextMenuItem (execute)="loadPreview(null, $event.item.item, $event.item.ou, null, {id:'LAST_3_MONTHS',name:'Last 3 Month'})">
+      <i class="fa fa-line-chart" aria-hidden="true"></i>
+      <span [translate]="'Last 3 Month'">Last 3 Month</span>
+    </ng-template>
+    <ng-template contextMenuItem (execute)="loadPreview(null, $event.item.item, $event.item.ou, null, {id:'LAST_6_MONTHS',name:'Last 6 Month'})">
+      <i class="fa fa-line-chart" aria-hidden="true"></i>
+      <span [translate]="'Last 6 Month'">Last 6 Month</span>
+    </ng-template>
+    <ng-template  contextMenuItem (execute)="loadPreview(null, $event.item.item, $event.item.ou, null, {id:'LAST_12_MONTHS',name:'Last 12 Month'})">
+      <i class="fa fa-line-chart" aria-hidden="true"></i>
+      <span [translate]="'Last 12 Month'">Last 12 Month</span>
+    </ng-template>
+    <ng-template contextMenuItem (execute)="loadPreview(null, $event.item.item, $event.item.ou, null, {id:'LAST_4_QUARTERS',name:'Last 4 Quarter'})">
+      <i class="fa fa-line-chart" style="margin-left:4px" aria-hidden="true"></i>
+      <span [translate]="'Last 4 Quarter'">Last 4 Quarter</span>
+    </ng-template>
+    <ng-template contextMenuItem (execute)="loadPreview(null, $event.item.item, $event.item.ou, null, {id:'LAST_5_YEARS',name:'Last 5 Years'})">
+      <i class="fa fa-line-chart" style="margin-left:4px" aria-hidden="true"></i>
+      <span [translate]="'Last 5 Years'">Last 5 Years</span>
+    </ng-template>
+  </context-menu>
+
+</context-menu>

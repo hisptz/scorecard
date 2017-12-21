@@ -13,6 +13,7 @@
         <!--sharing settings-->
         <th dnd-droppable (onDropSuccess)="transferDataSuccess($event,'new',null)">
           <app-sharing
+            tourAnchor="create.sharing"
             [scorecard]="scorecard"
             [userGroups]="user_groups$ | async"
             [group_loading]="!( group_loading$ | async )"
@@ -76,6 +77,7 @@
         <td style="vertical-align: bottom" dnd-droppable (onDropSuccess)="transferDataSuccess($event,'new',null)">
           <!--period configurations-->
           <app-period-filter
+            tourAnchor="create.pe"
             [selected_periods]="scorecard.data.selected_periods"
             [period_type]="scorecard.data.periodType"
             [showUpdate]="false"
@@ -111,6 +113,7 @@
 
           <!--organisation unit tree-->
           <app-org-unit-filter
+            tourAnchor="create.ou"
             *ngIf="!(orgunit_loading$ | async)"
             [orgunit_model] = "scorecard.data.orgunit_settings"
             [showUpdate]="false"

@@ -147,7 +147,7 @@
   "Bottleneck Analysis":"Bottleneck Analysis",
   "No#":"No#",
   "Search for orgunits here": "Search for orgunits here",
-  "Click to Sort By": "Click to Sort By",
+  "Click to Sort By": "Click to Sort By, or right click to analyse",
   "has no Children": "has no Children",
   "Basic Analysis": "Basic Analysis",
   "Sort Asc": "Sort Asc",
@@ -167,6 +167,7 @@
   "Label": "Label",
   "Baseline": "Baseline",
   "Target": "Target",
-  "Done": "Done"
+  "Done": "Done",
+  "Chart Labels": "Chart Labels"
 
 }

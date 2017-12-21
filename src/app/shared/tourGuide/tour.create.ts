@@ -8,14 +8,9 @@ export default <INgbStepOption[]>[{
   placement: 'bottom',
   title: 'Welcome',
 }, {
-  anchorId: 'create.options',
-  content: 'Customize the look of scorecard. add numbering, ranking, hide/show legend, average column and row.',
-  placement: 'bottom',
-  title: 'Additional Options',
-}, {
   anchorId: 'create.sample',
   content: 'This will show the sample of the scorecard that you are creating',
-  placement: 'bottom',
+  placement: 'top',
   title: 'Sample Scorecard',
 }, {
   anchorId: 'create.sharing',
@@ -73,9 +68,14 @@ export default <INgbStepOption[]>[{
   placement: 'bottom',
   title: 'Data Item Selection',
 }, {
-  anchorId: 'create.home',
-  content: 'Click here to Back to scorecard list',
+  anchorId: 'create.save',
+  content: 'Click here to save the changes',
   placement: 'auto',
-  title: 'Back to scorecard list',
+  title: 'Save changes',
+}, {
+  anchorId: 'create.cancel',
+  content: 'Click here to cancel and go back',
+  placement: 'auto',
+  title: 'Cancel and Go back',
 }
 ];

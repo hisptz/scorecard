@@ -536,6 +536,10 @@ export class ScorecardComponent implements OnInit, OnDestroy {
     return val;
   }
 
+  loadPreiviewFromChild(event) {
+    this.show_details.emit(event)
+  }
+
   // load a preview function
   loadPreview(event) {
     const { holderGroup, indicator, ou, period, periods, bottleneck } = event;
@@ -849,6 +853,7 @@ export class ScorecardComponent implements OnInit, OnDestroy {
                 'background_color': '#ffffff',
                 'holder_style': null
               }];
+              this.sub_model = {...this.selectedOrganisationUnit };
               created_scorecard.data.show_data_in_column = true;
               created_scorecard.data.is_bottleck = true;
               created_scorecard.data.name = 'Related Indicators for ' + indicator.name;
@@ -861,6 +866,9 @@ export class ScorecardComponent implements OnInit, OnDestroy {
           (error) => {
             this.children_available[indicator.id] = false;
             this.showSubScorecard[indicator.id] = true;
+            setTimeout(() => {
+              this.showSubScorecard[indicator.id] = false;
+            }, 2000);
           }
         );
       }
