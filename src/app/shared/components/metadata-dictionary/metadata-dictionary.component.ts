@@ -54,7 +54,7 @@ export class MetadataDictionaryComponent implements OnInit, OnDestroy {
     const Completeindicators = [];
     this.metadataFromAnalyticsLink(uid).forEach(value => {
       count++;
-      this.subscription = self.get('api/identifiableObjects/' + value + '.json')
+      this.subscription = self.get('identifiableObjects/' + value + '.json')
         .subscribe(data => {
           const metadataLink = data.href;
           if (metadataLink.indexOf('indicators') >= 1) {
@@ -67,18 +67,18 @@ export class MetadataDictionaryComponent implements OnInit, OnDestroy {
               .subscribe( indicatorData => {
                   // console.log(this.dataElementAvailable(data.numerator));
                   const indicatorObject = indicatorData;
-                  const numeratorExp = self.get('api/expressions/description?expression='
+                  const numeratorExp = self.get('expressions/description?expression='
                     + encodeURIComponent(indicatorData.numerator));
-                  const numeratorDataset = self.get('api/dataSets.json?fields=periodType,id,name,' +
-                    'timelyDays,formType,created,expiryDays&filter=dataElements.id:in:[' +
+                  const numeratorDataset = self.get('dataSets.json?fields=periodType,id,name,' +
+                    'timelyDays,formType,created,expiryDays&filter=dataSetElements.dataElement.id:in:[' +
                     this.dataElementAvailable(indicatorData.numerator) + ']&paging=false)');
-                  const denominatorExp = self.get('api/expressions/description?expression=' +
+                  const denominatorExp = self.get('expressions/description?expression=' +
                     encodeURIComponent(indicatorData.denominator));
-                  const denominatorDataSet = self.get('api/dataSets.json?fields=periodType,id,name,timelyDays,formType,' +
-                    'created,expiryDays&filter=dataElements.id:in:[' +
+                  const denominatorDataSet = self.get('dataSets.json?fields=periodType,id,name,timelyDays,formType,' +
+                    'created,expiryDays&filter=dataSetElements.dataElement.id:in:[' +
                     this.dataElementAvailable(indicatorData.denominator) + ']&paging=false)');
                   this.subscription = Observable.forkJoin([numeratorExp, numeratorDataset, denominatorExp, denominatorDataSet])
-                    .subscribe((results:any) => {
+                    .subscribe((results: any) => {
                         const numerator = results[0].description;
                         const numeratorDataEl = results[1];
                         const denominator = results[2].description;
@@ -194,8 +194,8 @@ export class MetadataDictionaryComponent implements OnInit, OnDestroy {
               .subscribe(progInd => {
                   const headers = new Headers();
                   headers.append('Content-Type', 'application/json;charset=UTF-8');
-                  const url = 'api/programIndicators/filter/description';
-                  const expr = 'api/programIndicators/expression/description';
+                  const url = 'programIndicators/filter/description';
+                  const expr = 'programIndicators/expression/description';
                   if (progInd.hasOwnProperty('filter')) {
                     this.http.post(url, progInd.filter, {headers: headers})
                       .subscribe(
