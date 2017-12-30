@@ -42,6 +42,7 @@ export class ScorecardComponent implements OnInit, OnDestroy {
   indicator_loading: boolean[] = [];
   indicator_done_loading: boolean[] = [];
   has_error: boolean[] = [];
+  error_text: string[] = [];
   old_proccessed_percent = 0;
   proccesed_indicators = 0;
   shown_records: any;
@@ -228,8 +229,10 @@ export class ScorecardComponent implements OnInit, OnDestroy {
                           );
                         },
                         error => {
+                          console.warn(error);
                           this.indicator_loading[loading_key] = false;
                           this.has_error[loading_key] = true;
+                          this.error_text[loading_key] = error.statusText + ' (' + error.status + ')';
                           this.doneLoadingIndicator(indicator, this.allIndicatorsLength, current_period);
                           this.indicator_done_loading[loading_key] = true;
                           old_proccesed_indicators++;
@@ -537,7 +540,7 @@ export class ScorecardComponent implements OnInit, OnDestroy {
   }
 
   loadPreiviewFromChild(event) {
-    this.show_details.emit(event)
+    this.show_details.emit(event);
   }
 
   // load a preview function

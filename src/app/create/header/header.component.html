@@ -25,7 +25,6 @@
         (click)="save()"
         style="height: 35px;margin-left: 5px"
         title="{{ 'Save the Changes'| translate }}"
-        [disabled]="scorecard.description == '' || scorecard.name == ''"
         [tourAnchor]="position === 'top'? 'create.save' : 'crear'"
       >
         <i class="fa fa-floppy-o text-info"></i>

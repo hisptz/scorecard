@@ -186,7 +186,9 @@ export class DataSelectionComponent implements OnInit {
       this.additional_labels,
       this.group_type,
       this.activeGroup,
-      pair
+      pair,
+      false,
+      this.ordered_holder_list
     );
   }
 

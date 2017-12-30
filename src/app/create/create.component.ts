@@ -187,4 +187,9 @@ export class CreateComponent implements OnInit {
   onTitleBlur(event) {
     console.log(event);
   }
+
+  showError(event) {
+    console.log(event)
+    this.errorSavingData = event;
+  }
 }

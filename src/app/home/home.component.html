@@ -46,7 +46,7 @@
 
 <!--if there is no scorecard created-->
 <!--<div class="container-fluid" style="padding-left: 0px; border-top: 1px solid blanchedalmond; margin-top: 20px; padding-top: 23px">-->
-<div class="container-fluid" style="padding-left: 0px; border-top: 1px solid blanchedalmond;margin-top: 15px" *ngIf="(scorecards$ | async).length == 0 && !(loading$ | async)">
+<div class="container-fluid" style="padding-left: 0px; border-top: 1px solid blanchedalmond;margin-top: 15px"  *ngIf="(scorecards$ | async).length == 0 && !(loading$ | async)">
   <app-description></app-description>
 </div>
 

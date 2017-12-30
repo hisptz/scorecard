@@ -5,7 +5,6 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpClientModule, HttpClient } from '@angular/common/http';
 import { NgxPaginationModule } from 'ngx-pagination';
 import { TourNgBootstrapModule } from 'ngx-tour-ng-bootstrap';
-import { ServiceWorkerModule } from '@angular/service-worker';
 import { StoreModule } from '@ngrx/store';
 import { RouterStateSerializer, StoreRouterConnectingModule } from '@ngrx/router-store';
 
@@ -74,7 +73,6 @@ export function HttpLoaderFactory(http: HttpClient) {
     StoreModule.forRoot(reducers),
     StoreRouterConnectingModule,
     EffectsModule.forRoot(effects),
-    ServiceWorkerModule.register('ngsw-worker.js', { enabled: environment.production }),
     TranslateModule.forRoot({
       loader: {
         provide: TranslateLoader,

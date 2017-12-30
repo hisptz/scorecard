@@ -1,5 +1,5 @@
 <div class="row no-print">
-  <div class="col-md-4 col-xs-12" style="padding-left: 0px; cursor: pointer;" tourAnchor="view.ou">
+  <div class="col-lg-4 col-sm-12" style="padding-left: 0px; cursor: pointer;" tourAnchor="view.ou">
     <!--organisation unit tree-->
     <app-org-unit-filter
       *ngIf="!(orgunit_loading$ | async)"
@@ -12,7 +12,7 @@
       <span [translate]="'Loading Organisation Units'">Loading Organisation Units...</span>
     </p>
   </div>
-  <div  class="col-md-4 col-xs-12" tourAnchor="view.pe">
+  <div  class="col-lg-4 col-sm-12" tourAnchor="view.pe">
     <app-period-filter
       #periodComponent
       [showUpdate]="true"
@@ -22,7 +22,7 @@
       (onPeriodChange) = "changePeriod($event)"
     ></app-period-filter>
   </div>
-  <div class="col-md-4 col-xs-12">
+  <div class="col-lg-4 col-sm-12">
     <!--Scorecard refresh button-->
     <button
       tourAnchor="view.refresh"

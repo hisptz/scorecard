@@ -66,6 +66,10 @@ export class SampleScorecardComponent implements OnInit {
     this.onOrgUnitUpdate.emit(event);
   }
 
+  updateGroup(event) {
+    console.log(event)
+  }
+
   //  this will enable updating of indicator
   updateIndicator(indicator: any): void {
     this.scorecardService.setCurrentIndicator(indicator, this.indicator_holder_groups, this.indicator_holders);

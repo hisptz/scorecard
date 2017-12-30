@@ -18,4 +18,4 @@ export const getSelectedScorecard = createSelector(
 // return all scorecards as an array instead of objects
 export const getAllScorecards = createSelector(getScorecardEntites, entities => {
   return Object.keys(entities).map(id => entities[id]);
-});
+})

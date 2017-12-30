@@ -41,7 +41,7 @@
     </th>
     <td *ngFor="let indicator of indicator_holders_list" class="indicator_title"
         style="line-height: 140%; padding: 0px;vertical-align: bottom; position: relative"
-        title="{{ 'Click to Sort By' | translate }} {{ getIndicatorTitle(indicator) }} {{ indicator.indicators[0].bottleneck_indicators.length == 0 ? '': ', For bottleneck analysis, right click any of the cellse' }}"
+        title="{{ 'Click to Sort By' | translate }} {{ getIndicatorTitle(indicator) }} {{ indicator.indicators[0].bottleneck_indicators.length == 0 ? '': ', For bottleneck analysis, right click any of the cells' }}"
         (click)="sortScoreCardFromColumn(indicator.indicators[0].id, sortAscending, orgunits, periods_list[0].id, false)"
         (dblclick)="loadPreview(null,indicator,null,null)"
         [attr.colspan]="periods_list.length"
@@ -52,7 +52,7 @@
         (mouseenter) ="mouseEnter(indicator)"
         (mouseleave) ="mouseLeave(indicator)"
     >
-      <i title="For bottleneck analysis, right click any of the cells" *ngIf="indicator.indicators[0].bottleneck_indicators.length != 0" class="fa fa-bar-chart-o" style="position: absolute; top:1px;right: 1px; opacity: 0.5"></i>
+      <i title="For bottleneck analysis, right click any of the cells" *ngIf="indicator.indicators[0].bottleneck_indicators.length != 0" class="fa fa-bar-chart-o no-print" style="position: absolute; top:1px;right: 1px; opacity: 0.5"></i>
       <div dnd-draggable [dragEnabled]="true" [dragData]="indicator" style="padding: 8px;">
         <app-indicator-title
           [indicator]="indicator"
@@ -63,6 +63,7 @@
           [sorting_column]="sorting_column"
           [current_sorting]="current_sorting"
           [has_error]="has_error"
+          [error_text]="error_text"
         ></app-indicator-title>
       </div>
     </td>
@@ -104,6 +105,7 @@
           [sorting_period]="sorting_period"
           [current_sorting]="current_sorting"
           [has_error]="has_error"
+          [error_text]="error_text"
         ></app-period-title>
       </td>
     </ng-container>
@@ -227,15 +229,15 @@
 </table>
 
 <context-menu #indicatorMenu>
-  <ng-template contextMenuItem (execute)="loadPreview(null,$event.item,null,null, null, true)"  let-item>
-     <span *ngIf="item.indicators[0].bottleneck_indicators.length != 0">
-          <i class="fa fa-bar-chart"></i>
-          <span [translate]="'Bottleneck Analysis'"> Bottleneck Analysis</span>
-        </span>
-  </ng-template>
+  <!--<ng-template contextMenuItem (execute)="loadPreview(null,$event.item,null,null, null, true)"  let-item>-->
+     <!--<span *ngIf="item.indicators[0].bottleneck_indicators.length != 0">-->
+          <!--<i class="fa fa-bar-chart"></i>-->
+          <!--<span [translate]="'Bottleneck Analysis'"> Bottleneck Analysis</span>-->
+        <!--</span>-->
+  <!--</ng-template>-->
   <ng-template contextMenuItem (execute)="loadPreview(null,$event.item,null,null)">
     <i class="fa fa-bar-chart-o" aria-hidden="true"></i>
-    <span [translate]="'Basic Analysis'"> Analyse</span>
+    <span [translate]="'Basic Analysis'"> Further Analysis</span>
   </ng-template>
   <ng-template contextMenuItem (execute)="sortScoreCardFromColumn($event.item.indicators[0].id, true, orgunits, periods_list[0].id, false)">
     <i class="fa fa-sort-amount-asc" aria-hidden="true"></i>

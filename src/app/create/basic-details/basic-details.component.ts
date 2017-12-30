@@ -1,4 +1,7 @@
-import {ChangeDetectionStrategy, Component, Input, OnInit} from '@angular/core';
+import {
+  ChangeDetectionStrategy, Component, ElementRef, EventEmitter, Input, OnInit, Output,
+  ViewChild
+} from '@angular/core';
 import {ApplicationState} from '../../store/reducers';
 import {Store} from '@ngrx/store';
 import {ScoreCard} from '../../shared/models/scorecard';
@@ -19,12 +22,20 @@ export class BasicDetailsComponent implements OnInit {
   @Input() indicator_holders: IndicatorHolder[] = [];
   @Input() legendset_definitions: Legend[] = [];
   @Input() header: any;
+  @Output() onSave = new EventEmitter();
 
   show_delete_legend: boolean[] = [];
   show_add_legend: boolean = false;
   new_definition: '';
   new_color = '#fff';
   newLabel = '';
+
+  @ViewChild('title')
+  title_element: ElementRef;
+
+  @ViewChild('description')
+  discription_element: ElementRef;
+
   constructor(private store: Store<ApplicationState>) { }
 
   ngOnInit() {

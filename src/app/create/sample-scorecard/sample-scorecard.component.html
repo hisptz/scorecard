@@ -17,6 +17,7 @@
             [scorecard]="scorecard"
             [userGroups]="user_groups$ | async"
             [group_loading]="!( group_loading$ | async )"
+            (onGroupChange)="updateGroup($event)"
           ></app-sharing>
         </th>
         <!--holder groups stays here-->
@@ -65,7 +66,7 @@
         <th style="width: 60px" dnd-droppable (onDropSuccess)="transferDataSuccess($event,'new-group',null)">
           <button
             class="btn btn-sm btn-outline-secondary cursor"
-            *ngIf="need_for_group$ | async"
+            *ngIf="(need_for_group$ | async) && !(current_holder_group.indicator_holder_ids.length == 1 && current_indicator.indicators.length == 0)"
             (click)="createGroup()"
           >
             <i class="fa fa-plus"></i>

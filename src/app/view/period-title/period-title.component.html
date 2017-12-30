@@ -9,7 +9,7 @@
 </i>
 <i
   *ngIf="has_error[indicator.indicators[0].id+period.id]"
-  class="fa fa-warning text-warning" title="There was an error loading this indicator"
+  class="fa fa-warning text-warning" [title]="'There was an error loading this indicator : ' +error_text[indicator.indicators[0].id+period.id]"
 ></i>
 {{ period.name }}
 <!--sorting icons-->

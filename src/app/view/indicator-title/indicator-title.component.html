@@ -10,7 +10,7 @@
   ></i>
   <i
     *ngIf="has_error[indicator.indicators[0].id+periods_list[0].id]  && periods_list.length == 1"
-    class="fa fa-warning text-warning" title="There was an error loading this indicator"
+    class="fa fa-warning text-warning" [title]="'There was an error loading this indicator : ' +error_text[indicator.indicators[0].id+periods_list[0].id]"
   ></i>
   <!--title-->
   <span style="line-height: 14px">

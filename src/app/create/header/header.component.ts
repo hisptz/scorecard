@@ -45,51 +45,67 @@ export class CreateHeaderComponent implements OnInit {
   }
 
   save() {
-    this.scorecardService.cleanUpEmptyColumns(this.scorecard.data.data_settings.indicator_holders, this.scorecard.data.data_settings.indicator_holder_groups, );
+    if (this.scorecard.data.data_settings.indicator_holders.length === 0 || this.scorecard.data.header.title === '' || this.scorecard.data.header.description === '') {
+      this.onSave.emit(true);
+      // this.someErrorOccured = true;
+      // if (this.scorecard.data.header.description === '') {
+      //   this.discription_element.nativeElement.focus();
+      // }
+      // if (this.scorecard.data.header.title === '') {
+      //   this.title_element.nativeElement.focus();
+      // }
+      setTimeout(() => {
+        this.onSave.emit(false);
+      }, 5000);
 
-    //  add related indicators to another datastore to enable flexible data analysis
-    this.scorecard.data.data_settings.indicator_holders.forEach((holder) => {
-      holder.indicators.forEach( (indicator) => {
-        if ( indicator.bottleneck_indicators.length !== 0 ) {
-          this.scorecardService.addRelatedIndicator(indicator.id, indicator.bottleneck_indicators);
-        }
-      });
-    });
-
-    //  post the data
-    this.saving_scorecard = true;
-    if (this.action_type === 'create') {
-      this.scorecardService.create(this.scorecard).subscribe(
-        (data) => {
-          this.saving_scorecard = false;
-          this.scorecardService.addScorecardToStore( this.scorecard.id, this.scorecard.data );
-          this.store.dispatch(new Go({  path: ['view', this.scorecard.id] }));
-        },
-        error => {
-          this.saving_error = true;
-          this.saving_scorecard = false;
-        }
-      );
     }else {
-      this.scorecardService.update(this.scorecard).subscribe(
-        (data) => {
-          this.saving_scorecard = false;
-          const scorecard_item = {
-            id: this.scorecard.id,
-            name: this.scorecard.data.header.title,
-            description: this.scorecard.data.header.description,
-            data: this.scorecard.data,
-            can_edit: true
-          };
-          this.store.dispatch(new LoadScorecardSuccess(scorecard_item));
-          this.store.dispatch(new Go({  path: ['view', this.scorecard.id] }));
-        },
-        error => {
-          this.saving_error = true;
-          this.saving_scorecard = false;
-        }
-      );
+      this.scorecardService.cleanUpEmptyColumns(this.scorecard.data.data_settings.indicator_holders, this.scorecard.data.data_settings.indicator_holder_groups, );
+
+      //  add related indicators to another datastore to enable flexible data analysis
+      this.scorecard.data.data_settings.indicator_holders.forEach((holder) => {
+        holder.indicators.forEach( (indicator) => {
+          if ( indicator.bottleneck_indicators.length !== 0 ) {
+            this.scorecardService.addRelatedIndicator(indicator.id, indicator.bottleneck_indicators);
+          }
+        });
+      });
+
+      //  post the data
+      this.saving_scorecard = true;
+      if (this.action_type === 'create') {
+        this.scorecardService.create(this.scorecard).subscribe(
+          (data) => {
+            this.saving_scorecard = false;
+            this.scorecardService.addScorecardToStore( this.scorecard.id, this.scorecard.data );
+            this.store.dispatch(new Go({  path: ['view', this.scorecard.id] }));
+          },
+          error => {
+            this.saving_error = true;
+            this.saving_scorecard = false;
+          }
+        );
+      }else {
+        this.scorecardService.update(this.scorecard).subscribe(
+          (data) => {
+            this.saving_scorecard = false;
+            const scorecard_item = {
+              id: this.scorecard.id,
+              name: this.scorecard.data.header.title,
+              description: this.scorecard.data.header.description,
+              data: this.scorecard.data,
+              can_edit: true
+            };
+            this.store.dispatch(new LoadScorecardSuccess(scorecard_item));
+            this.store.dispatch(new Go({  path: ['view', this.scorecard.id] }));
+          },
+          error => {
+            this.saving_error = true;
+            this.saving_scorecard = false;
+          }
+        );
+      }
     }
+
   }
 
   cancel() {

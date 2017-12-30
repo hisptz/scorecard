@@ -23,6 +23,7 @@ export class InvertedViewComponent implements OnInit {
   @Input() indicator_loading: any;
   @Input() old_proccessed_percent: any;
   @Input() has_error: any;
+  @Input() error_text: any;
   @Input() sorting_period: any;
   @Input() showSubScorecard: any;
   @Input() children_available: any;

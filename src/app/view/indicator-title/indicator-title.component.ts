@@ -14,6 +14,7 @@ export class IndicatorTitleComponent implements OnInit {
   @Input() indicator_done_loading: any[] = [];
   @Input() periods_list: any[] = [];
   @Input() has_error: any[] = [];
+  @Input() error_text: any[] = [];
   @Input() current_sorting: boolean;
   @Input() sorting_column: string;
   @Input() old_proccessed_percent: number;

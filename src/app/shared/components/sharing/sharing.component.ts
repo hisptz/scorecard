@@ -1,4 +1,4 @@
-import {Component, Input, OnInit} from '@angular/core';
+import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import * as _ from 'lodash';
 
 @Component({
@@ -11,6 +11,7 @@ export class SharingComponent implements OnInit {
   @Input() scorecard: any;
   @Input() userGroups: any;
   @Input() group_loading: boolean;
+  @Output() onGroupChange = new EventEmitter();
 
   showShareTree: boolean = true;
   share_filter: string = '';
@@ -47,6 +48,7 @@ export class SharingComponent implements OnInit {
         }
       });
     }
+    this.onGroupChange.emit(this.scorecard.data.user_groups.slice());
 
   }
 

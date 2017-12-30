@@ -84,18 +84,22 @@ export class ScorecardService {
   getCreatedScorecard() {
     this.store.select(getRouterState).first().subscribe(
       (route) => {
-        if (route.state.url === '/create') {
-          const scorecard = this.getEmptyScoreCard();
-          this.store.dispatch(new createActions.SetCreatedScorecard(this.getScorecardForCreation(scorecard, 'create')));
-        }else {
-          const scorecardId = route.state.params.scorecardid;
-          this.store.select(getScorecardEntites).first().subscribe(
-            scorecards => {
-              if (scorecards) {
-                this.store.dispatch(new createActions.SetCreatedScorecard(this.getScorecardForCreation(scorecards[scorecardId], 'edit')));
-              }
-            });
-        }
+        this.store.select(getUser).first().subscribe(
+          (user) => {
+            if (route.state.url === '/create') {
+              const scorecard = this.getEmptyScoreCard();
+              this.store.dispatch(new createActions.SetCreatedScorecard(this.getScorecardForCreation(scorecard, 'create', {id: user.id})));
+            }else {
+              const scorecardId = route.state.params.scorecardid;
+              this.store.select(getScorecardEntites).first().subscribe(
+                scorecards => {
+                  if (scorecards) {
+                    this.store.dispatch(new createActions.SetCreatedScorecard(this.getScorecardForCreation(scorecards[scorecardId], 'edit', {id: user.id})));
+                  }
+                });
+            }
+          }
+        );
       }
     );
   }
@@ -360,7 +364,7 @@ export class ScorecardService {
 
 
   // prepare a scorecard for adding to creation state
-  getScorecardForCreation(scorecard: ScoreCard, type: string): CreatedScorecardState {
+  getScorecardForCreation(scorecard: ScoreCard, type: string, user): CreatedScorecardState {
     scorecard = this.sanitize_scorecard(scorecard);
     return {
       action_type: type,
@@ -393,7 +397,7 @@ export class ScorecardService {
       additional_labels: scorecard.data.additional_labels,
       footer: scorecard.data.footer,
       indicator_dataElement_reporting_rate_selection: scorecard.data.indicator_dataElement_reporting_rate_selection,
-      user: scorecard.data.user,
+      user: scorecard.data.user.hasOwnProperty('id') ? scorecard.data.user : user,
       user_groups: scorecard.data.user_groups
     };
   }
@@ -717,7 +721,11 @@ export class ScorecardService {
         }
       });
     });
-    this.cleanUpEmptyColumns(indicator_holders, indicator_holder_groups);
+    this.store.dispatch(new createActions.SetHolders(indicator_holders));
+    this.store.dispatch(new createActions.SetHoldersGroups(indicator_holder_groups));
+    setTimeout(() => {
+      this.cleanUpEmptyColumns(indicator_holders, indicator_holder_groups);
+    });
   }
 
   //  this will enable updating of indicator
@@ -747,10 +755,17 @@ export class ScorecardService {
     group_type,
     active_group,
     pair = false,
-    from_drag = false
+    from_drag = false,
+    ordered_list = []
   ): void {
     if (this.indicatorExist(indicator_holders, item)) {
       if (!from_drag) {
+        if (current_indicator_holder.indicators[0].id === item.id && current_indicator_holder.indicators.length === 1) {
+          if (ordered_list.length > 1) {
+            const index = _.findIndex(ordered_list, {holder_id: current_indicator_holder.holder_id});
+            this.setCurrentIndicator(ordered_list[index - 1], indicator_holder_groups, indicator_holders);
+          }
+        }
         this.deleteIndicator(item, indicator_holders, indicator_holder_groups);
       }
     } else {

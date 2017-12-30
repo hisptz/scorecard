@@ -55,3 +55,26 @@ table * {
   opacity:0.7;
   border: 1px dashed #000;
 }
+@media print {
+  .no-print *{
+    display: none;
+  }
+  .no-print{
+    display: none;
+  }
+
+  .orgUnitName{
+    min-width: 130px;
+    height: 35px;
+    max-height: 35px;
+    font-size: 9px;
+  }
+  .table-bordered td{
+    /*border-top: 0.1em;*/
+  }
+  .legendItem{
+    width: 200px;
+    float: left;
+  }
+
+}

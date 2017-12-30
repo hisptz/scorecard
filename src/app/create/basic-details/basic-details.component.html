@@ -8,7 +8,8 @@
       tourAnchor="create.name"
       type="text"
       class="form-control form-control-sm"
-      #title id="title"
+      #title
+      id="title"
       placeholder="{{ 'Title' | translate }}"
       style="height: 25px; margin-top: 5px"
       [value]="header.title"
@@ -24,7 +25,8 @@
     <textarea
       tourAnchor="create.description"
       class="form-control form-control-sm"
-      #description id="description"
+      #description
+      id="description"
       placeholder="{{ 'Scorecard description' | translate }}"
       [value]="header.description"
       [(ngModel)]="header.description"

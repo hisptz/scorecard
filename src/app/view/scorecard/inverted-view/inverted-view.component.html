@@ -71,7 +71,7 @@
           (mouseenter) ="mouseEnter(indicator)"
           (mouseleave) ="mouseLeave(indicator)"
       >
-        <i *ngIf="has_bottleneck[indicator.indicators[0].id]" class="fa fa-bar-chart-o" style="position: absolute; top:1px;right: 1px"></i>
+        <i *ngIf="has_bottleneck[indicator.indicators[0].id]" class="fa fa-bar-chart-o no-print" style="position: absolute; top:1px;right: 1px"></i>
         <div dnd-draggable [dragEnabled]="true" [dragData]="indicator">
           <img src="assets/img/balls-3.svg"
                style="height: 30px" *ngIf="indicator_loading[indicator.indicators[0].id]"
@@ -154,12 +154,12 @@
 </table>
 
 <context-menu #indicatorMenu>
-  <ng-template contextMenuItem (execute)="loadPreview(null,$event.item,null,null, null, true)"  let-item>
-     <span *ngIf="item.indicators[0].bottleneck_indicators.length != 0">
-          <i class="fa fa-bar-chart"></i>
-          <span [translate]="'Bottleneck Analysis'"> Bottleneck Analysis</span>
-        </span>
-  </ng-template>
+  <!--<ng-template contextMenuItem (execute)="loadPreview(null,$event.item,null,null, null, true)"  let-item>-->
+     <!--<span *ngIf="item.indicators[0].bottleneck_indicators.length != 0">-->
+          <!--<i class="fa fa-bar-chart"></i>-->
+          <!--<span [translate]="'Bottleneck Analysis'"> Bottleneck Analysis</span>-->
+        <!--</span>-->
+  <!--</ng-template>-->
   <ng-template contextMenuItem (execute)="loadPreview(null,$event.item,null,null)">
     <i class="fa fa-bar-chart-o" aria-hidden="true"></i>
     <span [translate]="'Basic Analysis'"> Basic Analysis</span>
