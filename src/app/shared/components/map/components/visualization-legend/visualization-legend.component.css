@@ -5,6 +5,9 @@
 bar {
   background-color: rgba(236, 236, 236, 0.24)!important;
 }
+.row{
+  margin: 0px;
+}
 
 header {
   background-color: rgba(255, 255, 255, 0.3)!important;

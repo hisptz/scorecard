@@ -10,6 +10,7 @@ import {HttpClientService} from '../../../shared/services/http-client.service';
 export class MapContainerComponent implements OnInit {
 
   @Input() analyticsObject: any = null;
+  @Input() current_title: any = null;
   visualizationObject: any;
   constructor(private httpClient: HttpClientService) { }
 
@@ -17,7 +18,7 @@ export class MapContainerComponent implements OnInit {
     const initialVisualizationObject: any =  visualizationUtils.loadInitialVisualizationObject({id: 'scorecard_map', type: 'MAP'});
 
 
-    const orgUnitArray = this.analyticsObject.metaData.ou;
+    const orgUnitArray = this.analyticsObject ? this.analyticsObject.metaData.ou : [];
 
     this.visualizationObject = {...initialVisualizationObject, layers: [{settings: {}, analytics: this.analyticsObject}]};
 
@@ -25,6 +26,7 @@ export class MapContainerComponent implements OnInit {
       .subscribe((geoFeatures: any) => {
         this.visualizationObject = {
           ...this.visualizationObject,
+          name: this.current_title,
           details: {
             ...this.visualizationObject.details,
             loaded: true,

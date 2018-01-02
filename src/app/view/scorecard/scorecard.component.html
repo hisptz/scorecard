@@ -1,3 +1,4 @@
+
 <app-loading-notification
   [loading]="loading"
   [loading_message]="loading_message"
@@ -7,6 +8,7 @@
 </app-loading-notification>
 
 <div class="container-fluid" id="scorecard" style="padding-left: 5px;margin-top: 10px">
+
   <app-scorecard-header
     [legendset_definitions]="scorecard.data.legendset_definitions"
     [show_legend_definition]="scorecard.data.header.show_legend_definition"
@@ -14,6 +16,8 @@
     [organisation_unit_title]="organisation_unit_title"
     [period_title]="period_title"
     [scorecard_title]="scorecard.data.header.title"
+    [has_error]="error_occured"
+    [has_bottleneck]="has_bottleneck"
     ></app-scorecard-header>
 
   <div *ngIf="orgunits.length != 0">

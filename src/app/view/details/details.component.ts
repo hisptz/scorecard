@@ -32,6 +32,7 @@ export class DetailsComponent implements OnInit {
   error_occured: boolean = false;
   current_visualisation: string = 'table';
   current_analytics_data: any = null;
+  current_title: any = null;
   private subscription: Subscription;
   chartData: any = {};
   tableData: any = {};
@@ -432,7 +433,7 @@ export class DetailsComponent implements OnInit {
 
       this.loading = false;
     } else {
-
+      this.current_title = this.prepareCardTitle(this.indicator);
       if (this.checkIfParametersChanged(this.selectedOrganisationUnit.value, this.periodObject.value, indicatorsArray, function_indicatorsArray)) {
         this.error_occured = false;
         if (type === 'csv') {

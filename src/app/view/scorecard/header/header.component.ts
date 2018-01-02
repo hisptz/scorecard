@@ -14,6 +14,8 @@ export class ScorecardHearderComponent implements OnInit {
   @Input() scorecard_title: any = '';
   @Input() organisation_unit_title: any = '';
   @Input() period_title: any = '';
+  @Input() has_error: boolean = false;
+  @Input() has_bottleneck: boolean = false;
 
   constructor() { }
 

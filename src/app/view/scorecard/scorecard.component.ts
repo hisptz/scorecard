@@ -42,6 +42,8 @@ export class ScorecardComponent implements OnInit, OnDestroy {
   indicator_loading: boolean[] = [];
   indicator_done_loading: boolean[] = [];
   has_error: boolean[] = [];
+  error_occured: boolean;
+  has_bottleneck: boolean;
   error_text: string[] = [];
   old_proccessed_percent = 0;
   proccesed_indicators = 0;
@@ -120,11 +122,13 @@ export class ScorecardComponent implements OnInit, OnDestroy {
             };
           });
           this.allIndicatorsLength = allIndicators.length * this.periods_list.length;
-          console.log(this.allIndicatorsLength);
           // go through all indicators groups and then through all indicators in a group
           _.each(this.scorecard.data.data_settings.indicator_holders , (holder: any) => {
             holder.title = this.scorecardService.getIndicatorTitle(holder, this.hidenColums);
             _.each(holder.indicators, (indicator: any) => {
+              if (indicator.bottleneck_indicators.length !== 0) {
+                this.has_bottleneck = true;
+              }
               if (this.level === 'top' || this.scorecard.data.is_bottleck) {
                 indicator['values'] = indicator.hasOwnProperty('values') ? indicator.values : [];
                 indicator['tooltip'] =  indicator.hasOwnProperty('tooltip') ? indicator.tooltip : [];
@@ -164,6 +168,7 @@ export class ScorecardComponent implements OnInit, OnDestroy {
                       error: (error) => {
                         this.errorLoadingIndicator( indicator );
                         indicator.has_error = true;
+                        this.error_occured = true;
                       },
                       progress: (progress) => {}
                     };
@@ -232,6 +237,7 @@ export class ScorecardComponent implements OnInit, OnDestroy {
                           console.warn(error);
                           this.indicator_loading[loading_key] = false;
                           this.has_error[loading_key] = true;
+                          this.error_occured = true;
                           this.error_text[loading_key] = error.statusText + ' (' + error.status + ')';
                           this.doneLoadingIndicator(indicator, this.allIndicatorsLength, current_period);
                           this.indicator_done_loading[loading_key] = true;

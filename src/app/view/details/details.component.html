@@ -68,7 +68,7 @@
           <app-table-template [tableObject]="tableData"></app-table-template>
         </div>
         <div *ngIf="!loading && visualizer_config.type == 'map' && !error_occured">
-          <app-map-container [analyticsObject]="current_analytics_data"></app-map-container>
+          <app-map-container [analyticsObject]="current_analytics_data" [current_title]="current_title"></app-map-container>
         </div>
 
 
@@ -120,7 +120,7 @@
         </button>
         <a class="btn btn-outline-success btn-sm cursor" (click)="updateType('csv')" >
           <i class="fa fa-file-excel-o"></i>
-          <span [translate]="'Excel'"></span>Excel
+          <span [translate]="'Excel'">Excel</span>
         </a>
         <a
           class="btn btn-sm cursor"

@@ -19,4 +19,19 @@
       </tr>
     </table>
   </div>
+  <div class="col-sm-12">
+    <div style="float: left; font-size: 0.7em">
+      <i class="fa fa-caret-up"></i>&nbsp;
+      <span [translate]="'Increase from last period'">Increase from last period</span>
+      <span>&nbsp;&nbsp;&nbsp;</span>
+      <i class="fa fa-caret-down"></i>&nbsp;
+      <span [translate]="'Decrease from last period'">Decrease from last period</span>
+      <span  *ngIf="has_bottleneck">&nbsp;&nbsp;&nbsp;</span>
+      <i class="fa fa-bar-chart-o" *ngIf="has_bottleneck"></i>&nbsp;
+      <span  *ngIf="has_bottleneck" [translate]="'Indicator has bottleneck analysis'">Indicator has bottleneck analysis</span>
+      <span  *ngIf="has_error">&nbsp;&nbsp;&nbsp;</span>
+      <i  *ngIf="has_error"class="fa fa-warning text-warning"></i>&nbsp;
+      <span  *ngIf="has_error" [translate]="'Error Loading data'">Error Loading data</span>
+    </div>
+  </div>
 </div>

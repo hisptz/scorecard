@@ -168,6 +168,11 @@
   "Baseline": "Baseline",
   "Target": "Target",
   "Done": "Done",
-  "Chart Labels": "Chart Labels"
+  "Chart Labels": "Chart Labels",
+  "Increase from last period":"Increase from last period",
+  "Decrease from last period":"Decrease from last period",
+  "Error Loading data":"Error Loading data",
+  "Indicator has bottleneck analysis":"Indicator has bottleneck analysis"
+
 
 }

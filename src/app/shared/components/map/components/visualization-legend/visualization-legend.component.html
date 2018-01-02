@@ -4,7 +4,7 @@
        style="padding-left: 0px!important;padding-right: 0px!important;">
     <div *ngFor="let legend of visualizationLegends;let i = index;"
          >
-      <div class="col-lg-12 col-md-12 col-xs-12 legend-header" *ngIf="legend.name!='Boundaries'"
+      <div class="row legend-header" *ngIf="legend.name!='Boundaries'"
            style="border-bottom: 1px solid #cccccc;">
         <div class="col-lg-1 col-md-1 col-xs-1 legend-draggable-icon" style="padding-right: 20px;padding-left: 5px;">
           <a><i class="fa fa-th" style="color:#000000;"></i></a>
@@ -79,7 +79,7 @@
         </div>
       </div>
 
-      <div class="col-lg-12 col-md-12 col-xs-12 legend-header" *ngIf="legend.isBoundary"
+      <div class="row legend-header" *ngIf="legend.isBoundary"
            style="border-bottom: 1px solid #cccccc;"
       >
         <div class="col-lg-1 col-md-1 col-xs-1 legend-draggable-icon" (click)="toggleBoundaryLayer()">
@@ -126,8 +126,7 @@
     </div>
   </div>
   <div class="legend-view-container col-lg-12 col-md-12 col-xs-12">
-    <div class="row" style="border-bottom: 1px solid #cccccc">
-      <div class="col-lg-12 col-md-12 col-xs-12 legend-header">
+    <div class="legend-header row" style="border-bottom: 1px solid #cccccc">
         <div class="col-lg-1 col-md-1 col-xs-1 legend-draggable-icon" style="padding-right: 20px;padding-left: 5px;"
              (click)="toggleTileLegendView()">
           <a><i class="fa fa-map-o" style="color:#000000;"></i></a>
@@ -242,13 +241,10 @@
           &nbsp;
         </div>
       </div>
-    </div>
   </div>
   <div class="legend-view-container col-lg-12 col-md-12 col-xs-12">
-    <div class="row" style="border-bottom: 1px solid #cccccc">
-      <div class="col-lg-12 col-md-12 col-xs-12 legend-header-lower-bar"
-           style="background-color: transparent!important;" [ngClass]="{hide:showUpload}">
-        <div class="col-lg-4 col-md-4 col-xs-4 legend-draggable-icon-2" style="padding-left: 2px!important;">
+    <div [ngClass]="{hide:showUpload}" class="row legend-header-lower-bar" style="border-bottom: 1px solid #cccccc;background-color: transparent!important;">
+      <div class="col-lg-4 col-md-4 col-xs-4 legend-draggable-icon-2" style="padding-left: 2px!important;">
           <table class="legend-button-table" [ngClass]="{displayNone:displayNone}" style="background-color:transparent">
             <tr>
               <td>
@@ -262,7 +258,7 @@
             </tr>
           </table>
         </div>
-        <div class="col-lg-8 col-md-8 col-xs-8" *ngIf="!layerSelectionForm"
+      <div class="col-lg-8 col-md-8 col-xs-8" *ngIf="!layerSelectionForm"
              style="padding-right: 2px!important;">
           <table class="legend-button-table" [ngClass]="{displayNone:displayNone}"
                  style="background-color: transparent;">
@@ -289,7 +285,6 @@
             </tr>
           </table>
         </div>
-      </div>
       <div class="col-lg-12 col-md-12 col-xs-12 " [ngClass]="{hide:!showUpload}">
         <table>
           <tr>
