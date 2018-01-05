@@ -21,14 +21,18 @@
         <i class="fa fa-home"></i>
         <span [translate]="'Home'"> home</span>
       </button>
-      <button
-        style="height: 30px;margin-right: 3px"
-        class="btn btn-outline-secondary btn-sm float-md-right cursor"
-        title="{{ 'Get help' | translate }}"
-        (click)="startTour()"
-      >
-        <i class="fa fa-question-circle"></i>
-      </button>
+      <div class="dropdown float-md-right" style="margin-right: 3px">
+        <button style="height: 34px" class="btn btn-outline-secondary btn-sm dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          <i class="fa fa-question-circle"></i>
+        </button>
+        <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+          <a class="dropdown-item cursor" (click)="startTour()">Take a tour</a>
+          <a class="dropdown-item cursor" [routerLink]="['/documentation']">User Manual</a>
+          <a class="dropdown-item">
+            <span class="cursor" (click)="switchLanguage('en')">En</span> | <span class="cursor" (click)="switchLanguage('fr')">Fr</span>
+          </a>
+        </div>
+      </div>
     </div>
   </div>
 </div>

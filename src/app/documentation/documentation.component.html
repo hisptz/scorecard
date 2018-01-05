@@ -1,0 +1,1263 @@
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-md-2 col-xs-12" style="padding-left: 0px; cursor: pointer;" [routerLink]="['']" tourAnchor="home.start.tour" >
+      <img src="scorecard.svg" style="height: 58px; width: 48px" >
+      <span style="font-size: 20px" [translate]="'Score Card'"> </span>
+    </div>
+    <div class="col-md-8 col-xs-12" style="margin-top: 14px">
+      <h3 class="text-center">Interactive scorecard Documentation</h3>
+    </div>
+    <div class="col-md-2 col-xs-12 hidden-sm" style="margin-top: 14px">
+
+    </div>
+  </div>
+</div>
+<div class="container-fluid">
+<p class="c0"><span class="c1"></span></p>
+<p class="c35 title"><span class="c29 c22"></span></p>
+<p class="c35 title"><span class="c29 c22"></span></p>
+<p class="c39 title"><span class="c22 c29">Interactive scorecard Documentation</span></p>
+<p class="c2"><span
+  style="overflow: hidden; display: inline-block; margin: 0.00px 0.00px; border: 0.00px solid #000000; transform: rotate(0.00rad) translateZ(0px); -webkit-transform: rotate(0.00rad) translateZ(0px); width: 71.40px; height: 89.27px;"><img
+  alt="" src="assets/img/docs/image9.png"
+  style="width: 71.40px; height: 89.27px; margin-left: 0.00px; margin-top: 0.00px; transform: rotate(0.00rad) translateZ(0px); -webkit-transform: rotate(0.00rad) translateZ(0px);"
+  title=""></span></p>
+<p class="c0"><span class="c1"></span></p>
+<p class="c0"><span class="c1"></span></p>
+<p class="c0"><span class="c1"></span></p>
+<p class="c0"><span class="c1"></span></p>
+<p class="c0"><span class="c1"></span></p>
+<p class="c0"><span class="c1"></span></p>
+<p class="c0"><span class="c1"></span></p>
+<p class="c36 subtitle"><span class="c32">in collaboration of </span></p>
+<p class="c36 subtitle"><span class="c32">UNICEF, HISP UiO, HISP Uganda &amp; HISP Tanzania</span></p>
+<p class="c0"><span class="c1"></span></p>
+<p class="c0"><span class="c1"></span></p>
+<p class="c0"><span class="c1"></span></p>
+<p class="c0"><span class="c1"></span></p>
+<p class="c42"><span class="c33">Version 0.1</span></p>
+<p class="c10"><span class="c1"></span></p>
+<hr style="page-break-before:always;display:none;">
+<p class="c6"><span class="c1"></span></p>
+<p class="c6"><span class="c1"></span></p>
+<p class="c16"><span class="c1">&copy; 2016 &ndash; 2017</span></p>
+<p class="c16"><span class="c1">Interactive Scorecard Team</span></p>
+<p class="c6"><span class="c1"></span></p>
+<p class="c16"><span class="c1">Revision 1.0</span></p>
+<p class="c6"><span class="c1"></span></p>
+<p class="c16"><span class="c1">2017-12-21 18:00:00</span></p>
+<p class="c16"><span class="c1">Version 2.14</span></p>
+<p class="c6"><span class="c1"></span></p>
+<p class="c16"><span class="c1">Warranty: </span></p>
+<p class="c16"><span class="c1">THIS DOCUMENT IS PROVIDED BY THE AUTHORS &#39;&#39;AS IS&#39;&#39; AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE AUTHORS OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS MANUAL AND PRODUCTS MENTIONED HEREIN, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.</span>
+</p>
+<p class="c6"><span class="c1"></span></p>
+<p class="c16"><span class="c1">License: Permission is granted to copy, distribute and/or modify this document under the terms of the GNU Free Documentation License, Version 1.3 or any later version published by the Free Software Foundation; with no Invariant Sections, no Front-Cover Texts, and no Back-Cover Texts. A copy of the license is included in the source of this documentation, and is available here online:</span>
+</p>
+<p class="c16"><span class="c1">http://www.gnu.org/licenses/fdl.html.</span></p>
+<hr style="page-break-before:always;display:none;">
+<p class="c23" id="h.gjdgxs"><span class="c18">About this guide</span></p>
+<p class="c16"><span class="c1">The DHIS2 documentation is a collective effort and has been developed by the development team and users. While the guide strives to be complete, there may be certain functionalities which have been omitted or which have yet to be documented. This section explains some of the conventions which are used throughout the document.</span>
+</p>
+<p class="c16"><span class="c1">DHIS2 is a browser-based application. In many cases, screenshots have been included for enhanced clarity. Shortcuts to various functionalities are displayed such as </span><span
+  class="c11">Data element</span><span class="c1">&nbsp;</span><span class="c11">&gt;</span><span
+  class="c1">&nbsp;</span><span class="c11">Data element group</span><span class="c1">. The &quot;</span><span
+  class="c11">&gt;</span><span class="c1">&quot; symbol indicates that you should click </span><span class="c11">Data element</span><span
+  class="c1">&nbsp;and then click </span><span class="c11">Data element group</span><span class="c1">&nbsp;in the user interface.</span>
+</p>
+<p class="c16"><span class="c1">Different styles of text have been used to highlight important parts of the text or particular types of text, such as source code. Each of the conventions used in the document are explained below.</span>
+</p>
+<p class="c16"><span class="c11">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Note</span><span
+  style="overflow: hidden; display: inline-block; margin: 0.00px 0.00px; border: 0.00px solid #000000; transform: rotate(0.00rad) translateZ(0px); -webkit-transform: rotate(0.00rad) translateZ(0px); width: 24.00px; height: 24.00px;"><img
+  alt="" src="assets/img/docs/image23.png"
+  style="width: 24.00px; height: 24.00px; margin-left: 0.00px; margin-top: 0.00px; transform: rotate(0.00rad) translateZ(0px); -webkit-transform: rotate(0.00rad) translateZ(0px);"
+  title=""></span></p>
+<p class="c16"><span class="c1">A note contains additional information which should be considered or a reference to more information which may be helpful.</span>
+</p>
+<p class="c16"><span class="c11">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Tip</span><span
+  style="overflow: hidden; display: inline-block; margin: 0.00px 0.00px; border: 0.00px solid #000000; transform: rotate(0.00rad) translateZ(0px); -webkit-transform: rotate(0.00rad) translateZ(0px); width: 25.00px; height: 24.00px;"><img
+  alt="" src="assets/img/docs/image18.png"
+  style="width: 25.00px; height: 24.00px; margin-left: 0.00px; margin-top: 0.00px; transform: rotate(0.00rad) translateZ(0px); -webkit-transform: rotate(0.00rad) translateZ(0px);"
+  title=""></span></p>
+<p class="c16"><span class="c1">A tip can be a useful piece of advice, such as how to perform a particular task more efficiently.</span>
+</p>
+<p class="c16"><span class="c11">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Important</span><span
+  style="overflow: hidden; display: inline-block; margin: 0.00px 0.00px; border: 0.00px solid #000000; transform: rotate(0.00rad) translateZ(0px); -webkit-transform: rotate(0.00rad) translateZ(0px); width: 24.00px; height: 24.00px;"><img
+  alt="" src="assets/img/docs/image15.png"
+  style="width: 24.00px; height: 24.00px; margin-left: 0.00px; margin-top: 0.00px; transform: rotate(0.00rad) translateZ(0px); -webkit-transform: rotate(0.00rad) translateZ(0px);"
+  title=""></span></p>
+<p class="c16"><span class="c1">Important information should not be ignored, and usually indicates something which is required by the application.</span>
+</p>
+<p class="c16"><span class="c11">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Caution</span><span
+  style="overflow: hidden; display: inline-block; margin: 0.00px 0.00px; border: 0.00px solid #000000; transform: rotate(0.00rad) translateZ(0px); -webkit-transform: rotate(0.00rad) translateZ(0px); width: 24.00px; height: 24.00px;"><img
+  alt="" src="assets/img/docs/image8.png"
+  style="width: 24.00px; height: 24.00px; margin-left: 0.00px; margin-top: 0.00px; transform: rotate(0.00rad) translateZ(0px); -webkit-transform: rotate(0.00rad) translateZ(0px);"
+  title=""></span></p>
+<p class="c16"><span class="c1">Information contained in these sections should be carefully considered, and if not heeded, could result in unexpected results in analysis, performance, or functionality.</span>
+</p>
+<p class="c16"><span class="c11">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Warning</span><span
+  style="overflow: hidden; display: inline-block; margin: 0.00px 0.00px; border: 0.00px solid #000000; transform: rotate(0.00rad) translateZ(0px); -webkit-transform: rotate(0.00rad) translateZ(0px); width: 24.00px; height: 24.00px;"><img
+  alt="" src="assets/img/docs/image24.png"
+  style="width: 24.00px; height: 24.00px; margin-left: 0.00px; margin-top: 0.00px; transform: rotate(0.00rad) translateZ(0px); -webkit-transform: rotate(0.00rad) translateZ(0px);"
+  title=""></span></p>
+<p class="c16"><span class="c1">Information contained in these sections, if not heeded, could result in permanent data loss or affect the overall usability of the system.</span>
+</p><a id="t.62c95ebadd95ab8ab7c060cc78c5725983140158"></a><a id="t.0"></a>
+<table class="c24">
+  <tbody>
+  <tr class="c27">
+    <td class="c14" colspan="1" rowspan="1"><p class="c31"><span class="c34">Program listings usually contain some type of computer code.</span>
+    </p>
+      <p class="c31"><span class="c34">They will be displayed with a shaded background and a different font.</span></p>
+    </td>
+  </tr>
+  </tbody>
+</table>
+<p class="c6"><span class="c1"></span></p>
+<p class="c16"><span class="c11">Commands will be displayed in bold text, and represent a command which would need to be executed on the operating system or database.</span>
+</p>
+<p class="c16"><span class="c1">Links to external web sites or cross references will be displayed in blue text, and underlined</span>
+</p>
+<p class="c16"><span class="c1">like </span><span class="c37 c40"><a class="c4"
+                                                                     href="https://www.google.com/url?q=https://dhis2.org/&amp;sa=D&amp;ust=1515135732188000&amp;usg=AFQjCNHJfeZrcsuY83C0hQihw_XBfAINbw">this..</a></span>
+</p>
+<p class="c16"><span class="c1">Bibliographic references will displayed in square brackets like this [Store2007]. A full reference can be found in the bibliography contained at the end of this document.</span>
+</p><hr style="page-break-before:always;display:none;">
+<p class="c0"><span class="c1"></span></p>
+<p class="c23"><span class="c13">Table of Contents</span></p>
+<p class="c2"><span class="c1"><a class="c4" href="#h.30j0zll">Chapter 1. Scorecard and demo server&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;6</a></span>
+</p>
+<p class="c2 c20"><span class="c1"><a class="c4" href="#h.1fob9te">1.1 Introduction to scorecard&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;6</a></span>
+</p>
+<p class="c2 c20"><span class="c1"><a class="c4" href="#h.3znysh7">1.2 About demo server and scorecard meta-data&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;7</a></span>
+</p>
+<p class="c2 c8"><span class="c1"><a class="c4" href="#h.2et92p0">Using DHIS2 Demo server&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;7</a></span>
+</p>
+<p class="c2 c8"><span class="c1"><a class="c4" href="#h.tyjcwt">Scorecard meta-data&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;7</a></span>
+</p>
+<p class="c2"><span class="c1"><a class="c4" href="#h.3dy6vkm">Chapter 2. Installing of scorecard&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;7</a></span>
+</p>
+<p class="c2 c8"><span class="c1"><a class="c4" href="#h.1t3h5sf">2.1 Installation from within DHIS 2&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;7</a></span>
+</p>
+<p class="c2 c8"><span class="c1"><a class="c4" href="#h.4d34og8">2.2 Installation from DHIS 2 Appstore website&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;8</a></span>
+</p>
+<p class="c2 c8"><span class="c1"><a class="c4" href="#h.2s8eyo1">2.3 Installation Access credentials/Permissions.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;10</a></span>
+</p>
+<p class="c2 c8"><span class="c1"><a class="c4" href="#h.17dp8vu">2.4 Installation not successful.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;11</a></span>
+</p>
+<p class="c2"><span class="c1"><a class="c4" href="#h.3rdcrjn">Chapter 3. Opening and browsing scorecards&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;11</a></span>
+</p>
+<p class="c2 c20"><span class="c1"><a class="c4" href="#h.26in1rg">3.1 Opening of scorecard application&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;11</a></span>
+</p>
+<p class="c2 c20"><span class="c1"><a class="c4" href="#h.lnxbz9">3.2 Clearing application cache&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;12</a></span>
+</p>
+<p class="c2 c20"><span class="c1"><a class="c4" href="#h.35nkun2">3.3 Browsing of scorecard application&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;13</a></span>
+</p>
+<p class="c2 c20"><span class="c1"><a class="c4" href="#h.1ksv4uv">3.4 Display/Listing of scorecards&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;14</a></span>
+</p>
+<p class="c2 c8"><span class="c1"><a class="c4" href="#h.44sinio">List view&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;14</a></span>
+</p>
+<p class="c2 c8"><span class="c1"><a class="c4" href="#h.2jxsxqh">Card view&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;14</a></span>
+</p>
+<p class="c2 c8"><span class="c1"><a class="c4" href="#h.z337ya">Thumbnail view&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;14</a></span>
+</p>
+<p class="c2"><span class="c1"><a class="c4" href="#h.3j2qqm3">Chapter 4. Analysis with scorecard&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;15</a></span>
+</p>
+<p class="c2 c20"><span class="c1"><a class="c4" href="#h.1y810tw">4.1 Browsing scorecard&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;15</a></span>
+</p>
+<p class="c2 c20"><span class="c1"><a class="c4" href="#h.4i7ojhp">4.2 Navigating the scorecard&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;15</a></span>
+</p>
+<p class="c2 c8"><span class="c1"><a class="c4" href="#h.2xcytpi">Drill down analysis&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;15</a></span>
+</p>
+<p class="c2 c8"><span class="c1"><a class="c4" href="#h.1ci93xb">Organization unit selection&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;15</a></span>
+</p>
+<p class="c2 c21"><span class="c1"><a class="c4" href="#h.3whwml4">Selection by levels&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;15</a></span>
+</p>
+<p class="c2 c21"><span class="c1"><a class="c4" href="#h.2bn6wsx">Selection by groups&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;15</a></span>
+</p>
+<p class="c2 c21"><span class="c1"><a class="c4" href="#h.qsh70q">Selection by user organization unit&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;15</a></span>
+</p>
+<p class="c2 c8"><span class="c1"><a class="c4" href="#h.3as4poj">Period selection&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;15</a></span>
+</p>
+<p class="c2 c21"><span class="c1"><a class="c4" href="#h.1pxezwc">Fixed period selections&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;15</a></span>
+</p>
+<p class="c2 c21"><span class="c1"><a class="c4" href="#h.49x2ik5">Relative period selections&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;15</a></span>
+</p>
+<p class="c2 c21"><span class="c1"><a class="c4" href="#h.2p2csry">Extended relative periods&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;15</a></span>
+</p>
+<p class="c2"><span class="c1"><a class="c4" href="#h.147n2zr">Chapter 5. Scorecard layouts, headers and legends&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;15</a></span>
+</p>
+<p class="c2 c20"><span class="c1"><a class="c4" href="#h.3o7alnk">5.1 Layout change with drag-n-drop&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;16</a></span>
+</p>
+<p class="c2 c20"><span class="c1"><a class="c4" href="#h.23ckvvd">5.2 Scorecard header&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;16</a></span>
+</p>
+<p class="c2 c20"><span class="c1"><a class="c4" href="#h.ihv636">5.3 Scorecard legend&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;16</a></span>
+</p>
+<p class="c2 c20"><span class="c1"><a class="c4" href="#h.32hioqz">5.4 Column headers, hints and tool-tips&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;16</a></span>
+</p>
+<p class="c2"><span class="c1"><a class="c4" href="#h.1hmsyys">Chapter 6. Additional options&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;16</a></span>
+</p>
+<p class="c2 c20"><span class="c1"><a class="c4" href="#h.41mghml">6.1 Hide/show legend&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;16</a></span>
+</p>
+<p class="c2 c20"><span class="c1"><a class="c4" href="#h.2grqrue">6.2 Hide/show item number&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;16</a></span>
+</p>
+<p class="c2 c20"><span class="c1"><a class="c4" href="#h.vx1227">6.3 Hide/show empty rows&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;16</a></span>
+</p>
+<p class="c2 c20"><span class="c1"><a class="c4" href="#h.3fwokq0">6.4 Hide/show average row/column&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;16</a></span>
+</p>
+<p class="c2 c20"><span class="c1"><a class="c4" href="#h.1v1yuxt">6.5 Hide/show below/above average&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;16</a></span>
+</p>
+<p class="c2 c20"><span class="c1"><a class="c4" href="#h.4f1mdlm">6.6 Show top ten/five/three&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;16</a></span>
+</p>
+<p class="c2"><span class="c1"><a class="c4" href="#h.2u6wntf">Chapter 7. Context menu&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;16</a></span>
+</p>
+<p class="c2 c20"><span class="c1"><a class="c4" href="#h.19c6y18">7.1 Further analysis by entire column&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;17</a></span>
+</p>
+<p class="c2 c20"><span class="c1"><a class="c4" href="#h.3tbugp1">7.2 Sort asc/desc by column&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;17</a></span>
+</p>
+<p class="c2 c20"><span class="c1"><a class="c4" href="#h.28h4qwu">7.3 Best/worst by columns (top 10,5,3)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;17</a></span>
+</p>
+<p class="c2 c20"><span class="c1"><a class="c4" href="#h.nmf14n">7.4 Hide/show column&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;17</a></span>
+</p>
+<p class="c2 c20"><span class="c1"><a class="c4" href="#h.37m2jsg">7.5 Further Analysis by cell&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;17</a></span>
+</p>
+<p class="c2 c20"><span class="c1"><a class="c4" href="#h.1mrcu09">7.6 Trend analysis by cell&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;17</a></span>
+</p>
+<p class="c2 c20"><span class="c1"><a class="c4" href="#h.46r0co2">7.7 Bottleneck analysis by cell&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;17</a></span>
+</p>
+<p class="c2"><span class="c1"><a class="c4" href="#h.2lwamvv">Chapter 8. Further analysis&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;17</a></span>
+</p>
+<p class="c2 c20"><span class="c1"><a class="c4" href="#h.111kx3o">8.1 Bottleneck analysis&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;17</a></span>
+</p>
+<p class="c2 c20"><span class="c1"><a class="c4" href="#h.3l18frh">8.2 Pivot table analysis&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;17</a></span>
+</p>
+<p class="c2 c20"><span class="c1"><a class="c4" href="#h.206ipza">8.3 Chart analysis&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;17</a></span>
+</p>
+<p class="c2 c20"><span class="c1"><a class="c4" href="#h.4k668n3">8.4 Map analysis&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;18</a></span>
+</p>
+<p class="c2 c20"><span class="c1"><a class="c4" href="#h.2zbgiuw">8.5 Data dictionary&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;18</a></span>
+</p>
+<p class="c2 c20"><span class="c1"><a class="c4" href="#h.1egqt2p">8.6 Operations on Further analysis&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;18</a></span>
+</p>
+<p class="c2 c8"><span class="c1"><a class="c4" href="#h.3ygebqi">Layout selection&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;18</a></span>
+</p>
+<p class="c2 c8"><span class="c1"><a class="c4" href="#h.2dlolyb">Downloads&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;18</a></span>
+</p>
+<p class="c2 c8"><span class="c1"><a class="c4" href="#h.sqyw64">Print scorecard&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;18</a></span>
+</p>
+<p class="c2 c8"><span class="c1"><a class="c4" href="#h.3cqmetx">Download excel&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;18</a></span>
+</p>
+<p class="c2"><span class="c1"><a class="c4" href="#h.1rvwp1q">Chapter 9. Creating and managing of scorecard&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;18</a></span>
+</p>
+<p class="c2 c20"><span class="c1"><a class="c4" href="#h.4bvk7pj">9.1 Labeling/Branding scorecard&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;19</a></span>
+</p>
+<p class="c2 c8"><span class="c1"><a class="c4" href="#h.2r0uhxc">Labeling of scorecard&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;19</a></span>
+</p>
+<p class="c2 c8"><span class="c1"><a class="c4" href="#h.1664s55">Branding of scorecard&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;20</a></span>
+</p>
+<p class="c2 c20"><span class="c1"><a class="c4" href="#h.3q5sasy">9.2 Choosing your data selections&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;20</a></span>
+</p>
+<p class="c2 c8"><span class="c1"><a class="c4" href="#h.25b2l0r">Standard analytics data selections&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;21</a></span>
+</p>
+<p class="c2 c8"><span class="c1"><a class="c4" href="#h.kgcv8k">Functions selections&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;21</a></span>
+</p>
+<p class="c2 c20"><span class="c1"><a class="c4" href="#h.34g0dwd">9.3 Managing layouts and saving&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;22</a></span>
+</p>
+<p class="c2 c8"><span class="c1"><a class="c4" href="#h.1jlao46">Changing layout of scorecard&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;22</a></span>
+</p>
+<p class="c2"><span class="c1"><a class="c4" href="#h.43ky6rz">Chapter 10. Customizations and editing of scorecard&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;23</a></span>
+</p>
+<p class="c2 c20"><span class="c1"><a class="c4" href="#h.2iq8gzs">10.1 Access sharing settings&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;23</a></span>
+</p>
+<p class="c2 c20"><span class="c1"><a class="c4" href="#h.xvir7l">10.2 Startup period and organization unit selection&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;23</a></span>
+</p>
+<p class="c2 c20"><span class="c1"><a class="c4" href="#h.3hv69ve">10.3 Grouping of cells in scorecard&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;23</a></span>
+</p>
+<p class="c2 c20"><span class="c1"><a class="c4" href="#h.1x0gk37">10.4 Customization of cells&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;23</a></span>
+</p>
+<p class="c2 c8"><span class="c1"><a class="c4" href="#h.4h042r0">Column &amp; cell labels&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;23</a></span>
+</p>
+<p class="c2 c8"><span class="c1"><a class="c4" href="#h.2w5ecyt">Cell Effective(Minimum) gap&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;23</a></span>
+</p>
+<p class="c2 c8"><span class="c1"><a class="c4" href="#h.1baon6m">Cell cut-of points range&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;23</a></span>
+</p>
+<p class="c2 c8"><span class="c1"><a class="c4" href="#h.3vac5uf">Display effective gap arrows&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;23</a></span>
+</p>
+<p class="c2 c8"><span class="c1"><a class="c4" href="#h.2afmg28">Show legend colors&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;23</a></span>
+</p>
+<p class="c2 c20"><span class="c1"><a class="c4" href="#h.pkwqa1">10.5 Stack two cells in single column&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;23</a></span>
+</p>
+<p class="c2 c20"><span class="c1"><a class="c4" href="#h.39kk8xu">10.6 Color codes for cut-off points&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;23</a></span>
+</p>
+<p class="c2 c20"><span class="c1"><a class="c4" href="#h.1opuj5n">10.7 Related/Bottleneck indicators&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;24</a></span>
+</p>
+<p class="c2 c8"><span class="c1"><a class="c4" href="#h.48pi1tg">Individual indicator selections&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;24</a></span>
+</p>
+<p class="c2 c8"><span class="c1"><a class="c4" href="#h.2nusc19">Grouped indicator selections&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;24</a></span>
+</p>
+<p class="c2 c20"><span class="c1"><a class="c4" href="#h.1302m92">10.8 Additional labels&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;24</a></span>
+</p>
+<p class="c2"><span class="c1"><a class="c4" href="#h.3mzq4wv">Chapter 11. Help &amp; tour guide&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;24</a></span>
+</p>
+<p class="c2 c20"><span class="c1"><a class="c4" href="#h.2250f4o">11.1 Help and documentation&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;24</a></span>
+</p>
+<p class="c2 c20"><span class="c1"><a class="c4" href="#h.haapch">11.2 Scorecard community use cases&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;24</a></span>
+</p>
+<p class="c41"><span class="c1"><a class="c4" href="#h.319y80a">11.3 Tour guide&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;24</a></span>
+</p>
+<p class="c0 c20"><span class="c1"></span></p>
+<hr style="page-break-before:always;display:none;">
+<p class="c0"><span class="c1"></span></p>
+<ol class="c9 lst-kix_list_1-0 start" start="1">
+  <li class="c7"><h1 id="h.30j0zll" style="display:inline"><span class="c18">Chapter 1. Scorecard and demo server</span>
+  </h1></li>
+</ol>
+<ol class="c9 lst-kix_list_1-1 start" start="1">
+  <li class="c15"><h2 id="h.1fob9te" style="display:inline"><span class="c13">1.1 Introduction to scorecard</span></h2>
+  </li>
+</ol>
+<p class="c2"><span class="c1">In public health setting such as Ministries of Health, scorecard offers a useful and standardized method for analysis with traffic lights color codes, combining related indicators into one table. </span>
+</p>
+<p class="c0"><span class="c1"></span></p>
+<p class="c2"><span class="c1">A scorecard can gives an overall view of the performance of a health program such as a vaccination program, highlighting successes, weaknesses, and areas for improvement.</span>
+</p>
+<p class="c0"><span class="c1"></span></p>
+<p class="c2"><span class="c1">There are two ways to create a scorecard: you can use:</span></p>
+<ul class="c9 lst-kix_list_2-0 start">
+  <li class="c2 c19"><span class="c1">The Scorecard app, as explained in this documentation, or</span></li>
+  <li class="c2 c19"><span>The Pivot Table app, as explained in dhis2 website here: </span><span class="c38"><a
+    class="c4"
+    href="https://www.google.com/url?q=https://www.dhis2.org/node/243&amp;sa=D&amp;ust=1515135732205000&amp;usg=AFQjCNHeowZ8-mYwwjHfJ6gnnDxtkMx6qg">https://www.dhis2.org/node/243</a></span>
+  </li>
+</ul>
+<p class="c5"><span class="c1"></span></p>
+<p class="c12"><span
+  class="c1">This documentation focuses mainly on the scorecard application, as explained below;</span></p>
+<p class="c12"><span class="c1">The difference between the two, is that the scorecard app is tuned for advanced scorecard analysis and is developed and maintained by HISP Community developers, while the Pivot Table App is for basic scorecard analysis and is developed and maintained by the Dhis2 core team. </span>
+</p>
+<p class="c5"><span class="c1"></span></p>
+<p class="c12"><span class="c1">With both scorecard app and pivot table app, you can download and use your scorecard offline and share it on the DHIS2 dashboard. With a scorecard app, you have more advanced control and power to easily create and analyse multiple elements and dimensions in your data. </span>
+</p>
+<p class="c5"><span class="c1"></span></p>
+<p class="c12"><span class="c1">Additionally the scorecard app gives an opportunity to cascade your analysis by including bottleneck indicators in the scorecard dashboard as well as analyses your data with broad spectrum of visualization tools, such as pivot table, charts and maps. </span>
+</p>
+<p class="c0"><span class="c1"></span></p>
+<p class="c2"><span
+  style="overflow: hidden; display: inline-block; margin: 0.00px 0.00px; border: 0.00px solid #000000; transform: rotate(0.00rad) translateZ(0px); -webkit-transform: rotate(0.00rad) translateZ(0px); width: 624.00px; height: 357.33px;"><img
+  alt="" src="assets/img/docs/image19.png"
+  style="width: 624.00px; height: 357.33px; margin-left: 0.00px; margin-top: 0.00px; transform: rotate(0.00rad) translateZ(0px); -webkit-transform: rotate(0.00rad) translateZ(0px);"
+  title=""></span></p>
+<p class="c0"><span class="c1"></span></p>
+<p class="c2"><span class="c1">Figure 1.1: Standard layout of RMCAH Scorecard</span></p>
+<p class="c0"><span class="c1"></span></p>
+<ol class="c9 lst-kix_list_1-1" start="2">
+  <li class="c15"><h2 id="h.3znysh7" style="display:inline"><span class="c13">1.2 About demo server and scorecard meta-data</span>
+  </h2></li>
+</ol>
+<p class="c2"><span>DHIS2 Scorecard team maintains a demonstration server at </span><span class="c37"><a class="c4"
+                                                                                                         href="https://www.google.com/url?q=https://scorecard-dev.dhis2.org/demo&amp;sa=D&amp;ust=1515135732206000&amp;usg=AFQjCNGmxcbuXaFsR7NBbXdDCCHHh2b1Iw">https://scorecard-dev.dhis2.org/demo</a></span><span
+  class="c1">. This is by far the easiest way to try out Scorecard application in DHIS2.</span></p>
+<p class="c0"><span class="c1"></span></p>
+<ol class="c9 lst-kix_list_1-2 start" start="1">
+  <li class="c17"><h3 id="h.2et92p0" style="display:inline"><span class="c3">Using DHIS2 Demo server</span></h3></li>
+</ol>
+<p class="c2"><span class="c1">[caption here]</span></p>
+<p class="c0"><span class="c1"></span></p>
+<ol class="c9 lst-kix_list_1-2" start="2">
+  <li class="c17"><h3 id="h.tyjcwt" style="display:inline"><span class="c3">Scorecard meta-data</span></h3></li>
+</ol>
+<p class="c2"><span class="c1">[caption here]</span></p>
+<ol class="c9 lst-kix_list_1-0" start="2">
+  <li class="c7"><h1 id="h.3dy6vkm" style="display:inline"><span class="c18">Chapter 2. Installing of scorecard</span>
+  </h1></li>
+</ol>
+<p class="c2"><span class="c1">Scorecard application is completely free and open source, and it is available on DHIS2 app store (https://play.dhis2.org/appstore), download the latest scorecard application with long term support.</span>
+</p>
+<p class="c0"><span class="c1"></span></p>
+<p class="c2"><span class="c1">To install any application into DHIS 2, requires super user privilege, make sure your account has necessary authorities to install application, or contact DHIS 2 support team for acquisition of account with privileges for installation of apps.</span>
+</p>
+<p class="c0"><span class="c1"></span></p>
+<p class="c2"><span class="c1">There are two ways of installing interactive scorecard into your DHIS 2 instance.</span>
+</p>
+<p class="c0"><span class="c1"></span></p>
+<ol class="c9 lst-kix_list_1-2" start="3">
+  <li class="c17"><h3 id="h.1t3h5sf" style="display:inline"><span class="c3">2.1 Installation from within DHIS 2</span>
+  </h3></li>
+</ol>
+<p class="c2"><span class="c1">This installation approach is the most direct, but only available on DHIS 2 running on version 2.28 and above.</span>
+</p>
+<p class="c0"><span class="c1"></span></p>
+<p class="c2"><span class="c11">Step 1:</span></p>
+<p class="c0"><span class="c1"></span></p>
+<p class="c2"><span class="c1">Simply open Apps management by clicking on Apps search menu or apps icon on the top bar to locate Apps Management, click to bring down list of apps, or search &ldquo;Apps Management&rdquo;.</span>
+</p>
+<p class="c2"><span class="c1">Open the Apps management to go to apps listing See figure below:</span></p>
+<p class="c5"><span class="c1"></span></p>
+<p class="c5"><span class="c1"></span></p>
+<p class="c5"><span class="c1"></span></p>
+<p class="c12"><span
+  style="overflow: hidden; display: inline-block; margin: 0.00px 0.00px; border: 0.00px solid #000000; transform: rotate(0.00rad) translateZ(0px); -webkit-transform: rotate(0.00rad) translateZ(0px); width: 232.67px; height: 162.47px;"><img
+  alt="" src="assets/img/docs/image21.png"
+  style="width: 232.67px; height: 162.47px; margin-left: 0.00px; margin-top: 0.00px; transform: rotate(0.00rad) translateZ(0px); -webkit-transform: rotate(0.00rad) translateZ(0px);"
+  title=""></span></p>
+<p class="c5"><span class="c1"></span></p>
+<p class="c5"><span class="c1"></span></p>
+<p class="c5"><span class="c1"></span></p>
+<p class="c5"><span class="c1"></span></p>
+<p class="c5"><span class="c1"></span></p>
+<p class="c5"><span class="c1"></span></p>
+<p class="c5"><span class="c1"></span></p>
+<p class="c5"><span class="c1"></span></p>
+<p class="c5"><span class="c1"></span></p>
+<p class="c2"><span class="c1">Figure 2.1: Apps management on search menu</span></p>
+<p class="c0"><span class="c1"></span></p>
+<p class="c2"><span class="c11">Step 2:</span></p>
+<p class="c0"><span class="c1"></span></p>
+<p class="c2"><span class="c1">Once Apps management is open, go to Apps store panel, accessible on the left navigation menu, a list of online applications for installation will show up, look for interactive scorecard.</span>
+</p>
+<p class="c0"><span class="c1"></span></p>
+<p class="c2"><span
+  style="overflow: hidden; display: inline-block; margin: 0.00px 0.00px; border: 0.00px solid #000000; transform: rotate(0.00rad) translateZ(0px); -webkit-transform: rotate(0.00rad) translateZ(0px); width: 642.53px; height: 261.87px;"><img
+  alt="" src="assets/img/docs/image2.png"
+  style="width: 642.53px; height: 261.87px; margin-left: 0.00px; margin-top: 0.00px; transform: rotate(0.00rad) translateZ(0px); -webkit-transform: rotate(0.00rad) translateZ(0px);"
+  title=""></span></p>
+<p class="c2"><span class="c1">Figure 2.2: App store listing, with interactive scorecard</span></p>
+<p class="c0"><span class="c1"></span></p>
+<p class="c2"><span class="c1">Once found, click install to install the application. When done installing, interactive scorecard will be accessible from the search menu.</span>
+</p>
+<p class="c0"><span class="c1"></span></p>
+<p class="c0"><span class="c1"></span></p>
+<ol class="c9 lst-kix_list_1-2" start="4">
+  <li class="c17"><h3 id="h.4d34og8" style="display:inline"><span class="c3">2.2 Installation from DHIS 2 Appstore website</span>
+  </h3></li>
+</ol>
+<p class="c2"><span class="c1">This approach of installing DHIS 2 requires visiting DHIS 2 App store website, downloading zip file of the latest stable build of score card app, and manually installing it into DHIS 2.</span>
+</p>
+<p class="c0"><span class="c1"></span></p>
+<p class="c2"><span
+  class="c1">This approach is recommenced for all DHIS 2 instances running on version 2.27 and below.</span></p>
+<p class="c2"><span
+  style="overflow: hidden; display: inline-block; margin: 0.00px 0.00px; border: 0.00px solid #000000; transform: rotate(0.00rad) translateZ(0px); -webkit-transform: rotate(0.00rad) translateZ(0px); width: 642.53px; height: 486.60px;"><img
+  alt="" src="assets/img/docs/image1.png"
+  style="width: 642.53px; height: 486.60px; margin-left: 0.00px; margin-top: 0.00px; transform: rotate(0.00rad) translateZ(0px); -webkit-transform: rotate(0.00rad) translateZ(0px);"
+  title=""></span></p>
+<p class="c2"><span class="c1">Figure 2.3: Apps listing in DHIS2 Appstore</span></p>
+<p class="c0"><span class="c1"></span></p>
+<p class="c12"><span class="c11">Step 1:</span></p>
+<p class="c5"><span class="c1"></span></p>
+<p class="c12"><span class="c1">Once on DHIS 2 App store, locate interactive scorecard application, and click it to get the list of available versions of the scorecard. Pick the most latest version of the scorecard and download zip of the latest build into your local hard disk.</span>
+</p>
+<p class="c5"><span class="c1"></span></p>
+<p class="c12"><span
+  style="overflow: hidden; display: inline-block; margin: 0.00px 0.00px; border: 0.00px solid #000000; transform: rotate(0.00rad) translateZ(0px); -webkit-transform: rotate(0.00rad) translateZ(0px); width: 642.53px; height: 191.80px;"><img
+  alt="" src="assets/img/docs/image22.png"
+  style="width: 642.53px; height: 191.80px; margin-left: 0.00px; margin-top: 0.00px; transform: rotate(0.00rad) translateZ(0px); -webkit-transform: rotate(0.00rad) translateZ(0px);"
+  title=""></span></p>
+<p class="c12"><span class="c1">Figure 2.4: List of versions and supported version of DHIS 2</span></p>
+<p class="c5"><span class="c1"></span></p>
+<p class="c12"><span class="c1">Note:</span></p>
+<p class="c12"><span class="c1">Zip file name may have cryptic alphanumeric name such as &ldquo;3ad63731-a75d-4adb-95a1-4f646e481c20&rdquo;.</span>
+</p>
+<p class="c12"><span class="c1">You may rename zip file to easily to locate it in the future, with naming such as &ldquo;scorecard-v2.x.zip&rdquo;, where &ldquo;x&rdquo; is version number of your build.</span>
+</p>
+<p class="c5"><span class="c1"></span></p>
+<p class="c5"><span class="c1"></span></p>
+<p class="c12"><span class="c11">Step 2</span></p>
+<p class="c5"><span class="c1"></span></p>
+<p class="c12"><span class="c1">Click on Apps search menu or apps icon on the top bar to locate Apps Management, click to bring down list of apps, or search &ldquo;Apps Management&rdquo;.</span>
+</p>
+<p class="c5"><span class="c1"></span></p>
+<p class="c12"><span
+  style="overflow: hidden; display: inline-block; margin: 0.00px 0.00px; border: 0.00px solid #000000; transform: rotate(0.00rad) translateZ(0px); -webkit-transform: rotate(0.00rad) translateZ(0px); width: 232.67px; height: 162.47px;"><img
+  alt="" src="assets/img/docs/image21.png"
+  style="width: 232.67px; height: 162.47px; margin-left: 0.00px; margin-top: 0.00px; transform: rotate(0.00rad) translateZ(0px); -webkit-transform: rotate(0.00rad) translateZ(0px);"
+  title=""></span></p>
+<p class="c5"><span class="c1"></span></p>
+<p class="c5"><span class="c1"></span></p>
+<p class="c5"><span class="c1"></span></p>
+<p class="c5"><span class="c1"></span></p>
+<p class="c5"><span class="c1"></span></p>
+<p class="c5"><span class="c1"></span></p>
+<p class="c5"><span class="c1"></span></p>
+<p class="c5"><span class="c1"></span></p>
+<p class="c5"><span class="c1"></span></p>
+<p class="c12"><span class="c1">Figure 2.5: Apps management on search menu</span></p>
+<p class="c5"><span class="c1"></span></p>
+<p class="c12"><span class="c1">Open Apps management to see and manage list of installed applications on DHIS 2, Interactive scorecard app can be installed by clicking the upload icon.</span><span
+  style="overflow: hidden; display: inline-block; margin: 0.00px 0.00px; border: 0.00px solid #000000; transform: rotate(0.00rad) translateZ(0px); -webkit-transform: rotate(0.00rad) translateZ(0px); width: 30.60px; height: 30.60px;"><img
+  alt="" src="assets/img/docs/image10.png"
+  style="width: 30.60px; height: 30.60px; margin-left: 0.00px; margin-top: 0.00px; transform: rotate(0.00rad) translateZ(0px); -webkit-transform: rotate(0.00rad) translateZ(0px);"
+  title=""></span></p>
+<p class="c5"><span class="c1"></span></p>
+<p class="c12"><span
+  class="c1">Once installed, interactive score card application will be enlisted under standard apps</span></p>
+<p class="c12"><span
+  style="overflow: hidden; display: inline-block; margin: 0.00px 0.00px; border: 0.00px solid #000000; transform: rotate(0.00rad) translateZ(0px); -webkit-transform: rotate(0.00rad) translateZ(0px); width: 642.53px; height: 270.33px;"><img
+  alt="" src="assets/img/docs/image3.png"
+  style="width: 642.53px; height: 270.33px; margin-left: 0.00px; margin-top: 0.00px; transform: rotate(0.00rad) translateZ(0px); -webkit-transform: rotate(0.00rad) translateZ(0px);"
+  title=""></span></p>
+<p class="c12"><span class="c1">Figure 2.6: Interactive scorecard on list of installed standard applications</span></p>
+<p class="c5"><span class="c1"></span></p>
+<p class="c12"><span
+  class="c1">When done installing, interactive scorecard will be accessible from the search menu.</span></p>
+<p class="c5"><span class="c1"></span></p>
+<p class="c12"><span class="c1">If scorecard doesn&rsquo;t appear on your menu, it may be not visible for one of the two issues.</span>
+</p>
+<p class="c0"><span class="c1"></span></p>
+<ol class="c9 lst-kix_list_1-2" start="5">
+  <li class="c17"><h3 id="h.2s8eyo1" style="display:inline"><span class="c3">2.3 Installation Access credentials/Permissions.</span>
+  </h3></li>
+</ol>
+<p class="c2"><span class="c1">While scorecard application may be installed in your DHIS 2 instances, you may not have necessary permissions to see it, communicate with DHIS 2 moderator or DHIS 2 support team for the application to be assigned to one of your user roles.</span>
+</p>
+<p class="c0"><span class="c1"></span></p>
+<ol class="c9 lst-kix_list_1-2" start="6">
+  <li class="c17"><h3 id="h.17dp8vu" style="display:inline"><span class="c3">2.4 Installation not successful.</span>
+  </h3></li>
+</ol>
+<p class="c2"><span class="c1">Scorecard application will not be visible in your application, if it&rsquo;s &nbsp;either not yet installed in your DHIS 2 instance or installation process failed for technical reasons.</span>
+</p>
+<p class="c0"><span class="c1"></span></p>
+<p class="c2"><span class="c1">Most common failure to install, results from mis-configuration of read/write permissions of the installation folder on the server hosting dhis2. Mis-configuration of permission can also result to denial of ability to delete an installed application.</span>
+</p>
+<p class="c0"><span class="c1"></span></p>
+<p class="c2"><span class="c1">To resolve this, back-end access of DHIS 2 is required, to assign proper ownership and read-write permission of the folder for holding installed apps. </span>
+</p>
+<p class="c0"><span class="c1"></span></p>
+<p class="c2"><span class="c1">Note: location of folder for installed apps varies depending on version of DHIS 2 Installation.</span>
+</p>
+<ol class="c9 lst-kix_list_3-1 start" start="1">
+  <li class="c2 c25"><span class="c1">From version 2.27 going down, folder for installed apps is located in [DHIS2_HOME]/apps</span>
+  </li>
+  <li class="c12 c25"><span class="c1">From version 2.28 and above, folder for installed apps is located in [DHIS2_HOME]/files/apps</span>
+  </li>
+</ol>
+<p class="c5"><span class="c1"></span></p>
+<p class="c2">
+  <span>For more information on how to create and install applications on DHIS2 please &nbsp;visit </span><span
+  class="c38"><a class="c4"
+                 href="https://www.google.com/url?q=https://www.dhis2.org/how-to-create-find-install-apps&amp;sa=D&amp;ust=1515135732217000&amp;usg=AFQjCNG3LL00bHk6LaU3Mcg_5D-8228VJw">https://www.dhis2.org/how-to-create-find-install-apps</a></span>
+</p>
+<p class="c5"><span class="c1"></span></p>
+<ol class="c9 lst-kix_list_1-0" start="3">
+  <li class="c7"><h1 id="h.3rdcrjn" style="display:inline"><span
+    class="c18">Chapter 3. Opening and browsing scorecards</span></h1></li>
+</ol>
+<p class="c2"><span class="c1">Scorecard application can be found from the Apps menu, if scorecard application is not yet installed in your DHIS 2 instance or installation has issues, refer to the installation instruction part of this documentation for further guidance.</span>
+</p>
+<ol class="c9 lst-kix_list_1-1" start="3">
+  <li class="c15"><h2 id="h.26in1rg" style="display:inline"><span
+    class="c13">3.1 Opening of scorecard application</span></h2></li>
+</ol>
+<p class="c2"><span class="c1">Open scorecard by locating it on Apps search menu or apps icon on the top bar, click to bring down list of apps, or search &ldquo;scorecard&rdquo;.</span>
+</p>
+<p class="c2"><span
+  style="overflow: hidden; display: inline-block; margin: 0.00px 0.00px; border: 0.00px solid #000000; transform: rotate(0.00rad) translateZ(0px); -webkit-transform: rotate(0.00rad) translateZ(0px); width: 468.00px; height: 143.00px;"><img
+  alt="" src="assets/img/docs/image11.png"
+  style="width: 468.00px; height: 143.00px; margin-left: 0.00px; margin-top: 0.00px; transform: rotate(0.00rad) translateZ(0px); -webkit-transform: rotate(0.00rad) translateZ(0px);"
+  title=""></span></p>
+<p class="c0"><span class="c1"></span></p>
+<p class="c0"><span class="c1"></span></p>
+<p class="c0"><span class="c1"></span></p>
+<p class="c0"><span class="c1"></span></p>
+<p class="c0"><span class="c1"></span></p>
+<p class="c0"><span class="c1"></span></p>
+<p class="c0"><span class="c1"></span></p>
+<p class="c0"><span class="c1"></span></p>
+<p class="c0"><span class="c1"></span></p>
+<p class="c2"><span class="c1">Figure 2.7: Scorecard application on apps menu.</span></p>
+<p class="c0"><span class="c1"></span></p>
+<p class="c2"><span class="c1">Once open, scorecard application will bring list of created scorecards, or when no scorecard exists, a step by step instruction on how to create scorecard.</span>
+</p>
+<p class="c0"><span class="c1"></span></p>
+<p class="c2"><span class="c1">Note: </span></p>
+<p class="c2"><span class="c1">If scorecard application is taking too long to load, and you&rsquo;re not on a slow network, make sure you have cleared your browser cache.</span>
+</p>
+<p class="c0"><span class="c1"></span></p>
+<p class="c2"><span class="c1">Scorecard makes good use of cached file for better offline experience, as a result, when installing higher version, scorecard may use older version of cached files and thus break down while loading.</span>
+</p>
+<p class="c0"><span class="c1"></span></p>
+<p class="c0"><span class="c1"></span></p>
+<p class="c0"><span class="c1"></span></p>
+<p class="c2"><span
+  style="overflow: hidden; display: inline-block; margin: 0.00px 0.00px; border: 0.00px solid #000000; transform: rotate(0.00rad) translateZ(0px); -webkit-transform: rotate(0.00rad) translateZ(0px); width: 642.53px; height: 346.67px;"><img
+  alt="" src="assets/img/docs/image5.png"
+  style="width: 642.53px; height: 346.67px; margin-left: 0.00px; margin-top: 0.00px; transform: rotate(0.00rad) translateZ(0px); -webkit-transform: rotate(0.00rad) translateZ(0px);"
+  title=""></span></p>
+<p class="c2"><span class="c1">Figure 2.8: Scorecard application in a continuous state of loading.</span></p>
+<p class="c0"><span class="c1"></span></p>
+<ol class="c9 lst-kix_list_1-1" start="4">
+  <li class="c15"><h2 id="h.lnxbz9" style="display:inline"><span class="c13">3.2 Clearing application cache</span></h2>
+  </li>
+</ol>
+<p class="c2"><span class="c1">Approaches to clear application cache and browser interface, vary from browser to browser, but the common standard keyboard short-cut for all browsers is &ldquo;CTR+SHIFT+DELETE&rdquo;.</span>
+</p>
+<p class="c0"><span class="c1"></span></p>
+<p class="c2"><span
+  class="c1">Accessing interface for clearing browser cache can be done via the following approaches:</span></p>
+<ul class="c9 lst-kix_list_4-0 start">
+  <li class="c2 c19"><span class="c22">Google chrome</span><span class="c1">: Go to the menu icon on the top right corner, and click it to open, go to more tools menu, and choose &ldquo;Clear browsing data&rdquo;. Once interface is open, Make sure &ldquo;Clear the following items from&rdquo; is set to &ldquo;The beginning of time&rdquo;.</span>
+  </li>
+  <li class="c2 c19"><span class="c22">Mozilla Firefox</span><span class="c1">: Go to the menu icon on the top right corner, and click it to open, go to Library, and go to History, and choose &ldquo;Clear recent history&rdquo;. Once interface is open, Make sure &ldquo;Time range to clear&rdquo; is set to &ldquo;Everything&rdquo;, and &ldquo;Details&rdquo; option is expanded to show all details options.</span>
+  </li>
+</ul>
+<p class="c0"><span class="c1"></span></p>
+<p class="c2"><span class="c1">Once on the clear browsing data or recent history, tick &ldquo;Cache&rdquo;, &ldquo;Cookies&rdquo;, &ldquo;Hosted app data&rdquo; or &ldquo;Offline Website data&rdquo;. To clear all cached files, cookies and locally stored data by scorecard.</span>
+</p>
+<p class="c0"><span class="c1"></span></p>
+<p class="c2"><span class="c1">Note: These will also clear all cache information and cookies from other websites you&rsquo;ve visited in your browser.</span>
+</p>
+<p class="c0"><span class="c1"></span></p>
+<p class="c2"><span
+  style="overflow: hidden; display: inline-block; margin: 0.00px 0.00px; border: 0.00px solid #000000; transform: rotate(0.00rad) translateZ(0px); -webkit-transform: rotate(0.00rad) translateZ(0px); width: 74.00px; height: 38.00px;"><img
+  alt="" src="assets/img/docs/image12.png"
+  style="width: 74.00px; height: 38.00px; margin-left: 0.00px; margin-top: 0.00px; transform: rotate(0.00rad) translateZ(0px); -webkit-transform: rotate(0.00rad) translateZ(0px);"
+  title=""></span></p>
+<p class="c0"><span class="c1"></span></p>
+<p class="c0"><span class="c1"></span></p>
+<p class="c2"><span class="c1">Figure 2.9: Menu icons in Google chrome and figurefox</span></p>
+<p class="c2"><span
+  style="overflow: hidden; display: inline-block; margin: 0.00px 0.00px; border: 0.00px solid #000000; transform: rotate(0.00rad) translateZ(0px); -webkit-transform: rotate(0.00rad) translateZ(0px); width: 499.00px; height: 393.00px;"><img
+  alt="" src="assets/img/docs/image20.png"
+  style="width: 499.00px; height: 393.00px; margin-left: 0.00px; margin-top: 0.00px; transform: rotate(0.00rad) translateZ(0px); -webkit-transform: rotate(0.00rad) translateZ(0px);"
+  title=""></span></p>
+<p class="c2"><span class="c1">Figure 2.9: Google chrome interface for clearing browser cache</span></p>
+<p class="c0"><span class="c1"></span></p>
+<p class="c2"><span
+  style="overflow: hidden; display: inline-block; margin: 0.00px 0.00px; border: 0.00px solid #000000; transform: rotate(0.00rad) translateZ(0px); -webkit-transform: rotate(0.00rad) translateZ(0px); width: 492.00px; height: 351.00px;"><img
+  alt="" src="assets/img/docs/image6.png"
+  style="width: 492.00px; height: 351.00px; margin-left: 0.00px; margin-top: 0.00px; transform: rotate(0.00rad) translateZ(0px); -webkit-transform: rotate(0.00rad) translateZ(0px);"
+  title=""></span></p>
+<p class="c2"><span class="c1">Figure 2.10: Mozilla firefox interface for clearing browser cache</span></p>
+<p class="c0"><span class="c1"></span></p>
+<ol class="c9 lst-kix_list_1-1" start="5">
+  <li class="c15"><h2 id="h.35nkun2" style="display:inline"><span
+    class="c13">3.3 Browsing of scorecard application</span></h2></li>
+</ol>
+<p class="c2"><span class="c1">Once a scorecard application is open, it will display a list of all scorecards, user have permission to access. Items are by default displayed with list view, showing three items at a time, with pagination to access more scorecards. All scorecards are sorted in by names of scorecard in ascending order.</span>
+</p>
+<p class="c0"><span class="c1"></span></p>
+<p class="c2"><span class="c1">To locate scorecard, use the search panel to search by name or description of the scorecard, search will locate all favorites user have access to and list them sorted in ascending order.</span>
+</p>
+<p class="c0"><span class="c1"></span></p>
+<p class="c2"><span class="c1">Figure 2.11: Default list view of scorecard application</span><span
+  style="overflow: hidden; display: inline-block; margin: 0.00px 0.00px; border: 0.00px solid #000000; transform: rotate(0.00rad) translateZ(0px); -webkit-transform: rotate(0.00rad) translateZ(0px); width: 597.40px; height: 319.60px;"><img
+  alt="" src="assets/img/docs/image4.png"
+  style="width: 597.40px; height: 319.60px; margin-left: 0.00px; margin-top: 0.00px; transform: rotate(0.00rad) translateZ(0px); -webkit-transform: rotate(0.00rad) translateZ(0px);"
+  title=""></span></p>
+<p class="c0"><span class="c1"></span></p>
+<p class="c0"><span class="c1"></span></p>
+<ol class="c9 lst-kix_list_1-1" start="6">
+  <li class="c15"><h2 id="h.1ksv4uv" style="display:inline"><span class="c13">3.4 Display/Listing of scorecards</span>
+  </h2></li>
+</ol>
+<p class="c2"><span class="c1">There are three standard types of scorecard listings to allow navigation and traversing through long list of scorecards</span>
+</p>
+<p class="c0"><span class="c1"></span></p>
+<ol class="c9 lst-kix_list_1-2" start="7">
+  <li class="c17"><h3 id="h.44sinio" style="display:inline"><span class="c3">List view</span></h3></li>
+</ol>
+<p class="c2"><span class="c1">This is the default listing scorecard, displaying three items per page, while providing pagination options to move between pages.</span>
+</p>
+<p class="c0"><span class="c1"></span></p>
+<ol class="c9 lst-kix_list_1-2" start="8">
+  <li class="c17"><h3 id="h.2jxsxqh" style="display:inline"><span class="c3">Card view</span></h3></li>
+</ol>
+<p class="c2"><span class="c1">This displays all scorecards without paginations in multiple rows with two columns through out, allowing vertical navigation of scorecards.</span>
+</p>
+<p class="c0"><span class="c1"></span></p>
+<ol class="c9 lst-kix_list_1-2" start="9">
+  <li class="c17"><h3 id="h.z337ya" style="display:inline"><span class="c3">Thumbnail view</span></h3></li>
+</ol>
+<p class="c2"><span class="c1">This displays all scorecards without pagination in multiple rows with one column throughout, allowing more detailed view of each single scorecard.</span>
+</p>
+<p class="c0"><span class="c1"></span></p>
+<p class="c0"><span class="c1"></span></p>
+<p class="c2"><span class="c1">To visualize data with scorecard, click particular scorecard of interest. For more information on all functionalities available for browsing scorecard, visit the &ldquo;Browsing scorecard&rdquo; section of the documentation.</span>
+</p>
+<p class="c0"><span class="c1"></span></p>
+<ol class="c9 lst-kix_list_1-0" start="4">
+  <li class="c7"><h1 id="h.3j2qqm3" style="display:inline"><span class="c18">Chapter 4. Analysis with scorecard</span>
+  </h1></li>
+</ol>
+<p class="c2"><span class="c1">[caption here]</span></p>
+<p class="c0"><span class="c1"></span></p>
+<ol class="c9 lst-kix_list_1-1" start="7">
+  <li class="c15"><h2 id="h.1y810tw" style="display:inline"><span class="c13">4.1 Browsing scorecard</span></h2></li>
+</ol>
+<p class="c2"><span class="c1">[caption here]</span></p>
+<p class="c0"><span class="c1"></span></p>
+<ol class="c9 lst-kix_list_1-1" start="8">
+  <li class="c15"><h2 id="h.4i7ojhp" style="display:inline"><span class="c13">4.2 Navigating the scorecard</span></h2>
+  </li>
+</ol>
+<p class="c2"><span class="c1">[caption here]</span></p>
+<p class="c0"><span class="c1"></span></p>
+<ol class="c9 lst-kix_list_1-2" start="10">
+  <li class="c17"><h3 id="h.2xcytpi" style="display:inline"><span class="c3">Drill down analysis</span></h3></li>
+</ol>
+<p class="c2"><span class="c1">[caption here]</span></p>
+<p class="c0"><span class="c1"></span></p>
+<ol class="c9 lst-kix_list_1-2" start="11">
+  <li class="c17"><h3 id="h.1ci93xb" style="display:inline"><span class="c3">Organization unit selection</span></h3>
+  </li>
+</ol>
+<p class="c2"><span class="c1">[caption here]</span></p>
+<p class="c0"><span class="c1"></span></p>
+<ol class="c9 lst-kix_list_1-4 start" start="1">
+  <li class="c26"><h5 id="h.3whwml4" style="display:inline"><span class="c28 c22">Selection by levels</span></h5></li>
+</ol>
+<p class="c2"><span class="c1">[caption here]</span></p>
+<p class="c0"><span class="c1"></span></p>
+<ol class="c9 lst-kix_list_1-4" start="2">
+  <li class="c26"><h5 id="h.2bn6wsx" style="display:inline"><span class="c22 c28">Selection by groups</span></h5></li>
+</ol>
+<p class="c2"><span class="c1">[caption here]</span></p>
+<p class="c0"><span class="c1"></span></p>
+<ol class="c9 lst-kix_list_1-4" start="3">
+  <li class="c26"><h5 id="h.qsh70q" style="display:inline"><span
+    class="c28 c22">Selection by user organization unit</span></h5></li>
+</ol>
+<p class="c2"><span class="c1">[caption here]</span></p>
+<p class="c0"><span class="c1"></span></p>
+<ol class="c9 lst-kix_list_1-2" start="12">
+  <li class="c17"><h3 id="h.3as4poj" style="display:inline"><span class="c3">Period selection</span></h3></li>
+</ol>
+<p class="c2"><span class="c1">[caption here]</span></p>
+<p class="c0"><span class="c1"></span></p>
+<ol class="c9 lst-kix_list_1-4" start="4">
+  <li class="c26"><h5 id="h.1pxezwc" style="display:inline"><span class="c28 c22">Fixed period selections</span></h5>
+  </li>
+</ol>
+<p class="c2"><span class="c1">[caption here]</span></p>
+<p class="c0"><span class="c1"></span></p>
+<ol class="c9 lst-kix_list_1-4" start="5">
+  <li class="c26"><h5 id="h.49x2ik5" style="display:inline"><span class="c28 c22">Relative period selections</span></h5>
+  </li>
+</ol>
+<p class="c2"><span class="c1">[caption here]</span></p>
+<p class="c0"><span class="c1"></span></p>
+<ol class="c9 lst-kix_list_1-4" start="6">
+  <li class="c26"><h5 id="h.2p2csry" style="display:inline"><span class="c28 c22">Extended relative periods</span></h5>
+  </li>
+</ol>
+<p class="c2"><span class="c1">[caption here]</span></p>
+<p class="c0"><span class="c1"></span></p>
+<ol class="c9 lst-kix_list_1-0" start="5">
+  <li class="c7"><h1 id="h.147n2zr" style="display:inline"><span class="c18">Chapter 5. Scorecard layouts, headers and legends</span>
+  </h1></li>
+</ol>
+<p class="c2"><span class="c1">[caption here]</span></p>
+<p class="c0"><span class="c1"></span></p>
+<ol class="c9 lst-kix_list_1-1" start="9">
+  <li class="c15"><h2 id="h.3o7alnk" style="display:inline"><span class="c13">5.1 Layout change with drag-n-drop</span>
+  </h2></li>
+</ol>
+<p class="c2"><span class="c1">[caption here]</span></p>
+<p class="c0"><span class="c1"></span></p>
+<ol class="c9 lst-kix_list_1-1" start="10">
+  <li class="c15"><h2 id="h.23ckvvd" style="display:inline"><span class="c13">5.2 Scorecard header</span></h2></li>
+</ol>
+<p class="c2"><span class="c1">[caption here]</span></p>
+<p class="c0"><span class="c1"></span></p>
+<ol class="c9 lst-kix_list_1-1" start="11">
+  <li class="c15"><h2 id="h.ihv636" style="display:inline"><span class="c13">5.3 Scorecard legend</span></h2></li>
+</ol>
+<p class="c2"><span class="c1">[caption here] </span></p>
+<p class="c0"><span class="c1"></span></p>
+<ol class="c9 lst-kix_list_1-1" start="12">
+  <li class="c15"><h2 id="h.32hioqz" style="display:inline"><span
+    class="c13">5.4 Column headers, hints and tool-tips</span></h2></li>
+</ol>
+<p class="c2"><span class="c1">[caption here]</span></p>
+<ol class="c9 lst-kix_list_1-0" start="6">
+  <li class="c7"><h1 id="h.1hmsyys" style="display:inline"><span class="c18">Chapter 6. Additional options</span></h1>
+  </li>
+</ol>
+<p class="c2"><span class="c1">[caption here]</span></p>
+<p class="c0"><span class="c1"></span></p>
+<ol class="c9 lst-kix_list_1-1" start="13">
+  <li class="c15"><h2 id="h.41mghml" style="display:inline"><span class="c13">6.1 Hide/show legend</span></h2></li>
+</ol>
+<p class="c2"><span class="c1">[caption here]</span></p>
+<p class="c0"><span class="c1"></span></p>
+<ol class="c9 lst-kix_list_1-1" start="14">
+  <li class="c15"><h2 id="h.2grqrue" style="display:inline"><span class="c13">6.2 Hide/show item number</span></h2></li>
+</ol>
+<p class="c2"><span class="c1">[caption here]</span></p>
+<p class="c0"><span class="c1"></span></p>
+<ol class="c9 lst-kix_list_1-1" start="15">
+  <li class="c15"><h2 id="h.vx1227" style="display:inline"><span class="c13">6.3 Hide/show empty rows</span></h2></li>
+</ol>
+<p class="c2"><span class="c1">[caption here]</span></p>
+<p class="c0"><span class="c1"></span></p>
+<ol class="c9 lst-kix_list_1-1" start="16">
+  <li class="c15"><h2 id="h.3fwokq0" style="display:inline"><span class="c13">6.4 Hide/show average row/column</span>
+  </h2></li>
+</ol>
+<p class="c2"><span class="c1">[caption here]</span></p>
+<p class="c0"><span class="c1"></span></p>
+<ol class="c9 lst-kix_list_1-1" start="17">
+  <li class="c15"><h2 id="h.1v1yuxt" style="display:inline"><span class="c13">6.5 Hide/show below/above average</span>
+  </h2></li>
+</ol>
+<p class="c2"><span class="c1">[caption here]</span></p>
+<p class="c0"><span class="c1"></span></p>
+<ol class="c9 lst-kix_list_1-1" start="18">
+  <li class="c15"><h2 id="h.4f1mdlm" style="display:inline"><span class="c13">6.6 Show top ten/five/three</span></h2>
+  </li>
+</ol>
+<p class="c2"><span class="c1">[caption here]</span></p>
+<p class="c0"><span class="c1"></span></p>
+<ol class="c9 lst-kix_list_1-0" start="7">
+  <li class="c7"><h1 id="h.2u6wntf" style="display:inline"><span class="c18">Chapter 7. Context menu</span></h1></li>
+</ol>
+<p class="c2"><span class="c1">[caption here]</span></p>
+<p class="c0"><span class="c1"></span></p>
+<ol class="c9 lst-kix_list_1-1" start="19">
+  <li class="c15"><h2 id="h.19c6y18" style="display:inline"><span
+    class="c13">7.1 Further analysis by entire column</span></h2></li>
+</ol>
+<p class="c2"><span class="c1">[caption here]</span></p>
+<p class="c0"><span class="c1"></span></p>
+<ol class="c9 lst-kix_list_1-1" start="20">
+  <li class="c15"><h2 id="h.3tbugp1" style="display:inline"><span class="c13">7.2 Sort asc/desc by column</span></h2>
+  </li>
+</ol>
+<p class="c2"><span class="c1">[caption here]</span></p>
+<p class="c0"><span class="c1"></span></p>
+<ol class="c9 lst-kix_list_1-1" start="21">
+  <li class="c15"><h2 id="h.28h4qwu" style="display:inline"><span
+    class="c13">7.3 Best/worst by columns (top 10,5,3)</span></h2></li>
+</ol>
+<p class="c2"><span class="c1">[caption here]</span></p>
+<p class="c0"><span class="c1"></span></p>
+<ol class="c9 lst-kix_list_1-1" start="22">
+  <li class="c15"><h2 id="h.nmf14n" style="display:inline"><span class="c13">7.4 Hide/show column</span></h2></li>
+</ol>
+<p class="c2"><span class="c1">[caption here]</span></p>
+<p class="c0"><span class="c1"></span></p>
+<ol class="c9 lst-kix_list_1-1" start="23">
+  <li class="c15"><h2 id="h.37m2jsg" style="display:inline"><span class="c13">7.5 Further Analysis by cell</span></h2>
+  </li>
+</ol>
+<p class="c2"><span class="c1">[caption here]</span></p>
+<p class="c0"><span class="c1"></span></p>
+<ol class="c9 lst-kix_list_1-1" start="24">
+  <li class="c15"><h2 id="h.1mrcu09" style="display:inline"><span class="c13">7.6 Trend analysis by cell</span></h2>
+  </li>
+</ol>
+<p class="c2"><span class="c1">[caption here]</span></p>
+<p class="c0"><span class="c1"></span></p>
+<ol class="c9 lst-kix_list_1-1" start="25">
+  <li class="c15"><h2 id="h.46r0co2" style="display:inline"><span class="c13">7.7 Bottleneck analysis by cell</span>
+  </h2></li>
+</ol>
+<p class="c2"><span class="c1">[caption here]</span></p>
+<p class="c0"><span class="c1"></span></p>
+<ol class="c9 lst-kix_list_1-0" start="8">
+  <li class="c7"><h1 id="h.2lwamvv" style="display:inline"><span class="c18">Chapter 8. Further analysis</span></h1>
+  </li>
+</ol>
+<p class="c2"><span class="c1">[caption here]</span></p>
+<p class="c0"><span class="c1"></span></p>
+<ol class="c9 lst-kix_list_1-1" start="26">
+  <li class="c15"><h2 id="h.111kx3o" style="display:inline"><span class="c13">8.1 Bottleneck analysis</span></h2></li>
+</ol>
+<p class="c2"><span class="c1">[caption here]</span></p>
+<ol class="c9 lst-kix_list_1-1" start="27">
+  <li class="c15"><h2 id="h.3l18frh" style="display:inline"><span class="c13">8.2 Pivot table analysis</span></h2></li>
+</ol>
+<p class="c2"><span class="c1">[caption here]</span></p>
+<p class="c0"><span class="c1"></span></p>
+<ol class="c9 lst-kix_list_1-1" start="28">
+  <li class="c15"><h2 id="h.206ipza" style="display:inline"><span class="c13">8.3 Chart analysis</span></h2></li>
+</ol>
+<p class="c2"><span class="c1">[caption here]</span></p>
+<p class="c0"><span class="c1"></span></p>
+<ol class="c9 lst-kix_list_1-1" start="29">
+  <li class="c15"><h2 id="h.4k668n3" style="display:inline"><span class="c13">8.4 Map analysis</span></h2></li>
+</ol>
+<p class="c2"><span class="c1">[caption here]</span></p>
+<p class="c0"><span class="c1"></span></p>
+<ol class="c9 lst-kix_list_1-1" start="30">
+  <li class="c15"><h2 id="h.2zbgiuw" style="display:inline"><span class="c13">8.5 Data dictionary</span></h2></li>
+</ol>
+<p class="c2"><span class="c1">[caption here]</span></p>
+<p class="c0"><span class="c1"></span></p>
+<ol class="c9 lst-kix_list_1-1" start="31">
+  <li class="c15"><h2 id="h.1egqt2p" style="display:inline"><span class="c13">8.6 Operations on Further analysis</span>
+  </h2></li>
+</ol>
+<p class="c2"><span class="c1">[caption here]</span></p>
+<p class="c0"><span class="c1"></span></p>
+<ol class="c9 lst-kix_list_1-2" start="13">
+  <li class="c17"><h3 id="h.3ygebqi" style="display:inline"><span class="c3">Layout selection</span></h3></li>
+</ol>
+<p class="c2"><span class="c1">[caption here]</span></p>
+<p class="c0"><span class="c1"></span></p>
+<ol class="c9 lst-kix_list_1-2" start="14">
+  <li class="c17"><h3 id="h.2dlolyb" style="display:inline"><span class="c3">Downloads</span></h3></li>
+</ol>
+<p class="c2"><span class="c1">[caption here]</span></p>
+<p class="c0"><span class="c1"></span></p>
+<ol class="c9 lst-kix_list_1-2" start="15">
+  <li class="c17"><h3 id="h.sqyw64" style="display:inline"><span class="c3">Print scorecard</span></h3></li>
+</ol>
+<p class="c2"><span class="c1">[caption here]</span></p>
+<p class="c0"><span class="c1"></span></p>
+<ol class="c9 lst-kix_list_1-2" start="16">
+  <li class="c17"><h3 id="h.3cqmetx" style="display:inline"><span class="c3">Download excel</span></h3></li>
+</ol>
+<p class="c2"><span class="c1">[caption here]</span></p>
+<p class="c0"><span class="c1"></span></p>
+<ol class="c9 lst-kix_list_1-0" start="9">
+  <li class="c7"><h1 id="h.1rvwp1q" style="display:inline"><span class="c18">Chapter 9. Creating and managing of scorecard</span>
+  </h1></li>
+</ol>
+<p class="c0"><span class="c1"></span></p>
+<p class="c2"><span class="c1">Scorecard can be created via creation interface, which is accessible to &ldquo;create&rdquo; button on the top right corner while on home/listing page.</span>
+</p>
+<p class="c0"><span class="c1"></span></p>
+<p class="c2"><span class="c1">Click &ldquo;create&rdquo;, to open scorecard creation interface. If not on home page, to access create button from any page, go back to home/listing page.</span>
+</p>
+<p class="c0"><span class="c1"></span></p>
+<p class="c2"><span
+  style="overflow: hidden; display: inline-block; margin: 0.00px 0.00px; border: 0.00px solid #000000; transform: rotate(0.00rad) translateZ(0px); -webkit-transform: rotate(0.00rad) translateZ(0px); width: 642.53px; height: 361.40px;"><img
+  alt="" src="assets/img/docs/image14.png"
+  style="width: 642.53px; height: 361.40px; margin-left: 0.00px; margin-top: 0.00px; transform: rotate(0.00rad) translateZ(0px); -webkit-transform: rotate(0.00rad) translateZ(0px);"
+  title=""></span></p>
+<p class="c2"><span class="c1">Figure 3.1: Interface for creating scorecard</span></p>
+<p class="c0"><span class="c1"></span></p>
+<p class="c2"><span class="c1">Once on the scorecard creation interface, scorecard can be created quickly in three simple steps</span>
+</p>
+<ol class="c9 lst-kix_list_5-0 start" start="1">
+  <li class="c2 c19"><span class="c1">Labeling and branding of scorecard</span></li>
+  <li class="c2 c19"><span class="c1">Selecting data for the scorecard</span></li>
+  <li class="c2 c19"><span class="c1">Managing layout and saving</span></li>
+</ol>
+<p class="c0"><span class="c1"></span></p>
+<ol class="c9 lst-kix_list_1-1" start="32">
+  <li class="c15"><h2 id="h.4bvk7pj" style="display:inline"><span class="c13">9.1 Labeling/Branding scorecard</span>
+  </h2></li>
+</ol>
+<p class="c2"><span class="c1">Labeling of scorecard involves and branding involves filling in three main fields.</span>
+</p>
+<ul class="c9 lst-kix_list_6-0 start">
+  <li class="c2 c19"><span class="c1">Name, used for future search</span></li>
+  <li class="c2 c19"><span class="c1">Description, used for detailed/deep search</span></li>
+  <li class="c2 c19"><span class="c1">Custom header, for branding by placing banner on top of scorecard</span></li>
+</ul>
+<p class="c0"><span class="c1"></span></p>
+<ol class="c9 lst-kix_list_1-2" start="17">
+  <li class="c17"><h3 id="h.2r0uhxc" style="display:inline"><span class="c3">Labeling of scorecard</span></h3></li>
+</ol>
+<p class="c2"><span class="c1">Start by labeling scorecard with name and description, that can be done by entering title and description of scorecard on the middle left side of the scorecard.</span>
+</p>
+<p class="c0"><span class="c1"></span></p>
+<p class="c2"><span class="c22">Note: </span><span class="c1">Title and description of scorecard are mandatory fields to allow proper description of score card as well as allowing search in the future.</span>
+</p>
+<p class="c0"><span class="c1"></span></p>
+<p class="c2"><span
+  style="overflow: hidden; display: inline-block; margin: 0.00px 0.00px; border: 0.00px solid #000000; transform: rotate(0.00rad) translateZ(0px); -webkit-transform: rotate(0.00rad) translateZ(0px); width: 343.00px; height: 159.00px;"><img
+  alt="" src="assets/img/docs/image7.png"
+  style="width: 343.00px; height: 159.00px; margin-left: 0.00px; margin-top: 0.00px; transform: rotate(0.00rad) translateZ(0px); -webkit-transform: rotate(0.00rad) translateZ(0px);"
+  title=""></span></p>
+<p class="c0"><span class="c1"></span></p>
+<p class="c0"><span class="c1"></span></p>
+<p class="c0"><span class="c1"></span></p>
+<p class="c0"><span class="c1"></span></p>
+<p class="c0"><span class="c1"></span></p>
+<p class="c0"><span class="c1"></span></p>
+<p class="c0"><span class="c1"></span></p>
+<p class="c0"><span class="c1"></span></p>
+<p class="c2"><span class="c1">Figure 3.2: Section for labeling of scorecard with name and description.</span></p>
+<p class="c0"><span class="c1"></span></p>
+<ol class="c9 lst-kix_list_1-2" start="18">
+  <li class="c17"><h3 id="h.1664s55" style="display:inline"><span class="c3">Branding of scorecard</span></h3></li>
+</ol>
+<p class="c2"><span class="c1">Branding of scorecard is optional, by default scorecard uses name as heading of the scorecard, which will be displayed on top of scorecard, custom header field is available to allow more advanced customization and tailoring of scorecard.</span>
+</p>
+<p class="c0"><span class="c1"></span></p>
+<p class="c2"><span class="c1">Custom header, uses what you see is what you get(WYIWYG) interface to allow complex designs of headers supporting formatting of texts, alignments and insertion of images.</span>
+</p>
+<p class="c0"><span class="c1"></span></p>
+<p class="c2"><span class="c1">To edit custom header, locate &ldquo;customize header&rdquo; button, on the top center of the scorecard, where header of scorecard will be displayed.</span>
+</p>
+<p class="c2"><span
+  style="overflow: hidden; display: inline-block; margin: 0.00px 0.00px; border: 0.00px solid #000000; transform: rotate(0.00rad) translateZ(0px); -webkit-transform: rotate(0.00rad) translateZ(0px); width: 222.00px; height: 79.00px;"><img
+  alt="" src="assets/img/docs/image16.png"
+  style="width: 222.00px; height: 79.00px; margin-left: 0.00px; margin-top: 0.00px; transform: rotate(0.00rad) translateZ(0px); -webkit-transform: rotate(0.00rad) translateZ(0px);"
+  title=""></span></p>
+<p class="c0"><span class="c1"></span></p>
+<p class="c0"><span class="c1"></span></p>
+<p class="c0"><span class="c1"></span></p>
+<p class="c0"><span class="c1"></span></p>
+<p class="c2"><span class="c1">Figure 3.3: Button for customizing of scorecard header with WYIWYG</span></p>
+<p class="c0"><span class="c1"></span></p>
+<ol class="c9 lst-kix_list_1-1" start="33">
+  <li class="c15"><h2 id="h.3q5sasy" style="display:inline"><span class="c13">9.2 Choosing your data selections</span>
+  </h2></li>
+</ol>
+<p class="c2"><span class="c1">To choose type of data in your scorecard simply locate the section next to title and description for &nbsp;selecting type of meta-data, choosing group and picking meta-data of interest.</span>
+</p>
+<p class="c0"><span class="c1"></span></p>
+<p class="c2"><span class="c1">Select all indicators/data elements/reporting rates/program indicators/event data items/ custom functions of your choices, to insert them in scorecard columns.</span>
+</p>
+<p class="c0"><span class="c1"></span></p>
+<p class="c2"><span class="c1">Selection of score-card is simplified, what you see is what you get interface, with real-time simulation of scorecard layout.</span>
+</p>
+<p class="c0"><span class="c1"></span></p>
+<p class="c2"><span class="c1">Basic selection operations includes:</span></p>
+<ul class="c9 lst-kix_list_7-0 start">
+  <li class="c2 c19"><span class="c1">Select an item to add it, or un-select to remove if from scorecard columns</span>
+  </li>
+  <li class="c2 c19"><span class="c1">Drag and drop an item from the data selection to scorecard columns to add</span>
+  </li>
+  <li class="c2 c19"><span class="c1">Click trash/delete icon on &ldquo;Cell customization&rdquo; area to remove it from scorecard columns</span>
+  </li>
+</ul>
+<p class="c0"><span class="c1"></span></p>
+<p class="c2"><span
+  style="overflow: hidden; display: inline-block; margin: 0.00px 0.00px; border: 0.00px solid #000000; transform: rotate(0.00rad) translateZ(0px); -webkit-transform: rotate(0.00rad) translateZ(0px); width: 402.00px; height: 300.00px;"><img
+  alt="" src="assets/img/docs/image13.png"
+  style="width: 402.00px; height: 300.00px; margin-left: 0.00px; margin-top: 0.00px; transform: rotate(0.00rad) translateZ(0px); -webkit-transform: rotate(0.00rad) translateZ(0px);"
+  title=""></span></p>
+<p class="c0"><span class="c1"></span></p>
+<p class="c0"><span class="c1"></span></p>
+<p class="c0"><span class="c1"></span></p>
+<p class="c0"><span class="c1"></span></p>
+<p class="c0"><span class="c1"></span></p>
+<p class="c0"><span class="c1"></span></p>
+<p class="c0"><span class="c1"></span></p>
+<p class="c0"><span class="c1"></span></p>
+<p class="c0"><span class="c1"></span></p>
+<p class="c0"><span class="c1"></span></p>
+<p class="c0"><span class="c1"></span></p>
+<p class="c0"><span class="c1"></span></p>
+<p class="c0"><span class="c1"></span></p>
+<p class="c0"><span class="c1"></span></p>
+<p class="c0"><span class="c1"></span></p>
+<p class="c0"><span class="c1"></span></p>
+<p class="c2"><span class="c1">Figure 3.4: Data selections for scorecard</span></p>
+<p class="c0"><span class="c1"></span></p>
+<p class="c2"><span class="c1">Scorecard supports all data selections &nbsp;available in analytics applications, and supports more, such as &nbsp;custom functions. Among the supported meta-data selections includes:</span>
+</p>
+<ul class="c9 lst-kix_list_8-0 start">
+  <li class="c2 c19"><span class="c22">Indicator selection</span><span class="c1">, selection of indicators is done by available groups</span>
+  </li>
+  <li class="c2 c19"><span class="c22">Data element selection</span><span class="c1">, selection of data elements is done by available groups</span>
+  </li>
+  <li class="c2 c19"><span class="c22">Data Sets selection,</span><span class="c1">&nbsp;selections in data sets includes, Reporting rates, Reporting rates on time, Actual reports submitted, Actual reports submitted on time, Expected reports</span>
+  </li>
+  <li class="c2 c19"><span class="c22">Program indicator selections</span><span class="c1">, selection of program indicators is done by available programs</span>
+  </li>
+  <li class="c2 c19"><span class="c22">Event data items</span><span class="c1">, selection of data items is done by available programs</span>
+  </li>
+  <li class="c2 c19"><span class="c22">Custom functions</span><span class="c1">, selection of custom functions is done by available functions</span>
+  </li>
+</ul>
+<ol class="c9 lst-kix_list_1-2 start" start="1">
+  <li class="c17"><h3 id="h.25b2l0r" style="display:inline"><span class="c3">Standard analytics data selections</span>
+  </h3></li>
+</ol>
+<p class="c2"><span class="c1">Standard analytics data selections are the selections available by default on all DHIS2 analytics tools, such as pivot table, visualizer and GIS. These includes indicators, data elements, data set, program indicators and event data items.</span>
+</p>
+<p class="c0"><span class="c1"></span></p>
+<p class="c2"><span class="c22">Note:</span><span class="c1">&nbsp;All standard data selections, depend on the data sources, thus data selections should have reporting frequency same or higher than &nbsp;the default period type of the scorecard, otherwise those indicators will always return empty, due to wrong reporting period.</span>
+</p>
+<p class="c0"><span class="c1"></span></p>
+<ol class="c9 lst-kix_list_1-2" start="2">
+  <li class="c17"><h3 id="h.kgcv8k" style="display:inline"><span class="c3">Functions selections</span></h3></li>
+</ol>
+<p class="c2"><span class="c1">Functions selections are extended analytics calculations supporting a more open-ended logic of computation, such as logical operations, predictors and other complex analytics use cases.</span>
+</p>
+<p class="c0"><span class="c1"></span></p>
+<p class="c2"><span class="c1">To create functions to work with scorecard download, download function maintenance application from this link: https://play.dhis2.org/appstore/app/dXX2Fk6jwCX</span>
+</p>
+<p class="c0"><span class="c1"></span></p>
+<p class="c2"><span class="c1">Functions makes use of pure good old JavaScript(vanilla JavaScript) logic to do calculations purely on the browser, without the need for server, this is accomplished by execution of JavaScript codes that expects period and data selections and return standard DHIS2 analytics results.</span>
+</p>
+<p class="c0"><span class="c1"></span></p>
+<p class="c2"><span class="c1">Functions comprises of three key building blocks</span></p>
+<ol class="c9 lst-kix_list_9-0 start" start="1">
+  <li class="c2 c19"><span class="c1">Input/Selection parameters. Function expects standard DHIS2 periods and organization units selections.</span>
+  </li>
+  <li class="c2 c19"><span class="c1">Computation logic. This is an open-ended workspace for writing of calculation logic to work on given period and organization unit selections, computation logic is usually classified into rules dimensions, thus allowing one function to support different use cases by defining multiple rules that will control the computation logic. Possibilities are limitless, among major operations done includes</span>
+  </li>
+</ol>
+<ol class="c9 lst-kix_list_9-1 start" start="1">
+  <li class="c2 c25"><span class="c1">Fetching data from aggregate and event analytics and modifying results with custom logic, and reformat the results back in standard analytics format.</span>
+  </li>
+  <li class="c2 c25"><span class="c1">Fetching data from existing sqlViews, performing custom logics and formating results in standard analytics format</span>
+  </li>
+  <li class="c2 c25"><span class="c1">Fetching data from other DHIS2 API endpoints(such as data-value and events api) and other data sources(including external sources), performing custom logic and formating results in standard analytics format.</span>
+  </li>
+</ol>
+<ol class="c9 lst-kix_list_9-0" start="3">
+  <li class="c2 c19"><span class="c1">Output/Returned analytics. This is the end-result output from functions, formatted in standard analytics format, to allow compatibility with standard DHIS2 analytics applications.</span>
+  </li>
+</ol>
+<p class="c0"><span class="c1"></span></p>
+<p class="c2"><span class="c1">To support open-ended support for any level of complexity, function maintenance application has been developed, to allow any developer with basic JavaScript knowledge to quickly develop custom calculations either not supported natively by DHIS2 or to allow developer to work-around limitations or mis-calculations from standard analytics.</span>
+</p>
+<p class="c0"><span class="c1"></span></p>
+<p class="c2"><span class="c1">Main requirements for developing functions includes:</span></p>
+<ul class="c9 lst-kix_list_10-0 start">
+  <li class="c2 c19"><span class="c1">Basic web programming knowledge with JavaScript (jQuery is an advantage)</span>
+  </li>
+  <li class="c2 c19"><span class="c1">Understanding of DHIS 2 Web API and analytics</span></li>
+  <li class="c2 c19"><span class="c1">A working installation of Functions maintenance application.</span></li>
+</ul>
+<p class="c0"><span class="c1"></span></p>
+<p class="c2"><span class="c22">Note:</span><span class="c1">&nbsp;</span></p>
+<p class="c2"><span class="c1">If function maintenance application is installed for the first time, it&rsquo;ll create two standard functions as example functions to allow re-use of codes to create other functions.</span>
+</p>
+<p class="c0"><span class="c1"></span></p>
+<p class="c2"><span class="c1">The auto created functions will also be listed in functions selection list.</span></p>
+<p class="c0"><span class="c1"></span></p>
+<ol class="c9 lst-kix_list_1-1" start="34">
+  <li class="c15"><h2 id="h.34g0dwd" style="display:inline"><span class="c13">9.3 Managing layouts and saving</span>
+  </h2></li>
+</ol>
+<p class="c2"><span class="c1">Once done with scorecard data selection process, a list of all selections will be appearing as columns on the scorecard layout area. Scorecard will be in it&rsquo;s most basic layout, and is ready to be saved.</span>
+</p>
+<p class="c2"><span class="c1">Among the layout standards observations includes:</span></p>
+<ul class="c9 lst-kix_list_11-0 start">
+  <li class="c2 c19"><span class="c1">All columns are grouped in single default group. Group label for default single group is not displayed for simplicity.</span>
+  </li>
+  <li class="c2 c19"><span class="c1">Values, colors and arrows for each column are auto-generated. Values are auto generated to provided real-time what you see is what you get.</span>
+  </li>
+  <li class="c2 c19"><span class="c1">Column labels picks default name of the selected meta-data, labels can be changed, see section &ldquo;Customization of cells&rdquo; section of this documentation.</span>
+  </li>
+</ul>
+<p class="c0"><span class="c1"></span></p>
+<p class="c2"><span
+  style="overflow: hidden; display: inline-block; margin: 0.00px 0.00px; border: 0.00px solid #000000; transform: rotate(0.00rad) translateZ(0px); -webkit-transform: rotate(0.00rad) translateZ(0px); width: 642.53px; height: 110.87px;"><img
+  alt="" src="assets/img/docs/image17.png"
+  style="width: 642.53px; height: 110.87px; margin-left: 0.00px; margin-top: 0.00px; transform: rotate(0.00rad) translateZ(0px); -webkit-transform: rotate(0.00rad) translateZ(0px);"
+  title=""></span></p>
+<p class="c2"><span
+  class="c1">Figure 3.5: Standard layout of scorecard, with what you see is what you get interface.</span></p>
+<p class="c0"><span class="c1"></span></p>
+<ol class="c9 lst-kix_list_1-2" start="3">
+  <li class="c17"><h3 id="h.1jlao46" style="display:inline"><span class="c3">Changing layout of scorecard</span></h3>
+  </li>
+</ol>
+<p class="c2"><span class="c1">To change scorecard layouts, simply &nbsp;click on column labels(text), to select column to move, then simply drag and drop that column to a new position </span>
+</p>
+<p class="c0"><span class="c1"></span></p>
+<p class="c0"><span class="c1"></span></p>
+<ol class="c9 lst-kix_list_1-0" start="10">
+  <li class="c7"><h1 id="h.43ky6rz" style="display:inline"><span class="c18">Chapter 10. Customizations and editing of scorecard</span>
+  </h1></li>
+</ol>
+<p class="c2"><span class="c1">[caption here]</span></p>
+<p class="c0"><span class="c1"></span></p>
+<ol class="c9 lst-kix_list_1-1" start="35">
+  <li class="c15"><h2 id="h.2iq8gzs" style="display:inline"><span class="c13">10.1 Access sharing settings</span></h2>
+  </li>
+</ol>
+<p class="c2"><span class="c1">[caption here]</span></p>
+<p class="c0"><span class="c1"></span></p>
+<ol class="c9 lst-kix_list_1-1" start="36">
+  <li class="c15"><h2 id="h.xvir7l" style="display:inline"><span class="c13">10.2 Startup period and organization unit selection</span>
+  </h2></li>
+</ol>
+<p class="c2"><span class="c1">[caption here]</span></p>
+<p class="c0"><span class="c1"></span></p>
+<ol class="c9 lst-kix_list_1-1" start="37">
+  <li class="c15"><h2 id="h.3hv69ve" style="display:inline"><span class="c13">10.3 Grouping of cells in scorecard</span>
+  </h2></li>
+</ol>
+<p class="c2"><span class="c1">[caption here]</span></p>
+<p class="c0"><span class="c1"></span></p>
+<ol class="c9 lst-kix_list_1-1" start="38">
+  <li class="c15"><h2 id="h.1x0gk37" style="display:inline"><span class="c13">10.4 Customization of cells</span></h2>
+  </li>
+</ol>
+<p class="c2"><span class="c1">[caption here]</span></p>
+<p class="c0"><span class="c1"></span></p>
+<ol class="c9 lst-kix_list_1-2" start="4">
+  <li class="c17"><h3 id="h.4h042r0" style="display:inline"><span class="c3">Column &amp; cell labels</span></h3></li>
+</ol>
+<p class="c2"><span class="c1">[caption here]</span></p>
+<p class="c0"><span class="c1"></span></p>
+<ol class="c9 lst-kix_list_1-2" start="5">
+  <li class="c17"><h3 id="h.2w5ecyt" style="display:inline"><span class="c3">Cell Effective(Minimum) gap</span></h3>
+  </li>
+</ol>
+<p class="c2"><span class="c1">[caption here]</span></p>
+<p class="c0"><span class="c1"></span></p>
+<ol class="c9 lst-kix_list_1-2" start="6">
+  <li class="c17"><h3 id="h.1baon6m" style="display:inline"><span class="c3">Cell cut-of points range</span></h3></li>
+</ol>
+<p class="c2"><span class="c1">[caption here]</span></p>
+<p class="c0"><span class="c1"></span></p>
+<ol class="c9 lst-kix_list_1-2" start="7">
+  <li class="c17"><h3 id="h.3vac5uf" style="display:inline"><span class="c3">Display effective gap arrows</span></h3>
+  </li>
+</ol>
+<p class="c2"><span class="c1">[caption here]</span></p>
+<p class="c0"><span class="c1"></span></p>
+<ol class="c9 lst-kix_list_1-2" start="8">
+  <li class="c17"><h3 id="h.2afmg28" style="display:inline"><span class="c3">Show legend colors</span></h3></li>
+</ol>
+<p class="c2"><span class="c1">[caption here]</span></p>
+<p class="c0"><span class="c1"></span></p>
+<ol class="c9 lst-kix_list_1-1" start="39">
+  <li class="c15"><h2 id="h.pkwqa1" style="display:inline"><span
+    class="c13">10.5 Stack two cells in single column</span></h2></li>
+</ol>
+<p class="c2"><span class="c1">[caption here]</span></p>
+<p class="c0"><span class="c1"></span></p>
+<ol class="c9 lst-kix_list_1-1" start="40">
+  <li class="c15"><h2 id="h.39kk8xu" style="display:inline"><span class="c13">10.6 Color codes for cut-off points</span>
+  </h2></li>
+</ol>
+<p class="c2"><span class="c1">[caption here]</span></p>
+<p class="c0"><span class="c1"></span></p>
+<ol class="c9 lst-kix_list_1-1" start="41">
+  <li class="c15"><h2 id="h.1opuj5n" style="display:inline"><span class="c13">10.7 Related/Bottleneck indicators</span>
+  </h2></li>
+</ol>
+<p class="c2"><span class="c1">[caption here]</span></p>
+<p class="c0"><span class="c1"></span></p>
+<ol class="c9 lst-kix_list_1-2" start="9">
+  <li class="c17"><h3 id="h.48pi1tg" style="display:inline"><span class="c3">Individual indicator selections</span></h3>
+  </li>
+</ol>
+<p class="c2"><span class="c1">[caption here]</span></p>
+<p class="c0"><span class="c1"></span></p>
+<ol class="c9 lst-kix_list_1-2" start="10">
+  <li class="c17"><h3 id="h.2nusc19" style="display:inline"><span class="c3">Grouped indicator selections</span></h3>
+  </li>
+</ol>
+<p class="c2"><span class="c1">[caption here]</span></p>
+<ol class="c9 lst-kix_list_1-1" start="42">
+  <li class="c15"><h2 id="h.1302m92" style="display:inline"><span class="c13">10.8 Additional labels</span></h2></li>
+</ol>
+<p class="c2"><span class="c1">[caption here]</span></p>
+<p class="c0"><span class="c1"></span></p>
+<ol class="c9 lst-kix_list_1-0" start="11">
+  <li class="c7"><h1 id="h.3mzq4wv" style="display:inline"><span class="c18">Chapter 11. Help &amp; tour guide</span>
+  </h1></li>
+</ol>
+<p class="c2"><span class="c1">[caption here]</span></p>
+<p class="c0"><span class="c1"></span></p>
+<ol class="c9 lst-kix_list_1-1" start="43">
+  <li class="c15"><h2 id="h.2250f4o" style="display:inline"><span class="c13">11.1 Help and documentation</span></h2>
+  </li>
+</ol>
+<p class="c2"><span class="c1">[caption here]</span></p>
+<p class="c0"><span class="c1"></span></p>
+<ol class="c9 lst-kix_list_1-1" start="44">
+  <li class="c15"><h2 id="h.haapch" style="display:inline"><span class="c13">11.2 Scorecard community use cases</span>
+  </h2></li>
+</ol>
+<p class="c2"><span class="c1">[caption here]</span></p>
+<ol class="c9 lst-kix_list_1-1" start="45">
+  <li class="c15"><h2 id="h.319y80a" style="display:inline"><span class="c13">11.3 Tour guide</span></h2></li>
+</ol>
+<p class="c2"><span class="c1">[caption here]</span></p>
+
+</div>

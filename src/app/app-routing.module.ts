@@ -8,12 +8,18 @@ import { CreateComponent } from './create/create.component';
 import { ViewComponent } from './view/view.component';
 import {ScorecardExistsGuards} from './guards';
 import {UserExistsGuards} from './guards/user.exists';
+import {DocumentationComponent} from "./documentation/documentation.component";
 
 const routes: Routes = [
   {
     path: '',
     canActivate: [UserExistsGuards],
     component: HomeComponent ,
+    pathMatch: 'full'
+  },
+  {
+    path: 'documentation',
+    component: DocumentationComponent ,
     pathMatch: 'full'
   },
   {

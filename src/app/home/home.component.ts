@@ -135,4 +135,5 @@ export class HomeComponent implements OnInit {
     this.translate.use(language);
   }
 
+
 }

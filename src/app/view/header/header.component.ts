@@ -1,4 +1,5 @@
 import {ChangeDetectionStrategy, Component, EventEmitter, OnInit, Output} from '@angular/core';
+import {TranslateService} from "@ngx-translate/core";
 
 @Component({
   selector: 'app-view-header',
@@ -10,7 +11,7 @@ export class HeaderComponent implements OnInit {
 
   @Output() onGoHomePage = new EventEmitter();
   @Output() onTourStart = new EventEmitter();
-  constructor() { }
+  constructor(private translate: TranslateService) { }
 
   ngOnInit() {
   }
@@ -21,6 +22,10 @@ export class HeaderComponent implements OnInit {
 
   startTour() {
     this.onTourStart.emit();
+  }
+
+  switchLanguage(language: string) {
+    this.translate.use(language);
   }
 
 }

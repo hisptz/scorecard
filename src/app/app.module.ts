@@ -42,6 +42,7 @@ import {DatasetService} from './shared/services/dataset.service';
 import {EventDataService} from './shared/services/event-data.service';
 import {VisualizerService} from './shared/services/visualizer.service';
 import {FilterService} from './shared/services/filter.service';
+import { DocumentationComponent } from './documentation/documentation.component';
 
 // Add a function, that returns a “TranslateHttpLoader” and export it (needed by AoT)
 export function HttpLoaderFactory(http: HttpClient) {
@@ -58,7 +59,8 @@ export function HttpLoaderFactory(http: HttpClient) {
     PlaceholderComponent,
     DescriptionComponent,
     ScorecardDetailComponent,
-    ScoreCardFilterPipe
+    ScoreCardFilterPipe,
+    DocumentationComponent
   ],
   imports: [
     BrowserModule,
