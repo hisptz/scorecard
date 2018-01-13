@@ -10,7 +10,7 @@ import {IndicatorHolderGroup} from '../../shared/models/indicator-holders-group'
 
 
 export interface CreatedScorecardState {
-  action_type?: string,
+  action_type?: string;
   id: string;
   need_for_group: boolean;
   can_edit: boolean;
@@ -30,7 +30,8 @@ export interface CreatedScorecardState {
   show_data_in_column: boolean;
   show_score: boolean;
   show_rank: boolean;
-  empty_rows: boolean;
+  empty_rows?: boolean;
+  show_hierarchy?: boolean;
   rank_position_last: boolean;
   header: {
     title: string,
@@ -108,6 +109,7 @@ export const InitialCreateState: CreatedScorecardState = {
   show_score: false,
   show_rank: false,
   empty_rows: false,
+  show_hierarchy: false,
   rank_position_last: true,
   header: {
     title: '',

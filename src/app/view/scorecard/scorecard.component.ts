@@ -102,13 +102,17 @@ export class ScorecardComponent implements OnInit, OnDestroy {
       ).subscribe(
         (initialAnalyticsResult: any) => {
           initialAnalyticsResult = this.visualizerService._sanitizeIncomingAnalytics(initialAnalyticsResult);
-          console.log(initialAnalyticsResult);
           // prepare organisation unit list to be displayed in scorecard
           this.orgunits = _.map(initialAnalyticsResult.metaData.ou, (ou: any) => {
+            const detailed_orgunit = this.organisation_unit_nodes.treeModel.getNodeById(ou);
             const ou_structure: any = {
               'id': ou,
-              'name': initialAnalyticsResult.metaData.names[ou],
+              'name': initialAnalyticsResult.metaData.names[ou]
             };
+            if (detailed_orgunit && detailed_orgunit.data.hasOwnProperty('parent')) {
+              // if (this.scorecard.data.show_hierarchy) {
+                ou_structure.parent = detailed_orgunit.data.parent.name;
+            }
             if (orgUnits.items.length !== 0) {
               ou_structure.is_parent = (this.scorecard.data.show_data_in_column) ? false : orgUnits.items[0].id === ou;
             }
@@ -340,11 +344,6 @@ export class ScorecardComponent implements OnInit, OnDestroy {
   }
 
 
-
-
-
-
-
   // A function used to decouple indicator list and prepare them for a display
   getItemsFromGroups() {
     // let indicators_list = [];
@@ -388,32 +387,6 @@ export class ScorecardComponent implements OnInit, OnDestroy {
     }
     return indicators;
   }
-
-  // check if a column is empty
-  isRowEmpty(orgunit_id: string): boolean {
-    let checker = false;
-    let sum = 0;
-    let counter = 0;
-    for (const holder of this.scorecard.data.data_settings.indicator_holders) {
-      for (const indicator of holder.indicators) {
-        for (const current_period of this.periods_list){
-          if (this.hidenColums.indexOf(indicator.id) === -1) {
-            sum++;
-          }
-          if (this.hidenColums.indexOf(indicator.id) === -1 && indicator.values[orgunit_id + '.' + current_period.id] === null) {
-            counter++;
-          }
-        }
-
-
-      }
-    }
-    if (counter === sum && !this.scorecard.data.empty_rows) {
-      checker = true;
-    }
-    return checker;
-  }
-
 
   // check if column is empty
   isEmptyColumn(orgunits, indicator_id, scorecard) {

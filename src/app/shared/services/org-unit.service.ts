@@ -4,7 +4,7 @@ import {HttpClientService} from './http-client.service';
 import {ApplicationState} from '../../store/reducers';
 import {Store} from '@ngrx/store';
 import * as orgunitActions from '../../store/actions/orgunits.actions';
-import {DataService} from "./data.service";
+import {DataService} from './data.service';
 
 @Injectable()
 export class OrgUnitService {
@@ -178,7 +178,7 @@ export class OrgUnitService {
   generateUrlBasedOnLevels (level) {
     let childrenLevels = '[]';
     for (let i = 1; i < level + 1; i++) {
-      childrenLevels = childrenLevels.replace('[]', '[id,name,level,children[]]');
+      childrenLevels = childrenLevels.replace('[]', '[id,name,level,parent[name],children[]]');
     }
     let new_string = childrenLevels.substring(1);
     new_string = new_string.replace(',children[]]', '');

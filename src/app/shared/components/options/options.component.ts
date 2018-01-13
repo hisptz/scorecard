@@ -45,7 +45,8 @@ export class OptionsComponent implements OnInit {
   }
 
   setOptionFromButton( option, type, value = null ) {
-    console.log('nafika', this.options[option], type, value)
+    console.log(option, type, value, this.options);
+    console.log('nafika', this.options[option], type, value);
     if (type === 'boolean') {
       this.options[option] = !this.options[option];
     }else {

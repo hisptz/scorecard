@@ -130,7 +130,7 @@
           dnd-droppable (onDropSuccess)="dragItemSuccessfull($event,'orgunit',current_orgunit)"
       >
         <div dnd-draggable [dragEnabled]="true" [dragData]="current_orgunit" style="padding: 8px">
-          {{ current_orgunit.name }}
+          <span *ngIf="scorecard.data.show_hierarchy">{{ current_orgunit.parent }} / </span>  {{ current_orgunit.name }}
         </div>
       </td>
       <ng-container *ngFor="let indicator of indicator_holders_list">

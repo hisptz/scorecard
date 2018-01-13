@@ -30,6 +30,11 @@
           <i class="fa fa-circle-thin text-secondary" *ngIf="!options.empty_rows"></i>
           <span [translate]="'Empty Rows'"> Empty Rows</span>
         </li>
+        <li class="list-group-item pointer" (click)="setOptionFromButton('show_hierarchy', 'boolean')">
+          <i class="fa fa-check-circle text-secondary" *ngIf="options.show_hierarchy"></i>
+          <i class="fa fa-circle-thin text-secondary" *ngIf="!options.show_hierarchy"></i>
+          <span [translate]="'Show Hierarchy'"> Show Hierarchy</span>
+        </li>
         <li class="list-group-item pointer" (click)="setOptionFromButton('show_average_in_row', 'boolean')">
           <i class="fa fa-check-circle text-secondary" *ngIf="options.show_average_in_row"></i>
           <i class="fa fa-circle-thin text-secondary" *ngIf="!options.show_average_in_row"></i>

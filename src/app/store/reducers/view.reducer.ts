@@ -21,6 +21,7 @@ export interface ViewScorecardState {
   show_score: boolean;
   show_rank: boolean;
   empty_rows?: boolean;
+  show_hierarchy?: boolean;
   rank_position_last: boolean;
   header: {
     title: string,
@@ -88,6 +89,7 @@ export const initialViewState: ViewScorecardState = {
   show_score: false,
   show_rank: false,
   empty_rows: false,
+  show_hierarchy: false,
   rank_position_last: true,
   header: {
     title: '',
@@ -175,6 +177,7 @@ export function viewReducer(
       const options = {
         show_rank: action.payload.show_rank,
         empty_rows: action.payload.empty_rows,
+        show_hierarchy: action.payload.show_hierarchy,
         show_average_in_column: action.payload.show_average_in_column,
         show_average_in_row: action.payload.show_average_in_row,
         average_selection: action.payload.average_selection,
