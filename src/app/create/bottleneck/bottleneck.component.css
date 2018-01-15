@@ -101,7 +101,7 @@ label{
 
 .scorecard_details {
   width: auto;
-  height: 450px;
+  height: 380px;
   position: relative;
   /*padding-top: 10px;*/
   overflow: hidden;
@@ -129,7 +129,7 @@ label{
 
 .scorecard_details::after{
   width: auto;
-  height: 450px;
+  height: 380px;
   position: relative;
   padding-top: 2px;
   /*padding-left: 10px;*/
@@ -147,11 +147,19 @@ label{
   background-color: rgba(0,0,0,0.03);
   overflow: auto;
 }
+.bottleneck_scorecard_details input {
+  height: 25px;
+  padding-left: 2px;
+  font-size: 11px;
+}
 
+.bottleneck_scorecard_details p {
+  margin-bottom: 5px;
+}
 /*bottleneck Indicator selection arrea*/
 .bottleneck_scorecard_details {
   width: auto;
-  height: 450px;
+  height: 380px;
   position: relative;
   padding-top: 10px;
   overflow: hidden;

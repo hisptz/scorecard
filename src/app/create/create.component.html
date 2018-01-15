@@ -113,6 +113,7 @@
           [indicator]="bottleneck_card_indicator"
           [current_bottleneck_group]="selected_bottleneck_group"
           (onShowBottleneckEditor)="saveBotleneck($event)"
+          (onCancelBottleneckEditor)="cancelSaveBotleneck()"
         ></app-bottleneck>
       </div>
     </div>

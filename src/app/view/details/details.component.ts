@@ -16,7 +16,7 @@ import {CHART_TYPES} from './chart_types';
 export class DetailsComponent implements OnInit {
 
   @Input() indicatorDetails: any;
-  orgUnitModel: any;
+  orgUnitModel: any = null;
   selectedPeriod: any;
   periodType: any;
   year: any;
@@ -325,9 +325,16 @@ export class DetailsComponent implements OnInit {
               for (const bottleneck of item.bottleneck_indicators_groups) {
                 groupCateries.push({
                   name: bottleneck.name,
-                  categories: bottleneck.items.map((i) => i.name)
+                  categories: bottleneck.items.map((i) => i.bottleneck_title)
                 });
                 useGroups = true;
+                for ( const b_item of bottleneck.items) {
+                  if (b_item.hasOwnProperty('function')) {
+                    function_indicatorsArray.push(b_item);
+                  }else {
+                    indicatorsArray.push(b_item.id);
+                  }
+                }
                 if (bottleneck.hasOwnProperty('function')) {
                   function_indicatorsArray.push(...bottleneck.items);
                 }else {
@@ -443,7 +450,6 @@ export class DetailsComponent implements OnInit {
       if (this.showBottleneck) {
         this.visualizer_config.chartConfiguration.rotation = 0;
       }
-      console.log(this.visualizer_config)
     }
     // if there is no change of parameters from last request dont go to server
     if (type === 'info') {

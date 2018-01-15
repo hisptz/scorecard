@@ -308,7 +308,6 @@ export class OrgUnitFilterComponent implements OnInit {
     Object.keys(mapper).forEach(function(orgUnits) {
       arrayed_org_units.push(mapper[orgUnits]);
     });
-    console.log(this.orgunit_model);
     if (showUpdate) {
       this.onOrgUnitUpdate.emit({
         orgunit_model: this.orgunit_model,

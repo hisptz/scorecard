@@ -109,7 +109,11 @@ export class ScorecardComponent implements OnInit, OnDestroy {
               'id': ou,
               'name': initialAnalyticsResult.metaData.names[ou]
             };
+            if (detailed_orgunit && detailed_orgunit.data.hasOwnProperty('level')) {
+              ou_structure.level = detailed_orgunit.data.level;
+            }
             if (detailed_orgunit && detailed_orgunit.data.hasOwnProperty('parent')) {
+                ou_structure.level = detailed_orgunit.data.level;
               // if (this.scorecard.data.show_hierarchy) {
                 ou_structure.parent = detailed_orgunit.data.parent.name;
             }

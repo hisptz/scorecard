@@ -142,12 +142,16 @@ export class CreateComponent implements OnInit {
    * @param indicator
    */
   showBotleneckEditor(indicator) {
-    this.bottleneck_card_indicator = indicator;
+    this.bottleneck_card_indicator = {...indicator};
     if (indicator.hasOwnProperty('bottleneck_indicators_groups')) {
       if (indicator.bottleneck_indicators_groups.length !== 0) {
-        this.selected_bottleneck_group = indicator.bottleneck_indicators_groups[0];
+        this.selected_bottleneck_group = this.bottleneck_card_indicator.bottleneck_indicators_groups[0];
       }
     }
+    this.show_bottleneck_indicators = !this.show_bottleneck_indicators;
+  }
+
+  cancelSaveBotleneck() {
     this.show_bottleneck_indicators = !this.show_bottleneck_indicators;
   }
 

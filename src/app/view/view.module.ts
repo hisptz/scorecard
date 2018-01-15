@@ -25,7 +25,7 @@ import { InvertedViewComponent } from './scorecard/inverted-view/inverted-view.c
   imports: [
     SharedModule,
     MapModule,
-    Ng2HighchartsModule
+    Ng2HighchartsModule,
   ],
   declarations: [
     ViewComponent,

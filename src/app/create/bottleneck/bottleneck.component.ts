@@ -17,6 +17,7 @@ import {Legend} from '../../shared/models/legend';
 import {IndicatorHolderGroup} from '../../shared/models/indicator-holders-group';
 import {IndicatorHolder} from '../../shared/models/indicator-holder';
 import * as _ from 'lodash';
+import {VisualizerService} from '../../shared/services/visualizer.service';
 
 @Component({
   selector: 'app-bottleneck',
@@ -38,6 +39,7 @@ export class BottleneckComponent implements OnInit {
   @Input() current_bottleneck_group: any = null;
 
   @Output() onShowBottleneckEditor = new EventEmitter();
+  @Output() onCancelBottleneckEditor = new EventEmitter();
   datasets: any[] = [];
   indicatorGroups: any[] = [];
   dataElementGroups: any[] = [];
@@ -60,6 +62,8 @@ export class BottleneckComponent implements OnInit {
   p: number;
   r: number;
 
+  chartData: any = null;
+
   dataset_types = [
     {id: '.REPORTING_RATE', name: 'Reporting Rate'},
     {id: '.REPORTING_RATE_ON_TIME', name: 'Reporting Rate on time'},
@@ -75,6 +79,7 @@ export class BottleneckComponent implements OnInit {
     private dataElementService: DataElementGroupService,
     private programService: ProgramIndicatorsService,
     private eventService: EventDataService,
+    private visulizationService: VisualizerService,
     private dataService: DataService,
     private functionService: FunctionService,
     private store: Store<ApplicationState>
@@ -83,6 +88,16 @@ export class BottleneckComponent implements OnInit {
   }
 
   ngOnInit() {
+    this.loadPriview();
+  }
+
+  loadPriview() {
+    if (this.indicator.use_bottleneck_groups && this.indicator.bottleneck_indicators_groups.length !== 0) {
+      this.prepareChart(this.indicator);
+    }
+    if (!this.indicator.use_bottleneck_groups && this.indicator.bottleneck_indicators.length !== 0) {
+      this.prepareChart(this.indicator);
+    }
   }
 
   initiateItems() {
@@ -169,6 +184,7 @@ export class BottleneckComponent implements OnInit {
         this.error_loading_groups.message = 'There was an error when loading Data sets';
       }
     );
+
   }
 
   // load a single item for use in a score card
@@ -212,6 +228,7 @@ export class BottleneckComponent implements OnInit {
         this.indicator.bottleneck_indicators.push(item);
       }
     }
+    this.prepareChart(this.indicator);
 
   }
 
@@ -256,9 +273,16 @@ export class BottleneckComponent implements OnInit {
     this.current_bottleneck_group = this.indicator.bottleneck_indicators_groups[this.indicator.bottleneck_indicators_groups.length -1];
   }
 
+  deleteGroup(group) {
+    const index = _.findIndex(this.indicator.bottleneck_indicators_groups, {'id': group.id} );
+    this.indicator.bottleneck_indicators_groups.splice(index, 1);
+    this.prepareChart(this.indicator);
+  }
+
   removeBottleneckIndicatorFromGroup( item, group) {
     const index = _.findIndex(group.items, {'id': item.id} );
     group.items.splice(index, 1);
+    this.prepareChart(this.indicator);
   }
 
   // deal with all issues during group type switching between dataelent, indicators and datasets
@@ -500,6 +524,10 @@ export class BottleneckComponent implements OnInit {
     this.onShowBottleneckEditor.emit(indicator);
   }
 
+  cancelSaving() {
+    this.onCancelBottleneckEditor.emit();
+  }
+
   //  a function to remove bottleneck indicator
   removeBottleneckIndicator(item) {
     this.indicator.bottleneck_indicators.forEach( (value, index) => {
@@ -532,6 +560,122 @@ export class BottleneckComponent implements OnInit {
 
   stopPropergation(event) {
     event.stopPropagation();
+  }
+
+  prepareChart(item) {
+    const indicatorsArray = [];
+    const function_indicatorsArray = [];
+    const labels = [];
+    const groupCateries = [];
+    let useGroups = false;
+    if (item.use_bottleneck_groups) {
+      for (const bottleneck of item.bottleneck_indicators_groups) {
+        groupCateries.push({
+          name: bottleneck.name,
+          categories: bottleneck.items.map((i) => i.bottleneck_title)
+        });
+        useGroups = true;
+        if (bottleneck.hasOwnProperty('function')) {
+          function_indicatorsArray.push(...bottleneck.items);
+        }else {
+          indicatorsArray.push(...bottleneck.items.map((i) => i.id));
+        }
+        labels.push(...bottleneck.items.map((i) => { return {'id': i.id, 'name': i.bottleneck_title}; }));
+      }
+    }else {
+      useGroups = true;
+      for (const bottleneck of item.bottleneck_indicators) {
+        if (bottleneck.hasOwnProperty('function')) {
+          function_indicatorsArray.push(bottleneck);
+          labels.push({'id': bottleneck.id, 'name': bottleneck.bottleneck_title});
+        }else {
+          indicatorsArray.push(bottleneck.id);
+          labels.push({'id': bottleneck.id, 'name': bottleneck.bottleneck_title});
+        }
+      }
+    }
+    const visualizer_config = {
+      'type': 'chart',
+      'tableConfiguration': {},
+      'chartConfiguration': {
+        'type': 'column',
+        'show_labels': false,
+        'title': 'Sample bottleneck Chart',
+        'xAxisType': 'dx',
+        'yAxisType': 'ou',
+        'labels': labels,
+        'rotation': 0,
+        'dataGroups': groupCateries.length === 0 ? null : groupCateries
+      }
+    };
+    if (labels.length === 0) {
+      this.chartData = null;
+    }else {
+      this.chartData = this.visulizationService.drawChart(this.getSampleAnalytics(labels), visualizer_config.chartConfiguration);
+    }
+
+  }
+
+  getSampleAnalytics(labels) {
+    const combined_analytics: any = {
+      headers: [
+        {
+        'name': 'dx',
+        'column': 'Data',
+        'valueType': 'TEXT',
+        'type': 'java.lang.String',
+        'hidden': false,
+        'meta': true
+      },
+        {
+          'name': 'ou',
+          'column': 'Organisation unit',
+          'valueType': 'TEXT',
+          'type': 'java.lang.String',
+          'hidden': false,
+          'meta': true
+        },
+        {
+          'name': 'pe',
+          'column': 'Period',
+          'valueType': 'TEXT',
+          'type': 'java.lang.String',
+          'hidden': false,
+          'meta': true
+        },
+        {
+          'name': 'value',
+          'column': 'Value',
+          'valueType': 'NUMBER',
+          'type': 'java.lang.Double',
+          'hidden': false,
+          'meta': false
+        }],
+      metaData: {
+        names: {},
+        dx: [],
+        pe: [],
+        ou: [],
+        co: []
+      },
+      rows: [],
+      width: 0,
+      height: 0
+    };
+
+    for (const lab of labels) {
+      combined_analytics.metaData.names[lab.id] = lab.name;
+    }
+    combined_analytics.metaData.names['ouid'] = 'Organisation Unit';
+    combined_analytics.metaData.names['peid'] = 'Selected Period';
+    combined_analytics.metaData.ou = ['ouid'];
+    combined_analytics.metaData.pe = ['peid'];
+    combined_analytics.metaData.dx = labels.map(label => label.id);
+    combined_analytics.rows = labels.map((label) =>  {
+      return [ label.id,   'ouid', 'peid',  Math.floor(Math.random() * 10) + '' ];
+    });
+    return combined_analytics;
+
   }
 
 

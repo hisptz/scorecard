@@ -43,6 +43,7 @@ import {EventDataService} from './shared/services/event-data.service';
 import {VisualizerService} from './shared/services/visualizer.service';
 import {FilterService} from './shared/services/filter.service';
 import { DocumentationComponent } from './documentation/documentation.component';
+import {Ng2HighchartsModule} from 'ng2-highcharts';
 
 // Add a function, that returns a “TranslateHttpLoader” and export it (needed by AoT)
 export function HttpLoaderFactory(http: HttpClient) {

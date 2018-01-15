@@ -42,6 +42,7 @@ export class VisualizerService {
             width: '50px',
             'word-break': 'break-all'
           };
+          chartObject.xAxis.labels.step = 1;
         }
         break;
       case 'radar':
@@ -132,7 +133,7 @@ export class VisualizerService {
       analyticsObject.metaData.pe = analyticsObject.metaData.dimensions.pe;
       analyticsObject.metaData.dx = analyticsObject.metaData.dimensions.dx;
     }
-    if (analyticsObject.hasOwnProperty('headers')){
+    if (analyticsObject.hasOwnProperty('headers')) {
 
       for (const header of analyticsObject.headers) {
         if (header.hasOwnProperty('optionSet')) {
@@ -154,7 +155,6 @@ export class VisualizerService {
     if (nameConfiguration != null) {
       analyticsObject = this._updateAnalyticsForOptins(analyticsObject, nameConfiguration);
     }
-
     return analyticsObject;
   }
 
