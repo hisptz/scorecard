@@ -68,6 +68,7 @@ export class CreateComponent implements OnInit {
 
   show_bottleneck_indicators: boolean = false;
   bottleneck_card_indicator: any = {};
+  selected_bottleneck_group: any = null;
   header: any;
 
   constructor(private store: Store<ApplicationState>,
@@ -142,6 +143,11 @@ export class CreateComponent implements OnInit {
    */
   showBotleneckEditor(indicator) {
     this.bottleneck_card_indicator = indicator;
+    if (indicator.hasOwnProperty('bottleneck_indicators_groups')) {
+      if (indicator.bottleneck_indicators_groups.length !== 0) {
+        this.selected_bottleneck_group = indicator.bottleneck_indicators_groups[0];
+      }
+    }
     this.show_bottleneck_indicators = !this.show_bottleneck_indicators;
   }
 
@@ -151,6 +157,8 @@ export class CreateComponent implements OnInit {
       for (const item of holder.indicators ) {
         if (item.id === indicator.id) {
           item.bottleneck_indicators = indicator.bottleneck_indicators;
+          item.bottleneck_indicators_groups = indicator.bottleneck_indicators_groups;
+          item.use_bottleneck_groups = indicator.use_bottleneck_groups;
         }
       }
     }

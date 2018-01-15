@@ -178,11 +178,24 @@ export class DetailsComponent implements OnInit {
       }
     }
     if (counter === 1) {
-      if (indicators[0].hasOwnProperty('bottleneck_indicators')) {
-        if (indicators[0].bottleneck_indicators.length !== 0) {
-          check = true;
+      if (indicators[0].hasOwnProperty('use_bottleneck_groups')) {
+        if ( indicators[0].use_bottleneck_groups ) {
+          if (indicators[0].bottleneck_indicators_groups.length !== 0) {
+            check = true;
+          }
+        }else {
+          if (indicators[0].bottleneck_indicators.length !== 0) {
+            check = true;
+          }
+        }
+      }else {
+        if (indicators[0].hasOwnProperty('bottleneck_indicators')) {
+          if (indicators[0].bottleneck_indicators.length !== 0) {
+            check = true;
+          }
         }
       }
+
     }
     return check;
   }
@@ -308,35 +321,34 @@ export class DetailsComponent implements OnInit {
       for (const holder of this.indicator) {
         for (const item of holder.indicators) {
           if (this.hidden_columns.indexOf(item.id) === -1) {
-            if (item.hasOwnProperty('bottleneck_indicators')) {
-
-              // check first if bottleneck is groups or normal
-              if ( item.bottleneck_indicators[0].hasOwnProperty('type') && item.bottleneck_indicators[0].type === 'group') {
-                for (const bottleneck of item.bottleneck_indicators) {
-                  groupCateries.push({
-                    name: bottleneck.bottleneck_title,
-                    categories: bottleneck.items.map((i) => i.name)
-                  });
-                  useGroups = true;
-                  if (bottleneck.hasOwnProperty('function')) {
-                    function_indicatorsArray.push(...bottleneck.items);
-                  }else {
-                    indicatorsArray.push(...bottleneck.items.map((i) => i.id));
-                  }
-                  labels.push(...bottleneck.items.map((i) => { return {'id': i.id, 'name': i.name}; }));
-                }
-              }else {
+            if (item.use_bottleneck_groups) {
+              for (const bottleneck of item.bottleneck_indicators_groups) {
+                groupCateries.push({
+                  name: bottleneck.name,
+                  categories: bottleneck.items.map((i) => i.name)
+                });
                 useGroups = true;
-                for (const bottleneck of item.bottleneck_indicators) {
-                  if (bottleneck.hasOwnProperty('function')) {
-                    function_indicatorsArray.push(bottleneck);
-                    labels.push({'id': bottleneck.id, 'name': bottleneck.bottleneck_title});
-                  }else {
-                    indicatorsArray.push(bottleneck.id);
-                    labels.push({'id': bottleneck.id, 'name': bottleneck.bottleneck_title});
-                  }
+                if (bottleneck.hasOwnProperty('function')) {
+                  function_indicatorsArray.push(...bottleneck.items);
+                }else {
+                  indicatorsArray.push(...bottleneck.items.map((i) => i.id));
+                }
+                labels.push(...bottleneck.items.map((i) => { return {'id': i.id, 'name': i.bottleneck_title}; }));
+              }
+            }else {
+              useGroups = true;
+              for (const bottleneck of item.bottleneck_indicators) {
+                if (bottleneck.hasOwnProperty('function')) {
+                  function_indicatorsArray.push(bottleneck);
+                  labels.push({'id': bottleneck.id, 'name': bottleneck.bottleneck_title});
+                }else {
+                  indicatorsArray.push(bottleneck.id);
+                  labels.push({'id': bottleneck.id, 'name': bottleneck.bottleneck_title});
                 }
               }
+            }
+            if (item.hasOwnProperty('bottleneck_indicators')) {
+
             }
           }
         }
@@ -352,6 +364,7 @@ export class DetailsComponent implements OnInit {
         this.layoutModel = this.getStartingLayout('bottleneck');
         // this.chart_settings = 'ou-dx';
         this.visualizer_config.type = 'chart';
+        this.visualizer_config.rotation = 0;
         this.bottleneck_first_time = false;
       }
     } else {
@@ -427,6 +440,10 @@ export class DetailsComponent implements OnInit {
           'dataGroups': dataGroups
         }
       };
+      if (this.showBottleneck) {
+        this.visualizer_config.chartConfiguration.rotation = 0;
+      }
+      console.log(this.visualizer_config)
     }
     // if there is no change of parameters from last request dont go to server
     if (type === 'info') {

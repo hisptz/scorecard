@@ -306,6 +306,8 @@ export class ScorecardService {
       'legend_display': true,
       'legendset': legendset,
       'additional_label_values': {},
+      'use_bottleneck_groups': true,
+      'bottleneck_indicators_groups': [],
       'bottleneck_indicators': [],
       'arrow_settings': {
         'effective_gap': 5,
@@ -456,7 +458,7 @@ export class ScorecardService {
       header: scorecard.data.header,
       legendset_definitions: scorecard.data.legendset_definitions,
       highlighted_indicators: scorecard.data.highlighted_indicators,
-      indicator_holders: scorecard.data.data_settings.indicator_holders,
+      indicator_holders: this.sanitize_holders(scorecard.data.data_settings.indicator_holders),
       indicator_holder_groups: scorecard.data.data_settings.indicator_holder_groups,
       additional_labels: scorecard.data.additional_labels,
       footer: scorecard.data.footer,
@@ -469,6 +471,19 @@ export class ScorecardService {
       period: null,
       showModel: false,
     };
+  }
+
+  sanitize_holders(holders) {
+    for (const holder of holders) {
+      for (const indicator of holder) {
+        if ( !indicator.hasOwnProperty('use_bottleneck_groups')) {
+          indicator.use_bottleneck_groups = false;
+        }if ( !indicator.hasOwnProperty('bottleneck_indicators_groups')) {
+          indicator.bottleneck_indicators_groups = [];
+        }
+      }
+    }
+    return holders;
   }
 
   sanitize_scorecard(scorecard) {

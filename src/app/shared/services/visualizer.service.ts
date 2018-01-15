@@ -33,6 +33,16 @@ export class VisualizerService {
             }
           }
         };
+        if ( chartConfiguration.hasOwnProperty('rotation')) {
+          chartObject.xAxis.labels.rotation = chartConfiguration.rotation;
+          chartObject.xAxis.labels.style = {
+            color: '#666666',
+            cursor: 'default',
+            fontSize: '9px',
+            width: '50px',
+            'word-break': 'break-all'
+          };
+        }
         break;
       case 'radar':
         chartObject = this.drawSpiderChart(analyticObject, chartConfiguration);

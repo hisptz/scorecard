@@ -52,7 +52,8 @@
         (mouseenter) ="mouseEnter(indicator)"
         (mouseleave) ="mouseLeave(indicator)"
     >
-      <i title="For bottleneck analysis, right click any of the cells" *ngIf="indicator.indicators[0].bottleneck_indicators.length != 0" class="fa fa-bar-chart-o no-print" style="position: absolute; top:1px;right: 1px; opacity: 0.5"></i>
+      <i title="For bottleneck analysis, right click any of the cells"
+         *ngIf="!indicator.indicators[0].use_bottleneck_groups ? indicator.indicators[0].bottleneck_indicators.length != 0 : indicator.indicators[0].bottleneck_indicators_groups.length != 0" class="fa fa-bar-chart-o no-print" style="position: absolute; top:1px;right: 1px; opacity: 0.5"></i>
       <div dnd-draggable [dragEnabled]="true" [dragData]="indicator" style="padding: 8px;">
         <app-indicator-title
           [indicator]="indicator"
@@ -294,7 +295,7 @@
 
 <context-menu #itemMenu>
   <ng-template contextMenuItem (execute)="loadPreview(null, $event.item.item, $event.item.ou, $event.item.pe, null, true)"  let-item>
-    <span *ngIf="item.item.indicators[0].bottleneck_indicators.length != 0">
+    <span *ngIf="!item.item.indicators[0].use_bottleneck_groups ? item.item.indicators[0].bottleneck_indicators.length != 0 : item.item.indicators[0].bottleneck_indicators_groups.length != 0">
           <i class="fa fa-bar-chart"></i>
           <span [translate]="'Bottleneck Analysis'"> Bottleneck Analysis</span>
         </span>

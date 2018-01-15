@@ -16,6 +16,7 @@ import {Observable} from 'rxjs/Observable';
 import {Legend} from '../../shared/models/legend';
 import {IndicatorHolderGroup} from '../../shared/models/indicator-holders-group';
 import {IndicatorHolder} from '../../shared/models/indicator-holder';
+import * as _ from 'lodash';
 
 @Component({
   selector: 'app-bottleneck',
@@ -34,6 +35,7 @@ export class BottleneckComponent implements OnInit {
   @Input() legendset_definitions: Legend[];
   @Input() additional_labels: any;
   @Input() indicator: any;
+  @Input() current_bottleneck_group: any = null;
 
   @Output() onShowBottleneckEditor = new EventEmitter();
   datasets: any[] = [];
@@ -54,12 +56,12 @@ export class BottleneckComponent implements OnInit {
   done_loading_list: boolean = false;
   error_loading_groups: any = {occurred: false, message: ''};
   error_loading_list: any = {occurred: false, message: ''};
-  use_group_in_bottleneck: boolean = false;
+  use_group_in_bottleneck: boolean = true;
   p: number;
   r: number;
 
   dataset_types = [
-    {id: '', name: 'Reporting Rate'},
+    {id: '.REPORTING_RATE', name: 'Reporting Rate'},
     {id: '.REPORTING_RATE_ON_TIME', name: 'Reporting Rate on time'},
     {id: '.ACTUAL_REPORTS', name: 'Actual Reports Submitted'},
     {id: '.ACTUAL_REPORTS_ON_TIME', name: 'Reports Submitted on time'},
@@ -170,22 +172,47 @@ export class BottleneckComponent implements OnInit {
   }
 
   // load a single item for use in a score card
-  load_item(item, pair = false): void {
-    if (this.botteneckIndicatorExist(item)) {
-      this.removeBottleneckIndicator(item);
-    }else {
-      if (this.group_type === 'functions') {
-        item.bottleneck_title = item.name;
-        item.baseline = null;
-        item.target = null;
-        item.function = this.activeGroup;
+  load_item(item, useGroup = false, group = null): void {
+    if (useGroup) {
+      if (group == null) {
+        this.addGroup();
+        this.load_item(item, useGroup, this.current_bottleneck_group);
       }else {
-        item.bottleneck_title = item.name;
-        item.baseline = null;
-        item.target = null;
+        if (this.indicatorInGroup(item, group)) {
+          this.removeBottleneckIndicatorFromGroup(item, group);
+        }else {
+          if (this.group_type === 'functions') {
+            item.bottleneck_title = item.name;
+            item.baseline = null;
+            item.target = null;
+            item.function = this.activeGroup;
+          }else {
+            item.bottleneck_title = item.name;
+            item.baseline = null;
+            item.target = null;
+          }
+          group.items.push(item);
+        }
       }
-      this.indicator.bottleneck_indicators.push(item);
+
+    }else {
+      if (this.botteneckIndicatorExist(item)) {
+        this.removeBottleneckIndicator(item);
+      }else {
+        if (this.group_type === 'functions') {
+          item.bottleneck_title = item.name;
+          item.baseline = null;
+          item.target = null;
+          item.function = this.activeGroup;
+        }else {
+          item.bottleneck_title = item.name;
+          item.baseline = null;
+          item.target = null;
+        }
+        this.indicator.bottleneck_indicators.push(item);
+      }
     }
+
   }
 
   clear(type) {
@@ -215,6 +242,24 @@ export class BottleneckComponent implements OnInit {
     return last_id;
   }
 
+  /**
+   * Adding groups
+   * @param current_type
+   */
+  addGroup() {
+    const groupToBeAdded = {
+      name: 'Determinant Name',
+      id: this.scorecardService.makeid(),
+      items: []
+    };
+    this.indicator.bottleneck_indicators_groups.push(groupToBeAdded);
+    this.current_bottleneck_group = this.indicator.bottleneck_indicators_groups[this.indicator.bottleneck_indicators_groups.length -1];
+  }
+
+  removeBottleneckIndicatorFromGroup( item, group) {
+    const index = _.findIndex(group.items, {'id': item.id} );
+    group.items.splice(index, 1);
+  }
 
   // deal with all issues during group type switching between dataelent, indicators and datasets
   switchType(current_type): void {
@@ -425,26 +470,30 @@ export class BottleneckComponent implements OnInit {
     }
   }
 
+  setActiveGroup(group) {
+    this.current_bottleneck_group = group;
+  }
+
   addGroupAsBottleneck(group, list, type) {
-    if (this.botteneckIndicatorExist(group)) {
-      this.removeBottleneckIndicator(group);
-    }else {
-      if (this.group_type === 'type') {
-        group.bottleneck_title = group.name;
-        group.type = 'group';
-        group.baseline = null;
-        group.target = null;
-        group.items = list;
-        group.function = this.activeGroup;
-      } else {
-        group.bottleneck_title = group.name;
-        group.type = 'group';
-        group.baseline = null;
-        group.items = list;
-        group.target = null;
-      }
-      this.indicator.bottleneck_indicators.push(group);
-    }
+    // if (this.botteneckIndicatorExist(group)) {
+    //   this.removeBottleneckIndicator(group);
+    // }else {
+    //   if (this.group_type === 'type') {
+    //     group.bottleneck_title = group.name;
+    //     group.type = 'group';
+    //     group.baseline = null;
+    //     group.target = null;
+    //     group.items = list;
+    //     group.function = this.activeGroup;
+    //   } else {
+    //     group.bottleneck_title = group.name;
+    //     group.type = 'group';
+    //     group.baseline = null;
+    //     group.items = list;
+    //     group.target = null;
+    //   }
+    //   this.indicator.bottleneck_indicators.push(group);
+    // }
   }
 
   showBotleneckEditor(indicator) {
@@ -460,6 +509,14 @@ export class BottleneckComponent implements OnInit {
     });
   }
 
+  indicatorInGroup(item, group) {
+    if (group) {
+      const index = _.findIndex(group.items, {'id': item.id} );
+      return index !== -1;
+    }
+    return false;
+  }
+
   //  a function to check if bottleneck indicator exists
   botteneckIndicatorExist(item): boolean {
     let check  = false;
@@ -472,5 +529,10 @@ export class BottleneckComponent implements OnInit {
     }
     return check;
   }
+
+  stopPropergation(event) {
+    event.stopPropagation();
+  }
+
 
 }

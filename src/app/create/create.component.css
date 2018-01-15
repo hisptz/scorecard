@@ -222,7 +222,7 @@ a:hover{
 }
 /*scorecard indicator details*/
 .indicator_details{
-  position: fixed;
+  position: absolute;
   top: 0;
   right: 0;
   bottom: 0;
@@ -256,8 +256,8 @@ a:hover{
 }
 
 .indicator_dialog{
-  width: 86%;
-  margin: 100px 7% auto 7%;
+  width: 90%;
+  margin: 50px 5% auto 5%;
 }
 .indicator-content {
   -webkit-box-shadow: 0 5px 15px rgba(0,0,0,.5);

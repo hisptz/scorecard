@@ -15,6 +15,8 @@ export interface IndicatorObject {
   legendset: Legend[];
   additional_label_values?: any;
   bottleneck_indicators?: any[];
+  use_bottleneck_groups?: boolean;
+  bottleneck_indicators_groups?: any[];
   arrow_settings: {
     effective_gap: number;
     display: boolean

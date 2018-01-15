@@ -1,11 +1,11 @@
 import {ChangeDetectionStrategy, Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {ScorecardService} from '../../shared/services/scorecard.service';
-import {Store} from "@ngrx/store";
-import {ApplicationState} from "../../store/reducers";
-import {Observable} from "rxjs/Observable";
+import {Store} from '@ngrx/store';
+import {ApplicationState} from '../../store/reducers';
+import {Observable} from 'rxjs/Observable';
 import * as createSelector from '../../store/selectors/create.selectors';
 import * as createActions from '../../store/actions/create.actions';
-import * as _ from 'lodash'
+import * as _ from 'lodash';
 
 @Component({
   selector: 'app-item-details',
@@ -39,6 +39,12 @@ export class ItemDetailsComponent implements OnInit {
   }
 
   showBotleneckEditor(indicator) {
+    if (!indicator.hasOwnProperty('use_bottleneck_groups')) {
+      indicator.use_bottleneck_groups = indicator.bottleneck_indicators.length === 0 ? true : false;
+    }
+    if (!indicator.hasOwnProperty('bottleneck_indicators_groups')) {
+      indicator.bottleneck_indicators_groups = [];
+    }
     this.onShowBottleneckEditor.emit(indicator);
   }
 

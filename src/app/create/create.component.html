@@ -111,6 +111,7 @@
           [current_indicator_holder]="current_indicator_holder$ | async"
           [current_holder_group]="current_holder_group$ | async"
           [indicator]="bottleneck_card_indicator"
+          [current_bottleneck_group]="selected_bottleneck_group"
           (onShowBottleneckEditor)="saveBotleneck($event)"
         ></app-bottleneck>
       </div>
