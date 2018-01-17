@@ -1,8 +1,8 @@
 import { Legend } from './legend';
 
 export interface IndicatorObject {
-  showTopArrow?: boolean;
-  showBottomArrow?: boolean;
+  showTopArrow?: boolean | boolean[];
+  showBottomArrow?: boolean | boolean[];
   name: string;
   id: string;
   calculation?: string;

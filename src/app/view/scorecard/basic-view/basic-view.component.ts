@@ -162,8 +162,10 @@ export class BasicViewComponent implements OnInit {
           if (this.hidenColums.indexOf(indicator.id) === -1) {
             sum++;
           }
-          if (this.hidenColums.indexOf(indicator.id) === -1 && indicator.values[orgunit_id + '.' + current_period.id] === null) {
-            counter++;
+          if (indicator && indicator.values) {
+            if (this.hidenColums.indexOf(indicator.id) === -1 && indicator.values[orgunit_id + '.' + current_period.id] === null) {
+              counter++;
+            }
           }
         }
 

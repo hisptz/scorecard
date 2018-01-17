@@ -478,7 +478,29 @@ export class ScorecardService {
       for (const indicator of holder) {
         if ( !indicator.hasOwnProperty('use_bottleneck_groups')) {
           indicator.use_bottleneck_groups = false;
-        }if ( !indicator.hasOwnProperty('bottleneck_indicators_groups')) {
+        }if ( !indicator.hasOwnProperty('values')) {
+          indicator.values = [];
+        }if ( !indicator.hasOwnProperty('showTopArrow')) {
+          indicator.showTopArrow = [];
+        }else {
+          if (indicator.showTopArrow instanceof Array) {
+
+          }else {
+            indicator.showTopArrow = [];
+          }
+        }
+
+        if ( !indicator.hasOwnProperty('showBottomArrow')) {
+          indicator.showBottomArrow = [];
+        }else {
+          if (indicator.showBottomArrow instanceof Array) {
+
+          }else {
+            indicator.showBottomArrow = [];
+          }
+        }
+
+        if ( !indicator.hasOwnProperty('bottleneck_indicators_groups')) {
           indicator.bottleneck_indicators_groups = [];
         }
       }
@@ -916,9 +938,11 @@ export class ScorecardService {
         if (hidenColums.indexOf(indicator.id) === -1) {
           for (const orgunit of orgunits) {
             const usekey = orgunit.id + '.' + period;
-            if (usekey in indicator.values && indicator.values[usekey] !== null) {
-              n++;
-              sum += (!isNaN(indicator.values[usekey])) ? parseFloat(indicator.values[usekey]) : 0;
+            if (indicator.values) {
+              if (usekey in indicator.values && indicator.values[usekey] !== null) {
+                n++;
+                sum += (!isNaN(indicator.values[usekey])) ? parseFloat(indicator.values[usekey]) : 0;
+              }
             }
           }
         }

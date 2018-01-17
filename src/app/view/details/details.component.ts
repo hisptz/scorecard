@@ -314,6 +314,8 @@ export class DetailsComponent implements OnInit {
 
     // check first if your supposed to load bottleneck indicators too for analysis
     let labels = null;
+    let names = {};
+    let namesArr = [];
     if (this.showBottleneck) {
       labels = [];
       const groupCateries = [];
@@ -341,17 +343,20 @@ export class DetailsComponent implements OnInit {
                   indicatorsArray.push(...bottleneck.items.map((i) => i.id));
                 }
                 labels.push(...bottleneck.items.map((i) => { return {'id': i.id, 'name': i.bottleneck_title}; }));
+                namesArr.push(...bottleneck.items.map((i) => { return {'id': i.bottleneck_title, 'name': i.name}; }));
+                names = this.getEntities(namesArr, names);
               }
             }else {
               useGroups = true;
               for (const bottleneck of item.bottleneck_indicators) {
                 if (bottleneck.hasOwnProperty('function')) {
                   function_indicatorsArray.push(bottleneck);
-                  labels.push({'id': bottleneck.id, 'name': bottleneck.bottleneck_title});
                 }else {
                   indicatorsArray.push(bottleneck.id);
-                  labels.push({'id': bottleneck.id, 'name': bottleneck.bottleneck_title});
                 }
+                labels.push({'id': bottleneck.id, 'name': bottleneck.bottleneck_title});
+                namesArr.push({'id': bottleneck.bottleneck_title, 'name': bottleneck.name});
+                names = this.getEntities(namesArr, names);
               }
             }
             if (item.hasOwnProperty('bottleneck_indicators')) {
@@ -381,11 +386,12 @@ export class DetailsComponent implements OnInit {
           if (this.hidden_columns.indexOf(item.id) === -1) {
             if (item.hasOwnProperty('calculation') && item.calculation === 'custom_function') {
               function_indicatorsArray.push({...item, 'function': item.function_to_use});
-              labels.push({'id': item.id, 'name': item.title});
             }else {
               indicatorsArray.push(item.id);
-              labels.push({'id': item.id, 'name': item.title});
             }
+            labels.push({'id': item.id,  'name': item.bottleneck_title});
+            namesArr.push({'id': item.bottleneck_title, 'name': item.name});
+            names = this.getEntities(namesArr, names);
           }
         }
       }
@@ -448,7 +454,9 @@ export class DetailsComponent implements OnInit {
         }
       };
       if (this.showBottleneck) {
+        console.log(names)
         this.visualizer_config.chartConfiguration.rotation = 0;
+        this.visualizer_config.chartConfiguration.tooltipItems = names;
       }
     }
     // if there is no change of parameters from last request dont go to server
@@ -493,7 +501,7 @@ export class DetailsComponent implements OnInit {
             const url =  'analytics.json?dimension=dx:' + indicatorsArray.join(';') + '&dimension=pe:' + this.periodObject.value + '&dimension=ou:' + this.selectedOrganisationUnit.value + '&displayProperty=NAME';
             this.subscription = this.loadAnalytics(url).subscribe(
               (data) => {
-                analytics_calls.push(data);
+                analytics_calls.push(this.visulizationService._sanitizeIncomingAnalytics(data));
                 if (function_indicatorsArray.length !== 0) {
                   function_indicatorsArray.forEach( (indicator_item) => {
                     const use_function = this.getFunction(indicator_item.function);
@@ -579,6 +587,21 @@ export class DetailsComponent implements OnInit {
         }
       }
     }
+  }
+
+  getEntities(itemArray, initialValues) {
+    const entities = itemArray.reduce(
+      (items: { [id: string]: any }, item: any) => {
+        return {
+          ...items,
+          [item.id]: item,
+        };
+      },
+      {
+        ...initialValues,
+      }
+    );
+    return entities;
   }
 
   checkIfParametersChanged(orgunits, periods, indicators, function_indicatorsArray): boolean {

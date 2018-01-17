@@ -134,15 +134,15 @@ export class ScorecardComponent implements OnInit, OnDestroy {
           _.each(this.scorecard.data.data_settings.indicator_holders , (holder: any) => {
             holder.title = this.scorecardService.getIndicatorTitle(holder, this.hidenColums);
             _.each(holder.indicators, (indicator: any) => {
+              indicator['values'] = indicator.hasOwnProperty('values') ? indicator.values : [];
+              indicator['showTopArrow'] = indicator.hasOwnProperty('showTopArrow') ? indicator.showTopArrow : [];
+              indicator['showBottomArrow'] = indicator.hasOwnProperty('showBottomArrow') ? indicator.showBottomArrow : [];indicator['tooltip'] =  indicator.hasOwnProperty('tooltip') ? indicator.tooltip : [];
+              indicator['previous_values'] =  indicator.hasOwnProperty('previous_values') ? indicator.previous_values : [];
               if (indicator.bottleneck_indicators.length !== 0) {
                 this.has_bottleneck = true;
               }
               if (this.level === 'top' || this.scorecard.data.is_bottleck) {
-                indicator['values'] = indicator.hasOwnProperty('values') ? indicator.values : [];
-                indicator['tooltip'] =  indicator.hasOwnProperty('tooltip') ? indicator.tooltip : [];
-                indicator['previous_values'] =  indicator.hasOwnProperty('previous_values') ? indicator.previous_values : [];
-                indicator['showTopArrow'] =   [];
-                indicator['showBottomArrow'] =  [];
+
               }
 
               // go through all selected period for scorecard
@@ -160,6 +160,7 @@ export class ScorecardComponent implements OnInit, OnDestroy {
                       pe: current_period.id,
                       rule: this.getFunctionRule(use_function['rules'], indicator.id),
                       success: (data) => { // This will run on successfull function return, which will save the result to the data store for analytics
+                        console.log(data)
                         this.doneLoadingIndicator(indicator, this.allIndicatorsLength, current_period);
                         for (const orgunit of data.metaData.ou) {
                           const value_key = orgunit + '.' + current_period.id;
@@ -217,6 +218,9 @@ export class ScorecardComponent implements OnInit, OnDestroy {
                                       if (parseInt(indicator.previous_values[key]) !== 0) {
                                         const checkTopArrow = parseInt(indicator.values[key]) > (parseInt(indicator.previous_values[key]) + effective_gap );
                                         const checkBottomArror = parseInt(indicator.values[key]) < (parseInt(indicator.previous_values[key]) - effective_gap );
+                                        // A check to make sure the arrows are always arrays before assignment
+                                        if (!(indicator.showTopArrow instanceof Array)) {indicator.showTopArrow = []; }
+                                        if (!(indicator.showBottomArrow instanceof Array)) {indicator.showBottomArrow = []; }
                                         indicator.showTopArrow[key] = checkTopArrow;
                                         indicator.showBottomArrow[key] = checkBottomArror;
                                         if (indicator.showTopArrow[key] && indicator.values[key] !== null && indicator.previous_values[key] !== null && olddata.metaData.names.hasOwnProperty(splited_key[0])) {

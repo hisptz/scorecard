@@ -43,6 +43,16 @@ export class VisualizerService {
             'word-break': 'break-all'
           };
           chartObject.xAxis.labels.step = 1;
+          chartObject.xAxis.labels.useHTML = true;
+          chartObject.xAxis.labels.formatter = function () {
+            if (chartConfiguration.tooltipItems[this.value + '']) {
+              return '<div class="hastip" title="' + chartConfiguration.tooltipItems[this.value + ''].name + '">' + this.value + '</div>';
+            }else {
+              return '<div class="hastip" title="' + this.value + ' MY TOOOLTIP">' + this.value + '</div>';
+            }
+
+
+          };
         }
         break;
       case 'radar':
