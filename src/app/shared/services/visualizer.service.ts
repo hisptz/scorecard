@@ -25,6 +25,7 @@ export class VisualizerService {
         };
         break;
       case 'column':
+        console.log(chartConfiguration)
         chartObject = this.drawOtherCharts(analyticObject, chartConfiguration);
         chartObject.plotOptions = {
           column: {
@@ -33,8 +34,34 @@ export class VisualizerService {
             }
           }
         };
+        console.log(chartConfiguration.colors);
+        if (chartConfiguration.hasOwnProperty('colors') && chartConfiguration.colors.length !== 0) {
+          chartObject.plotOptions.column['colorByPoint'] = true,
+          chartObject.colors = chartConfiguration.colors;
+        }
         if ( chartConfiguration.hasOwnProperty('rotation')) {
+          console.log('nafika hapa kuchora');
           chartObject.xAxis.labels.rotation = chartConfiguration.rotation;
+          chartObject.tooltip = {
+            formatter: function () {
+              let s = '<b>' + this.x + '</b>';
+              if (chartConfiguration.tooltipItems[this.x.name + '']) {
+                s = '<b>' + chartConfiguration.tooltipItems[this.x.name + ''].name + '</b>';
+              }else {
+                s = '<b>' + this.x + '</b>';
+              }
+              s += '<br/>' + this.series.name + ': ' +
+                this.y + 'm';
+
+              // _.forEach(this.points, function (point) {
+              //   console.log(point)
+              //   s += '<br/>' + point.series.name + ': ' +
+              //     point.y + 'm';
+              // });
+
+              return s;
+            }
+          };
           chartObject.xAxis.labels.style = {
             color: '#666666',
             cursor: 'default',
@@ -48,7 +75,7 @@ export class VisualizerService {
             if (chartConfiguration.tooltipItems[this.value + '']) {
               return '<div class="hastip" title="' + chartConfiguration.tooltipItems[this.value + ''].name + '">' + this.value + '</div>';
             }else {
-              return '<div class="hastip" title="' + this.value + ' MY TOOOLTIP">' + this.value + '</div>';
+              return '<div class="hastip" title="' + this.value + '">' + this.value + '</div>';
             }
 
 
@@ -134,7 +161,7 @@ export class VisualizerService {
     if (analyticsObject.metaData.hasOwnProperty('items')) {
       const arr = {names: {}};
       _.forEach(analyticsObject.metaData.items, function(value: any, key) {
-        arr.names[key] = value.name;
+         arr.names[key] = value.name;
       });
       const dimensions = analyticsObject.metaData.dimensions;
       // analyticsObject = {...analyticsObject, metaData: {...analyticsObject.metaData, names: arr.names, ...dimensions }};
@@ -242,8 +269,9 @@ export class VisualizerService {
    * @param yAxisItems : Array
    * @returns {{xAxisItems: Array, yAxisItems: Array}}
    */
-  prepareCategories(analyticsObject, xAxis: string, yAxis: string, xAxisItems = [], yAxisItems = [], nameConfiguration: any = null) {
-    analyticsObject = this._sanitizeIncomingAnalytics(analyticsObject, nameConfiguration);
+  prepareCategories(analytics, xAxis: string, yAxis: string, xAxisItems = [], yAxisItems = [], nameConfiguration: any = null) {
+    const analyticsObject = this._sanitizeIncomingAnalytics(analytics, nameConfiguration);
+    console.log(JSON.stringify(analyticsObject));
     const structure = {
       'xAxisItems': [],
       'yAxisItems': []
@@ -450,6 +478,54 @@ export class VisualizerService {
    * @returns {{title, chart, xAxis, yAxis, labels, series}|any}
    */
   drawOtherCharts(analyticsObject, chartConfiguration) {
+    const labels = (chartConfiguration.hasOwnProperty('labels')) ? chartConfiguration.labels : null;
+    const chartObject = this.getChartConfigurationObject('defaultChartObject', chartConfiguration.show_labels);
+    if (chartConfiguration.type === 'bar') {
+      chartObject.chart.type = chartConfiguration.type;
+      chartObject.xAxis.labels.rotation = 0;
+    } else {
+      chartObject.chart.type = '';
+    }
+    chartObject.title.text = chartConfiguration.title;
+    const metaDataObject = this.prepareCategories(analyticsObject,
+      chartConfiguration.xAxisType,
+      chartConfiguration.yAxisType,
+      (chartConfiguration.hasOwnProperty('xAxisItems')) ? chartConfiguration.xAxisItems : [],
+      (chartConfiguration.hasOwnProperty('yAxisItems')) ? chartConfiguration.yAxisItems : [],
+      labels
+    );
+    chartObject.xAxis.categories = [];
+    for (const val of metaDataObject.xAxisItems) {
+      chartObject.xAxis.categories.push(val.name);
+    }
+    chartObject.series = [];
+    for (const yAxis of metaDataObject.yAxisItems) {
+      const chartSeries = [];
+      for (const xAxis of metaDataObject.xAxisItems) {
+        const dataItems = this.getDataObject(chartConfiguration, xAxis, yAxis);
+        const number = this.getDataValue(analyticsObject, dataItems);
+        chartSeries.push(number);
+      }
+      chartObject.series.push({
+        type: chartConfiguration.type,
+        name: yAxis.name, data: chartSeries
+      });
+    }
+    console.log(JSON.stringify(chartObject));
+    if (chartConfiguration.hasOwnProperty('dataGroups') && chartConfiguration.dataGroups !== null) {
+      chartObject.xAxis.categories = chartConfiguration.dataGroups;
+    }
+    console.log(JSON.stringify(chartObject));
+    return chartObject;
+  }
+
+  /**
+   * draw other charts
+   * @param analyticsObject
+   * @param chartConfiguration : Object {'type':'line','title': 'My chart', 'xAxisType': 'pe', 'yAxisType': 'dx' ....}
+   * @returns {{title, chart, xAxis, yAxis, labels, series}|any}
+   */
+  drawBottleneckCharts(analyticsObject, chartConfiguration) {
     const labels = (chartConfiguration.hasOwnProperty('labels')) ? chartConfiguration.labels : null;
     const chartObject = this.getChartConfigurationObject('defaultChartObject', chartConfiguration.show_labels);
     if (chartConfiguration.type === 'bar') {

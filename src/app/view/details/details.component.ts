@@ -315,7 +315,10 @@ export class DetailsComponent implements OnInit {
     // check first if your supposed to load bottleneck indicators too for analysis
     let labels = null;
     let names = {};
-    let namesArr = [];
+    const namesArr = [];
+    const colors = [];
+    const chartColors = ['#309EE3', '#97C5E1'];
+    let colorCount = 0;
     if (this.showBottleneck) {
       labels = [];
       const groupCateries = [];
@@ -329,6 +332,8 @@ export class DetailsComponent implements OnInit {
                   name: bottleneck.name,
                   categories: bottleneck.items.map((i) => i.bottleneck_title)
                 });
+                colors.push(...bottleneck.items.map((i) => chartColors[colorCount]));
+                colorCount = colorCount === 0 ? 1 : 0;
                 useGroups = true;
                 for ( const b_item of bottleneck.items) {
                   if (b_item.hasOwnProperty('function')) {
@@ -336,11 +341,6 @@ export class DetailsComponent implements OnInit {
                   }else {
                     indicatorsArray.push(b_item.id);
                   }
-                }
-                if (bottleneck.hasOwnProperty('function')) {
-                  function_indicatorsArray.push(...bottleneck.items);
-                }else {
-                  indicatorsArray.push(...bottleneck.items.map((i) => i.id));
                 }
                 labels.push(...bottleneck.items.map((i) => { return {'id': i.id, 'name': i.bottleneck_title}; }));
                 namesArr.push(...bottleneck.items.map((i) => { return {'id': i.bottleneck_title, 'name': i.name}; }));
@@ -389,7 +389,7 @@ export class DetailsComponent implements OnInit {
             }else {
               indicatorsArray.push(item.id);
             }
-            labels.push({'id': item.id,  'name': item.bottleneck_title});
+            labels.push({'id': item.id,  'name': item.title});
             namesArr.push({'id': item.bottleneck_title, 'name': item.name});
             names = this.getEntities(namesArr, names);
           }
@@ -454,9 +454,9 @@ export class DetailsComponent implements OnInit {
         }
       };
       if (this.showBottleneck) {
-        console.log(names)
         this.visualizer_config.chartConfiguration.rotation = 0;
         this.visualizer_config.chartConfiguration.tooltipItems = names;
+        this.visualizer_config.chartConfiguration.colors = colors;
       }
     }
     // if there is no change of parameters from last request dont go to server
@@ -530,9 +530,7 @@ export class DetailsComponent implements OnInit {
                         this.error_occured = true;
                         console.log('error');
                       },
-                      progress: (progress) => {
-                        console.log('progress');
-                      }
+                      progress: (progress) => { }
                     };
                     const execute = Function('parameters', use_function['function']);
                     execute(parameters);
@@ -575,9 +573,7 @@ export class DetailsComponent implements OnInit {
                     this.error_occured = true;
                     console.log('error');
                   },
-                  progress: (progress) => {
-                    console.log('progress');
-                  }
+                  progress: (progress) => { }
                 };
                 const execute = Function('parameters', use_function['function']);
                 execute(parameters);
