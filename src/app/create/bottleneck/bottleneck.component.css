@@ -1,3 +1,13 @@
+.activeGroup {
+  background-color: #c5c4c7;
+  margin: 10px;
+}
+
+.activeitemInList {
+  background-color: rgba(0,0,0,0.08);
+  cursor: not-allowed!important;
+}
+
 .switcher {
   border-bottom: 0px;
   border-bottom-left-radius: 0px;
@@ -8,7 +18,7 @@
   width: auto;
   height: 450px;
   position: relative;
-  padding-top: 10px;
+  padding-top: 0px;
   overflow: hidden;
   margin-bottom: 5px;
   /*padding-left: 20px;*/

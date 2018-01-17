@@ -12,6 +12,7 @@
         [ngClass]="{ 'btn-outline-secondary': indicator.use_bottleneck_groups,'btn-secondary': !indicator.use_bottleneck_groups }"
       >Use Individual Items</button>
       <button *ngIf="indicator.use_bottleneck_groups" class="btn btn-sm btn-outline-secondary pull-right" (click)="addGroup()">Add Group</button>
+      <button *ngIf="indicator.use_bottleneck_groups && indicator.bottleneck_indicators_groups.length == 0" class="btn btn-sm btn-outline-secondary pull-right" (click)="generateGroups()">Generate Groups</button>
     </div>
     <div class="col-sm-7 scorecard_details">
       <div class="row ">
@@ -89,10 +90,11 @@
               <ul class="list-group" *ngIf="done_loading_list">
                 <li
                   class="list-group-item selection_link"
+                  [ngClass]="{'activeitemInList': botteneckIndicatorExist(item)}"
                   *ngFor="let item of current_listing | filterByName:listQuery | paginate: { id: 'list1', itemsPerPage: 8, currentPage: r }"
                   (click)="load_item(item, indicator.use_bottleneck_groups, current_bottleneck_group)"
                 >
-                  <i class="fa fa-check-circle-o text-success" *ngIf="botteneckIndicatorExist(item) || indicatorInGroup(item, current_bottleneck_group)"></i> {{ item.name }}
+                  <i class="fa fa-check-circle-o text-success" *ngIf="botteneckIndicatorExist(item)"></i> {{ item.name }}
                 </li>
               </ul>
               <pagination-controls  id="list1" (pageChange)="r = $event" directionLinks="true" autoHide="true" previousLabel=" " nextLabel=" "></pagination-controls>
@@ -106,29 +108,50 @@
       <!--group selection-->
       <div class="thumbnail bottleneck_scorecard_details" *ngIf="indicator.use_bottleneck_groups">
         <div id="accordion" role="tablist" dnd-sortable-container [sortableData]="indicator.bottleneck_indicators_groups">
-          <div class="card" *ngFor="let group of indicator.bottleneck_indicators_groups; let i = index"
-               dnd-sortable [sortableIndex]="i">
-            <div class="card-header" style="padding: 5px" role="tab" id="headingOne" (click)="setActiveGroup(group)">
+          <div
+            class="card"
+            *ngFor="let group of indicator.bottleneck_indicators_groups; let i = index"
+            dnd-sortable [sortableIndex]="i"
+            [dragEnabled]="enableGroupdragOperation"
+            (onDropSuccess)="onDropSuccess($event)"
+            [ngClass]="{'activeGroup': group.id == current_bottleneck_group.id}"
+          >
+            <div
+              class="card-header"
+              style="padding: 5px"
+              role="tab"
+              id="headingOne"
+              (click)="setActiveGroup(group)"
+            >
               <h6 class="mb-0">
-                <a style="color: black" *ngIf="group.id != current_bottleneck_group.id" role="button" aria-expanded="true" attr.aria-controls="{{group.id}}">
+                <a style="color: black" role="button" aria-expanded="true" attr.aria-controls="{{group.id}}">
                   <i class="fa fa-bars text-muted" style="cursor: move"></i>
-                  {{group.name}}
+                  {{group.name}} <small style="font-size: 10px">( {{group.items.length}} Indicators)</small>
                   <i class="fa fa-chevron-down pull-right"></i>
-                  <i class="fa fa-trash-o pull-right cursor" (click)="deleteGroup(group)" ></i>
+                  <i *ngIf="!show_confirmation[group.id]" title="delete group" class="fa fa-trash-o pull-right cursor" (click)="show_confirmation = []; show_confirmation[group.id] = true; $event.preventDefault()" ></i>
+                  <span [@hiddenItem] = "show_confirmation[group.id]?'notHidden':'hidden'">
+                    <i title="cancel deleting" class="fa fa-ban pull-right cursor" (click)="show_confirmation[group.id] = false; $event.preventDefault()"></i>
+                    <i title="confirm deleting" class="fa fa-check-circle-o text-success pull-right cursor" (click)="deleteGroup(group);"></i>
+                  </span>
                 </a>
-                <!--<a  href="{{'#' + group.id }}" role="button" aria-expanded="true" attr.aria-controls="{{group.id}}">-->
-                  <input *ngIf="group.id == current_bottleneck_group.id" type="text" class="form-control" [(ngModel)]="group.name" (click)="stopPropergation($event)">
 
               </h6>
             </div>
 
             <div id="{{group.id}}" class="collapse" [ngClass]="{'show':group.id == current_bottleneck_group.id}" role="tabpanel" aria-labelledby="headingOne" data-parent="#accordion">
               <div class="card-body" style="padding: 5px">
-                <ul class="list-group" dnd-sortable-container [sortableData]="group.items">
+                <label>Group Name </label>
+                <input  type="text" class="form-control" [(ngModel)]="group.name" (blur)="prepareChart(indicator)">
+                <p class="lead" *ngIf="group.items.length == 0">
+                  Select Indicators to add in this group
+                </p>
+                <ul style="margin-top: 4px" class="list-group" dnd-sortable-container [sortableData]="group.items">
                   <li
                     class="list-group-item"
-                    *ngFor="let item of group.items; let i = index"
-                    dnd-sortable [sortableIndex]="i"
+                    *ngFor="let item of group.items; let k = index"
+                    dnd-sortable [sortableIndex]="k"
+                    [dragEnabled]="enableItemdragOperation"
+                    (onDropSuccess)="onDropSuccess($event)"
                   >
                     <div style="margin-left: -15px;margin-right: -15px">
                       <p>{{ item.name }}
@@ -137,7 +160,7 @@
                         </a>
                       </p>
                       <label [translate]="'Display Name'">Display Name</label>
-                      <input class="form-control form-control-sm" [(ngModel)]="item.bottleneck_title">
+                      <input class="form-control form-control-sm" [(ngModel)]="item.bottleneck_title" (blur)="prepareChart(indicator)" (click)="enableGroupdragOperation = false;">
                     </div>
                     <div class="container-fluid" style="padding: 0px">
                       <div class="row">
@@ -165,7 +188,8 @@
           <li
             class="list-group-item"
             dnd-sortable [sortableIndex]="i"
-            *ngFor="let item of indicator.bottleneck_indicators | paginate: { id: 'list3', itemsPerPage: 6, currentPage: r }; let i = index"
+            (onDropSuccess)="onDropSuccess($event)"
+            *ngFor="let item of indicator.bottleneck_indicators | paginate: { id: 'list3', itemsPerPage: 6, currentPage: k }; let i = index"
           >
             <div style="margin-left: -15px;margin-right: -15px">
               <p>{{ item.name }}
@@ -174,7 +198,7 @@
                 </a>
               </p>
               <label [translate]="'Display Name'">Display Name</label>
-              <input class="form-control form-control-sm" [(ngModel)]="item.bottleneck_title">
+              <input class="form-control form-control-sm" [(ngModel)]="item.bottleneck_title" (blur)="prepareChart(indicator)">
             </div>
             <div class="container-fluid" style="padding: 0px">
               <div class="row">
@@ -190,11 +214,12 @@
             </div>
           </li>
         </ul>
-        <pagination-controls  id="list3" (pageChange)="r = $event" directionLinks="true" autoHide="true" previousLabel=" " nextLabel=" "></pagination-controls>
+        <pagination-controls  id="list3" (pageChange)="k = $event" directionLinks="true" autoHide="true" previousLabel=" " nextLabel=" "></pagination-controls>
       </div>
     </div>
     <!--saving buttons-->
     <div class="container-fluid" style="padding: 0px">
+      <p class="text-right" style="font-size: 10px; margin: 0px" *ngIf="indicator.use_bottleneck_groups">Groups without indicators will be removed</p>
       <button
         class="btn btn-outline-secondary btn-sm pull-right cursor"
         (click)="showBotleneckEditor(indicator)">

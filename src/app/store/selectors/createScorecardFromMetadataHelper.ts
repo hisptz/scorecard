@@ -53,6 +53,7 @@ export function getScorecardOptions(data: ScorecardData) {
     shown_records: data.shown_records,
     show_score: data.show_score,
     show_arrows_definition: data.header.show_arrows_definition,
-    show_data_in_column: data.show_data_in_column
+    show_data_in_column: data.show_data_in_column,
+    show_title: data.header.template.display
   };
 }

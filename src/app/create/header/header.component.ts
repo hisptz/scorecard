@@ -3,13 +3,13 @@ import {
   Output
 } from '@angular/core';
 import {ScoreCard} from '../../shared/models/scorecard';
-import {ScorecardService} from "../../shared/services/scorecard.service";
-import {Observable} from "rxjs/Observable";
-import {ApplicationState} from "../../store/reducers";
-import {Store} from "@ngrx/store";
-import {Go} from "../../store/actions/router.action";
-import {LoadScorecardSuccess} from "../../store/actions/scorecard.actions";
-import {TranslateService} from "@ngx-translate/core";
+import {ScorecardService} from '../../shared/services/scorecard.service';
+import {Observable} from 'rxjs/Observable';
+import {ApplicationState} from '../../store/reducers';
+import {Store} from '@ngrx/store';
+import {Go} from '../../store/actions/router.action';
+import {LoadScorecardSuccess} from '../../store/actions/scorecard.actions';
+import {TranslateService} from '@ngx-translate/core';
 
 @Component({
   selector: 'app-create-header',
@@ -119,7 +119,8 @@ export class CreateHeaderComponent implements OnInit {
   }
 
   optionUpdated(event) {
-
+    console.log(event);
+    console.log(this.scorecard.data.header);
   }
 
   switchLanguage(language: string) {

@@ -118,7 +118,7 @@ export const InitialCreateState: CreatedScorecardState = {
     show_arrows_definition: true,
     show_legend_definition: true,
     template: {
-      display: false,
+      display: true,
       content: ''
     }
   },

@@ -18,11 +18,25 @@ import {IndicatorHolderGroup} from '../../shared/models/indicator-holders-group'
 import {IndicatorHolder} from '../../shared/models/indicator-holder';
 import * as _ from 'lodash';
 import {VisualizerService} from '../../shared/services/visualizer.service';
+import {animate, state, style, transition, trigger} from '@angular/animations';
 
 @Component({
   selector: 'app-bottleneck',
   templateUrl: './bottleneck.component.html',
-  styleUrls: ['./bottleneck.component.css']
+  styleUrls: ['./bottleneck.component.css'],
+  animations: [
+    trigger('hiddenItem', [
+      state('notHidden' , style({
+        'transform': 'scale(1, 1)'
+      })),
+      state('hidden', style({
+        'transform': 'scale(0.0, 0.00)',
+        'visibility': 'hidden',
+        'height': '0px'
+      })),
+      transition('notHidden <=> hidden', animate('300ms'))
+    ])
+  ]
 })
 export class BottleneckComponent implements OnInit {
   @Input() scorecard: ScoreCard;
@@ -61,8 +75,13 @@ export class BottleneckComponent implements OnInit {
   use_group_in_bottleneck: boolean = true;
   p: number;
   r: number;
+  k: number;
 
   chartData: any = null;
+  show_confirmation: boolean[] = [];
+
+  enableGroupdragOperation = true;
+  enableItemdragOperation = false;
 
   dataset_types = [
     {id: '.REPORTING_RATE', name: 'Reporting Rate'},
@@ -89,6 +108,16 @@ export class BottleneckComponent implements OnInit {
 
   ngOnInit() {
     this.loadPriview();
+  }
+
+  activateGroupDrag() {
+    this.enableItemdragOperation = false;
+    this.enableGroupdragOperation = true;
+  }
+
+  deactivateGroupDrag() {
+    this.enableItemdragOperation = true;
+    this.enableGroupdragOperation = false;
   }
 
   loadPriview() {
@@ -194,8 +223,12 @@ export class BottleneckComponent implements OnInit {
         this.addGroup();
         this.load_item(item, useGroup, this.current_bottleneck_group);
       }else {
-        if (this.indicatorInGroup(item, group)) {
-          this.removeBottleneckIndicatorFromGroup(item, group);
+        if (this.botteneckIndicatorExist(item)) {
+          // this.indicator.bottleneck_indicators_groups.forEach((singlegroup) => {
+          //   if (this.indicatorInGroup(item, singlegroup)) {
+          //     this.current_bottleneck_group = singlegroup;
+          //   }
+          // });
         }else {
           if (this.group_type === 'functions') {
             item.bottleneck_title = item.name;
@@ -208,6 +241,7 @@ export class BottleneckComponent implements OnInit {
             item.target = null;
           }
           group.items.push(item);
+          this.prepareChart(this.indicator);
         }
       }
 
@@ -227,8 +261,9 @@ export class BottleneckComponent implements OnInit {
         }
         this.indicator.bottleneck_indicators.push(item);
       }
+      this.prepareChart(this.indicator);
     }
-    this.prepareChart(this.indicator);
+
 
   }
 
@@ -271,6 +306,36 @@ export class BottleneckComponent implements OnInit {
     };
     this.indicator.bottleneck_indicators_groups.push(groupToBeAdded);
     this.current_bottleneck_group = this.indicator.bottleneck_indicators_groups[this.indicator.bottleneck_indicators_groups.length - 1];
+  }
+
+  generateGroups() {
+    const groupsToBeAdded = [{
+      name: 'Commodities',
+      id: this.scorecardService.makeid(),
+      items: []
+    }, {
+      name: 'Human Resources',
+      id: this.scorecardService.makeid(),
+      items: []
+    }, {
+      name: 'Geographic Access',
+      id: this.scorecardService.makeid(),
+      items: []
+    }, {
+      name: 'Utilisation',
+      id: this.scorecardService.makeid(),
+      items: []
+    }, {
+      name: 'Continuity',
+      id: this.scorecardService.makeid(),
+      items: []
+    }, {
+      name: 'Effective Coverage',
+      id: this.scorecardService.makeid(),
+      items: []
+    }];
+    this.indicator.bottleneck_indicators_groups = groupsToBeAdded;
+    this.current_bottleneck_group = this.indicator.bottleneck_indicators_groups[0];
   }
 
   deleteGroup(group) {
@@ -495,7 +560,12 @@ export class BottleneckComponent implements OnInit {
   }
 
   setActiveGroup(group) {
-    this.current_bottleneck_group = group;
+    if (this.current_bottleneck_group.id === group.id) {
+      this.current_bottleneck_group = {};
+    }else {
+      this.current_bottleneck_group = group;
+    }
+    this.enableGroupdragOperation = true;
   }
 
   addGroupAsBottleneck(group, list, type) {
@@ -521,6 +591,13 @@ export class BottleneckComponent implements OnInit {
   }
 
   showBotleneckEditor(indicator) {
+    const keys = [];
+    this.indicator.bottleneck_indicators_groups.forEach((value, key) => {
+      if (value.items.length !== 0) {
+        keys.push(value);
+      }
+    });
+    this.indicator.bottleneck_indicators_groups = keys;
     this.onShowBottleneckEditor.emit(indicator);
   }
 
@@ -548,13 +625,22 @@ export class BottleneckComponent implements OnInit {
   //  a function to check if bottleneck indicator exists
   botteneckIndicatorExist(item): boolean {
     let check  = false;
-    if (this.indicator.hasOwnProperty('bottleneck_indicators') ) {
-      for ( const indicator of this.indicator.bottleneck_indicators ) {
-        if ( indicator.id === item.id) {
+    if (!this.indicator.use_bottleneck_groups) {
+      if (this.indicator.hasOwnProperty('bottleneck_indicators') ) {
+        for ( const indicator of this.indicator.bottleneck_indicators ) {
+          if ( indicator.id === item.id) {
+            check = true;
+          }
+        }
+      }
+    }else {
+      for ( const group of this.indicator.bottleneck_indicators_groups ) {
+        if ( this.indicatorInGroup(item, group)) {
           check = true;
         }
       }
     }
+
     return check;
   }
 
@@ -580,7 +666,7 @@ export class BottleneckComponent implements OnInit {
   prepareChart(item) {
     const indicatorsArray = [];
     const function_indicatorsArray = [];
-    let labels = null;
+    const labels = [];
     let names = {};
     const namesArr = [];
     const colors = [];
@@ -589,7 +675,7 @@ export class BottleneckComponent implements OnInit {
     const groupCateries = [];
     let useGroups = false;
     if (item.use_bottleneck_groups) {
-      labels = [];
+
       for (const bottleneck of item.bottleneck_indicators_groups) {
         groupCateries.push({
           name: bottleneck.name,
@@ -608,7 +694,6 @@ export class BottleneckComponent implements OnInit {
         names = this.getEntities(namesArr, names);
       }
     }else {
-      useGroups = true;
       for (const bottleneck of item.bottleneck_indicators) {
         if (bottleneck.hasOwnProperty('function')) {
           function_indicatorsArray.push(bottleneck);
@@ -643,6 +728,10 @@ export class BottleneckComponent implements OnInit {
       this.chartData = this.visulizationService.drawChart(this.getSampleAnalytics(labels), visualizer_config.chartConfiguration);
     }
 
+  }
+
+  onDropSuccess(e) {
+    this.prepareChart(this.indicator);
   }
 
   getSampleAnalytics(labels) {
@@ -701,7 +790,7 @@ export class BottleneckComponent implements OnInit {
     combined_analytics.metaData.pe = ['peid'];
     combined_analytics.metaData.dx = labels.map(label => label.id);
     combined_analytics.rows = labels.map((label) =>  {
-      return [ label.id,   'ouid', 'peid',  Math.floor(Math.random() * 10) + '' ];
+      return [ label.id,   'ouid', 'peid',  Math.floor((Math.random() * 80) + 20) + '' ];
     });
     return combined_analytics;
 

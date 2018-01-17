@@ -25,7 +25,6 @@ export class VisualizerService {
         };
         break;
       case 'column':
-        console.log(chartConfiguration)
         chartObject = this.drawOtherCharts(analyticObject, chartConfiguration);
         chartObject.plotOptions = {
           column: {
@@ -34,13 +33,11 @@ export class VisualizerService {
             }
           }
         };
-        console.log(chartConfiguration.colors);
         if (chartConfiguration.hasOwnProperty('colors') && chartConfiguration.colors.length !== 0) {
           chartObject.plotOptions.column['colorByPoint'] = true,
           chartObject.colors = chartConfiguration.colors;
         }
         if ( chartConfiguration.hasOwnProperty('rotation')) {
-          console.log('nafika hapa kuchora');
           chartObject.xAxis.labels.rotation = chartConfiguration.rotation;
           chartObject.tooltip = {
             formatter: function () {
@@ -52,13 +49,6 @@ export class VisualizerService {
               }
               s += '<br/>' + this.series.name + ': ' +
                 this.y + 'm';
-
-              // _.forEach(this.points, function (point) {
-              //   console.log(point)
-              //   s += '<br/>' + point.series.name + ': ' +
-              //     point.y + 'm';
-              // });
-
               return s;
             }
           };
@@ -271,7 +261,6 @@ export class VisualizerService {
    */
   prepareCategories(analytics, xAxis: string, yAxis: string, xAxisItems = [], yAxisItems = [], nameConfiguration: any = null) {
     const analyticsObject = this._sanitizeIncomingAnalytics(analytics, nameConfiguration);
-    console.log(JSON.stringify(analyticsObject));
     const structure = {
       'xAxisItems': [],
       'yAxisItems': []
@@ -511,11 +500,9 @@ export class VisualizerService {
         name: yAxis.name, data: chartSeries
       });
     }
-    console.log(JSON.stringify(chartObject));
     if (chartConfiguration.hasOwnProperty('dataGroups') && chartConfiguration.dataGroups !== null) {
       chartObject.xAxis.categories = chartConfiguration.dataGroups;
     }
-    console.log(JSON.stringify(chartObject));
     return chartObject;
   }
 
@@ -562,7 +549,6 @@ export class VisualizerService {
     if (chartConfiguration.hasOwnProperty('dataGroups') && chartConfiguration.dataGroups !== null) {
       chartObject.xAxis.categories = chartConfiguration.dataGroups;
     }
-    console.log(JSON.stringify(chartObject));
     return chartObject;
   }
 
@@ -936,7 +922,6 @@ export class VisualizerService {
             });
           }
           if (tableConfiguration.hasOwnProperty('hide_zeros') && tableConfiguration.hide_zeros) {
-            console.log(item.items);
             if (!this.checkZeros(tableConfiguration.rows.length, item.items)) {
               table.rows.push(item);
             }
@@ -964,7 +949,6 @@ export class VisualizerService {
           });
         }
         if (tableConfiguration.hasOwnProperty('hide_zeros') && tableConfiguration.hide_zeros) {
-          console.log(item.items);
           if (!this.checkZeros(tableConfiguration.rows.length, item.items)) {
             table.rows.push(item);
           }

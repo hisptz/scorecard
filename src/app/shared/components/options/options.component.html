@@ -20,6 +20,11 @@
           <i class="fa fa-circle-thin text-secondary" *ngIf="!options.show_legend_definition"></i>
           <span [translate]="'Legend'"> Legend</span>
         </li>
+        <li class="list-group-item pointer" (click)="setOptionFromButton('show_title', 'boolean')">
+          <i class="fa fa-check-circle text-secondary" *ngIf="options.show_title"></i>
+          <i class="fa fa-circle-thin text-secondary" *ngIf="!options.show_title"></i>
+          <span [translate]="'Title'"> Title</span>
+        </li>
         <li class="list-group-item pointer" (click)="setOptionFromButton('show_rank', 'boolean')">
           <i class="fa fa-check-circle text-secondary" *ngIf="options.show_rank"></i>
           <i class="fa fa-circle-thin text-secondary" *ngIf="!options.show_rank"></i>

@@ -1,6 +1,6 @@
-<div [innerHTML]="template_content | safeHtml"></div>
-<h3 class="text-center">
-  <span *ngIf="!template_content">{{ scorecard_title }} &nbsp;</span>
+<div *ngIf="template_content.display" [innerHTML]="template_content.content | safeHtml"></div>
+<h3 class="text-center" *ngIf="!template_content.content && template_content.display">
+  <span >{{ scorecard_title }} &nbsp;</span>
   {{ organisation_unit_title || '' }}&nbsp;&nbsp;&nbsp;
   <span> {{ period_title || '' }} </span>
 </h3>

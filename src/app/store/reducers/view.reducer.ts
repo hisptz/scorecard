@@ -188,7 +188,11 @@ export function viewReducer(
       const header = {
         ...state.header,
         show_legend_definition: action.payload.show_legend_definition,
-        show_arrows_definition: action.payload.show_arrows_definition
+        show_arrows_definition: action.payload.show_arrows_definition,
+        template: {
+          ...state.header.template,
+          display: action.payload.show_title
+        }
       };
       return {...state, header, ...options};
     }
