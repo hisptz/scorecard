@@ -465,6 +465,7 @@ export class DetailsComponent implements OnInit {
       this.loading = false;
     } else {
       this.current_title = this.prepareCardTitle(this.indicator);
+      console.log(this.periodObject);
       if (this.checkIfParametersChanged(this.selectedOrganisationUnit.value, this.periodObject.value, indicatorsArray, function_indicatorsArray)) {
         this.error_occured = false;
         if (type === 'csv') {
@@ -601,13 +602,15 @@ export class DetailsComponent implements OnInit {
   }
 
   checkIfParametersChanged(orgunits, periods, indicators, function_indicatorsArray): boolean {
+    console.log(this.current_parameters)
+    console.log(periods)
     let checker = false;
     const temp_arr = [];
     for (const per of periods.split(';')) {
-      temp_arr.push(per.id);
+      temp_arr.push(per);
     }
     for (const org of orgunits.split(';')) {
-      temp_arr.push(org.id);
+      temp_arr.push(org);
     }
     for (const indicator of indicators) {
       temp_arr.push(indicator);
@@ -615,7 +618,7 @@ export class DetailsComponent implements OnInit {
     for (const indicator of function_indicatorsArray) {
       temp_arr.push(indicator.id);
     }
-
+    console.log(temp_arr)
     if (this.current_parameters.length !== 0 && temp_arr.length === this.current_parameters.length) {
       checker = temp_arr.sort().join(',') === this.current_parameters.sort().join(',');
     } else {

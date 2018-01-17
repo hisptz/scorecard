@@ -144,6 +144,41 @@ export class PeriodFilterComponent implements OnInit {
     });
   }
 
+  // setting the period to next or previous
+  setPeriod(type) {
+    const periods = [];
+    if (type === 'down') {
+      _.forEach(this.selected_periods, (period) => {
+        const periodType = this.deducePeriodType(period.id);
+        const lastPer = this.getLastPeriod(period.id, periodType)
+        periods.push(this.getPeriodById(lastPer, this.getPeriodArray(periodType, lastPer.substring(0, 4))));
+      });
+    }
+    if (type === 'up') {
+      _.forEach(this.selected_periods, (period) => {
+        const periodType = this.deducePeriodType(period.id);
+        const nextPer = this.getNextPeriod(period.id, periodType)
+        periods.push(this.getPeriodById(nextPer, this.getPeriodArray(periodType, nextPer.substring(0, 4))));
+      });
+    }
+    this.selected_periods = periods;
+    this.emitPeriod(false);
+    setTimeout(() => {
+      this.emitPeriod(true);
+    }, 50);
+  }
+
+  // check if period already exist in the period display list
+  getPeriodById(period_id, array): boolean{
+    let checker: any;
+    for ( const per of array ){
+      if ( per.id === period_id) {
+        checker = per;
+      }
+    }
+    return checker;
+  }
+
   pushPeriodForward() {
     this.year += 1;
     this.periods = this.getPeriodArray(this.period_type, this.year);
@@ -560,43 +595,47 @@ export class PeriodFilterComponent implements OnInit {
     }
   }
 
-  // getRelativePeriodText(period_key: string) {
-  //   let date = new Date();
-  //   let year = date.getFullYear();
-  //   let datestring =('0' +(date.getMonth()+1)).slice(-2);
-  //   switch (datestring) {
-  //     case '01':
-  //       return{
-  //         months:'',
-  //         quarters:'',
-  //         years:''
-  //       }
-  //       break;
-  //     case '02':
-  //       break;
-  //     case '03':
-  //       break;
-  //     case '04':
-  //       break;
-  //     case '05':
-  //       break;
-  //     case '06':
-  //       break;
-  //     case '07':
-  //       break;
-  //     case '08':
-  //       break;
-  //     case '09':
-  //       break;
-  //     case '10':
-  //       break;
-  //     case '11':
-  //       break;
-  //     case '12':
-  //       break;
-  //
-  //   }
-  //
-  // }
+  deducePeriodType(periodId: string): string {
+    let periodType = 'Quarterly';
+    if (periodId.length === 4) {
+      periodType = 'Yearly';
+    }else if ( periodId.length === 6) {
+      if ( periodId.indexOf('Q') !== -1 ) {
+        periodType = 'Quarterly';
+      }else if ( periodId.indexOf('S') !== -1 ) {
+        periodType = 'SixMonthly';
+      }else {
+        periodType = 'Monthly';
+      }
+    }else if ( periodId.length === 7) {
+      if ( periodId.indexOf('B') !== -1 ) {
+        periodType = 'BiMonthly';
+      }if ( periodId.indexOf('Oct') !== -1 ) {
+        periodType = 'FinancialOct';
+      }
+    }else if ( periodId.length === 9) {
+      if ( periodId.indexOf('April') !== -1 ) {
+        periodType = 'FinancialApril';
+      }if ( periodId.indexOf('_WEEK') !== -1 ) {
+        periodType = 'Relative Weeks';
+      }
+    }else {
+      if ( periodId.indexOf('AprilS') !== -1 ) {
+        periodType = 'SixMonthlyApril';
+      }if ( periodId.indexOf('July') !== -1 ) {
+        periodType = 'FinancialJuly';
+      }if ( periodId.indexOf('FINANCIAL_') !== -1 ) {
+        periodType = 'RelativeFinancialYear';
+      }if ( periodId.indexOf('_MONTH') !== -1 ) {
+        periodType = 'RelativeMonth';
+      }if ( periodId.indexOf('_WEEK') !== -1 ) {
+        periodType = 'Relative Weeks';
+      }if ( periodId.indexOf('_QUARTERS') !== -1 ) {
+        periodType = 'RelativeQuarter';
+      }
+    }
+
+    return periodType;
+  }
 
 }

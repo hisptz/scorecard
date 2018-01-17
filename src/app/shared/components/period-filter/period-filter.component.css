@@ -124,3 +124,34 @@ span.selected-item {
   padding-left: 2px;
   padding-right: 2px;
 }
+
+.show_tops{
+  position: relative;
+  float: left;
+  display: inline-block;
+  text-align: center;
+  cursor: pointer;
+  border: 1px solid #c6c6c6;
+  /*padding: 8px 8px;*/
+  font-size: 12px;
+  min-height: 35px!important;
+  border-radius: 4px;
+  color: #555;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  -o-user-select: none;
+  user-select: none;
+  white-space: normal;
+  background-color: #fff;
+  background-image: linear-gradient(#fff,#f7f7f7);
+  width: 7%;
+  height: 35px;
+}
+
+.arrows:hover{
+  transform: scale(1.001, 1.001);
+  -webkit-box-shadow: 0 0 10px rgba(0,0,0,0.1);
+  box-shadow: 0 0 10px rgba(0,0,0,0.1);
+  background-color: rgba(0,0,0,0.05);
+}
