@@ -3,6 +3,7 @@
     "name": "Scorecard 2.4-beta-1.4",
     "description": "Score Card Generation",
     "launch_path": "index.html",
+    "language": "en",
     "icons": {
         "16": "scorecard.png",
         "48": "scorecard.png",

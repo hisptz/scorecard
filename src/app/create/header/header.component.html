@@ -47,14 +47,16 @@
       ></app-options>
 
       <div class="dropdown float-md-right" style="margin-right: 3px">
-        <button style="height: 34px" class="btn btn-outline-secondary btn-sm dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+        <button style="height: 35px" class="btn btn-outline-secondary btn-sm dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
           <i class="fa fa-question-circle"></i>
         </button>
         <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-          <a class="dropdown-item cursor" (click)="startTour()">Take a tour</a>
-          <a class="dropdown-item cursor" [routerLink]="['/documentation']">User Manual</a>
-          <a class="dropdown-item">
-            <span class="cursor" (click)="switchLanguage('en')">En</span> | <span class="cursor" (click)="switchLanguage('fr')">Fr</span>
+          <a class="dropdown-item cursor" (click)="startTour()" [translate]="'Take a tour'">Take a tour</a>
+          <a class="dropdown-item cursor" [routerLink]="['/documentation']" [translate]="'User Manual'">User Manual</a>
+          <a class="dropdown-item language-change">
+            <span title="English" (click)="switchLanguage('en')">En</span> |
+            <span title="French" (click)="switchLanguage('fr')">Fr</span> |
+            <span title="Portuguese" (click)="switchLanguage('pt')">Pt</span>
           </a>
         </div>
       </div>

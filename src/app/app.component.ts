@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import {TranslateService} from '@ngx-translate/core';
+import {HttpClient} from '@angular/common/http';
 
 @Component({
   selector: 'app-root',
@@ -8,8 +9,15 @@ import {TranslateService} from '@ngx-translate/core';
 })
 export class AppComponent {
   title = 'app';
-  constructor (private translate: TranslateService) {
-    translate.setDefaultLang('en');
+  constructor (private translate: TranslateService, private http: HttpClient) {
+    http.get('manifest.webapp').subscribe((data: any) => {
+      translate.setDefaultLang('en');
+      if (data.hasOwnProperty('language')) {
+        translate.setDefaultLang(data.language);
+      }else {
+        translate.setDefaultLang('en');
+      }
+    });
   }
 
 

@@ -36,10 +36,12 @@
           <i class="fa fa-question-circle"></i>
         </button>
         <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-          <a class="dropdown-item cursor" (click)="startTour()">Take a tour</a>
-          <a class="dropdown-item cursor" [routerLink]="['/documentation']">User Manual</a>
-          <a class="dropdown-item" href="#">
-            <span (click)="switchLanguage('en')">En</span> | <span (click)="switchLanguage('fr')">Fr</span>
+          <a class="dropdown-item cursor" (click)="startTour()" [translate]="'Take a tour'">Take a tour</a>
+          <a class="dropdown-item cursor" [routerLink]="['/documentation']" [translate]="'User Manual'">User Manual</a>
+          <a class="dropdown-item language-change" href="#">
+            <span title="English" (click)="switchLanguage('en')">En</span> |
+            <span title="French" (click)="switchLanguage('fr')">Fr</span> |
+            <span title="Portuguese" (click)="switchLanguage('pt')">Pt</span>
           </a>
         </div>
       </div>
