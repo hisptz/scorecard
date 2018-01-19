@@ -329,7 +329,7 @@ export class DetailsComponent implements OnInit {
     const namesArr = [];
     const titlesArr = [];
     const colors = [];
-    const chartColors = ['#309EE3', '#97C5E1'];
+    const chartColors = ['#7DB2E8', '#80CC33', '#40BF80', '#75F0F0', '#9485E0', '#D98CCC', '#D98C99', '#D9998C', '#9485E0', '#E09485', '#F7B26E', '#E6C419', '#BFBF40', '#E09485', '#80CC33', '#40BF80', '#75F0F0'];
     let colorCount = 0;
     if (this.showBottleneck) {
       labels = [];
@@ -344,8 +344,12 @@ export class DetailsComponent implements OnInit {
                   name: bottleneck.name,
                   categories: bottleneck.items.map((i) => i.bottleneck_title)
                 });
-                colors.push(...bottleneck.items.map((i) => chartColors[colorCount]));
-                colorCount = colorCount === 0 ? 1 : 0;
+                if (bottleneck.hasOwnProperty('color')) {
+                  colors.push(...bottleneck.items.map((i) => bottleneck.color));
+                }else {
+                  colors.push(...bottleneck.items.map((i) => chartColors[colorCount]));
+                }
+                colorCount = colorCount + 1;
                 useGroups = true;
                 for ( const b_item of bottleneck.items) {
                   if (b_item.hasOwnProperty('function')) {

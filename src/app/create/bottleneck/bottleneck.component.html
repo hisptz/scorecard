@@ -138,8 +138,10 @@
               (click)="setActiveGroup(group)"
             >
               <h6 class="mb-0">
-                <a style="color: black" role="button" aria-expanded="true" attr.aria-controls="{{group.id}}">
-                  <i class="fa fa-bars text-muted" style="cursor: move"></i>
+                <a [style.color]="'black'" role="button" aria-expanded="true" attr.aria-controls="{{group.id}}">
+                  <span [style.color]="group.color">
+                    <i class="fa fa-bars" style="cursor: move;"></i>
+                  </span>
                   {{group.name}} <small style="font-size: 10px">( {{group.items.length}} {{ 'Indicators' | translate}})</small>
                   <i class="fa fa-chevron-down pull-right"></i>
                   <i *ngIf="!show_confirmation[group.id]" title="delete group" class="fa fa-trash-o pull-right cursor" (click)="show_confirmation = []; show_confirmation[group.id] = true; $event.preventDefault()" ></i>
@@ -155,6 +157,9 @@
             <div id="{{group.id}}" class="collapse" [ngClass]="{'show':group.id == current_bottleneck_group.id}" role="tabpanel" aria-labelledby="headingOne" data-parent="#accordion">
               <div class="card-body" style="padding: 5px">
                 <label [translate]="'Group Name'">Group Name </label>
+                <select [(ngModel)]="group.color" style="width: 100px;" [style.background-color]="group.color" (change)="prepareChart(indicator)">
+                  <option *ngFor="let color of groupColors" [value]="color" style="width: 100px;" [style.background-color]="color"></option>
+                </select>
                 <input  type="text" class="form-control" [(ngModel)]="group.name" (blur)="prepareChart(indicator)">
                 <p class="lead" *ngIf="group.items.length == 0" [translate]="'Select Indicators to add in this group'">
                   Select Indicators to add in this group
@@ -173,7 +178,8 @@
                           <i class="fa fa-trash-o text-danger"></i>
                         </a>
                       </p>
-                      <label [translate]="'Display Name'">Display Name</label>
+                      <label [translate]="'Display Name'">Display Name</label> &nbsp;
+
                       <input class="form-control form-control-sm" [(ngModel)]="item.bottleneck_title" (blur)="prepareChart(indicator)" (click)="enableGroupdragOperation = false;">
                     </div>
                     <div class="container-fluid" style="padding: 0px">
