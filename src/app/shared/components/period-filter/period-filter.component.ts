@@ -99,7 +99,7 @@ export class PeriodFilterComponent implements OnInit {
   selectAllItems() {
     this.periods.forEach((item) => {
       if (!this.checkPeriodAvailabilty(item, this.selected_periods )) {
-        this.selected_periods.push(item);
+        this.selected_periods = [...this.selected_periods, item];
       }
     });
     this.emitPeriod(false);
@@ -150,14 +150,14 @@ export class PeriodFilterComponent implements OnInit {
     if (type === 'down') {
       _.forEach(this.selected_periods, (period) => {
         const periodType = this.deducePeriodType(period.id);
-        const lastPer = this.getLastPeriod(period.id, periodType)
+        const lastPer = this.getLastPeriod(period.id, periodType);
         periods.push(this.getPeriodById(lastPer, this.getPeriodArray(periodType, lastPer.substring(0, 4))));
       });
     }
     if (type === 'up') {
       _.forEach(this.selected_periods, (period) => {
         const periodType = this.deducePeriodType(period.id);
-        const nextPer = this.getNextPeriod(period.id, periodType)
+        const nextPer = this.getNextPeriod(period.id, periodType);
         periods.push(this.getPeriodById(nextPer, this.getPeriodArray(periodType, nextPer.substring(0, 4))));
       });
     }
@@ -169,7 +169,7 @@ export class PeriodFilterComponent implements OnInit {
   }
 
   // check if period already exist in the period display list
-  getPeriodById(period_id, array): boolean{
+  getPeriodById(period_id, array): boolean {
     let checker: any;
     for ( const per of array ){
       if ( per.id === period_id) {
@@ -208,14 +208,15 @@ export class PeriodFilterComponent implements OnInit {
   }
   // action to be called when a tree item is deselected(Remove item in array of selected items
   deactivatePer ( $event ) {
-    this.selected_periods.splice(this.selected_periods.indexOf($event), 1);
+    const index = this.selected_periods.indexOf($event);
+    this.selected_periods = [...this.selected_periods.slice(0, index), ...this.selected_periods.slice(index + 1)];
     this.emitPeriod(false);
   }
 
   // add item to array of selected items when item is selected
   activatePer($event) {
     if (!this.checkPeriodAvailabilty($event, this.selected_periods)) {
-      this.selected_periods.push($event);
+      this.selected_periods = [...this.selected_periods, $event];
       this.emitPeriod(false);
     }
   }
@@ -483,7 +484,7 @@ export class PeriodFilterComponent implements OnInit {
       const year = period.substring(0, 4);
       const last_year = parseInt(year) - 1;
       return last_year + 'April';
-    }
+    }else { return period; }
 
 
   }
@@ -592,7 +593,7 @@ export class PeriodFilterComponent implements OnInit {
       const year = period.substring(0, 4);
       const last_year = parseInt(year) + 1;
       return last_year + 'April';
-    }
+    }else { return period; }
   }
 
   deducePeriodType(periodId: string): string {

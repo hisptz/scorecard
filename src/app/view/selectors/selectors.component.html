@@ -74,6 +74,7 @@
     <!--Additional options for a scorecard-->
     <app-options
       [mode]="'view'"
+      [sorting_column]="sorting_column"
       [options]="options$ | async"
       (onOptionUpdate) = "optionUpdated($event)"
     ></app-options>

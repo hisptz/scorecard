@@ -7,6 +7,7 @@ import {UserGroup} from '../../shared/models/user-group';
 import {OrgUnitModel} from '../../shared/models/org-unit-model';
 import {Legend} from '../../shared/models/legend';
 import {IndicatorHolderGroup} from '../../shared/models/indicator-holders-group';
+import * as viewActions from '../actions/view.actions';
 
 
 export interface CreatedScorecardState {
@@ -67,7 +68,7 @@ export interface CreatedScorecardState {
 export const InitialCreateState: CreatedScorecardState = {
   action_type: 'create',
   id: '',
-  need_for_group: false,
+  need_for_group: true,
   can_edit: true,
   current_indicator_holder: {
     'holder_id': 1,
@@ -223,6 +224,11 @@ export function createReducer(
       return {...state, indicator_holders };
     }
 
+    case (createActions.SET_USER_GROUP): {
+      const  user_groups = action.payload;
+      return {...state, user_groups };
+    }
+
     case (createActions.SET_HOLDER_GROUPS): {
       const  indicator_holder_groups = action.payload;
       return {...state, indicator_holder_groups };
@@ -233,6 +239,29 @@ export function createReducer(
       return {...state, additional_labels };
     }
 
+    case (createActions.SET_OPTIONS): {
+      const options = {
+        show_rank: action.payload.show_rank,
+        empty_rows: action.payload.empty_rows,
+        show_hierarchy: action.payload.show_hierarchy,
+        show_average_in_column: action.payload.show_average_in_column,
+        show_average_in_row: action.payload.show_average_in_row,
+        average_selection: action.payload.average_selection,
+        shown_records: action.payload.shown_records,
+        show_score: action.payload.show_score,
+        show_data_in_column: action.payload.show_data_in_column
+      };
+      const header = {
+        ...state.header,
+        show_legend_definition: action.payload.show_legend_definition,
+        show_arrows_definition: action.payload.show_arrows_definition,
+        template: {
+          ...state.header.template,
+          display: action.payload.show_title
+        }
+      };
+      return {...state, header, ...options};
+    }
   }
   return state;
 }

@@ -35,6 +35,7 @@ export class SampleScorecardComponent implements OnInit {
   @Output() onOrgUnitUpdate = new EventEmitter();
 
   user_groups$: Observable<UserGroup[]>;
+  selected_user_groups$: Observable<any>;
   group_loading$: Observable<boolean>;
   orgunit_loading$: Observable<boolean>;
   holders_list$: Observable<IndicatorHolder[]>;
@@ -53,6 +54,7 @@ export class SampleScorecardComponent implements OnInit {
     this.holders_list$ = store.select(createSelector.getHoldersList);
     this.need_for_group$ = store.select(createSelector.getNeedForGroup);
     this.need_for_indicator$ = store.select(createSelector.getNeedForIndicator);
+    this.selected_user_groups$ = store.select(createSelector.getUserGroups);
   }
 
   ngOnInit() {
@@ -67,7 +69,7 @@ export class SampleScorecardComponent implements OnInit {
   }
 
   updateGroup(event) {
-    console.log(event)
+    this.store.dispatch(new createActions.SetUserGroups(event));
   }
 
   //  this will enable updating of indicator

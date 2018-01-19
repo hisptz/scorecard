@@ -5,14 +5,28 @@
         class="btn switcher"
         (click)="indicator.use_bottleneck_groups = true; loadPriview()"
         [ngClass]="{ 'btn-outline-secondary': !indicator.use_bottleneck_groups,'btn-secondary': indicator.use_bottleneck_groups }"
+        [translate]="'Use Groups'"
       >Use Groups</button>
       <button
         class="btn btn-outline-secondary switcher"
         (click)="indicator.use_bottleneck_groups = false; loadPriview()"
         [ngClass]="{ 'btn-outline-secondary': indicator.use_bottleneck_groups,'btn-secondary': !indicator.use_bottleneck_groups }"
+        [translate]="'Use Individual Items'"
       >Use Individual Items</button>
-      <button *ngIf="indicator.use_bottleneck_groups" class="btn btn-sm btn-outline-secondary pull-right" (click)="addGroup()">Add Group</button>
-      <button *ngIf="indicator.use_bottleneck_groups && indicator.bottleneck_indicators_groups.length == 0" class="btn btn-sm btn-outline-secondary pull-right" (click)="generateGroups()">Generate Groups</button>
+      <button
+        *ngIf="indicator.use_bottleneck_groups"
+        class="btn btn-sm btn-outline-secondary pull-right"
+        (click)="addGroup()"
+        [translate]="'Add Group'"
+        title="{{'Add Group' | translate}}"
+      >Add Group</button>
+      <button
+        *ngIf="indicator.use_bottleneck_groups && indicator.bottleneck_indicators_groups.length == 0"
+        class="btn btn-sm btn-outline-secondary pull-right"
+        (click)="generateGroups()"
+        [translate]="'Generate Groups'"
+        title="{{'Generate Groups Based on standard TANAHASHI Model' | translate}}"
+      >Generate Groups</button>
     </div>
     <div class="col-sm-7 scorecard_details">
       <div class="row ">
@@ -126,7 +140,7 @@
               <h6 class="mb-0">
                 <a style="color: black" role="button" aria-expanded="true" attr.aria-controls="{{group.id}}">
                   <i class="fa fa-bars text-muted" style="cursor: move"></i>
-                  {{group.name}} <small style="font-size: 10px">( {{group.items.length}} Indicators)</small>
+                  {{group.name}} <small style="font-size: 10px">( {{group.items.length}} {{ 'Indicators' | translate}})</small>
                   <i class="fa fa-chevron-down pull-right"></i>
                   <i *ngIf="!show_confirmation[group.id]" title="delete group" class="fa fa-trash-o pull-right cursor" (click)="show_confirmation = []; show_confirmation[group.id] = true; $event.preventDefault()" ></i>
                   <span [@hiddenItem] = "show_confirmation[group.id]?'notHidden':'hidden'">
@@ -140,9 +154,9 @@
 
             <div id="{{group.id}}" class="collapse" [ngClass]="{'show':group.id == current_bottleneck_group.id}" role="tabpanel" aria-labelledby="headingOne" data-parent="#accordion">
               <div class="card-body" style="padding: 5px">
-                <label>Group Name </label>
+                <label [translate]="'Group Name'">Group Name </label>
                 <input  type="text" class="form-control" [(ngModel)]="group.name" (blur)="prepareChart(indicator)">
-                <p class="lead" *ngIf="group.items.length == 0">
+                <p class="lead" *ngIf="group.items.length == 0" [translate]="'Select Indicators to add in this group'">
                   Select Indicators to add in this group
                 </p>
                 <ul style="margin-top: 4px" class="list-group" dnd-sortable-container [sortableData]="group.items">

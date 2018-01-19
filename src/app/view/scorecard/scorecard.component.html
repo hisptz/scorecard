@@ -1,3 +1,9 @@
+<div class="container-fluid" [@hiddenItem] = "no_selections?'notHidden':'hidden'">
+  <p class="lead text-muted text-center">
+    Please select at least one Period and one Organisation Unit.
+  </p>
+</div>
+
 <app-loading-notification
   [loading]="loading"
   [loading_message]="loading_message"

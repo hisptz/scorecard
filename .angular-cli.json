@@ -16,8 +16,7 @@
         "balls-5.svg",
         "scorecard.svg",
         "scorecard.png",
-        "manifest.webapp",
-        "scorecard.appcache"
+        "manifest.webapp"
       ],
       "index": "index.html",
       "main": "main.ts",

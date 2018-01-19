@@ -39,19 +39,34 @@ export class VisualizerService {
         }
         if ( chartConfiguration.hasOwnProperty('rotation')) {
           chartObject.xAxis.labels.rotation = chartConfiguration.rotation;
-          chartObject.tooltip = {
-            formatter: function () {
-              let s = '<b>' + this.x + '</b>';
-              if (chartConfiguration.tooltipItems[this.x.name + '']) {
-                s = '<b>' + chartConfiguration.tooltipItems[this.x.name + ''].name + '</b>';
-              }else {
-                s = '<b>' + this.x + '</b>';
+          if ( chartConfiguration.hasOwnProperty('tooltipItems')) {
+            chartObject.tooltip = {
+              formatter: function () {
+                let s = '<b>' + this.x + '</b>';
+                if (chartConfiguration.tooltipItems[this.x.name + ':' + this.x.parent.name]) {
+                  s = '<b>' + chartConfiguration.tooltipItems[this.x.name + ':' + this.x.parent.name].name + '</b>';
+                }else {
+                  s = '<b>' + this.x + '</b>';
+                }
+                s += '<br/>' + this.series.name + ': ' +
+                  this.y;
+                return s;
               }
-              s += '<br/>' + this.series.name + ': ' +
-                this.y + 'm';
-              return s;
-            }
-          };
+            };
+
+            chartObject.xAxis.labels.formatter = function () {
+              if ( this.value.hasOwnProperty('parent')) {
+                if (chartConfiguration.tooltipItems[this.value.name + ':' + this.value.parent.name]) {
+                  return '<div class="hastip" title="' + chartConfiguration.tooltipItems[this.value.name + ':' + this.value.parent.name].name + '">' + this.value.name + '</div>';
+                }
+              }if ( !this.value.hasOwnProperty('parent')) {
+                if (!chartConfiguration.titlesItems[this.value + '']) {
+                  return '<div class="hastip" title="' + this.value + '">' + this.value + '</div>';
+                }
+              }
+            };
+          }
+
           chartObject.xAxis.labels.style = {
             color: '#666666',
             cursor: 'default',
@@ -61,15 +76,7 @@ export class VisualizerService {
           };
           chartObject.xAxis.labels.step = 1;
           chartObject.xAxis.labels.useHTML = true;
-          chartObject.xAxis.labels.formatter = function () {
-            if (chartConfiguration.tooltipItems[this.value + '']) {
-              return '<div class="hastip" title="' + chartConfiguration.tooltipItems[this.value + ''].name + '">' + this.value + '</div>';
-            }else {
-              return '<div class="hastip" title="' + this.value + '">' + this.value + '</div>';
-            }
 
-
-          };
         }
         break;
       case 'radar':

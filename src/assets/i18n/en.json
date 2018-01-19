@@ -78,7 +78,7 @@
   "Click create new, Write your score card a title and description": "Click create new, Write your score card a title and description",
   "Write group header name for indicators you will create in next step": "Write group header name for indicators you will create in next step",
   "Select indicator group and click indicator to add to the group": "Select indicator group and click indicator to add to the group",
-  "Select groups that will be able to view or edit your scorecard": "Sélectionnez les groupes qui pourront voir ou modifier votre tableau de bord",
+  "Select groups that will be able to view or edit your scorecard": "Select groups that will be able to view or edit your scorecard",
   "Edit title to change title to use on heading": "Edit title to change title to use on heading",
   "Enter effective gap to show increase/decrease from last period": "Enter effective gap to show increase/decrease from last period",
   "Set minimum and maximum range for each color code": "Set minimum and maximum range for each color code",
@@ -161,7 +161,7 @@
   "Last 3 Month": "Last 3 Month",
   "Last 6 Month": "Last 6 Month",
   "Last 12 Month": "Last 12 Month",
-  "Last 4 Quarter": "Last 4 Quarte",
+  "Last 4 Quarter": "Last 4 Quarter",
   "Last 5 Years": "Last 5 Years",
   "Getting scorecard ready": "Getting scorecard ready",
   "Display Name": "Display Name",
@@ -173,7 +173,18 @@
   "Increase from last period":"Increase from last period",
   "Decrease from last period":"Decrease from last period",
   "Error Loading data":"Error Loading data",
-  "Indicator has bottleneck analysis":"Indicator has bottleneck analysis"
+  "Indicator has bottleneck analysis":"Indicator has bottleneck analysis",
+  "Use Groups": "Use Groups",
+  "Use Individual Items": "Use Individual Items",
+  "Add Group": "Add Group",
+  "Generate Groups": "Generate Groups",
+  "Generate Groups Based on standard TANAHASHI Model": "Generate Groups Based on standard TANAHASHI Model",
+  "Group Name": "Group Name",
+  "Select Indicators to add in this group": "Select Indicators to add in this group",
+  "Go to next period": "Go to next period",
+  "Go to previous period": "Go to previous period",
+  "Sort scorecard by organisation unit": "Sort scorecard by organisation unit",
+  "Sorted By": "Sorted By"
 
 
 }

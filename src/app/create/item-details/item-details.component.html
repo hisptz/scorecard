@@ -142,28 +142,29 @@
         </div>
 
       </div>
+      <!--additinal labels-->
+      <div class="col-sm-7" *ngFor="let label of additional_labels">
+        <div style="padding-bottom: 5px" class="row">
+          <div class="col-sm-3">
+            <label class="sans-pro lebal">{{ label }}:</label>
+          </div>
+          <div class="col-sm-9">
+            <input
+              [(ngModel)]="indicator.additional_label_values[label]"
+              class="form-control form-control-sm"/>
+          </div>
+        </div>
+      </div>
     </div>
 
     <a (click)="showBotleneckEditor(indicator)"
-       style="padding: 6px;padding-top: 0px; margin-left: 0px; font-size: 12px"
-       class="btn btn-sm btn-default"
+       style="padding: 3px; margin-left: 5px; margin-bottom: 10px; font-size: 12px"
+       class="btn btn-sm btn-outline-secondary cursor"
        title="Click to manage indicators related to {{ indicator.title }}">
       <span class="fa fa-pencil"></span> Related/Bottleneck indicators
       <span class="badge badge-pill badge-secondary"> {{ !indicator.use_bottleneck_groups ? indicator.bottleneck_indicators.length : indicator.bottleneck_indicators_groups.length }} </span>
     </a>
-    <!--additinal labels-->
-    <div class="col-sm-7" *ngFor="let label of additional_labels">
-      <div style="padding-bottom: 5px">
-        <div class="col-sm-3">
-          <label class="sans-pro lebal">{{ label }}:</label>
-        </div>
-        <div class="col-sm-9">
-          <input
-            [(ngModel)]="indicator.additional_label_values[label]"
-            class="form-control form-control-sm"/>
-        </div>
-      </div>
-    </div>
+
   </div>
   <span
     style="margin-left: 5px"

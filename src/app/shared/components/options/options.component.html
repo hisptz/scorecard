@@ -43,17 +43,21 @@
         <li class="list-group-item pointer" (click)="setOptionFromButton('show_average_in_row', 'boolean')">
           <i class="fa fa-check-circle text-secondary" *ngIf="options.show_average_in_row"></i>
           <i class="fa fa-circle-thin text-secondary" *ngIf="!options.show_average_in_row"></i>
-          <span [translate]="'Average Row'"> Average Row</span>
+          <span [translate]="'Average Column'"> Average Column</span>
         </li>
         <li class="list-group-item pointer" (click)="setOptionFromButton('show_average_in_column', 'boolean')">
           <i class="fa fa-check-circle text-secondary" *ngIf="options.show_average_in_column"></i>
           <i class="fa fa-circle-thin text-secondary" *ngIf="!options.show_average_in_column"></i>
-          <span [translate]="'Average Column'"> Average Column</span>
+          <span [translate]="'Average Row'"> Average Row</span>
         </li>
       </ul>
     </div>
     <div class="col-sm-4" *ngIf="mode == 'view'" style="padding: 0px">
       <h5 class="text-center text-muted" [translate]="'Best/Worst'">Best/Worst</h5>
+      <p class="text-muted" style="font-size: 12px" *ngIf="mode !== 'edit'">
+        <span [translate]="'Sorted By'"></span> &nbsp;
+        {{ sorting_column }}
+      </p>
       <ul class="list-group btn-sec">
         <li class="list-group-item pointer" (click)="setOptionFromButton('shown_records', 'value', 'all')">
           <i class="fa fa-check-circle text-secondary" *ngIf="options.shown_records == 'all'"></i>

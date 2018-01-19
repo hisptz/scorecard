@@ -690,7 +690,7 @@ export class BottleneckComponent implements OnInit {
           indicatorsArray.push(...bottleneck.items.map((i) => i.id));
         }
         labels.push(...bottleneck.items.map((i) => { return {'id': i.id, 'name': i.bottleneck_title}; }));
-        namesArr.push(...bottleneck.items.map((i) => { return {'id': i.bottleneck_title, 'name': i.name}; }));
+        namesArr.push(...bottleneck.items.map((i) => { return {'id': i.bottleneck_title + ' : ' + bottleneck.name, 'name': i.name}; }));
         names = this.getEntities(namesArr, names);
       }
     }else {

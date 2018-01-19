@@ -1,4 +1,4 @@
-import {ActionReducerMap, createFeatureSelector} from '@ngrx/store';
+import {ActionReducerMap, createFeatureSelector, MetaReducer} from '@ngrx/store';
 import {scorecardReducer, ScorecardState} from './scorecard.reducer';
 import {uiReducer, UiState} from './ui.reducer';
 import * as fromRouter from '@ngrx/router-store';
@@ -7,6 +7,8 @@ import {CreatedScorecardState, createReducer} from "./create.reducer";
 import {staticDataReducer, StaticDataState} from "./static-data.reducer";
 import {orgunitReducer, OrgunitState} from "./orgunits.reducer";
 import {viewReducer, ViewScorecardState} from "./view.reducer";
+import {environment} from '../../../environments/environment';
+import {storeFreeze} from 'ngrx-store-freeze';
 
 export  interface ApplicationState {
   scorecards: ScorecardState;
@@ -27,6 +29,7 @@ export const reducers: ActionReducerMap<ApplicationState> = {
   routerReducer: fromRouter.routerReducer,
 };
 
+export const metaReducers: MetaReducer<ApplicationState>[] = !environment.production ? [storeFreeze] : [];
 
 export const getRouterState = createFeatureSelector<
   fromRouter.RouterReducerState<RouterStateUrl>

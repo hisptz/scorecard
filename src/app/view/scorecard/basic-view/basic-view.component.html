@@ -4,7 +4,9 @@
     <!--numbering-->
     <th *ngIf="scorecard.data.show_rank" style="width: 30px"></th>
     <!--orgunit area/for sorting orgunit-->
-    <th class="orgUnitName" (click)="sortScoreCardFromColumn('none', sortAscending, orgunits, periods_list[0].id, false)" title="Sort scorecard by organisation unit">
+    <th class="orgUnitName"
+        (click)="sortScoreCardFromColumn('none', sortAscending, orgunits, periods_list[0].id, false)"
+        title="{{ 'Sort scorecard by organisation unit' | translate}}">
       <!--sorting icons-->
       <span class="fa fa-sort-desc pull-right text-muted" *ngIf="!current_sorting && sorting_column == 'none'"></span>
       <span class="fa fa-sort-asc pull-right text-muted" *ngIf="current_sorting && sorting_column == 'none'"></span>

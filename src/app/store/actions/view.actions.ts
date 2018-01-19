@@ -9,12 +9,13 @@ export const SET_SELECTED_OU = '[View] Set Selected OU';
 export const SET_SELECTED_PE = '[View] Set Selected PE';
 export const SET_SCORECARD_OPTIONS = '[View] Set Scorecard Options';
 
-export const SET_ITEM = '[Create] Set configuration Item';
-export const SET_LEGEND = '[Create] Set Legend';
-export const SET_HEADER = '[Create] Set Header';
-export const SET_HOLDERS = '[Create] Set Holders';
-export const SET_HOLDER_GROUPS = '[Create] Set Holder Groups';
-export const SET_ADDITIONAL_LABELS = '[Create] Set Additional Labels';
+export const SET_ITEM = '[View] Set configuration Item';
+export const SET_LEGEND = '[View] Set Legend';
+export const SET_HEADER = '[View] Set Header';
+export const SET_HOLDERS = '[View] Set Holders';
+export const SET_HOLDER_GROUPS = '[View] Set Holder Groups';
+export const SET_ADDITIONAL_LABELS = '[View] Set Additional Labels';
+export const SET_SORTING_COLUMN = '[View] Set Sorting Column';
 
 
 export class SetViewdScorecard implements Action {
@@ -72,6 +73,11 @@ export class SetOptions implements Action {
   constructor(public payload: any) {}
 }
 
+export class SetSortingColumn implements Action {
+  readonly type = SET_SORTING_COLUMN;
+  constructor(public payload: any) {}
+}
+
 
 export class GetScorecardToView implements Action {
   readonly type = GET_SCORECARD_TO_VIEW;
@@ -90,4 +96,5 @@ export type Actions =
   | SetLoaded
   | SetSelectedOu
   | SetSelectedPe
-  | SetOptions;
+  | SetOptions
+  | SetSortingColumn;

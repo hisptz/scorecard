@@ -2,7 +2,7 @@ import {Component, OnInit, Input, Output, EventEmitter, ViewChild} from '@angula
 import { TreeComponent, TREE_ACTIONS, IActionMapping } from 'angular-tree-component';
 import { MultiselectComponent } from './multiselect/multiselect.component';
 import { OrgUnitService } from '../../services/org-unit.service';
-
+import * as _ from 'lodash';
 @Component({
   selector: 'app-org-unit-filter',
   templateUrl: './org-unit-filter.component.html',
@@ -130,10 +130,10 @@ export class OrgUnitFilterComponent implements OnInit {
         .subscribe(
           (data: any) => {
             // assign urgunit levels and groups to variables
-            this.orgunit_model.orgunit_levels = data.organisationUnitLevels;
+            this.orgunit_model = { ...this.orgunit_model, 'orgunit_levels': data.organisationUnitLevels };
             // setting organisation groups
             this.orgunitService.getOrgunitGroups().subscribe( groups => {//noinspection TypeScriptUnresolvedVariable
-              this.orgunit_model.orgunit_groups = groups;
+              this.orgunit_model = { ...this.orgunit_model, 'orgunit_groups': groups };
             });
 
             // identify currently logged in usser
@@ -156,8 +156,13 @@ export class OrgUnitFilterComponent implements OnInit {
                     const fields = this.orgunitService.generateUrlBasedOnLevels(use_level);
                     this.orgunitService.getAllOrgunitsForTree1(fields, orgunits).subscribe(
                       items => {
-                        items[0].expanded = true;
-                        this.organisationunits = items;
+                        this.organisationunits = this.sortOrganisationUnitTree([
+                          {
+                            ...items[0],
+                            isExpanded: true
+                          },
+                          ...items.slice(1)
+                        ]);
 
                         // activate organisation units
                         for (const active_orgunit of this.orgunit_model.selected_orgunits) {
@@ -172,7 +177,6 @@ export class OrgUnitFilterComponent implements OnInit {
                             this.activateNode(active_orgunit.id, this.orgtree, true);
                           }
                         }
-                        this.prepareOrganisationUnitTree(this.organisationunits, 'parent');
                       },
                       error => {
                         console.log('something went wrong while fetching Organisation units');
@@ -272,7 +276,7 @@ export class OrgUnitFilterComponent implements OnInit {
     }
     this.orgunit_model.selected_orgunits.forEach((item, index) => {
       if ( $event.node.data.id === item.id ) {
-        this.orgunit_model.selected_orgunits.splice(index, 1);
+        this.orgunit_model.selected_orgunits = [...this.orgunit_model.selected_orgunits.slice(0, index), ...this.orgunit_model.selected_orgunits.slice(index + 1)];
       }
     });
 
@@ -290,7 +294,7 @@ export class OrgUnitFilterComponent implements OnInit {
     }
     this.selected_orgunits = [$event.node.data];
     if (!this.checkOrgunitAvailabilty($event.node.data, this.orgunit_model.selected_orgunits)) {
-      this.orgunit_model.selected_orgunits.push($event.node.data);
+      this.orgunit_model.selected_orgunits = [...this.orgunit_model.selected_orgunits, $event.node.data];
     }
     this.orgUnit = $event.node.data;
     this.emit(false);
@@ -353,42 +357,13 @@ export class OrgUnitFilterComponent implements OnInit {
     this.emit(false);
   }
 
-  prepareOrganisationUnitTree(organisationUnit, type: string = 'top') {
-    if (type === 'top') {
-      if (organisationUnit.children) {
-        organisationUnit.children.sort((a, b) => {
-          if (a.name > b.name) {
-            return 1;
-          }
-          if (a.name < b.name) {
-            return -1;
-          }
-          // a must be equal to b
-          return 0;
-        });
-        organisationUnit.children.forEach((child) => {
-          this.prepareOrganisationUnitTree(child, 'top');
-        });
-      }
-    }else {
-      organisationUnit.forEach((orgunit) => {
-        if (orgunit.children) {
-          orgunit.children.sort((a, b) => {
-            if (a.name > b.name) {
-              return 1;
-            }
-            if (a.name < b.name) {
-              return -1;
-            }
-            // a must be equal to b
-            return 0;
-          });
-          orgunit.children.forEach((child) => {
-            this.prepareOrganisationUnitTree(child, 'top');
-          });
-        }
-      });
-    }
+  sortOrganisationUnitTree(organisationUnits: any[]) {
+    return _.map(_.sortBy(organisationUnits, 'name'), (orgUnit) => {
+      return orgUnit.children ? {
+        ...orgUnit,
+        children: this.sortOrganisationUnitTree(orgUnit.children)
+      } : orgUnit;
+    });
   }
 
   // prepare a proper name for updating the organisation unit display area.

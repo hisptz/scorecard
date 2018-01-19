@@ -26,6 +26,7 @@ export class OptionsComponent implements OnInit {
 
   @Input() options: any = null;
   @Input() mode = 'edit';
+  @Input() sorting_column = 'none';
   @Output() onOptionUpdate: EventEmitter<any> = new EventEmitter<any>();
 
   showAdditionalOptions: boolean = true;

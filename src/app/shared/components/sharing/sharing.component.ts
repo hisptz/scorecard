@@ -8,7 +8,7 @@ import * as _ from 'lodash';
 })
 export class SharingComponent implements OnInit {
 
-  @Input() scorecard: any;
+  @Input() user_groups: any;
   @Input() userGroups: any;
   @Input() group_loading: boolean;
   @Output() onGroupChange = new EventEmitter();
@@ -26,35 +26,47 @@ export class SharingComponent implements OnInit {
   }
 
   //  add user sharing settings
-  toogleGroup(type, group) {
+  toogleGroup(type, group, event) {
     if (group.hasOwnProperty(type)) {
-      group[type] = !group[type];
+      group = {...group, [type]: !group[type]};
     }else {
-      group[type] = true;
+      group =  {...group, [type]: true};
     }
-    if (!_.find(this.scorecard.data.user_groups, {'id': group.id})) {
-      this.scorecard.data.user_groups.push(group);
+    const groupIndex = _.findIndex(this.userGroups , {'id': group.id});
+    if (!_.find(this.user_groups, {'id': group.id})) {
+      this.user_groups = [...this.user_groups, group];
     }else {
-      this.scorecard.data.user_groups.forEach((value, index) => {
+      this.user_groups.forEach((value, index) => {
         if ( value.id === group.id ) {
-          this.scorecard.data.user_groups[index] = group;
+          this.user_groups =
+            [
+              ...this.user_groups.slice(0, index),
+              group,
+              ...this.user_groups.slice(index + 1)
+            ];
         }
       });
     }
     if (!group['see'] && !group['edit']) {
-      this.scorecard.data.user_groups.forEach((value, index) => {
+      this.user_groups.forEach((value, index) => {
         if ( value.id === group.id ) {
-          this.scorecard.data.user_groups.splice(index, 1);
+          this.user_groups = [...this.user_groups.slice(0, index), ...this.user_groups.slice(index + 1)];
         }
       });
     }
-    this.onGroupChange.emit(this.scorecard.data.user_groups.slice());
+    this.userGroups = [
+      ...this.userGroups.slice(0, groupIndex),
+      group,
+      ...this.userGroups.slice(groupIndex + 1)
+    ];
+    this.onGroupChange.emit(this.user_groups);
+    event.stopPropagation();
 
   }
 
   getGroupActiveState(type, group): boolean {
     let checker = false;
-    this.scorecard.data.user_groups.forEach((value) => {
+    this.user_groups.forEach((value) => {
       if ( value.id === group.id && value.hasOwnProperty(type)) {
         checker = value[type];
       }

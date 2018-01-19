@@ -10,6 +10,7 @@ export const getScorecardToView = createSelector(getViewedState, createScorecard
 export const getSelectedOu = createSelector(getViewedState, (data: ViewScorecardState) => data.orgunit);
 export const getSelectedPe = createSelector(getViewedState, (data: ViewScorecardState) => data.period);
 export const getLoaded = createSelector(getViewedState, (data: ViewScorecardState) => data.loaded);
+export const getSortingColumnId = createSelector(getViewedState, (data: ViewScorecardState) => data.sortingColumn);
 
 // Base selectors
 export const getDataSection = createSelector(getScorecardToView, (scorecard: ScoreCard) => scorecard.data);
@@ -77,3 +78,17 @@ export const getHoldersList  = createSelector(
     }
     return indicators_list;
   });
+
+export const getSortingColumn = createSelector(getHoldersList , getSortingColumnId, (holderList, sortingColumId) => {
+  let sortingColumn = 'Organisation Unit';
+  console.log(holderList)
+  console.log(sortingColumId)
+  for (const holder of holderList) {
+    for (const indicator of holder.indicators) {
+      if ( indicator.id === sortingColumId ) {
+        sortingColumn = indicator.title;
+      }
+    }
+  }
+  return sortingColumn;
+});

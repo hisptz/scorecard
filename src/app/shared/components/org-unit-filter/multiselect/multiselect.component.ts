@@ -23,7 +23,7 @@ export class MultiselectComponent implements OnInit {
         this.selected_items = this.starting_items;
       }else {
         this.starting_items.forEach((val) => {
-          this.selected_items.push(val);
+          this.selected_items = [ ...this.selected_items, val ];
         });
       }
       this.onSelected.emit(this.selected_items);
@@ -53,7 +53,7 @@ export class MultiselectComponent implements OnInit {
     if (this.checkItemAvailabilty(item, this.selected_items )) {
       this.selected_items.splice(this.selected_items.indexOf(item), 1);
     }else {
-      this.selected_items.push(item);
+      this.selected_items = [ ...this.selected_items, item ];
     }
     this.onSelected.emit(this.selected_items);
   }

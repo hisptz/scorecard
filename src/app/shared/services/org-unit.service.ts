@@ -152,7 +152,7 @@ export class OrgUnitService {
                   const fields = this.generateUrlBasedOnLevels(use_level);
                   this.getAllOrgunitsForTree1(fields, orgunits).subscribe(
                     items => {
-                      items[0].expanded = true;
+                      // items[0].expanded = true;
                     },
                     error => {
                       console.log('something went wrong while fetching Organisation units');

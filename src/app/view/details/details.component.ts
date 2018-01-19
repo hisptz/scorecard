@@ -1,4 +1,4 @@
-import {Component, Input, OnInit} from '@angular/core';
+import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 
 import {Angular2Csv} from 'angular2-csv';
 import {VisualizerService} from '../../shared/services/visualizer.service';
@@ -16,6 +16,7 @@ import {CHART_TYPES} from './chart_types';
 export class DetailsComponent implements OnInit {
 
   @Input() indicatorDetails: any;
+  @Output() onClose = new EventEmitter();
   orgUnitModel: any = null;
   selectedPeriod: any;
   periodType: any;
@@ -102,6 +103,10 @@ export class DetailsComponent implements OnInit {
     this.updateType((this.showBottleneck) ? '' : 'table');
   }
 
+  closeModel() {
+    this.onClose.emit();
+  }
+
   updateChartType(type: string) {
     this.currentChartType = type;
     this.updateType('chart');
@@ -126,7 +131,12 @@ export class DetailsComponent implements OnInit {
 
   updatePeriod($event) {
     this.periodObject = $event;
-    this.updateType(this.visualizer_config.type);
+    if ( this.showBottleneck ) {
+      this.updateType('');
+    }else {
+      this.updateType(this.visualizer_config.type);
+    }
+
   }
   // get function details from id
   getFunction(id) {
@@ -163,7 +173,7 @@ export class DetailsComponent implements OnInit {
         }
       }
     }
-    return (this.showBottleneck) ? indicators_title.join(', ') + ' Bottleneck Indicators ' : indicators_title.join(', ');
+    return indicators_title.join(', ');
 
   }
 
@@ -315,7 +325,9 @@ export class DetailsComponent implements OnInit {
     // check first if your supposed to load bottleneck indicators too for analysis
     let labels = null;
     let names = {};
+    let titles = {};
     const namesArr = [];
+    const titlesArr = [];
     const colors = [];
     const chartColors = ['#309EE3', '#97C5E1'];
     let colorCount = 0;
@@ -343,8 +355,10 @@ export class DetailsComponent implements OnInit {
                   }
                 }
                 labels.push(...bottleneck.items.map((i) => { return {'id': i.id, 'name': i.bottleneck_title}; }));
-                namesArr.push(...bottleneck.items.map((i) => { return {'id': i.bottleneck_title, 'name': i.name}; }));
+                namesArr.push(...bottleneck.items.map((i) => { return {'id': i.bottleneck_title + ':' + bottleneck.name, 'name': i.name}; }));
+                titlesArr.push(...bottleneck.items.map((i) => { return {'id': i.bottleneck_title, 'name': i.name}; }));
                 names = this.getEntities(namesArr, names);
+                titles = this.getEntities(titlesArr, titles);
               }
             }else {
               useGroups = true;
@@ -455,8 +469,11 @@ export class DetailsComponent implements OnInit {
       };
       if (this.showBottleneck) {
         this.visualizer_config.chartConfiguration.rotation = 0;
-        this.visualizer_config.chartConfiguration.tooltipItems = names;
-        this.visualizer_config.chartConfiguration.colors = colors;
+        if ( dataGroups !== null ) {
+          this.visualizer_config.chartConfiguration.tooltipItems = names;
+          this.visualizer_config.chartConfiguration.titlesItems = titles;
+          this.visualizer_config.chartConfiguration.colors = colors;
+        }
       }
     }
     // if there is no change of parameters from last request dont go to server
@@ -602,8 +619,6 @@ export class DetailsComponent implements OnInit {
   }
 
   checkIfParametersChanged(orgunits, periods, indicators, function_indicatorsArray): boolean {
-    console.log(this.current_parameters)
-    console.log(periods)
     let checker = false;
     const temp_arr = [];
     for (const per of periods.split(';')) {
@@ -618,7 +633,6 @@ export class DetailsComponent implements OnInit {
     for (const indicator of function_indicatorsArray) {
       temp_arr.push(indicator.id);
     }
-    console.log(temp_arr)
     if (this.current_parameters.length !== 0 && temp_arr.length === this.current_parameters.length) {
       checker = temp_arr.sort().join(',') === this.current_parameters.sort().join(',');
     } else {

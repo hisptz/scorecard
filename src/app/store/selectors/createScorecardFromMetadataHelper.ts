@@ -2,8 +2,9 @@ import {CreatedScorecardState} from '../reducers/create.reducer';
 import {ScoreCard, ScorecardData} from '../../shared/models/scorecard';
 import {ViewScorecardState} from "../reducers/view.reducer";
 
-export function createScorecardFromStore(scorecardState: CreatedScorecardState | ViewScorecardState): ScoreCard {
-  if (scorecardState) {
+export function createScorecardFromStore(scorecard: CreatedScorecardState | ViewScorecardState): ScoreCard {
+  if (scorecard) {
+    const scorecardState = {...scorecard}
     return {
       id: scorecardState.id,
       name: scorecardState.header.title,

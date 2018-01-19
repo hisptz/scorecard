@@ -13,10 +13,12 @@ export const SET_NEXT_HOLDER_ID = '[Create] Set Next Holder Id';
 export const SET_NEED_FOR_INDICATOR = '[Create] Set Need for Indicator';
 export const SET_NEED_FOR_GROUP = '[Create] Set Need for Group';
 
+export const SET_OPTIONS = '[Create] Set Options';
 export const SET_ITEM = '[Create] Set configuration Item';
 export const SET_LEGEND = '[Create] Set Legend';
 export const SET_HEADER = '[Create] Set Header';
 export const SET_HOLDERS = '[Create] Set Holders';
+export const SET_USER_GROUP = '[Create] Set User Group';
 export const SET_HOLDER_GROUPS = '[Create] Set Holder Groups';
 export const SET_ADDITIONAL_LABELS = '[Create] Set Additional Labels';
 export const SET_EDDITING_HEADER = '[Create] Set Editing Haader';
@@ -92,6 +94,16 @@ export class SetEdditingHeader implements Action {
   constructor(public payload: boolean) {}
 }
 
+export class SetOptions implements Action {
+  readonly type = SET_OPTIONS;
+  constructor(public payload: any) {}
+}
+
+export class SetUserGroups implements Action {
+  readonly type = SET_USER_GROUP;
+  constructor(public payload: any) {}
+}
+
 export class GetScorecardToCreate implements Action {
   readonly type = GET_SCORECARD_TO_CREATE;
 }
@@ -112,4 +124,6 @@ export type Actions =
   | SetHolders
   | SetHoldersGroups
   | SetAdditionalLabels
-  | SetEdditingHeader;
+  | SetEdditingHeader
+  | SetOptions
+  | SetUserGroups;

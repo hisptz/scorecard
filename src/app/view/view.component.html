@@ -9,6 +9,7 @@
     (onOrgunitChange)="setOrgunitNodes($event)"
     (onDownloadCsv)="downloadCsv()"
     (onUpdate)="loadScorecard()"
+    [sorting_column]="sorting_column$ | async"
   ></app-selectors>
 </div>
 
@@ -19,6 +20,7 @@
     <p><a class="btn btn-light btn-sm pull-right" (click)="closeModel()"><i class="fa fa-close"></i> </a></p>
     <app-details
       *ngIf="showPreview"
+      (onClose)="closeModel()"
       [indicatorDetails]="indicatorDetails"
 
     ></app-details>
@@ -36,6 +38,7 @@
       [functions]="functions$ | async"
       [organisation_unit_nodes]="organisation_unit_nodes"
       (show_details)="loadPreview($event)"
+      (onChangingSort)="onChangeSort($event)"
     ></app-scorecard>
 
     <h1 class="text-center" *ngIf="!(functions_loaded$ | async) || !(metadata_ready$ | async)">

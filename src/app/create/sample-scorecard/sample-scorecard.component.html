@@ -14,7 +14,7 @@
         <th dnd-droppable (onDropSuccess)="transferDataSuccess($event,'new',null)">
           <app-sharing
             tourAnchor="create.sharing"
-            [scorecard]="scorecard"
+            [user_groups]="selected_user_groups$ | async"
             [userGroups]="user_groups$ | async"
             [group_loading]="!( group_loading$ | async )"
             (onGroupChange)="updateGroup($event)"

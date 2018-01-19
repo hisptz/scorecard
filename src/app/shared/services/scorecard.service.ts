@@ -94,7 +94,8 @@ export class ScorecardService {
               this.store.select(getScorecardEntites).first().subscribe(
                 scorecards => {
                   if (scorecards) {
-                    this.store.dispatch(new createActions.SetCreatedScorecard(this.getScorecardForCreation(scorecards[scorecardId], 'edit', {id: user.id})));
+                    const scorecard_copy = {...scorecards};
+                    this.store.dispatch(new createActions.SetCreatedScorecard(this.getScorecardForCreation({...scorecard_copy[scorecardId]}, 'edit', {id: user.id})));
                   }
                 });
             }
@@ -112,7 +113,8 @@ export class ScorecardService {
           this.store.select(getScorecardEntites).first().subscribe(
             scorecards => {
               if (scorecards) {
-                this.store.dispatch(new viewActions.SetViewdScorecard(this.getScorecardForViewing(scorecards[scorecardId])));
+                const scorecard_copy = {...scorecards};
+                this.store.dispatch(new viewActions.SetViewdScorecard(this.getScorecardForViewing({...scorecard_copy[scorecardId]})));
               }
             });
       }
@@ -373,13 +375,13 @@ export class ScorecardService {
     return {
       action_type: type,
       id: scorecard.id,
-      need_for_group: false,
+      need_for_group: scorecard.data.data_settings.indicator_holders.length !== 0,
       can_edit: scorecard.can_edit,
       current_indicator_holder: this.deduceStartingIndicatorHolder(scorecard).current_indicator_holder,
       current_group:  this.deduceStartingIndicatorHolder(scorecard).current_group,
       next_group_id: null,
       next_holder_id: null,
-      need_for_indicator: false,
+      need_for_indicator: scorecard.data.data_settings.indicator_holders.length !== 0,
       show_title_editor: false,
       orgunit_settings: scorecard.data.orgunit_settings,
       average_selection: scorecard.data.average_selection,
@@ -470,6 +472,7 @@ export class ScorecardService {
       orgunit: null,
       period: null,
       showModel: false,
+      sortingColumn: 'none',
     };
   }
 
@@ -670,7 +673,9 @@ export class ScorecardService {
   addHolderGroups( indicator_holder_groups, holder_group, holder, current_id: any = null ): void {
     this.store.dispatch(new createActions.SetNeedForGroup(true));
     let add_new = true;
-    for ( const group of indicator_holder_groups ) {
+    let new_holder_groups = indicator_holder_groups.slice();
+    const new_holder_group = { ...holder_group};
+    for ( const group of new_holder_groups ) {
       if (group.id === holder_group.id) {
         if ( group.indicator_holder_ids.indexOf(holder.holder_id) === -1 ) {
           const index = this.findSelectedIndicatorIndex( current_id, group );
@@ -681,12 +686,12 @@ export class ScorecardService {
     }
     if (add_new) {
       // TODO: check what this is doing --->> this.deleting[holder_group.id] = false;
-      if ( holder_group.indicator_holder_ids.indexOf(holder.holder_id) === -1 ) {
-        holder_group.indicator_holder_ids.push(holder.holder_id);
+      if ( new_holder_group.indicator_holder_ids.indexOf(holder.holder_id) === -1 ) {
+        new_holder_group.indicator_holder_ids = [...new_holder_group.indicator_holder_ids, holder.holder_id];
       }
-      indicator_holder_groups.push(holder_group);
+      new_holder_groups = [...new_holder_groups, new_holder_group];
     }
-    this.store.dispatch(new createActions.SetHoldersGroups(indicator_holder_groups.slice()));
+    this.store.dispatch(new createActions.SetHoldersGroups(new_holder_groups.slice()));
   }
 
   // enable adding of new Indicator

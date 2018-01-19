@@ -58,6 +58,7 @@ export interface ViewScorecardState {
   orgunit?: any;
   period?: any;
   showModel?: boolean;
+  sortingColumn?: string;
 }
 
 export const initialViewState: ViewScorecardState = {
@@ -149,10 +150,11 @@ export const initialViewState: ViewScorecardState = {
   orgunit: null,
   period: null,
   showModel: false,
+  sortingColumn: 'none'
 };
 
 export function viewReducer(
-  state: ViewScorecardState,
+  state: ViewScorecardState = initialViewState,
   action: viewActions.Actions
 ): ViewScorecardState {
 
@@ -170,7 +172,12 @@ export function viewReducer(
 
     case (viewActions.SET_SELECTED_OU): {
       const orgunit = action.payload;
+      console.log({...state, orgunit})
       return {...state, orgunit};
+    }
+
+    case (viewActions.SET_SORTING_COLUMN): {
+      return {...state, sortingColumn: action.payload};
     }
 
     case (viewActions.SET_SCORECARD_OPTIONS): {

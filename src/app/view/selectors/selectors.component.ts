@@ -1,4 +1,4 @@
-import {ChangeDetectionStrategy, Component, EventEmitter, OnInit, Output} from '@angular/core';
+import {ChangeDetectionStrategy, Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {ApplicationState} from '../../store/reducers';
 import {Store} from '@ngrx/store';
 import {Observable} from 'rxjs/Observable';
@@ -15,6 +15,7 @@ import * as orgunitSelector from '../../store/selectors/orgunits.selectors';
 })
 export class SelectorsComponent implements OnInit {
 
+  @Input() sorting_column: string = 'none';
   orgunit_settings$: Observable<any>;
   selected_periods$: Observable<any>;
   period_type$: Observable<any>;
@@ -64,6 +65,7 @@ export class SelectorsComponent implements OnInit {
       this.store.dispatch(new viewActions.SetSelectedOu(selected_ou));
     }
   }
+
   updateOrgUnit(event) {
     this.onOrgunitChange.emit(event);
     const items = event.items.map((item) => {

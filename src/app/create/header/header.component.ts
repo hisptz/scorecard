@@ -10,6 +10,7 @@ import {Store} from '@ngrx/store';
 import {Go} from '../../store/actions/router.action';
 import {LoadScorecardSuccess} from '../../store/actions/scorecard.actions';
 import {TranslateService} from '@ngx-translate/core';
+import {SET_OPTIONS, SetOptions} from '../../store/actions/create.actions';
 
 @Component({
   selector: 'app-create-header',
@@ -119,8 +120,7 @@ export class CreateHeaderComponent implements OnInit {
   }
 
   optionUpdated(event) {
-    console.log(event);
-    console.log(this.scorecard.data.header);
+    this.store.dispatch(new SetOptions(event));
   }
 
   switchLanguage(language: string) {

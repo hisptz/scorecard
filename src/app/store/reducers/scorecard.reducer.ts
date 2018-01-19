@@ -76,6 +76,6 @@ export function scorecardReducer(
 }
 
 // scorecard high level selectors from its state
-export const getScorecardEntities = (state: ScorecardState) => state.entities;
+export const getScorecardEntities = (state: ScorecardState) => { return {...state.entities} };
 export const getScorecardLoading = (state: ScorecardState) => state.loading;
 export const getScorecardLoaded = (state: ScorecardState) => state.loaded;

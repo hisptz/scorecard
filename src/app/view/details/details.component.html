@@ -1,6 +1,6 @@
 <div class="container-fluid">
-  <div class="row" *ngIf="!showBottleneck">
-    <div class="col-md-4">
+  <div class="row">
+    <div class="col-md-4" *ngIf="!showBottleneck">
       <app-org-unit-filter
         *ngIf="orgUnitModel"
         [orgunit_model]="orgUnitModel"
@@ -22,7 +22,7 @@
       >
       </app-period-filter>
     </div>
-    <div class="col-md-3" style="padding-right: 5px">
+    <div class="col-md-3" style="padding-right: 5px" *ngIf="!showBottleneck">
       <app-layout
         *ngIf="visualizer_config.type != 'info'"
         [visualizationType]="layoutVisualizationType"
@@ -30,7 +30,7 @@
         (onLayoutUpdate)="updateLayout($event)"
       ></app-layout>
     </div>
-    <div class="col-md-1">
+    <div class="col-md-1" *ngIf="!showBottleneck">
       <div class="row">
         <button
           style="height: 35px"
@@ -143,6 +143,16 @@
           <i class="fa fa-road" [ngClass]="{ 'text-white':(showBottleneck) }"></i>
 
           <span [ngClass]="{ 'text-white':(showBottleneck) }" [translate]="'Bottleneck Analysis'">Bottleneck Analysis</span>
+        </a>
+        <a
+          class="btn btn-sm pull-right btn-outline-secondary cursor"
+          (click)="closeModel()"
+          title="{{'Close' | translate}}"
+        >
+          <i class="fa fa-window-close-o"></i>
+          <span [translate]="'Close'">
+            Close
+          </span>
         </a>
       </div>
     </div>

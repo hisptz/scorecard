@@ -17,6 +17,7 @@ import * as orgunitSelector from '../store/selectors/orgunits.selectors';
 import {ScorecardComponent} from './scorecard/scorecard.component';
 import tourSteps from '../shared/tourGuide/tour.view';
 import { TourService } from 'ngx-tour-ng-bootstrap';
+import {SetSortingColumn} from '../store/actions/view.actions';
 
 @Component({
   selector: 'app-view',
@@ -70,6 +71,7 @@ export class ViewComponent implements OnInit {
   orgunit_loading$: Observable<boolean>;
   functions_loaded$: Observable<boolean>;
   metadata_ready$: Observable<boolean>;
+  sorting_column$: Observable<string>;
 
 
   selectedOrganisationUnits$: Observable<any>;
@@ -80,6 +82,7 @@ export class ViewComponent implements OnInit {
   hoverState = 'notHovered';
   indicatorDetails = null;
   showPreview = false;
+  sorting_column: string = 'none';
 
   @ViewChild(ScorecardComponent)
   private childScoreCard: ScorecardComponent;
@@ -106,6 +109,7 @@ export class ViewComponent implements OnInit {
     this.functions$ = this.store.select(getFunctions);
     this.functions_loaded$ = this.store.select(getFunctionsLoaded);
     this.orgunit_loading$ = store.select(orgunitSelector.getOrgunitLoading);
+    this.sorting_column$ = store.select(viewSelectors.getSortingColumn);
 
     this.tourService.initialize(tourSteps);
 
@@ -145,6 +149,10 @@ export class ViewComponent implements OnInit {
 
   loadScorecard() {
     this.childScoreCard.loadScoreCard();
+  }
+
+  onChangeSort(sorting_column) {
+    this.store.dispatch(new viewActions.SetSortingColumn(sorting_column));
   }
 
 
