@@ -3,12 +3,20 @@
 <head>
   <meta charset="utf-8">
   <title>Scorecard</title>
-  <base href="/">
-
+  <base href="">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="icon" type="image/x-icon" href="favicon.ico">
+  <style>
+    @font-face{font-family:Scorecard-Averta;font-style:normal;font-weight:400;src:url(assets/fonts/averta-regular.woff2) format('woff2')}
+    @font-face{font-family:Scorecard-Averta;font-style:normal;font-weight:700;src:url(assets/fonts/averta-bold.woff2) format('woff2')}
+    body *{
+      font-family: Scorecard-Averta, sans-serif, appleLogo;
+    }
+  </style>
 </head>
 <body>
   <app-root></app-root>
+
+  <script src="https://cdn.ckeditor.com/4.5.11/full/ckeditor.js"></script>
 </body>
 </html>
