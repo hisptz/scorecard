@@ -21,6 +21,13 @@ import { reducers } from './store/reducers';
 import {environment } from '../environments/environment';
 import {CustomSerializer } from './store/reducers/router.reducer';
 import {services } from './shared/services';
+import {PlaceholderComponent} from './home/placeholder/placeholder.component';
+import {DescriptionComponent} from './home/description/description.component';
+import {guards} from "./guards/index";
+import {RoundProgressModule} from "angular-svg-round-progressbar";
+import {LoaderComponent} from "./shared/components/loader/loader.component";
+import {ScorecardDetailComponent} from "./home/scorecard-detail/scorecard-detail.component";
+import {ScoreCardFilterPipe} from "./home/score-card-filter.pipe";
 
 // Add a function, that returns a “TranslateHttpLoader” and export it (needed by AoT)
 export function HttpLoaderFactory(http: HttpClient) {
@@ -32,7 +39,12 @@ export function HttpLoaderFactory(http: HttpClient) {
 @NgModule({
   declarations: [
     AppComponent,
-    HomeComponent
+    HomeComponent,
+    PlaceholderComponent,
+    DescriptionComponent,
+    LoaderComponent,
+    ScorecardDetailComponent,
+    ScoreCardFilterPipe
   ],
   imports: [
     BrowserModule,
@@ -54,11 +66,13 @@ export function HttpLoaderFactory(http: HttpClient) {
         deps: [HttpClient]
       }
     }),
+    RoundProgressModule,
     !environment.production ? StoreDevtoolsModule.instrument({maxAge: 100}) : []
   ],
   providers: [
     { provide: RouterStateSerializer, useClass: CustomSerializer },
-    ...services
+    ...services,
+    ...guards
   ],
   bootstrap: [AppComponent]
 })

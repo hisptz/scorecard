@@ -30,7 +30,7 @@
     "label-position": true,
     "max-line-length": [
       true,
-      140
+      340
     ],
     "member-access": false,
     "member-ordering": [
@@ -61,7 +61,7 @@
     "no-empty-interface": true,
     "no-eval": true,
     "no-inferrable-types": [
-      true,
+      false,
       "ignore-params"
     ],
     "no-misused-new": true,
@@ -79,9 +79,7 @@
     "one-line": [
       true,
       "check-open-brace",
-      "check-catch",
-      "check-else",
-      "check-whitespace"
+      "check-catch"
     ],
     "prefer-const": true,
     "quotemark": [

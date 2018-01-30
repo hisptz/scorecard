@@ -36,9 +36,18 @@ export function uiReducer(
     }
 
     case (fromuiaction.SET_VIEW_STYLE): {
+      console.log('nafika');
+      let view_style = '';
+      if (action.payload === 'List') {
+        view_style = 'Card';
+      } else if (action.payload === 'Card') {
+        view_style = 'Thumbnail';
+      } else if (action.payload === 'Thumbnail') {
+        view_style = 'List';
+      }
       return {
         ...state,
-        view_style: action.payload
+        view_style
       };
     }
   }
