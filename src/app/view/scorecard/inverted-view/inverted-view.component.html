@@ -61,7 +61,7 @@
   <ng-container *ngFor="let indicator of indicator_holders_list | filterIndicatorByName:searchQuery; let i=index">
     <tr style="height: 35px; max-height: 35px; overflow-y: hidden; line-height: 80%" class="orunitTr" *ngIf="scorecard.data.shown_records == 'all' || i < scorecard.data.shown_records">
       <td style="vertical-align: bottom;font-size: 10px;cursor: pointer;line-height: 80%;padding: 8px" *ngIf="scorecard.data.show_rank">{{ i+1 }}</td>
-      <td style="vertical-align: bottom;font-size: 10px;cursor: pointer;line-height: 80%;padding: 8px;min-width:150px; position: relative"
+      <td style="vertical-align: bottom;font-size: 10px;cursor: pointer;line-height: 80%;padding: 2px;min-width:100px; position: relative"
           class="orgUnitName"
           dnd-droppable (onDropSuccess)="dragItemSuccessfull($event,'indicator',indicator)"
           (click)="loadChildrenData(null,indicator.indicators[0])"
@@ -71,8 +71,13 @@
           (mouseenter) ="mouseEnter(indicator)"
           (mouseleave) ="mouseLeave(indicator)"
       >
-        <i *ngIf="has_bottleneck[indicator.indicators[0].id]" class="fa fa-bar-chart-o no-print" style="position: absolute; top:1px;right: 1px"></i>
-        <div dnd-draggable [dragEnabled]="true" [dragData]="indicator">
+        <i
+          title="For bottleneck analysis, right click any of the cells"
+          *ngIf="!indicator.indicators[0].use_bottleneck_groups ? indicator.indicators[0].bottleneck_indicators.length != 0 : indicator.indicators[0].bottleneck_indicators_groups.length != 0"
+          class="fa fa-bar-chart-o no-print"
+          style="position: absolute; top:1px;right: 1px"></i>
+        <div
+          dnd-draggable [dragEnabled]="true" [dragData]="indicator" style="padding: 8px">
           <img src="assets/img/balls-3.svg"
                style="height: 30px" *ngIf="indicator_loading[indicator.indicators[0].id]"
                title="Loading old data for {{ getIndicatorTitle(indicator) }}">

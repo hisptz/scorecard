@@ -86,8 +86,7 @@ export class HomeComponent implements OnInit {
   }
 
   viewcorecard(scorecard, event ) {
-    this.clikedScorecard = scorecard.id;
-    // this.store.dispatch(new Go({  path: ['view', scorecard.id] }));
+    this.store.dispatch(new Go({  path: ['view', scorecard.id] }));
     event.stopPropagation();
   }
 

@@ -837,61 +837,61 @@ export class ScorecardComponent implements OnInit, OnDestroy {
       if (this.showSubScorecard[indicator.id]) {
         this.showSubScorecard = [];
       }else {
-        this.scorecardService.getRelatedIndicators(indicator.id).subscribe(
-          (data: any) => {
-            if (data.length === 0) {
-              this.children_available[indicator.id] = false;
-              this.showSubScorecard[indicator.id] = true;
-            } else {
-              this.children_available[indicator.id] = true;
-              // this.subscorecard = this.createScorecardByIndicators(indicator,indicator.bottleneck_indicators);
-              const created_scorecard = this.scorecardService.getEmptyScoreCard();
-              const legendSet = indicator.legendset;
-              const holder_ids = [];
-              data.forEach((item, item_index) => {
-                // check first if it is a function or not
-                const indicator_structure = this.scorecardService.getIndicatorStructure(item.name, item.id, legendSet, item.bottleneck_title);
-                if (item.hasOwnProperty('function')) {
-                  indicator_structure.calculation = 'custom_function';
-                  indicator_structure.function_to_use = item.function;
-                } else {
-                  indicator_structure.calculation = 'analytics';
-                }
-                const indicator_holder = {
-                  'holder_id': item_index + 1,
-                  'indicators': [
-                    indicator_structure
-                  ]
-                };
-                holder_ids.push(item_index + 1);
-                created_scorecard.data.data_settings.indicator_holders.push(indicator_holder);
-              });
-
-              created_scorecard.data.data_settings.indicator_holder_groups = [{
-                'id': '1',
-                'name': 'New Group',
-                'indicator_holder_ids': holder_ids,
-                'background_color': '#ffffff',
-                'holder_style': null
-              }];
-              this.sub_model = {...this.selectedOrganisationUnit };
-              created_scorecard.data.show_data_in_column = true;
-              created_scorecard.data.is_bottleck = true;
-              created_scorecard.data.name = 'Related Indicators for ' + indicator.name;
-              created_scorecard.data.header.title = 'Related Indicators for ' + indicator.name;
-              this.subscorecard = created_scorecard;
-              this.showSubScorecard[indicator.id] = true;
-            }
-
-          },
-          (error) => {
-            this.children_available[indicator.id] = false;
-            this.showSubScorecard[indicator.id] = true;
-            setTimeout(() => {
-              this.showSubScorecard[indicator.id] = false;
-            }, 2000);
+        let data = [];
+        if (indicator.hasOwnProperty('use_bottleneck_groups')) {
+          if ( indicator.use_bottleneck_groups) {
+            indicator.bottleneck_indicators_groups.forEach(group => {
+              data.push(...group.items);
+            });
+          } else {
+            data = indicator.bottleneck_indicators;
           }
-        );
+        }else {
+          data = indicator.bottleneck_indicators;
+        }
+        if (data.length === 0) {
+          this.children_available[indicator.id] = false;
+          this.showSubScorecard[indicator.id] = true;
+        } else {
+          this.children_available[indicator.id] = true;
+          // this.subscorecard = this.createScorecardByIndicators(indicator,indicator.bottleneck_indicators);
+          const created_scorecard = this.scorecardService.getEmptyScoreCard();
+          const legendSet = indicator.legendset;
+          const holder_ids = [];
+          data.forEach((item, item_index) => {
+            // check first if it is a function or not
+            const indicator_structure = this.scorecardService.getIndicatorStructure(item.name, item.id, legendSet, item.bottleneck_title);
+            if (item.hasOwnProperty('function')) {
+              indicator_structure.calculation = 'custom_function';
+              indicator_structure.function_to_use = item.function;
+            } else {
+              indicator_structure.calculation = 'analytics';
+            }
+            const indicator_holder = {
+              'holder_id': item_index + 1,
+              'indicators': [
+                indicator_structure
+              ]
+            };
+            holder_ids.push(item_index + 1);
+            created_scorecard.data.data_settings.indicator_holders.push(indicator_holder);
+          });
+
+          created_scorecard.data.data_settings.indicator_holder_groups = [{
+            'id': '1',
+            'name': 'New Group',
+            'indicator_holder_ids': holder_ids,
+            'background_color': '#ffffff',
+            'holder_style': null
+          }];
+          this.sub_model = {...this.selectedOrganisationUnit };
+          created_scorecard.data.show_data_in_column = true;
+          created_scorecard.data.is_bottleck = true;
+          created_scorecard.data.name = 'Related Indicators for ' + indicator.name;
+          created_scorecard.data.header.title = 'Related Indicators for ' + indicator.name;
+          this.subscorecard = created_scorecard;
+          this.showSubScorecard[indicator.id] = true;
+        }
       }
     }
 
