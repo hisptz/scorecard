@@ -18,17 +18,22 @@ import {ScorecardComponent} from './scorecard/scorecard.component';
 import tourSteps from '../shared/tourGuide/tour.view';
 import { TourService } from 'ngx-tour-ng-bootstrap';
 import {SetSortingColumn} from '../store/actions/view.actions';
+import {fadeIn, fadeOut, fadeSmooth, zoomCard} from '../shared/animations/basic-animations';
 
 @Component({
   selector: 'app-view',
   templateUrl: './view.component.html',
   styleUrls: ['./view.component.css'],
   animations: [
+    fadeIn,
+    fadeOut,
+    fadeSmooth,
     trigger('visibilityChanged', [
       state('notHovered' , style({
+        'opacity': 0,
         'transform': 'scale(0, 0)',
         'position': 'fixed',
-        'top': '100px',
+        'top': '-100px',
         'box-shadow': '0 0 0px rgba(0,0,0,0.0)',
         'background-color': 'rgba(0,0,0,0.0)',
         'border': '0px solid #ddd'
@@ -38,6 +43,7 @@ import {SetSortingColumn} from '../store/actions/view.actions';
         'width': '90%',
         'left': '5%',
         'position': 'fixed',
+        'opacity': 1,
         'top': '100px',
         'z-index': '100',
         '-webkit-box-shadow': '0 0 10px rgba(0,0,0,0.2)',
@@ -45,7 +51,7 @@ import {SetSortingColumn} from '../store/actions/view.actions';
         'background-color': 'rgba(255,255,255,1)',
         'border': '1px solid #ddd'
       })),
-      transition('notHovered <=> hoovered', animate('100ms'))
+      transition('notHovered <=> hoovered', animate('500ms 10ms ease-out'))
     ]),
     trigger('fadeInOut', [
       transition(':enter', [   // :enter is alias to 'void => *'
@@ -54,6 +60,23 @@ import {SetSortingColumn} from '../store/actions/view.actions';
       ]),
       transition(':leave', [   // :leave is alias to '* => void'
         animate(500, style({opacity: 0}))
+      ])
+    ]),
+    trigger('newhiddenState', [
+      transition(':enter', [
+        style({
+          'transform': 'scale(0) translateY(-100px)',
+          'opacity': '0'
+        }),
+        animate('400ms 100ms ease-in', style({
+          'transform': 'scale(1) translateY(0px)',
+          'opacity': '1'
+        }))
+      ]), transition(':leave', [
+        animate('400ms 100ms ease-in', style({
+          'transform': 'scale(0) translateY(0px)',
+          'opacity': '0'
+        }))
       ])
     ])
   ]

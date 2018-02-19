@@ -120,8 +120,8 @@
   </tr>
 
   <!--data-->
-
-  <ng-container *ngFor="let current_orgunit of orgunits | filterByName:searchQuery; let i=index">
+  <tbody [@listState]="orgunits.length">
+  <ng-container *ngFor="let current_orgunit of orgunits | filterByName:searchQuery; let i=index" >
     <tr
       style="height: 35px; max-height: 35px; overflow-y: hidden; line-height: 80%"
       class="orunitTr"
@@ -193,6 +193,8 @@
       </td>
     </tr>
   </ng-container>
+
+  </tbody>
 
   <!--sum column-->
   <tr *ngIf="scorecard.data.show_sum_in_column" style="height: 35px; max-height: 35px; overflow-y: hidden; line-height: 80%">

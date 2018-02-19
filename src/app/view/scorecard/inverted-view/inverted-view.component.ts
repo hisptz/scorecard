@@ -3,12 +3,14 @@ import {ScoreCard} from '../../../shared/models/scorecard';
 import {ScorecardService} from '../../../shared/services/scorecard.service';
 import * as _ from 'lodash';
 import {ContextMenuComponent, ContextMenuService} from 'ngx-contextmenu';
+import {listStateTrigger} from '../../../shared/animations/basic-animations';
 
 @Component({
   selector: 'app-inverted-view',
   templateUrl: './inverted-view.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  styleUrls: ['./inverted-view.component.css']
+  styleUrls: ['./inverted-view.component.css'],
+  animations: [listStateTrigger]
 })
 export class InvertedViewComponent implements OnInit {
   @Input() scorecard: ScoreCard;
@@ -104,6 +106,7 @@ export class InvertedViewComponent implements OnInit {
   }
 
   loadPreviewFromChild(event) {
+    console.log(event)
     this.onLoadPreviewFromChild.emit(event);
   }
 

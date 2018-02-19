@@ -20,16 +20,16 @@ import {animate, group, state, style, transition, trigger} from '@angular/animat
       )),
       transition('hidden => shown', [
         group([
-          animate('300ms', style({transform: 'translateY(0)'})),
-          animate('400ms', style({opacity: 1})),
-          animate('300ms', style({'max-height': '360px'}))
+          animate('150ms', style({transform: 'translateY(0)'})),
+          animate('200ms', style({opacity: 1})),
+          animate('150ms', style({'max-height': '360px'}))
         ])
       ]),
       transition('shown => hidden', [
         group([
-          animate('300ms', style({transform: 'translateY(0)', opacity: 1})),
-          animate('400ms', style({'display': 'none'})),
-          animate('350ms', style({'max-height': '30px'}))
+          animate('50ms', style({transform: 'translateY(0)', opacity: 1})),
+          animate('20ms', style({'display': 'none'})),
+          animate('50ms', style({'max-height': '30px'}))
         ])
       ])
     ])

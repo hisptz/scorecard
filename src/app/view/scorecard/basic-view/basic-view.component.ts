@@ -3,12 +3,14 @@ import {ScoreCard} from '../../../shared/models/scorecard';
 import {ScorecardService} from '../../../shared/services/scorecard.service';
 import * as _ from 'lodash';
 import {ContextMenuComponent, ContextMenuService} from 'ngx-contextmenu';
+import {listStateTrigger} from '../../../shared/animations/basic-animations';
 
 @Component({
   selector: 'app-basic-view',
   templateUrl: './basic-view.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  styleUrls: ['./basic-view.component.css']
+  styleUrls: ['./basic-view.component.css'],
+  animations: [listStateTrigger]
 })
 export class BasicViewComponent implements OnInit {
 

@@ -55,21 +55,20 @@ export const listStateTrigger = trigger('listState', [
     query(':enter', [
       style({
         opacity: 0,
-        transform: 'translateX(-100%)'
+        transform: 'translateX(-20%)'
       }),
-      stagger(300, [
-        animate('500ms ease-out', keyframes([
+      stagger(100, [
+        group([animate('400ms ease-out',
           style({
             opacity: 1,
-            transform: 'translateX(15%)',
-            offset: 0.4
-          }),
-          style({
-            opacity: 1,
-            transform: 'translateX(0)',
             offset: 1
           })
-        ]))
+        ), animate('300ms ease-out',
+          style({
+            transform: 'translateX(0)',
+          })
+        )])
+
       ])
     ], {optional: true})
   ])

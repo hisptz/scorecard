@@ -22,7 +22,7 @@ export class MapContainerComponent implements OnInit {
 
     this.visualizationObject = {...initialVisualizationObject, layers: [{settings: {}, analytics: this.analyticsObject}]};
 
-    this.httpClient.get(this._getGeoFeatureUrl('../../../api/', this._getGeoFeatureParams(orgUnitArray.join(';'))))
+    this.httpClient.get(this._getGeoFeatureUrl('', this._getGeoFeatureParams(orgUnitArray.join(';'))))
       .subscribe((geoFeatures: any) => {
         this.visualizationObject = {
           ...this.visualizationObject,

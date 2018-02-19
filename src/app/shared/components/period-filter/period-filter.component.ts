@@ -38,16 +38,16 @@ const PERIOD_TYPE: Array<any> = [
       )),
       transition('hidden => shown', [
         group([
-          animate('300ms', style({transform: 'translateY(0)'})),
-          animate('400ms', style({opacity: 1})),
-          animate('300ms', style({'max-height': '360px'}))
+          animate('150ms', style({transform: 'translateY(0)'})),
+          animate('200ms', style({opacity: 1})),
+          animate('150ms', style({'max-height': '360px'}))
         ])
       ]),
       transition('shown => hidden', [
         group([
-          animate('300ms', style({transform: 'translateY(0)', opacity: 1})),
-          animate('400ms', style({'display': 'none'})),
-          animate('350ms', style({'max-height': '30px'}))
+          animate('50ms', style({transform: 'translateY(0)', opacity: 1})),
+          animate('20ms', style({'display': 'none'})),
+          animate('50ms', style({'max-height': '30px'}))
         ])
       ])
     ])
@@ -174,17 +174,21 @@ export class PeriodFilterComponent implements OnInit {
     const periods = [];
     if (type === 'down') {
       _.forEach(this.selected_periods, (period) => {
-        const periodType = this.deducePeriodType(period.id);
-        const lastPer = this.getLastPeriod(period.id, periodType);
-        periods.push(this.getPeriodById(lastPer, this.getPeriodArray(periodType, lastPer.substring(0, 4))));
-      });
+          const periodType = this.deducePeriodType(period.id);
+          if (periodType.indexOf('Relative') === -1 ) {
+            const lastPer = this.getLastPeriod(period.id, periodType);
+            periods.push(this.getPeriodById(lastPer, this.getPeriodArray(periodType, lastPer.substring(0, 4))));
+          }
+        });
     }
     if (type === 'up') {
       _.forEach(this.selected_periods, (period) => {
         const periodType = this.deducePeriodType(period.id);
-        const nextPer = this.getNextPeriod(period.id, periodType);
-        periods.push(this.getPeriodById(nextPer, this.getPeriodArray(periodType, nextPer.substring(0, 4))));
-      });
+        if (periodType.indexOf('Relative') === -1 ) {
+          const nextPer = this.getNextPeriod(period.id, periodType);
+          periods.push(this.getPeriodById(nextPer, this.getPeriodArray(periodType, nextPer.substring(0, 4))));
+        }
+        });
     }
     this.selected_periods = periods;
     this.emitPeriod(false);

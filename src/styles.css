@@ -10,11 +10,20 @@
 
 @media print {
   #menu-container{
-    display: none;
+    display: none !important;
+    background-color: transparent !important;
   }
   #menu-container *{
-    display: none;
+    display: none !important;
+    background-color: transparent !important;
   }
+  .no-print{
+    display: none !important;
+  }
+  .no-print *{
+    display: none !important;
+  }
+
 }
 
 

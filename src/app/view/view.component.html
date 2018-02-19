@@ -1,10 +1,11 @@
 
 <app-view-header
+  @fade
  (onGoHomePage)="goToHomePage()"
  (onTourStart)="startTour()"
 ></app-view-header>
 
-<div id="options" class="container-fluid " style="margin-top: 20px" *ngIf="(loaded$ | async)">
+<div id="options" class="container-fluid " style="margin-top: 20px" *ngIf="(loaded$ | async)" @fade>
   <app-selectors
     (onOrgunitChange)="setOrgunitNodes($event)"
     (onDownloadCsv)="downloadCsv()"
@@ -27,7 +28,7 @@
   </div>
 </div>
 
-<div class="row">
+<div class="row" @fade>
   <div class="col-sm-12"  tourAnchor="view.scorecard">
     <app-scorecard
       *ngIf="(functions_loaded$ | async) && (metadata_ready$ | async)"
