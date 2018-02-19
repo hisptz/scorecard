@@ -31,8 +31,8 @@ export class ScoreCardFilterPipe implements PipeTransform {
     //   // filter users, users which match and return true will be kept, false will be filtered out
     //   if (value.length !== 0 && name != null) {
     //     return _.sortBy(value.filter((scorecard) => {
-    //       return (scorecard.data.header.title.toLowerCase().indexOf(name.toLowerCase()) !== -1);
-    //     }), [(item: any) => item.data.header.title]);
+    //       return (scorecard.data.create-header.title.toLowerCase().indexOf(name.toLowerCase()) !== -1);
+    //     }), [(item: any) => item.data.create-header.title]);
     //   }
     //
     // }

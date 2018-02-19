@@ -1,6 +1,6 @@
 <tour-step-template></tour-step-template>
 <div class="container-fluid">
-  <div class="row">
+  <div class="row" @fade>
     <div class="col-md-2 col-xs-12" style="padding-left: 0px; cursor: pointer;" [routerLink]="['']" tourAnchor="home.start.tour" >
       <img src="scorecard.svg" style="height: 58px; width: 48px" >
       <span style="font-size: 20px" [translate]="'Score Card'"> </span>
@@ -52,10 +52,26 @@
 
 <!--if there is no scorecard created-->
 <!--<div class="container-fluid" style="padding-left: 0px; border-top: 1px solid blanchedalmond; margin-top: 20px; padding-top: 23px">-->
-<div class="container-fluid" style="padding-left: 0px; border-top: 1px solid blanchedalmond;margin-top: 15px"  *ngIf="(scorecards$ | async).length == 0 && !(loading$ | async)">
+<div
+  @fade
+  class="container-fluid"
+  style="padding-left: 0px;
+  border-top: 1px solid blanchedalmond;margin-top: 15px"
+  *ngIf="(scorecards$ | async).length == 0 && !(loading$ | async)">
   <app-description></app-description>
 </div>
 
+<!--if there is no scorecard matching the search criteria-->
+<div
+  class="container-fluid"
+  style="padding-left: 0px; border-top: 1px solid rgba(0,0,0,0.2);margin-top: 14px"
+  @fadeOut
+  *ngIf="(scorecards$ | async).length != 0 && !(loading$ | async) && ((scorecards$ | async) | scoreCardFilter: queryterm).length == 0"
+>
+  <h1 class="text-center" style="padding-top: 40px;padding-bottom: 40px;"> No scorecard Matching {{ queryterm}} ...
+    <button class="btn btn-clear btn-sm" (click)="clearSearchInput()">Search Again</button>
+  </h1>
+</div>
 
 <!--if the scorecards are being loaded-->
 <div
@@ -109,6 +125,7 @@
       (mouseenter) ="mouseEnter(scorecard.id)"
       (mouseleave) ="mouseLeave()"
       (click)="viewcorecard(scorecard,$event)"
+      @fadeSmooth
     >
       <app-scorecard-detail
         [scorecard]="scorecard"
@@ -153,10 +170,11 @@
       class="list-group-item cursor"
       *ngFor="let scorecard of (scorecards$ | async) | scoreCardFilter: queryterm"
       [@visibilityChanged]="current_hovered_scorecard === scorecard.id ? 'hoovered': 'notHovered'"
-      (mouseenter) ="mouseEnter(scorecard)"
-      (mouseleave) ="mouseLeave(scorecard)"
+      (mouseenter) ="mouseEnter(scorecard.id)"
+      (mouseleave) ="mouseLeave(scorecard.id)"
       (click)="viewcorecard(scorecard,$event)"
       style="padding-bottom: 40px"
+      @fadeSmooth
     >
       <app-scorecard-detail
         [scorecard]="scorecard"
@@ -171,13 +189,14 @@
 <div class="row"  *ngIf="viewStle == 'Thumbnail'">
 
   <div
-    class="col-sm-6"
+    class="col-sm-6 cursor"
     *ngFor="let scorecard of (scorecards$ | async) | scoreCardFilter: queryterm"
     [@visibilityChanged]="current_hovered_scorecard === scorecard.id ? 'hoovered': 'notHovered'"
-    (mouseenter) ="mouseEnter(scorecard)"
-    (mouseleave) ="mouseLeave(scorecard)"
+    (mouseenter) ="mouseEnter(scorecard.id)"
+    (mouseleave) ="mouseLeave(scorecard.id)"
     (click)="viewcorecard(scorecard,$event)"
     style="padding-bottom: 40px"
+    @fadeSmooth
   >
     <app-scorecard-detail
       [scorecard]="scorecard"

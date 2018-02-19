@@ -72,14 +72,15 @@
         <div class="col-sm-6 no-left-padding1">
           <div class="thumbnail scorecard_details2">
             <!--<h4 style="margin-top: 0px;margin-bottom: 1px">Data Type</h4>-->
-            <img src="balls-4.svg" style="height: 70px; padding-top: 20px" *ngIf="!done_loading_groups">
-            <div class="form-group" *ngIf="done_loading_groups">
+            <img src="balls-4.svg" style="height: 70px; padding-top: 20px" *ngIf="!(_done_loading_groups$ | async)">
+            <div class="form-group" *ngIf="_done_loading_groups$ | async">
               <input type="text" class="form-control form-control-sm" placeholder="Search group by name" style="height: 25px;padding-left: 2px; font-size: 11px" [(ngModel)]="groupQuery">
             </div>
-            <ul class="list-group" *ngIf="done_loading_groups">
+            <ul class="list-group" *ngIf="_done_loading_groups$ | async">
               <li
+                @fadeOut
                 class="list-group-item selection_link"
-                *ngFor="let group of current_groups | filterByName:groupQuery | paginate: { id: 'groups1', itemsPerPage: 8, currentPage: p }"
+                *ngFor="let group of (_current_groups$ | async) | filterByName:groupQuery | paginate: { id: 'groups', itemsPerPage: 8, currentPage: p }; trackBy: trackItem"
                 [ngClass]="{'listSelected': group.id == activeGroup}"
                 (click)="load_list(group, group_type)"
               >
@@ -95,17 +96,18 @@
         <div class="col-sm-6 no-left-padding1">
           <div class="thumbnail scorecard_details2" >
             <div *ngIf="listReady">
-              <img src="balls-4.svg" style="height: 90px; padding-top: 20px" *ngIf="!done_loading_list">
-              <h5 class="text-danger" *ngIf="error_loading_list.occurred">{{ error_loading_list.message }}</h5>
-              <div class="form-group" *ngIf="done_loading_list">
+              <img src="balls-4.svg" style="height: 90px; padding-top: 20px" *ngIf="!(_done_loading_list$ | async)">
+              <h5 class="text-danger" *ngIf="(_error_loading_list$ | async).occurred">{{ (_error_loading_list$ | async).message}}</h5>
+              <div class="form-group" *ngIf="_done_loading_list$ | async">
                 <input type="text" class="form-control form-control-sm" placeholder="Search Item by name" style="height: 25px;padding-left: 2px; font-size: 11px" [(ngModel)]="listQuery">
               </div>
-              <p *ngIf="done_loading_list && current_listing.length == 0" [translate]="'No items for a selected group'">No items for a selected group</p>
-              <ul class="list-group" *ngIf="done_loading_list">
+              <p *ngIf="(_done_loading_list$ | async) && (_current_listing$ | async).length == 0" [translate]="'No items for a selected group'">No items for a selected group</p>
+              <ul class="list-group" *ngIf="_done_loading_list$ | async">
                 <li
+                  @fadeOut
                   class="list-group-item selection_link"
                   [ngClass]="{'activeitemInList': botteneckIndicatorExist(item)}"
-                  *ngFor="let item of current_listing | filterByName:listQuery | paginate: { id: 'list1', itemsPerPage: 8, currentPage: r }"
+                  *ngFor="let item of (_current_listing$ | async) | filterByName:listQuery | paginate: { id: 'list1', itemsPerPage: 8, currentPage: r }; trackBy: trackItem"
                   (click)="load_item(item, indicator.use_bottleneck_groups, current_bottleneck_group)"
                 >
                   <i class="fa fa-check-circle-o text-success" *ngIf="botteneckIndicatorExist(item)"></i> {{ item.name }}
@@ -124,6 +126,7 @@
         <div id="accordion" role="tablist" dnd-sortable-container [sortableData]="indicator.bottleneck_indicators_groups">
           <div
             class="card"
+            @groupFade
             *ngFor="let group of indicator.bottleneck_indicators_groups; let i = index"
             dnd-sortable [sortableIndex]="i"
             [dragEnabled]="enableGroupdragOperation"
@@ -146,7 +149,7 @@
                   <i class="fa fa-chevron-down pull-right"></i>
                   <i *ngIf="!show_confirmation[group.id]" title="delete group" class="fa fa-trash-o pull-right cursor" (click)="show_confirmation = []; show_confirmation[group.id] = true; $event.preventDefault()" ></i>
                   <span [@hiddenItem] = "show_confirmation[group.id]?'notHidden':'hidden'">
-                    <i title="cancel deleting" class="fa fa-ban pull-right cursor" (click)="show_confirmation[group.id] = false; $event.preventDefault()"></i>
+                    <i title="cancel deleting" class="fa fa-times-circle-o pull-right cursor" (click)="show_confirmation[group.id] = false; $event.preventDefault()"></i>
                     <i title="confirm deleting" class="fa fa-check-circle-o text-success pull-right cursor" (click)="deleteGroup(group);"></i>
                   </span>
                 </a>
@@ -166,6 +169,7 @@
                 </p>
                 <ul style="margin-top: 4px" class="list-group" dnd-sortable-container [sortableData]="group.items">
                   <li
+                    @groupFade
                     class="list-group-item"
                     *ngFor="let item of group.items; let k = index"
                     dnd-sortable [sortableIndex]="k"
@@ -206,6 +210,7 @@
       <div class="thumbnail bottleneck_scorecard_details"  *ngIf="!indicator.use_bottleneck_groups">
         <ul class="list-group" dnd-sortable-container [sortableData]="indicator.bottleneck_indicators">
           <li
+            @groupFade
             class="list-group-item"
             dnd-sortable [sortableIndex]="i"
             (onDropSuccess)="onDropSuccess($event)"

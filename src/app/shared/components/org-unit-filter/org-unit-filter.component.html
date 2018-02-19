@@ -32,7 +32,7 @@
           </span>
       <span *ngIf="orgunit_tree_config.loading">{{ orgunit_tree_config.loading_message }}</span>
     </div>
-    <div class="tree-view" [ngClass]="{'hiddenTree':showOrgTree}" id="tree_view">
+    <div class="tree-view" [@showOption]="showOrgTree ? 'hidden': 'shown'" id="tree_view">
       <div class="container-fluid">
         <div class="row">
           <div class="col-sm-3" style="padding-left: 0px; margin-bottom: 5px">

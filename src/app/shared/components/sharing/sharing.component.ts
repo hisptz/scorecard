@@ -1,10 +1,41 @@
-import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
+import {ChangeDetectionStrategy, Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import * as _ from 'lodash';
+import {animate, group, state, style, transition, trigger} from '@angular/animations';
 
 @Component({
   selector: 'app-sharing',
   templateUrl: './sharing.component.html',
-  styleUrls: ['./sharing.component.css']
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  styleUrls: ['./sharing.component.css'],
+  animations: [
+    trigger('fadeOut', [
+      state('void', style({opacity: 0})),
+      transition(':enter', animate('200ms')),
+      transition(':leave', animate('200ms'))
+    ]),
+    trigger('showOption', [
+      state('hidden', style(
+        {'opacity': 0.1, 'transform': 'translateY(-50px)', 'max-height': '50px', 'display': 'none'}
+      )),
+      state('shown', style(
+        {opacity: 1, transform: 'translateY(0)'}
+      )),
+      transition('hidden => shown', [
+        group([
+          animate('300ms', style({transform: 'translateY(0)'})),
+          animate('400ms', style({opacity: 1})),
+          animate('300ms', style({'max-height': '360px'}))
+        ])
+      ]),
+      transition('shown => hidden', [
+        group([
+          animate('300ms', style({transform: 'translateY(0)', opacity: 1})),
+          animate('400ms', style({'display': 'none'})),
+          animate('350ms', style({'max-height': '30px'}))
+        ])
+      ])
+    ])
+  ]
 })
 export class SharingComponent implements OnInit {
 

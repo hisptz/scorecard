@@ -8,7 +8,6 @@ import {HttpClient} from '@angular/common/http';
   styleUrls: ['./app.component.css']
 })
 export class AppComponent {
-  title = 'app';
   constructor (private translate: TranslateService, private http: HttpClient) {
     http.get('manifest.webapp').subscribe((data: any) => {
       translate.setDefaultLang('en');

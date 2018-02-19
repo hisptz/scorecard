@@ -22,9 +22,10 @@
         </th>
         <!--holder groups stays here-->
         <th
-          *ngFor="let indicator_holder_group of indicator_holder_groups"
+          *ngFor="let indicator_holder_group of indicator_holder_groups; trackBy: trackItem"
           dnd-droppable (onDropSuccess)="transferDataSuccess($event,'group',indicator_holder_group)"
           style="font-size: 9px; padding: 5px"
+          @fadeOut1
           [attr.colspan]="indicator_holder_group.indicator_holder_ids.length"
           class="sans-pro"
           [ngClass]="{'current': current_holder_group.id == indicator_holder_group.id}"
@@ -86,12 +87,12 @@
           ></app-period-filter>
           <!--end of period configuration-->
         </td>
-        <td *ngFor="let indicator of holders_list$ | async" style="padding: 5px;font-size: 10px;width:90px;max-width: 90px;overflow-wrap: break-word;cursor: pointer;" class="sans-pro"
+        <td *ngFor="let indicator of holders_list$ | async; trackBy: trackItemId" style="padding: 5px;font-size: 10px;width:90px;max-width: 90px;overflow-wrap: break-word;cursor: pointer;" class="sans-pro"
             title="{{'Click to update' | translate}} {{ getIndicatorTitle(indicator) }}"
             [ngClass]="{'current':current_indicator.holder_id == indicator.holder_id}"
             (click)="updateIndicator(indicator)"
             dnd-droppable (onDropSuccess)="transferDataSuccess($event,'table_data',indicator)"
-
+            [@fadeOut]="'in'"
         >
           <div dnd-draggable [dragEnabled]="true" [dragData]="indicator">
             {{ getIndicatorTitle(indicator) }}
@@ -129,7 +130,9 @@
             style="font-size: 10px;max-width: 90px;overflow-wrap: break-word; cursor: pointer; padding: 0px;line-height: 10%"
             class="sans-pro" [ngClass]="{'current': current_indicator.holder_id == indicator.holder_id}"
             title="{{'Click to update' | translate}} {{ getIndicatorTitle(indicator) }}"
-            (click)="updateIndicator(indicator)">
+            (click)="updateIndicator(indicator)"
+            [@fadeOut]="'in'"
+        >
           <svg *ngIf="indicator.indicators.length == 2" viewbox="0 0 90 35" width="90" height="35">
             <polygon points="0 0 90 0 90 0 0 35" [attr.fill]="assignBgColor(indicator.indicators[0],indicator.indicators[0].value)" style="stroke:#CAC0C0;stroke-width:0.4"/>
             <text fill="#000" x="3" y="18" font-size="11" font-family="Source Sans Pro">
@@ -174,6 +177,7 @@
         <th *ngFor="let indicator of holders_list$ | async"
             style="font-size: 10px;max-width: 90px;overflow-wrap: break-word; cursor: pointer; line-height: 80%;padding: 0px"
             class="sans-pro" [ngClass]="{'current':current_indicator.holder_id == indicator.holder_id}"
+            [@fadeOut]="'in'"
         >
           <input type="text"
                  [(ngModel)]="indicator.indicators[0].additional_label_values[label]"

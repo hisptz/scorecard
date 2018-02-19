@@ -22,6 +22,9 @@ export const SET_USER_GROUP = '[Create] Set User Group';
 export const SET_HOLDER_GROUPS = '[Create] Set Holder Groups';
 export const SET_ADDITIONAL_LABELS = '[Create] Set Additional Labels';
 export const SET_EDDITING_HEADER = '[Create] Set Editing Haader';
+export const SET_ORGUNIT_SETTINGS = '[Create] Set Orgunit Settings';
+export const SET_PERIOD_TYPE = '[Create] Set Period Type';
+export const SET_SELECTED_PERIODS = '[Create] Set Selected Period';
 
 
 export class SetCreatedScorecard implements Action {
@@ -99,6 +102,21 @@ export class SetOptions implements Action {
   constructor(public payload: any) {}
 }
 
+export class SetOrgunitSettings implements Action {
+  readonly type = SET_ORGUNIT_SETTINGS;
+  constructor(public payload: any) {}
+}
+
+export class SetPeriodType implements Action {
+  readonly type = SET_PERIOD_TYPE;
+  constructor(public payload: any) {}
+}
+
+export class SetSelectedPeriod implements Action {
+  readonly type = SET_SELECTED_PERIODS;
+  constructor(public payload: any) {}
+}
+
 export class SetUserGroups implements Action {
   readonly type = SET_USER_GROUP;
   constructor(public payload: any) {}
@@ -126,4 +144,7 @@ export type Actions =
   | SetAdditionalLabels
   | SetEdditingHeader
   | SetOptions
-  | SetUserGroups;
+  | SetUserGroups
+  | SetOrgunitSettings
+  | SetPeriodType
+  | SetSelectedPeriod;

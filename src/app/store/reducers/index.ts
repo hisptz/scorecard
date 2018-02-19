@@ -3,10 +3,10 @@ import {scorecardReducer, ScorecardState} from './scorecard.reducer';
 import {uiReducer, UiState} from './ui.reducer';
 import * as fromRouter from '@ngrx/router-store';
 import {RouterStateUrl} from './router.reducer';
-import {CreatedScorecardState, createReducer} from "./create.reducer";
+import {CreatedScorecardState, createReducer} from './create.reducer';
 import {staticDataReducer, StaticDataState} from './static-data.reducer';
-import {orgunitReducer, OrgunitState} from "./orgunits.reducer";
-import {viewReducer, ViewScorecardState} from "./view.reducer";
+import {orgunitReducer, OrgunitState} from './orgunits.reducer';
+import {viewReducer, ViewScorecardState} from './view.reducer';
 import {environment} from '../../../environments/environment';
 import {storeFreeze} from 'ngrx-store-freeze';
 

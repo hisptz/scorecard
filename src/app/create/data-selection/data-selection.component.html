@@ -41,14 +41,15 @@
   <div class="col-sm-6 no-left-padding1">
     <div class="thumbnail scorecard_details2" tourAnchor="create.group_selection">
       <!--<h4 style="margin-top: 0px;margin-bottom: 1px">Data Type</h4>-->
-      <img src="balls-4.svg" style="height: 70px; padding-top: 20px" *ngIf="!done_loading_groups">
-      <div class="form-group" *ngIf="done_loading_groups">
+      <img src="balls-4.svg" style="height: 70px; padding-top: 20px" *ngIf="!(_done_loading_groups$ | async)">
+      <div class="form-group" *ngIf="_done_loading_groups$ | async">
         <input type="text" class="form-control form-control-sm" placeholder="Search group by name" style="height: 25px;padding-left: 2px; font-size: 11px" [(ngModel)]="groupQuery">
       </div>
-      <ul class="list-group" *ngIf="done_loading_groups">
+      <ul class="list-group" *ngIf="_done_loading_groups$ | async">
         <li
+          @fadeOut
           class="list-group-item selection_link"
-          *ngFor="let group of current_groups | filterByName:groupQuery | paginate: { id: 'groups', itemsPerPage: 8, currentPage: p }"
+          *ngFor="let group of (_current_groups$ | async) | filterByName:groupQuery | paginate: { id: 'groups', itemsPerPage: 8, currentPage: p }; trackBy: trackItem"
           [ngClass]="{'listSelected': group.id == activeGroup}"
           (click)="load_list(group.id, group_type)"
         >
@@ -64,16 +65,17 @@
   <div class="col-sm-6 no-left-padding1">
     <div class="thumbnail scorecard_details2" tourAnchor="create.item_selection">
       <div *ngIf="listReady">
-        <img src="balls-4.svg" style="height: 90px; padding-top: 20px" *ngIf="!done_loading_list">
-        <h5 class="text-danger" *ngIf="error_loading_list.occurred">{{ error_loading_list.message }}</h5>
-        <div class="form-group" *ngIf="done_loading_list">
+        <img src="balls-4.svg" style="height: 90px; padding-top: 20px" *ngIf="!(_done_loading_list$ | async)">
+        <h5 class="text-danger" *ngIf="(_error_loading_list$ | async).occurred">{{ (_error_loading_list$ | async).message}}</h5>
+        <div class="form-group" *ngIf="_done_loading_list$ | async">
           <input type="text" class="form-control form-control-sm" placeholder="Search Item by name" style="height: 25px;padding-left: 2px; font-size: 11px" [(ngModel)]="listQuery">
         </div>
-        <p *ngIf="done_loading_list && current_listing.length == 0" [translate]="'No items for a selected group'">No items for a selected group</p>
-        <ul class="list-group" *ngIf="done_loading_list">
+        <p *ngIf="(_done_loading_list$ | async) && (_current_listing$ | async).length == 0" [translate]="'No items for a selected group'">No items for a selected group</p>
+        <ul class="list-group" *ngIf="_done_loading_list$ | async">
           <li
+            @fadeOut
             class="list-group-item selection_link"
-            *ngFor="let item of current_listing | filterByName:listQuery | paginate: { id: 'list', itemsPerPage: 8, currentPage: r }"
+            *ngFor="let item of (_current_listing$ | async) | filterByName:listQuery | paginate: { id: 'list', itemsPerPage: 8, currentPage: r }; trackBy: trackItem"
             [ngClass]="{'already_selected': indicatorExist(indicator_holders, item)}"
             (click)="load_item(item)"
             dnd-draggable [dragEnabled]="true" [dragData]="item"

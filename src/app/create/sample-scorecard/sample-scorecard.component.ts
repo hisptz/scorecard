@@ -12,12 +12,29 @@ import * as dataSelector from '../../store/selectors/static-data.selectors';
 import * as createSelector from '../../store/selectors/create.selectors';
 import {ScorecardService} from '../../shared/services/scorecard.service';
 import * as createActions from '../../store/actions/create.actions';
+import {animate, state, style, transition, trigger} from '@angular/animations';
 
 @Component({
   selector: 'app-sample-scorecard',
   templateUrl: './sample-scorecard.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  styleUrls: ['./sample-scorecard.component.css']
+  styleUrls: ['./sample-scorecard.component.css'],
+  animations: [
+    trigger('fadeOut', [
+      state('in', style({opacity: 1, transform: 'scale(1)'})),
+      transition(':enter', [
+          style({ opacity: 0.2, transform: 'scale(0)'}),
+          animate('300ms ease-in', style({ opacity: 1, transform: 'scale(1)'}))
+      ]
+      )
+
+    ]), trigger('fadeOut1', [
+      state('void', style({opacity: 0.2, transform: 'scale(0)'})),
+      state('in', style({opacity: 1, transform: 'scale(1)'})),
+      transition(':enter', animate('300ms ease-in', style({opacity: 1, transform: 'scale(1)'}))),
+      transition(':leave', animate('300ms ease-in', style({opacity: 0, transform: 'scale(0)'})))
+    ])
+  ]
 })
 export class SampleScorecardComponent implements OnInit {
 
@@ -61,10 +78,15 @@ export class SampleScorecardComponent implements OnInit {
   }
 
   updatePeriod(event) {
+    if (event) {
+      this.store.dispatch(new createActions.SetPeriodType(event.type));
+      this.store.dispatch(new createActions.SetSelectedPeriod(event.items));
+    }
     this.onPeriodUpdate.emit(event);
   }
 
   updateOrgUnitModel(event) {
+    this.store.dispatch(new createActions.SetOrgunitSettings(event));
     this.onOrgUnitUpdate.emit(event);
   }
 
@@ -350,6 +372,14 @@ export class SampleScorecardComponent implements OnInit {
         );
       }
     }
+  }
+
+  trackItem(index, item) {
+    return item ? item.id : undefined;
+  }
+
+  trackItemId(index, item) {
+    return item ? item.holder_id : undefined;
   }
 
 }

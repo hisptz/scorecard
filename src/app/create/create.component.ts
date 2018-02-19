@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {ChangeDetectionStrategy, Component, OnInit} from '@angular/core';
 import {animate, state, style, transition, trigger} from '@angular/animations';
 import { Store} from '@ngrx/store';
 import { ApplicationState } from '../store/reducers';
@@ -18,6 +18,7 @@ import { TourService } from 'ngx-tour-ng-bootstrap';
 @Component({
   selector: 'app-create',
   templateUrl: './create.component.html',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   styleUrls: ['./create.component.css'],
   animations: [
     trigger('fadeInOut', [
@@ -36,6 +37,32 @@ import { TourService } from 'ngx-tour-ng-bootstrap';
         'border': '1px solid #ddd'
       })),
       transition('notHovered <=> hoovered', animate('400ms'))
+    ]), trigger('hiddenState', [
+      state('hidden' , style({
+        'transform': 'scale(0) translateY(-100px)',
+        'opacity': '0'
+      })),
+      state('notHidden', style({
+        'transform': 'scale(1) translateY(0px)',
+        'opacity': '1'
+      })),
+      transition('hidden <=> notHidden', animate('400ms 100ms ease-in'))
+    ]), trigger('newhiddenState', [
+      transition(':enter', [
+        style({
+          'transform': 'scale(0) translateY(-100px)',
+          'opacity': '0'
+        }),
+        animate('400ms 100ms ease-in', style({
+          'transform': 'scale(1) translateY(0px)',
+          'opacity': '1'
+        }))
+      ]), transition(':leave', [
+        animate('400ms 100ms ease-in', style({
+          'transform': 'scale(0) translateY(0px)',
+          'opacity': '0'
+        }))
+      ])
     ])
   ]
 })

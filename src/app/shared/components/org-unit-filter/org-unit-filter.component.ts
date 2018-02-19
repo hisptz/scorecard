@@ -1,12 +1,39 @@
-import {Component, OnInit, Input, Output, EventEmitter, ViewChild} from '@angular/core';
+import {Component, OnInit, Input, Output, EventEmitter, ViewChild, ChangeDetectionStrategy} from '@angular/core';
 import { TreeComponent, TREE_ACTIONS, IActionMapping } from 'angular-tree-component';
 import { MultiselectComponent } from './multiselect/multiselect.component';
 import { OrgUnitService } from '../../services/org-unit.service';
 import * as _ from 'lodash';
+import {animate, group, state, style, transition, trigger} from '@angular/animations';
+
 @Component({
   selector: 'app-org-unit-filter',
   templateUrl: './org-unit-filter.component.html',
-  styleUrls: ['./org-unit-filter.component.css']
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  styleUrls: ['./org-unit-filter.component.css'],
+  animations: [
+    trigger('showOption', [
+      state('hidden', style(
+        {'opacity': 0.1, 'transform': 'translateY(-50px)', 'max-height': '50px', 'display': 'none'}
+      )),
+      state('shown', style(
+        {opacity: 1, transform: 'translateY(0)'}
+      )),
+      transition('hidden => shown', [
+        group([
+          animate('300ms', style({transform: 'translateY(0)'})),
+          animate('400ms', style({opacity: 1})),
+          animate('300ms', style({'max-height': '360px'}))
+        ])
+      ]),
+      transition('shown => hidden', [
+        group([
+          animate('300ms', style({transform: 'translateY(0)', opacity: 1})),
+          animate('400ms', style({'display': 'none'})),
+          animate('350ms', style({'max-height': '30px'}))
+        ])
+      ])
+    ])
+  ]
 })
 export class OrgUnitFilterComponent implements OnInit {
   // the object that will carry the output value you can send one from outside to config start values
@@ -400,9 +427,12 @@ export class OrgUnitFilterComponent implements OnInit {
       if ( orgunit_model.selected_orgunits.length === 1 ) {
         const detailed_orgunit = this.orgtree.treeModel.getNodeById(orgunit_model.selected_orgunits[0].id);
         orgUnits.push(detailed_orgunit.id);
+        console.log(detailed_orgunit)
         if (detailed_orgunit.hasOwnProperty('children') && with_children) {
-          for ( const orgunit of detailed_orgunit.children ) {
-            orgUnits.push(orgunit.id);
+          if (detailed_orgunit.children) {
+            for ( const orgunit of detailed_orgunit.children ) {
+              orgUnits.push(orgunit.id);
+            }
           }
         }
 

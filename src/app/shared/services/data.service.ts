@@ -56,7 +56,7 @@ export class DataService {
               id: 'all',
               name: 'Public',
               title: 'This will be accessible to everyone in the system accessing the scorecard'
-            }]
+            }];
             this.user_groups = [...this.user_groups, ...data.userGroups];
             this.store.dispatch(new LoadUserGroupsDone(this.user_groups));
             observ.next(data);

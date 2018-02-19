@@ -205,6 +205,13 @@ export function createReducer(
       return {...state, show_title_editor: action.payload };
     }
 
+    case (createActions.SET_ORGUNIT_SETTINGS): {
+      return {
+        ...state,
+        orgunit_settings: {...state.orgunit_settings, ...action.payload}
+      };
+    }
+
     case (createActions.SET_ITEM): {
       return {...state, [action.payload.key]: action.payload.value };
     }
@@ -237,6 +244,14 @@ export function createReducer(
     case (createActions.SET_ADDITIONAL_LABELS): {
       const  additional_labels = action.payload;
       return {...state, additional_labels };
+    }
+
+    case (createActions.SET_PERIOD_TYPE): {
+      return {...state, periodType: action.payload };
+    }
+
+    case (createActions.SET_SELECTED_PERIODS): {
+      return {...state, selected_periods: action.payload };
     }
 
     case (createActions.SET_OPTIONS): {

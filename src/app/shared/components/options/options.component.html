@@ -10,7 +10,7 @@
   <i class="fa fa-cog"></i>
   <span [translate]="'Options'"> Options</span>
 </button>
-<div class="additional-options" [ngClass]="{'hiddenTree':showAdditionalOptions}" style="padding-top: 0px; padding-bottom: 0px">
+<div class="additional-options" [@showOption]="showAdditionalOptions ? 'hidden': 'shown'" style="padding-top: 0px; padding-bottom: 0px">
   <div class="row" style="font-size: 11px">
     <div class="col-sm-4" style="padding: 0px; padding-left: 10px">
       <h5 class="text-center text-muted" [translate]="'Show'">Show</h5>

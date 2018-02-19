@@ -16,12 +16,20 @@ import {IndicatorGroupService} from '../../shared/services/indicator-group.servi
 import {Observable} from 'rxjs/Observable';
 import {getFunctions} from '../../store/selectors/static-data.selectors';
 import {Legend} from '../../shared/models/legend';
-import * as createActions from '../../store/actions/create.actions';
+import {BehaviorSubject} from 'rxjs/BehaviorSubject';
+import {animate, group, state, style, transition, trigger} from '@angular/animations';
 
 @Component({
   selector: 'app-data-selection',
   templateUrl: './data-selection.component.html',
-  styleUrls: ['./data-selection.component.css']
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  styleUrls: ['./data-selection.component.css'],
+  animations: [
+    trigger('fadeOut', [
+      state('void', style({opacity: 0.6})),
+      transition(':enter', animate('300ms ease-in'))
+    ])
+  ]
 })
 export class DataSelectionComponent implements OnInit {
 
@@ -43,7 +51,7 @@ export class DataSelectionComponent implements OnInit {
   programs: any[] = [];
   events: any[] = [];
   functions: any =  [];
-  current_groups: any[];
+  current_groups: any[] = [];
   current_listing: any[] = [];
   current_listing$: Observable<any[]>;
   activeGroup: string = null;
@@ -55,6 +63,13 @@ export class DataSelectionComponent implements OnInit {
   done_loading_list: boolean = false;
   error_loading_groups: any = {occurred: false, message: ''};
   error_loading_list: any = {occurred: false, message: ''};
+
+  _current_groups$ = new BehaviorSubject([]);
+  _current_listing$ = new BehaviorSubject([]);
+  _done_loading_groups$ = new BehaviorSubject(false);
+  _done_loading_list$ = new BehaviorSubject(false);
+  _error_loading_groups$ = new BehaviorSubject({occurred: false, message: ''});
+  _error_loading_list$ = new BehaviorSubject({occurred: false, message: ''});
 
   p: number;
   r: number;
@@ -98,14 +113,18 @@ export class DataSelectionComponent implements OnInit {
             indicators: group.indicators
           });
         }
-        this.current_groups = this.indicatorGroups;
-        this.error_loading_groups.occurred = false;
-        this.done_loading_groups = true;
-        this.load_list(this.current_groups[0].id, 'indicators');
+        // this.current_groups = this.indicatorGroups;
+        // this.error_loading_groups.occurred = false;
+        // this.done_loading_groups = true;
+        this._current_groups$.next(this.indicatorGroups);
+        this._error_loading_groups$.next({occurred: false, message: ''});
+        this._done_loading_groups$.next(true);
+        if (this.indicatorGroups.length !== 0) {
+          this.load_list(this.indicatorGroups[0].id, 'indicators');
+        }
       },
       error => {
-        this.error_loading_groups.occurred = true;
-        this.error_loading_groups.message = 'There was an error when loading Indicator Groups';
+        this._error_loading_groups$.next({occurred: true, message: 'There was an error when loading Indicator Groups'});
       }
     );
     // get dataElementsGroups
@@ -120,8 +139,7 @@ export class DataSelectionComponent implements OnInit {
         }
       },
       error => {
-        this.error_loading_groups.occurred = true;
-        this.error_loading_groups.message = 'There was an error when loading Data Element Groups';
+        this._error_loading_groups$.next({occurred: true, message: 'There was an error when loading Data Elements'});
       }
     );
     // get Programs
@@ -141,8 +159,7 @@ export class DataSelectionComponent implements OnInit {
         }
       },
       error => {
-        this.error_loading_groups.occurred = true;
-        this.error_loading_groups.message = 'There was an error when loading Programs';
+        this._error_loading_groups$.next({occurred: true, message: 'There was an error when loading Programs'});
       }
     );
     // get datasets
@@ -158,8 +175,7 @@ export class DataSelectionComponent implements OnInit {
         }
       },
       error => {
-        this.error_loading_groups.occurred = true;
-        this.error_loading_groups.message = 'There was an error when loading Data sets';
+        this._error_loading_groups$.next({occurred: true, message: 'There was an error when loading Data sets'});
       }
     );
     //  get functions
@@ -168,8 +184,7 @@ export class DataSelectionComponent implements OnInit {
         this.functions = functions;
       },
       error => {
-        this.error_loading_groups.occurred = true;
-        this.error_loading_groups.message = 'There was an error when loading Data sets';
+        this._error_loading_groups$.next({occurred: true, message: 'There was an error when loading Data sets'});
       }
     );
   }
@@ -220,46 +235,33 @@ export class DataSelectionComponent implements OnInit {
     return last_id;
   }
 
-
   // deal with all issues during group type switching between dataelent, indicators and datasets
   switchType(current_type): void {
     this.listReady = false;
     this.groupQuery = null;
     if (current_type === 'indicators') {
-      this.current_groups = this.indicatorGroups;
-      if (this.current_groups.length !== 0) {
-        this.load_list(this.current_groups[0].id, current_type);
-      }
+      this.setList(current_type, this.indicatorGroups);
     }else if (current_type === 'dataElements') {
-      this.current_groups = this.dataElementGroups;
-      if (this.current_groups.length !== 0) {
-        this.load_list(this.current_groups[0].id, current_type);
-      }
+      this.setList(current_type, this.dataElementGroups);
     }else if (current_type === 'datasets') {
-      this.current_groups = this.dataset_types;
-      if (this.current_groups.length !== 0) {
-        this.load_list(this.current_groups[0].id, current_type);
-      }
+      this.setList(current_type, this.dataset_types);
     }else if (current_type === 'programs') {
-      this.current_groups = this.programs;
-      if (this.current_groups.length !== 0) {
-        this.load_list(this.current_groups[0].id, current_type);
-      }
+      this.setList(current_type, this.programs);
     }else if (current_type === 'event') {
-      this.current_groups = this.programs;
-      if (this.current_groups.length !== 0) {
-        this.load_list(this.current_groups[0].id, current_type);
-      }
+      this.setList(current_type, this.programs);
     }else if (current_type === 'functions') {
-      this.current_groups = this.functions;
-      if (this.current_groups.length !== 0) {
-        this.load_list(this.current_groups[0].id, current_type);
-      }
+      this.setList(current_type, this.functions);
     }else {
 
     }
     this.onGroupTypeChange.emit(current_type);
+  }
 
+  setList(type, groups) {
+    this._current_groups$.next(groups);
+    if (groups.length !== 0) {
+      this.load_list(groups[0].id, type);
+    }
   }
 
   // load items to be displayed in a list of indicators/ data Elements / Data Sets
@@ -268,15 +270,15 @@ export class DataSelectionComponent implements OnInit {
     this.activeGroup = group_id;
     this.onGroupActivate.emit(group_id);
     this.listReady = true;
-    this.current_listing = [];
-    this.done_loading_list = true;
+    this._current_listing$.next([]);
+    this._done_loading_list$.next(true);
     if ( current_type === 'indicators' ) {
       let load_new = false;
-      for ( const group  of this.indicatorGroups ) {
-        if ( group.id === group_id ) {
-          if (group.indicators.length !== 0) {
-            this.current_listing = group.indicators;
-            this.done_loading_list = true;
+      for ( const indicatorGroup  of this.indicatorGroups ) {
+        if ( indicatorGroup.id === group_id ) {
+          if (indicatorGroup.indicators.length !== 0) {
+            this._current_listing$.next(indicatorGroup.indicators);
+            this._done_loading_list$.next(true);
           }else {
             load_new = true;
           }
@@ -285,28 +287,27 @@ export class DataSelectionComponent implements OnInit {
       if ( load_new ) {
         this.indicatorService.load(group_id).subscribe(
           indicators => {
-            this.current_listing = indicators.indicators;
-            this.done_loading_list = true;
-            for ( const group  of this.indicatorGroups ) {
-              if ( group.id === group_id ) {
-                group.indicators = indicators.indicators;
+            this._current_listing$.next(indicators.indicators);
+            this._done_loading_list$.next(true);
+            for ( const indicatorGroup  of this.indicatorGroups ) {
+              if ( indicatorGroup.id === group_id ) {
+                indicatorGroup.indicators = indicators.indicators;
               }
             }
           },
           error => {
-            this.error_loading_list.occurred = true;
-            this.error_loading_list.message = 'Something went wrong when trying to load Indicators';
+            this._error_loading_list$.next({occurred: true, message: 'Something went wrong when trying to load Indicators'});
           }
         );
       }
 
     }else if ( current_type === 'dataElements' ) {
       let load_new = false;
-      for ( const group  of this.dataElementGroups ) {
-        if ( group.id === group_id ) {
-          if (group.dataElements.length !== 0) {
-            this.current_listing = group.dataElements;
-            this.done_loading_list = true;
+      for ( const dataElementGroup  of this.dataElementGroups ) {
+        if ( dataElementGroup.id === group_id ) {
+          if (dataElementGroup.dataElements.length !== 0) {
+            this._current_listing$.next(dataElementGroup.dataElements);
+            this._done_loading_list$.next(true);
           }else {
             load_new = true;
           }
@@ -315,22 +316,21 @@ export class DataSelectionComponent implements OnInit {
       if ( load_new ) {
         this.dataElementService.load(group_id).subscribe(
           dataElements => {
-            this.current_listing = dataElements.dataElements;
-            this.done_loading_list = true;
-            for ( const group  of this.dataElementGroups ) {
-              if ( group.id === group_id ) {
-                group.dataElements = dataElements.dataElements;
+            this._current_listing$.next(dataElements.dataElements);
+            this._done_loading_list$.next(true);
+            for ( const dataElementGroup  of this.dataElementGroups ) {
+              if ( dataElementGroup.id === group_id ) {
+                dataElementGroup.dataElements = dataElements.dataElements;
               }
             }
           },
           error => {
-            this.error_loading_list.occurred = true;
-            this.error_loading_list.message = 'Something went wrong when trying to load Indicators';
+            this._error_loading_list$.next({occurred: true, message: 'Something went wrong when trying to load Indicators'});
           }
         );
       }
     }else if ( current_type === 'datasets' ) {
-      this.current_listing = [];
+      const current_listing = [];
       let group_name = '';
       for (const dataset_group of this.dataset_types ) {
         if (dataset_group.id === group_id) {
@@ -338,20 +338,21 @@ export class DataSelectionComponent implements OnInit {
         }
       }
       for ( const dataset of this.datasets ) {
-        this.current_listing.push(
+        current_listing.push(
           {id: dataset.id + group_id, name: group_name + ' ' + dataset.name}
         );
       }
+      this._current_listing$.next(current_listing);
       this.listReady = true;
-      this.done_loading_list = true;
+      this._done_loading_list$.next(true);
       this.listQuery = null;
     }else if ( current_type === 'programs' ) {
       let load_new = false;
-      for ( const group  of this.programs ) {
-        if ( group.id === group_id ) {
-          if (group.indicators.length !== 0) {
-            this.current_listing = group.indicators;
-            this.done_loading_list = true;
+      for ( const current_group  of this.programs ) {
+        if ( current_group.id === group_id ) {
+          if (current_group.hasOwnProperty('indicators') && current_group.indicators.length !== 0) {
+            this._current_listing$.next(current_group.indicators);
+            this._done_loading_list$.next(true);
           }else {
             load_new = true;
           }
@@ -360,28 +361,27 @@ export class DataSelectionComponent implements OnInit {
       if ( load_new ) {
         this.programService.load(group_id).subscribe(
           indicators => {
-            this.current_listing = indicators.programs[0].programIndicators;
-            this.done_loading_list = true;
-            for ( const group  of this.programs ) {
-              if ( group.id === group_id ) {
-                group.indicators = indicators.programs.programIndicators;
+            this._current_listing$.next(indicators.programs[0].programIndicators);
+            this._done_loading_list$.next(true);
+            for ( const program  of this.programs ) {
+              if ( program.id === group_id ) {
+                program.indicators = indicators.programs[0].programIndicators;
               }
             }
           },
           error => {
-            this.error_loading_list.occurred = true;
-            this.error_loading_list.message = 'Something went wrong when trying to load Indicators';
+            this._error_loading_list$.next({occurred: true, message: 'Something went wrong when trying to load Indicators'});
           }
         );
       }
 
     }else if ( current_type === 'event' ) {
       let load_new = false;
-      for ( const group  of this.events ) {
-        if ( group.id === group_id ) {
-          if (group.indicators.length !== 0) {
-            this.current_listing = group.indicators;
-            this.done_loading_list = true;
+      for ( const event  of this.events ) {
+        if ( event.id === group_id ) {
+          if (event.indicators.length !== 0) {
+            this._current_listing$.next(event.indicators);
+            this._done_loading_list$.next(true);
           }else {
             load_new = true;
           }
@@ -390,44 +390,46 @@ export class DataSelectionComponent implements OnInit {
       if ( load_new ) {
         this.eventService.load(group_id).subscribe(
           indicators => {
+            const programDataElement = [];
             //noinspection TypeScriptUnresolvedVariable
             for (const event_data of indicators.programDataElements ) {
               if (event_data.valueType === 'INTEGER_ZERO_OR_POSITIVE' || event_data.valueType === 'BOOLEAN' ) {
-                this.current_listing.push(event_data);
+                programDataElement.push(event_data);
               }
             }
-            this.done_loading_list = true;
-            for ( const group  of this.events ) {
-              if ( group.id === group_id ) {
-                group.indicators = this.current_listing;
+            this._current_listing$.next(programDataElement);
+            this._done_loading_list$.next(true);
+            for ( const event  of this.events ) {
+              if ( event.id === group_id ) {
+                event.indicators = this.current_listing;
               }
             }
           },
           error => {
-            this.error_loading_list.occurred = true;
-            this.error_loading_list.message = 'Something went wrong when trying to load Indicators';
+            this._error_loading_list$.next({occurred: true, message: 'Something went wrong when trying to load Indicators'});
           }
         );
       }
 
     }else if ( current_type === 'functions' ) {
-      for ( const group  of this.functions ) {
-        if ( group.id === group_id ) {
-          if (group.rules.length !== 0) {
-            this.current_listing = group.rules;
-            this.done_loading_list = true;
+      for ( const functionItem  of this.functions ) {
+        if ( functionItem.id === group_id ) {
+          if (functionItem.rules.length !== 0) {
+            this._current_listing$.next(functionItem.rules);
+            this._done_loading_list$.next(true);
           }else {
-            this.done_loading_list = true;
-            this.current_listing = [];
+            this._done_loading_list$.next(true);
+            this._current_listing$.next([]);
           }
         }
       }
     }else {
 
     }
-
-
   }
 
+  trackItem(index, item) {
+    return item ? item.id : undefined;
+  }
 
 }

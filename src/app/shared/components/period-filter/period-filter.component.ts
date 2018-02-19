@@ -1,7 +1,7 @@
 import {
-  Component, OnInit, Output, Input, EventEmitter
+  Component, OnInit, Output, Input, EventEmitter, ChangeDetectionStrategy
 } from '@angular/core';
-
+import {animate, group, state, style, transition, trigger} from '@angular/animations';
 import * as _ from 'lodash';
 
 const PERIOD_TYPE: Array<any> = [
@@ -26,7 +26,32 @@ const PERIOD_TYPE: Array<any> = [
 @Component({
   selector: 'app-period-filter',
   templateUrl: './period-filter.component.html',
-  styleUrls: ['./period-filter.component.css']
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  styleUrls: ['./period-filter.component.css'],
+  animations: [
+    trigger('showOption', [
+      state('hidden', style(
+        {'opacity': 0.1, 'transform': 'translateY(-50px)', 'max-height': '50px', 'display': 'none'}
+      )),
+      state('shown', style(
+        {opacity: 1, transform: 'translateY(0)'}
+      )),
+      transition('hidden => shown', [
+        group([
+          animate('300ms', style({transform: 'translateY(0)'})),
+          animate('400ms', style({opacity: 1})),
+          animate('300ms', style({'max-height': '360px'}))
+        ])
+      ]),
+      transition('shown => hidden', [
+        group([
+          animate('300ms', style({transform: 'translateY(0)', opacity: 1})),
+          animate('400ms', style({'display': 'none'})),
+          animate('350ms', style({'max-height': '30px'}))
+        ])
+      ])
+    ])
+  ]
 })
 export class PeriodFilterComponent implements OnInit {
 

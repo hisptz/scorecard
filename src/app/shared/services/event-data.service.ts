@@ -10,8 +10,6 @@ export interface EventData {
 @Injectable()
 export class EventDataService {
 
-  private _indicatorGroups: EventData[];
-
   constructor(private http: HttpClientService) {  }
 
   // get all indicator groups

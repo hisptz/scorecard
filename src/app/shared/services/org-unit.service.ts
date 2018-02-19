@@ -5,6 +5,8 @@ import {ApplicationState} from '../../store/reducers';
 import {Store} from '@ngrx/store';
 import * as orgunitActions from '../../store/actions/orgunits.actions';
 import {DataService} from './data.service';
+import {Subject} from 'rxjs/Subject';
+import * as _ from 'lodash';
 
 @Injectable()
 export class OrgUnitService {
@@ -15,11 +17,16 @@ export class OrgUnitService {
   orgunit_groups: any[] = [];
   initial_orgunits: any[] = [];
   user_information: any = null;
+  private _nodes = new Subject<any>();
   constructor(
     private http: HttpClientService,
     private store: Store<ApplicationState>,
     private dataService: DataService
   ) { }
+
+  getNodes(): Observable<any> {
+    return this._nodes.asObservable();
+  }
 
   // Get current user information
   getUserInformation (priority = null) {
@@ -152,7 +159,14 @@ export class OrgUnitService {
                   const fields = this.generateUrlBasedOnLevels(use_level);
                   this.getAllOrgunitsForTree1(fields, orgunits).subscribe(
                     items => {
-                      // items[0].expanded = true;
+                      const organisationunits = this.sortOrganisationUnitTree([
+                        {
+                          ...items[0],
+                          isExpanded: true
+                        },
+                        ...items.slice(1)
+                      ]);
+                      this._nodes.next(organisationunits);
                     },
                     error => {
                       console.log('something went wrong while fetching Organisation units');
@@ -173,6 +187,14 @@ export class OrgUnitService {
     });
   }
 
+  sortOrganisationUnitTree(organisationUnits: any[]) {
+    return _.map(_.sortBy(organisationUnits, 'name'), (orgUnit) => {
+      return orgUnit.children ? {
+        ...orgUnit,
+        children: this.sortOrganisationUnitTree(orgUnit.children)
+      } : orgUnit;
+    });
+  }
 
   // Generate Organisation unit url based on the level needed
   generateUrlBasedOnLevels (level) {

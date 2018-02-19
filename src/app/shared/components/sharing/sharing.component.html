@@ -22,7 +22,7 @@
       <i class="fa fa-caret-down pull-right" *ngIf="!group_loading"></i>
       <span *ngIf="group_loading" [translate]="'Loading user groups'">Loading user groups</span>
     </div>
-    <div class="tree-view" [ngClass]="{'hiddenTree':showShareTree}">
+    <div class="tree-view" [@showOption]="showShareTree ? 'hidden': 'shown'">
       <div class="search-area">
         <form *ngIf="!group_loading" style="border-bottom: solid 1px blanchedalmond;">
           <input [(ngModel)]="share_filter" placeholder="{{ 'Search' | translate }}" name="share_search_field"/>

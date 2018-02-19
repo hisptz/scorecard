@@ -98,7 +98,7 @@
   </div>
 
   <!--model for bottleneck indicator-->
-  <div class="indicator_details" *ngIf="show_bottleneck_indicators">
+  <div class="indicator_details" *ngIf="show_bottleneck_indicators" [@newhiddenState]="show_bottleneck_indicators">
     <div class="indicator_dialog">
       <div class="indicator-content">
         <app-bottleneck
@@ -119,7 +119,7 @@
     </div>
   </div>
 
-  <div class="custom_header_details" [ngClass]="{'hiddendiv': !(show_editor$ | async)}">
+  <div class="custom_header_details" [@hiddenState]="!(show_editor$ | async) ? 'hidden' : 'notHidden'">
     <div class="indicator_dialog">
       <div class="custom-header-content">
         <span class="glyphicon glyphicon-remove pull-right" style="cursor: pointer" (click)="hideTextEditor()"></span>

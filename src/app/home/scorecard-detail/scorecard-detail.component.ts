@@ -37,10 +37,9 @@ export class ScorecardDetailComponent implements OnInit {
 
   deleteScoreCard(scorecard, event) {
     this.deleting = true;
-
     this.scoreCardService.remove( scorecard ).subscribe(
       data => {
-        this.store.dispatch(new RemoveScorecardsSuccess(scorecard));
+        this.store.dispatch(new RemoveScorecardsSuccess(scorecard.id));
       },
       error => {
         this.deleting = false;
