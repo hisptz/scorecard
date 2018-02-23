@@ -32,6 +32,7 @@ export class CreateHeaderComponent implements OnInit {
 
   saving_scorecard: boolean = false;
   saving_error: boolean = false;
+  show_more: boolean = false;
   constructor(
     private store: Store<ApplicationState>,
     private scorecardService: ScorecardService,

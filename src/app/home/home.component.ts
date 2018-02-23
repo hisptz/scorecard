@@ -43,7 +43,7 @@ export class HomeComponent implements OnInit {
   queryterm = '';
   clikedScorecard = '';
   scorecards$: Observable<ScoreCard[]>;
-
+  show_more: boolean = false;
   paginationconfiguration: PaginationInstance = {
     id: 'custom',
     itemsPerPage: 3,

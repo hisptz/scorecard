@@ -11,6 +11,7 @@ export class HeaderComponent implements OnInit {
 
   @Output() onGoHomePage = new EventEmitter();
   @Output() onTourStart = new EventEmitter();
+  show_more: boolean = false;
   constructor(private translate: TranslateService) { }
 
   ngOnInit() {
