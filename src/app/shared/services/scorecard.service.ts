@@ -162,15 +162,15 @@ export class ScorecardService {
       // if it is available update the item in data store
       (data) => {
         this.updateRelatedIndicator(indicator_id, related_indicators).subscribe(
-          returned_data => console.log('added'),
-          error => console.log('something went wrong')
+          returned_data => {},
+          error => console.error('something went wrong', error)
         );
       },
       // if it is not available add new item in datastore
       (error) => {
         this.createRelatedIndicator(indicator_id, related_indicators).subscribe(
-          data => console.log('added'),
-          errorr => console.log('something went wrong')
+          data => {},
+          errorr => console.error('something went wrong', errorr)
         );
       }
     );

@@ -169,12 +169,12 @@ export class OrgUnitService {
                       this._nodes.next(organisationunits);
                     },
                     error => {
-                      console.log('something went wrong while fetching Organisation units');
+                      console.error('something went wrong while fetching Organisation units', error);
                     }
                   );
                 },
                 error => {
-                  console.log('something went wrong while fetching Organisation units');
+                  console.error('something went wrong while fetching Organisation units', error);
                 }
               );
 

@@ -388,7 +388,6 @@ export class FavoriteService {
   }
 
   getFavoriteOptions(apiRootUrl) {
-    console.log('loaded')
     return Observable.of([])
     // return Observable.create(observer => {
     //   this.http.get(apiRootUrl + 'dataStore/idashboard/favoriteOptions').subscribe((favoriteOptions: any) => {
@@ -739,7 +738,7 @@ export class FavoriteService {
           const arrayItems: any[] = result.items;
           if (arrayItems) {
             arrayItems.forEach(item => {
-              newItemList.push(item)
+              newItemList.push(item);
             });
           }
           ;
@@ -748,13 +747,11 @@ export class FavoriteService {
            * Add more item list from already added list
            */
           const existingItems = newLayoutResult[currentDimensionIndex].items;
-          console.log(JSON.stringify(existingItems))
           if (existingItems) {
             existingItems.forEach(item => {
-              newItemList.push(item)
+              newItemList.push(item);
             });
           }
-          ;
 
           newLayoutResult[currentDimensionIndex].items = newItemList;
 

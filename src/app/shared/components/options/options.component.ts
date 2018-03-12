@@ -58,6 +58,7 @@ export class OptionsComponent implements OnInit {
   @Output() onOptionUpdate: EventEmitter<any> = new EventEmitter<any>();
 
   showAdditionalOptions: boolean = true;
+  pinAdditionalOptions: boolean = true;
   constructor() { }
 
   ngOnInit() {
@@ -65,6 +66,7 @@ export class OptionsComponent implements OnInit {
   }
 
   showOptions() {
+    this.pinAdditionalOptions = !this.pinAdditionalOptions;
     this.showAdditionalOptions = !this.showAdditionalOptions;
   }
 

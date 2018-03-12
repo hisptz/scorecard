@@ -486,7 +486,6 @@ export class DetailsComponent implements OnInit {
       this.loading = false;
     } else {
       this.current_title = this.prepareCardTitle(this.indicator);
-      console.log(this.periodObject);
       if (this.checkIfParametersChanged(this.selectedOrganisationUnit.value, this.periodObject.value, indicatorsArray, function_indicatorsArray)) {
         this.error_occured = false;
         if (type === 'csv') {
@@ -514,7 +513,6 @@ export class DetailsComponent implements OnInit {
             },
             error => {
               this.error_occured = true;
-              console.log(error);
             }
           );
         }else {
@@ -550,7 +548,6 @@ export class DetailsComponent implements OnInit {
                       error: (error) => {
                         completed_functions++;
                         this.error_occured = true;
-                        console.log('error');
                       },
                       progress: (progress) => { }
                     };
@@ -562,7 +559,6 @@ export class DetailsComponent implements OnInit {
               },
               error => {
                 this.error_occured = true;
-                console.log(error);
               }
             );
           }else {
@@ -593,7 +589,6 @@ export class DetailsComponent implements OnInit {
                   error: (error) => {
                     completed_functions++;
                     this.error_occured = true;
-                    console.log('error');
                   },
                   progress: (progress) => { }
                 };

@@ -206,13 +206,13 @@ export class OrgUnitFilterComponent implements OnInit {
                         }
                       },
                       error => {
-                        console.log('something went wrong while fetching Organisation units');
+                        console.error('something went wrong while fetching Organisation units', error);
                         this.orgunit_tree_config.loading = false;
                       }
                     );
                   },
                   error => {
-                    console.log('something went wrong while fetching Organisation units');
+                    console.error('something went wrong while fetching Organisation units', error);
                     this.orgunit_tree_config.loading = false;
                   }
                 );
@@ -427,7 +427,6 @@ export class OrgUnitFilterComponent implements OnInit {
       if ( orgunit_model.selected_orgunits.length === 1 ) {
         const detailed_orgunit = this.orgtree.treeModel.getNodeById(orgunit_model.selected_orgunits[0].id);
         orgUnits.push(detailed_orgunit.id);
-        console.log(detailed_orgunit)
         if (detailed_orgunit.hasOwnProperty('children') && with_children) {
           if (detailed_orgunit.children) {
             for ( const orgunit of detailed_orgunit.children ) {

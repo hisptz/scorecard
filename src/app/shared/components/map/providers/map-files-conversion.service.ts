@@ -420,7 +420,6 @@ export class MapFilesConversion {
   }
 
   private _data(_) {
-    console.log(this._tag('value', '2'));
     return this._tag('Data', this._tag('value', this._encode(_[1])), [['name', this._encode(_[0])]]);
   }
 

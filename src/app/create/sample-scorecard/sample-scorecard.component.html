@@ -176,6 +176,7 @@
         <th>{{ label }}</th>
         <th *ngFor="let indicator of holders_list$ | async"
             style="font-size: 10px;max-width: 90px;overflow-wrap: break-word; cursor: pointer; line-height: 80%;padding: 0px"
+            (click)="updateIndicator(indicator)"
             class="sans-pro" [ngClass]="{'current':current_indicator.holder_id == indicator.holder_id}"
             [@fadeOut]="'in'"
         >

@@ -235,7 +235,7 @@
     <th *ngIf="scorecard.data.show_average_in_row"></th>
   </tr>
 </table>
-
+{{ scorecard.data.additional_labels }}
 <context-menu #indicatorMenu>
   <!--<ng-template contextMenuItem (execute)="loadPreview(null,$event.item,null,null, null, true)"  let-item>-->
      <!--<span *ngIf="item.indicators[0].bottleneck_indicators.length != 0">-->

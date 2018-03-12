@@ -41,9 +41,7 @@ export class MetadataDictionaryComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    // console.log(this.metadataidentifiers);
     const uid = this.metadataidentifiers;
-    console.log(this.metadataFromAnalyticsLink(uid));
     this.displayDetail(uid);
   }
 
@@ -65,7 +63,6 @@ export class MetadataDictionaryComponent implements OnInit, OnDestroy {
             this.subscription = self.get_from_base(indicatorUrl)
 
               .subscribe( indicatorData => {
-                  // console.log(this.dataElementAvailable(data.numerator));
                   const indicatorObject = indicatorData;
                   const numeratorExp = self.get('expressions/description?expression='
                     + encodeURIComponent(indicatorData.numerator));
@@ -107,8 +104,6 @@ export class MetadataDictionaryComponent implements OnInit, OnDestroy {
                       () => {
                         this.progressMessage = 'Compiling' + data.name + ' for consumptions';
                         if (count === this.metadataFromAnalyticsLink(uid).length) {
-                          console.log(count);
-                          console.log(this.indicators = this.CompleteData);
                           this.showingLoading = false;
                         }
 
@@ -136,7 +131,6 @@ export class MetadataDictionaryComponent implements OnInit, OnDestroy {
             this.subscription = self.get_from_base(dataelementUrl)
               .subscribe(dataelement => {
                   this.dataelements.push(dataelement);
-                  console.log(this.dataelements); // It brings undefined
                 },
                 error => {
                   this.progressMessage = 'Sorry we are still looking what might be wrong';
@@ -144,7 +138,6 @@ export class MetadataDictionaryComponent implements OnInit, OnDestroy {
                 () => {
                   this.progressMessage = 'Compiling data for consumptions';
                   if (count === this.metadataFromAnalyticsLink(uid).length) {
-                    console.log(count);
                     this.showingLoading = false;
                   }
                 }
@@ -164,7 +157,6 @@ export class MetadataDictionaryComponent implements OnInit, OnDestroy {
                 () => {
                   this.progressMessage = 'Compiling data for consumptions';
                   if (count === this.metadataFromAnalyticsLink(uid).length) {
-                    console.log(count);
                     this.showingLoading = false;
                   }
                 }
@@ -182,7 +174,6 @@ export class MetadataDictionaryComponent implements OnInit, OnDestroy {
                 () => {
                   this.progressMessage = 'Compiling data for consumptions';
                   if (count === this.metadataFromAnalyticsLink(uid).length) {
-                    console.log(count);
                     this.showingLoading = false;
                   }
                 }
@@ -208,7 +199,6 @@ export class MetadataDictionaryComponent implements OnInit, OnDestroy {
                                   filterName: programDatadata.description,
                                   expressionName: expres.description
                                 });
-                                console.log(this.programInd);
                               },
                               error => {
                                 this.progressMessage = 'Sorry we are still looking what might be wrong';
@@ -216,7 +206,6 @@ export class MetadataDictionaryComponent implements OnInit, OnDestroy {
                               () => {
                                 this.progressMessage = 'Compiling data for consumptions';
                                 if (count === this.metadataFromAnalyticsLink(uid).length) {
-                                  console.log(count);
                                   this.showingLoading = false;
                                 }
                               }
@@ -238,7 +227,6 @@ export class MetadataDictionaryComponent implements OnInit, OnDestroy {
                         () => {
                           this.progressMessage = 'Compiling data for consumptions';
                           if (count === this.metadataFromAnalyticsLink(uid).length) {
-                            console.log(count);
                             this.showingLoading = false;
                           }
                         }

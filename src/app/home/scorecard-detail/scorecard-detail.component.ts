@@ -39,7 +39,7 @@ export class ScorecardDetailComponent implements OnInit {
     this.deleting = true;
     this.scoreCardService.remove( scorecard ).subscribe(
       data => {
-        this.store.dispatch(new RemoveScorecardsSuccess(scorecard.id));
+        this.store.dispatch(new RemoveScorecardsSuccess(scorecard));
       },
       error => {
         this.deleting = false;

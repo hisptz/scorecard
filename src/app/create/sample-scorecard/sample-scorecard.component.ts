@@ -289,13 +289,12 @@ export class SampleScorecardComponent implements OnInit {
             this.group_type,
             this.active_group
           );
-        },20);
+        }, 20);
       }
     }else if (drop_area === 'table_data') {
       //  check if someone is trying to reorder items within the scorecard
       if ( $event.dragData.hasOwnProperty('holder_id') ) {
         if ( $event.dragData.holder_id === object.holder_id ) {
-          console.log('cant move item to itself');
         }else {
           const position = this.getHolderPosition($event.dragData, object);
           const indicator_holder_groups_list = this.deleteHolder( $event.dragData );

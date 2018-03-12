@@ -275,7 +275,7 @@ export class VisualizationLegendComponent implements OnInit {
         const r = new FileReader();
         r.onload = (e: any) => {
           let contentFromUploadedFile: any;
-          contentFromUploadedFile = (new Function("return " + e.target.result))();
+          contentFromUploadedFile = (new Function('return ' + e.target.result))();
           this.uploadEvent(contentFromUploadedFile);
         }
         r.readAsText(file);
@@ -283,7 +283,7 @@ export class VisualizationLegendComponent implements OnInit {
 
       }
     } else {
-      console.log("Not a geojson file");
+      console.warn('Not a geojson file');
     }
 
 

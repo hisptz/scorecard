@@ -172,7 +172,6 @@ export function viewReducer(
 
     case (viewActions.SET_SELECTED_OU): {
       const orgunit = action.payload;
-      console.log({...state, orgunit})
       return {...state, orgunit};
     }
 

@@ -117,7 +117,7 @@ export class BasicViewComponent implements OnInit {
   }
 
   getIndicatorLabel(indicator, label) {
-    this.scorecardService.getIndicatorLabel(indicator, label, this.hidenColums);
+    return this.scorecardService.getIndicatorLabel(indicator, label, this.hidenColums);
   }
 
   findRowAverage(orgunit_id, periods_list, period) {

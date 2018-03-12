@@ -161,7 +161,7 @@ export class MapTemplateComponent implements OnInit {
       // height = '81vh';
     }
     div.style.width = width;
-    div.style.height = height;console.log(height)
+    div.style.height = height;
     if (parentElement) {
       parentElement.appendChild(div);
     }
@@ -232,10 +232,10 @@ export class MapTemplateComponent implements OnInit {
   }
 
   processFileUpload(event) {
-    if (event.hasOwnProperty('type') && event.type == 'FeatureCollection') {
+    if (event.hasOwnProperty('type') && event.type === 'FeatureCollection') {
       this.drawUploadedlLayer(this.mapVisualizationService.prepareGeoJsonLayerFromFileContents(event, L));
     } else {
-      console.log('THIS IS NOT VALID GEOJSON FILE');
+      console.warn('THIS IS NOT VALID GEOJSON FILE');
     }
   }
 

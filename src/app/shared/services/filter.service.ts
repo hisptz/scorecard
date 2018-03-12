@@ -218,7 +218,6 @@ export class FilterService {
     } else if (period_type === 'SixMonthlyApril') {
       const year = period.substring(0, 4);
       const six_month = period.substring(4, 12);
-      console.log(period.substring(4, 12));
       let time = '';
       if (six_month === 'AprilS2') {
         time = year + 'AprilS1';

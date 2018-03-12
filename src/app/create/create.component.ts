@@ -220,15 +220,11 @@ export class CreateComponent implements OnInit {
   }
 
   onTitleReady(event) {
-    console.log(event);
   }
 
-  onTitleBlur(event) {
-    console.log(event);
-  }
+  onTitleBlur(event) {}
 
   showError(event) {
-    console.log(event)
     this.errorSavingData = event;
   }
 }

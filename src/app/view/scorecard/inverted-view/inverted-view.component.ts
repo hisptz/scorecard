@@ -106,7 +106,6 @@ export class InvertedViewComponent implements OnInit {
   }
 
   loadPreviewFromChild(event) {
-    console.log(event)
     this.onLoadPreviewFromChild.emit(event);
   }
 

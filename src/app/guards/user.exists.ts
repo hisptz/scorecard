@@ -27,7 +27,6 @@ export class UserExistsGuards implements CanActivate {
       .select(getUser)
       .pipe(
         map((entities) => {
-          console.log(!!entities);
           return !!entities;
         }),
         take(1)
