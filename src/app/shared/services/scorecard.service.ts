@@ -221,6 +221,8 @@ export class ScorecardService {
         'average_selection': 'all',
         'shown_records': 'all',
         'show_average_in_row': false,
+        'show_league_table': false,
+        'show_league_table_all': false,
         'show_average_in_column': false,
         'periodType': 'Quarterly',
         'selected_periods': [{
@@ -337,7 +339,7 @@ export class ScorecardService {
         checker_see = true;
         checker_edit = true;
       }
-    }else {
+    } else {
       checker_see = true;
       checker_edit = true;
     }
@@ -388,6 +390,8 @@ export class ScorecardService {
       shown_records: scorecard.data.shown_records,
       show_average_in_row: scorecard.data.show_average_in_row,
       show_average_in_column: scorecard.data.show_average_in_column,
+      show_league_table: scorecard.data.hasOwnProperty('show_league_table') ? scorecard.data.empty_rows : false,
+      show_league_table_all: scorecard.data.hasOwnProperty('show_league_table_all') ? scorecard.data.empty_rows : false,
       periodType: scorecard.data.periodType,
       selected_periods: scorecard.data.selected_periods,
       show_data_in_column: scorecard.data.show_data_in_column,
@@ -448,6 +452,8 @@ export class ScorecardService {
       average_selection: scorecard.data.average_selection,
       shown_records: scorecard.data.shown_records,
       show_average_in_row: scorecard.data.show_average_in_row,
+      show_league_table: scorecard.data.show_league_table,
+      show_league_table_all: scorecard.data.show_league_table_all,
       show_average_in_column: scorecard.data.show_average_in_column,
       periodType: scorecard.data.periodType,
       selected_periods: scorecard.data.selected_periods,
@@ -485,20 +491,20 @@ export class ScorecardService {
           indicator.values = [];
         }if ( !indicator.hasOwnProperty('showTopArrow')) {
           indicator.showTopArrow = [];
-        }else {
+        } else {
           if (indicator.showTopArrow instanceof Array) {
 
-          }else {
+          } else {
             indicator.showTopArrow = [];
           }
         }
 
         if ( !indicator.hasOwnProperty('showBottomArrow')) {
           indicator.showBottomArrow = [];
-        }else {
+        } else {
           if (indicator.showBottomArrow instanceof Array) {
 
-          }else {
+          } else {
             indicator.showBottomArrow = [];
           }
         }
@@ -525,7 +531,7 @@ export class ScorecardService {
         'type': 'report',
         'selected_user_orgunit': []
       };
-    }else if (!scorecard.data.orgunit_settings.hasOwnProperty('selected_orgunits')) {
+    } else if (!scorecard.data.orgunit_settings.hasOwnProperty('selected_orgunits')) {
       scorecard.data.orgunit_settings = {
         'selection_mode': 'Usr_orgUnit',
         'selected_levels': [],
@@ -538,7 +544,7 @@ export class ScorecardService {
         'type': 'report',
         'selected_user_orgunit': []
       };
-    }else if (!this.isArray(scorecard.data.orgunit_settings.selected_levels)) {
+    } else if (!this.isArray(scorecard.data.orgunit_settings.selected_levels)) {
       scorecard.data.orgunit_settings = {
         'selection_mode': 'Usr_orgUnit',
         'selected_levels': [],
@@ -577,6 +583,12 @@ export class ScorecardService {
     }
     if (!scorecard.data.hasOwnProperty('show_data_in_column')) {
       scorecard.data.show_data_in_column = false;
+    }
+    if (!scorecard.data.hasOwnProperty('show_league_table')) {
+      scorecard.data.show_league_table = false;
+    }
+    if (!scorecard.data.hasOwnProperty('show_league_table_all')) {
+      scorecard.data.show_league_table_all = false;
     }
     return scorecard;
   }
@@ -923,6 +935,42 @@ export class ScorecardService {
           if (hidenColums.indexOf(indicator.id) === -1 && indicator.values[use_key] !== null) {
             counter++;
             sum += (!isNaN(indicator.values[use_key])) ? parseFloat(indicator.values[use_key]) : 0;
+          }
+        }
+      }
+    }
+
+    return (sum / counter).toFixed(2);
+  }
+
+ /**
+   * finding the row average
+   * @param orgunit_id
+   */
+  findRowZAverage(orgunit_id, periods_list, period, indicator_holders, hidenColums) {
+    let sum = 0;
+    let counter = 0;
+    if (period === null) {
+      for (const holder of indicator_holders) {
+        for (const indicator of holder.indicators) {
+          for (const per of periods_list) {
+            const use_key = orgunit_id + '.' + per.id;
+            const item = _.find(indicator.key_values, { 'key': use_key });
+            if (hidenColums.indexOf(indicator.id) === -1 && item) {
+              counter++;
+              sum += (!isNaN(item.value)) ? parseFloat(item.value) : 0;
+            }
+          }
+        }
+      }
+    } else {
+      const use_key = orgunit_id + '.' + period;
+      for (const holder of indicator_holders) {
+        for (const indicator of holder.indicators) {
+          const item = _.find(indicator.key_values, { 'key': use_key });
+          if (hidenColums.indexOf(indicator.id) === -1 && item) {
+            counter++;
+            sum += (!isNaN(item.value)) ? parseFloat(item.value) : 0;
           }
         }
       }

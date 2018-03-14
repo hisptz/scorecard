@@ -16,6 +16,8 @@ export interface ScorecardData {
     average_selection?: string;
     shown_records?: string;
     show_average_in_row?: boolean;
+    show_league_table?: boolean;
+    show_league_table_all?: boolean;
     show_average_in_column?: boolean;
     periodType?: string;
     selected_periods?: any[];

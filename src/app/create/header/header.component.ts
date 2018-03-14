@@ -62,7 +62,7 @@ export class CreateHeaderComponent implements OnInit {
         this.onSave.emit(false);
       }, 5000);
 
-    }else {
+    } else {
       this.scorecardService.cleanUpEmptyColumns(this.scorecard.data.data_settings.indicator_holders, this.scorecard.data.data_settings.indicator_holder_groups, );
 
       //  add related indicators to another datastore to enable flexible data analysis
@@ -88,7 +88,7 @@ export class CreateHeaderComponent implements OnInit {
             this.saving_scorecard = false;
           }
         );
-      }else {
+      } else {
         this.scorecardService.update(this.scorecard).subscribe(
           (data) => {
             this.saving_scorecard = false;

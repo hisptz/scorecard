@@ -55,7 +55,7 @@
     </div>
     <div class="col-sm-4" *ngIf="mode == 'view'" style="padding: 0px">
       <h5 class="text-center text-muted" [translate]="'Best/Worst'">Best/Worst</h5>
-      <p class="text-muted" style="font-size: 12px" *ngIf="mode !== 'edit'">
+      <p class="text-muted mb-1" style="font-size: 12px" *ngIf="mode !== 'edit'">
         <span [translate]="'Sorted By'"></span> &nbsp;
         {{ sorting_column }}
       </p>
@@ -79,6 +79,16 @@
           <i class="fa fa-check-circle text-secondary" *ngIf="options.shown_records == 10"></i>
           <i class="fa fa-circle-thin text-secondary" *ngIf="options.shown_records != 10"></i>
           <span [translate]="'Top Ten'"> Top Ten</span>
+        </li>
+        <li class="list-group-item pointer" (click)="setOptionFromButton('show_league_table', 'boolean')">
+          <i class="fa fa-check-circle text-secondary" *ngIf="options.show_league_table"></i>
+          <i class="fa fa-circle-thin text-secondary" *ngIf="!options.show_league_table"></i>
+          <span [translate]="'League table'"> League table</span>
+        </li>
+        <li class="list-group-item pointer" (click)="setOptionFromButton('show_league_table_all', 'boolean')">
+          <i class="fa fa-check-circle text-secondary" *ngIf="options.show_league_table_all"></i>
+          <i class="fa fa-circle-thin text-secondary" *ngIf="!options.show_league_table_all"></i>
+          <span [translate]="'Cups in Indicators'"> Cups in Indicators</span>
         </li>
       </ul>
     </div>
@@ -121,6 +131,16 @@
           <i class="fa fa-check-circle text-secondary" *ngIf="options.show_data_in_column"></i>
           <i class="fa fa-circle-thin text-secondary" *ngIf="!options.show_data_in_column"></i>
           <span [translate]="'show data in rows'"> show data in rows </span>
+        </li>
+        <li class="list-group-item pointer" (click)="setOptionFromButton('show_league_table', 'boolean')">
+          <i class="fa fa-check-circle text-secondary" *ngIf="options.show_league_table"></i>
+          <i class="fa fa-circle-thin text-secondary" *ngIf="!options.show_league_table"></i>
+          <span [translate]="'League table'"> League table</span>
+        </li>
+        <li class="list-group-item pointer" (click)="setOptionFromButton('show_league_table_all', 'boolean')">
+          <i class="fa fa-check-circle text-secondary" *ngIf="options.show_league_table_all"></i>
+          <i class="fa fa-circle-thin text-secondary" *ngIf="!options.show_league_table_all"></i>
+          <span [translate]="'Cups in Indicators'"> Cups in Indicators</span>
         </li>
       </ul>
     </div>

@@ -14,6 +14,8 @@ export interface ViewScorecardState {
   average_selection: string;
   shown_records: string;
   show_average_in_row: boolean;
+  show_league_table_all?: boolean;
+  show_league_table?: boolean;
   show_average_in_column: boolean;
   periodType: string;
   selected_periods: any[];
@@ -80,6 +82,8 @@ export const initialViewState: ViewScorecardState = {
   average_selection: 'all',
   shown_records: 'all',
   show_average_in_row: false,
+  show_league_table: false,
+  show_league_table_all: false,
   show_average_in_column: false,
   periodType: 'Quarterly',
   selected_periods: [{
@@ -186,6 +190,8 @@ export function viewReducer(
         show_hierarchy: action.payload.show_hierarchy,
         show_average_in_column: action.payload.show_average_in_column,
         show_average_in_row: action.payload.show_average_in_row,
+        show_league_table_all: action.payload.show_league_table_all,
+        show_league_table: action.payload.show_league_table,
         average_selection: action.payload.average_selection,
         shown_records: action.payload.shown_records,
         show_score: action.payload.show_score,

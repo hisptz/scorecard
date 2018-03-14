@@ -124,6 +124,10 @@ export class BasicViewComponent implements OnInit {
     return this.scorecardService.findRowAverage(orgunit_id, periods_list, period, this.scorecard.data.data_settings.indicator_holders, this.hidenColums);
   }
 
+  findRowZAverage(orgunit_id, periods_list, period) {
+    return this.scorecardService.findRowZAverage(orgunit_id, periods_list, period, this.scorecard.data.data_settings.indicator_holders, this.hidenColums);
+  }
+
   findRowTotalAverage(orgunits, period) {
     return this.scorecardService.findRowTotalAverage(orgunits, period, this.scorecard.data.data_settings.indicator_holders, this.hidenColums);
   }
@@ -146,6 +150,36 @@ export class BasicViewComponent implements OnInit {
       }
     }
     return tooltip.join(', ');
+  }
+
+  getSortedOrgUnits(orgunits, periods_list, period) {
+    return _.orderBy(orgunits.map(ou  => {
+      return { key: ou.id, value: this.findRowZAverage(ou.id, periods_list, period)};
+    }), ['value'], ['desc']);
+  }
+
+  has_cup1(key, orgunits, periods_list, period): boolean {
+    const list = this.getSortedOrgUnits(orgunits, periods_list, period);
+    if (list.length > 0 && list[0].key === key) {
+      return true;
+    }if (list.length > 1 && list[1].key === key) {
+      return true;
+    }if (list.length > 2 && list[2].key === key) {
+      return true;
+    }
+    return false;
+  }
+
+  get_cup_color(key, orgunits, periods_list, period): string {
+    const list = this.getSortedOrgUnits(orgunits, periods_list, period);
+    if (list.length > 0 && list[0].key === key) {
+      return 'gold';
+    } if (list.length > 1 && list[1].key === key) {
+      return 'silver';
+    } if (list.length > 2 && list[2].key === key) {
+      return '#CD7F32';
+    }
+    return '';
   }
 
   // get number of visible indicators from a holder

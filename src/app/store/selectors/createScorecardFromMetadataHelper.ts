@@ -1,6 +1,6 @@
 import {CreatedScorecardState} from '../reducers/create.reducer';
 import {ScoreCard, ScorecardData} from '../../shared/models/scorecard';
-import {ViewScorecardState} from "../reducers/view.reducer";
+import {ViewScorecardState} from '../reducers/view.reducer';
 
 export function createScorecardFromStore(scorecard: CreatedScorecardState | ViewScorecardState): ScoreCard {
   if (scorecard) {
@@ -15,6 +15,8 @@ export function createScorecardFromStore(scorecard: CreatedScorecardState | View
         'average_selection': scorecardState.average_selection,
         'shown_records': scorecardState.shown_records,
         'show_average_in_row': scorecardState.show_average_in_row,
+        'show_league_table': scorecardState.show_league_table,
+        'show_league_table_all': scorecardState.show_league_table_all,
         'show_average_in_column': scorecardState.show_average_in_column,
         'periodType': scorecardState.periodType,
         'selected_periods': scorecardState.selected_periods,
@@ -50,6 +52,8 @@ export function getScorecardOptions(data: ScorecardData) {
     show_hierarchy: data.show_hierarchy,
     show_average_in_column: data.show_average_in_column,
     show_average_in_row: data.show_average_in_row,
+    show_league_table: data.show_league_table,
+    show_league_table_all: data.show_league_table_all,
     average_selection: data.average_selection,
     shown_records: data.shown_records,
     show_score: data.show_score,

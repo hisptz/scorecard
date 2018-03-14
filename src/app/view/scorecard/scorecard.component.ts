@@ -10,6 +10,7 @@ import {VisualizerService} from '../../shared/services/visualizer.service';
 import * as _ from 'lodash';
 import {ContextMenuComponent, ContextMenuService} from 'ngx-contextmenu';
 import {animate, state, style, transition, trigger} from '@angular/animations';
+import {arr} from './arrayHelpers';
 
 @Component({
   selector: 'app-scorecard',
@@ -158,9 +159,8 @@ export class ScorecardComponent implements OnInit, OnDestroy {
               holder.title = this.scorecardService.getIndicatorTitle(holder, this.hidenColums);
               _.each(holder.indicators, (indicator: any) => {
                 indicator['values'] = indicator.hasOwnProperty('values') ? indicator.values : [];
+                indicator['key_values'] = indicator.hasOwnProperty('key_values') ? indicator.key_values : [];
                 indicator['showTopArrow'] = indicator.hasOwnProperty('showTopArrow') ? indicator.showTopArrow : [];
-                indicator['has_cup'] = indicator.hasOwnProperty('has_cup') ? indicator.has_cup : false;
-                indicator['cup_color'] = indicator.hasOwnProperty('cup_color') ? indicator.cup_color : '#524424'; // #ffd422
                 indicator['showBottomArrow'] = indicator.hasOwnProperty('showBottomArrow') ? indicator.showBottomArrow : [];
                 indicator['tooltip'] = indicator.hasOwnProperty('tooltip') ? indicator.tooltip : [];
                 indicator['previous_values'] = indicator.hasOwnProperty('previous_values') ? indicator.previous_values : [];
@@ -231,6 +231,13 @@ export class ScorecardComponent implements OnInit, OnDestroy {
                                 'value': current_period.id
                               }];
                               indicator.values[value_key] = this.visualizerService.getDataValue(data, data_config);
+                              indicator.key_values.push({key: value_key, value: this.visualizerService.getDataValue(data, data_config)});
+                              const uniqueArr = _.uniqBy(indicator.key_values, 'key');
+                              indicator.key_values = _.orderBy(uniqueArr.map((val: any) => {
+                                const mean = arr.mean(uniqueArr.map((v: any) => v.value));
+                                const standardDeviation = arr.standardDeviation(uniqueArr.map((v: any) => v.value));
+                                return { key: val.key, value: (val.value - mean) / standardDeviation };
+                              }), ['value'], ['desc']);
                             }
                             this.shown_records = this.orgunits.length;
                             // load previous data
@@ -276,7 +283,6 @@ export class ScorecardComponent implements OnInit, OnDestroy {
                                   old_proccesed_indicators++;
                                   this.old_proccessed_percent = (old_proccesed_indicators / this.allIndicatorsLength) * 100;
                                   if (this.old_proccessed_percent === 100) {
-                                    // this.updatedScorecard.emit(this.scorecard);
                                   }
                                 })
                             );

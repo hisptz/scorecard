@@ -16,6 +16,7 @@ export class ScorecardHearderComponent implements OnInit {
   @Input() period_title: any = '';
   @Input() has_error: boolean = false;
   @Input() has_bottleneck: boolean = false;
+  @Input() show_league_table: boolean = false;
 
   constructor() { }
 
