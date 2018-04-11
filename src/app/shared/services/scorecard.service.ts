@@ -390,8 +390,8 @@ export class ScorecardService {
       shown_records: scorecard.data.shown_records,
       show_average_in_row: scorecard.data.show_average_in_row,
       show_average_in_column: scorecard.data.show_average_in_column,
-      show_league_table: scorecard.data.hasOwnProperty('show_league_table') ? scorecard.data.empty_rows : false,
-      show_league_table_all: scorecard.data.hasOwnProperty('show_league_table_all') ? scorecard.data.empty_rows : false,
+      show_league_table: scorecard.data.hasOwnProperty('show_league_table') ? scorecard.data.show_league_table : false,
+      show_league_table_all: scorecard.data.hasOwnProperty('show_league_table_all') ? scorecard.data.show_league_table_all : false,
       periodType: scorecard.data.periodType,
       selected_periods: scorecard.data.selected_periods,
       show_data_in_column: scorecard.data.show_data_in_column,
@@ -428,7 +428,7 @@ export class ScorecardService {
           'holder_style': null
         },
       };
-    }else {
+    } else {
       return {
         current_indicator_holder: _.find(
           scorecard.data.data_settings.indicator_holders,
@@ -943,9 +943,14 @@ export class ScorecardService {
     return (sum / counter).toFixed(2);
   }
 
- /**
-   * finding the row average
+  /**
+   *
    * @param orgunit_id
+   * @param periods_list
+   * @param period
+   * @param indicator_holders
+   * @param hidenColums
+   * @returns {string}
    */
   findRowZAverage(orgunit_id, periods_list, period, indicator_holders, hidenColums) {
     let sum = 0;
@@ -956,6 +961,7 @@ export class ScorecardService {
           for (const per of periods_list) {
             const use_key = orgunit_id + '.' + per.id;
             const item = _.find(indicator.key_values, { 'key': use_key });
+            // console.log(item)
             if (hidenColums.indexOf(indicator.id) === -1 && item) {
               counter++;
               sum += (!isNaN(item.value)) ? parseFloat(item.value) : 0;

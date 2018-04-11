@@ -179,7 +179,7 @@ export class BasicViewComponent implements OnInit {
     } if (list.length > 2 && list[2].key === key) {
       return '#CD7F32';
     }
-    return '';
+    return 'white';
   }
 
   // get number of visible indicators from a holder

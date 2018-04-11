@@ -25,6 +25,7 @@
   <polygon points="0 0 90 0 90 35 0 35" [attr.fill]="assignBgColor(indicator_list[0],indicator_list[0].values[value_key])"/>
   <text fill="#000" x="30" y="20" font-size="11" font-family="Source Sans Pro">
     <tspan>{{ indicator_list[0].values[value_key] }}</tspan>
+    <!--<tspan>{{  indicator_list[0].key_values[value_key] }}</tspan>-->
   </text>
   <!--top arrow-->
   <path *ngIf="indicator_list[0].showTopArrow[value_key] && scorecard.data.header.show_arrows_definition" d="M2,10H12L7,4" style="fill:black;stroke:black;stroke-width:1"/>

@@ -159,6 +159,7 @@ export class ScorecardComponent implements OnInit, OnDestroy {
               holder.title = this.scorecardService.getIndicatorTitle(holder, this.hidenColums);
               _.each(holder.indicators, (indicator: any) => {
                 indicator['values'] = indicator.hasOwnProperty('values') ? indicator.values : [];
+                indicator['key_values1'] = indicator.hasOwnProperty('key_values1') ? indicator.key_values1 : [];
                 indicator['key_values'] = indicator.hasOwnProperty('key_values') ? indicator.key_values : [];
                 indicator['showTopArrow'] = indicator.hasOwnProperty('showTopArrow') ? indicator.showTopArrow : [];
                 indicator['showBottomArrow'] = indicator.hasOwnProperty('showBottomArrow') ? indicator.showBottomArrow : [];
@@ -231,13 +232,14 @@ export class ScorecardComponent implements OnInit, OnDestroy {
                                 'value': current_period.id
                               }];
                               indicator.values[value_key] = this.visualizerService.getDataValue(data, data_config);
-                              indicator.key_values.push({key: value_key, value: this.visualizerService.getDataValue(data, data_config)});
-                              const uniqueArr = _.uniqBy(indicator.key_values, 'key');
+                              indicator.key_values1.push({key: value_key, value: this.visualizerService.getDataValue(data, data_config)});
+                              const uniqueArr = _.uniqBy(indicator.key_values1, 'key');
                               indicator.key_values = _.orderBy(uniqueArr.map((val: any) => {
                                 const mean = arr.mean(uniqueArr.map((v: any) => v.value));
                                 const standardDeviation = arr.standardDeviation(uniqueArr.map((v: any) => v.value));
                                 return { key: val.key, value: (val.value - mean) / standardDeviation };
                               }), ['value'], ['desc']);
+                              console.log(indicator)
                             }
                             this.shown_records = this.orgunits.length;
                             // load previous data
