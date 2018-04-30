@@ -102,8 +102,8 @@ export const InitialCreateState: CreatedScorecardState = {
   average_selection: 'all',
   shown_records: 'all',
   show_average_in_row: false,
-  show_league_table: false,
-  show_league_table_all: false,
+  show_league_table: true,
+  show_league_table_all: true,
   show_average_in_column: false,
   periodType: 'Quarterly',
   selected_periods: [{
@@ -111,7 +111,7 @@ export const InitialCreateState: CreatedScorecardState = {
     name: 'January - March 2017'
   }],
   show_data_in_column: false,
-  show_score: false,
+  show_score: true,
   show_rank: false,
   empty_rows: false,
   show_hierarchy: false,

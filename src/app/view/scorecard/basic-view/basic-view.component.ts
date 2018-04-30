@@ -4,6 +4,7 @@ import {ScorecardService} from '../../../shared/services/scorecard.service';
 import * as _ from 'lodash';
 import {ContextMenuComponent, ContextMenuService} from 'ngx-contextmenu';
 import {listStateTrigger} from '../../../shared/animations/basic-animations';
+import {forEach} from '@angular/router/src/utils/collection';
 
 @Component({
   selector: 'app-basic-view',
@@ -80,6 +81,7 @@ export class BasicViewComponent implements OnInit {
 
 
   sortScoreCardFromColumn(sortingColumn, sortAscending, orguUnits, period: string, lower_level: boolean = true) {
+    this.hideAllAverages();
     this.onSortScoreCardFromColumn.emit({sortingColumn, sortAscending, orguUnits, period, lower_level});
   }
 
@@ -182,6 +184,17 @@ export class BasicViewComponent implements OnInit {
     return 'white';
   }
 
+  get_column_rank(key, orgunits, periods_list, period): number {
+    const list = this.getSortedOrgUnits(orgunits, periods_list, period);
+    let ite = 0;
+    list.forEach((item, index) => {
+      if ( list[index].key === key) {
+        ite = index + 1;
+      }
+    });
+    return ite;
+  }
+
   // get number of visible indicators from a holder
   getVisibleIndicators(holder) {
     return _.filter(holder.indicators, (indicator: any) => !_.includes(this.hidenColums, indicator.id));
@@ -244,5 +257,9 @@ export class BasicViewComponent implements OnInit {
 
   hideClicked( item , type = null) {
     this.onHideClicked.emit({ item , type});
+  }
+
+  hideAllAverages() {
+    console.log(document.querySelector('.avg_col'));
   }
 }

@@ -1,6 +1,6 @@
 <tour-step-template></tour-step-template>
 <div class="container-fluid" *ngIf="!(can_edit$ | async)">
-  <h1 class="text-center" style="margin-top: 50px">You have no permission to edit this scorecard</h1>
+  <h1 class="text-center" style="margin-top: 50px">You have no permission to edit this League Table</h1>
   <h1 class="text-center">
     <button (click)="cancelSaving()" class="btn btn-outline-primary">Go Back</button>
   </h1>
@@ -36,9 +36,9 @@
     class="container-fluid warning-wrapper" *ngIf="show_title_warning$ | async">
     <span
       class="text-muted"
-      [translate]="'Write the title, Description and start by picking indicators for your scorecard'"
+      [translate]="'Write the title, Description and start by picking indicators for your League Table'"
     >
-      Write the title, Description and start by picking indicators for your scorecard.
+      Write the title, Description and start by picking indicators for your League Table.
     </span>
   </div>
 
@@ -48,15 +48,15 @@
       class="alert alert-danger"
       style="margin: 0px; padding: 10px" role="alert"
       *ngIf="errorSavingData"
-      [translate]="'Make sure to write the title, Description and pick at least one indicators for your score card'"
+      [translate]="'Make sure to write the title, Description and pick at least one indicators for your League Table'"
     >
-      Make sure to write the title, Description and pick at least one indicators for your score card.
+      Make sure to write the title, Description and pick at least one indicators for your League Table.
     </div>
   </div>
 
   <div class="container-fluid" style="font-size: 11px">
     <div class="row">
-      <!--basic details of the scorecard-->
+      <!--basic details of the League Table-->
       <div class="col-sm-3 no-left-padding1">
         <app-basic-details
           [legendset_definitions]="legendset_definitions$ | async"

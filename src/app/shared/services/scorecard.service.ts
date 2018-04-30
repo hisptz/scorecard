@@ -44,7 +44,7 @@ export class ScorecardService {
       this._scorecards.forEach( ( scorecard ) => {
         // this.store.dispatch(new AddScorecardAction( scorecard ));
       });
-    }else {
+    } else {
       this.store.select(getUser).subscribe(
         (userInfo) => {
           if (userInfo) {
@@ -89,7 +89,7 @@ export class ScorecardService {
             if (route.state.url === '/create') {
               const scorecard = this.getEmptyScoreCard();
               this.store.dispatch(new createActions.SetCreatedScorecard(this.getScorecardForCreation(scorecard, 'create', {id: user.id})));
-            }else {
+            } else {
               const scorecardId = route.state.params.scorecardid;
               this.store.select(getScorecardEntites).first().subscribe(
                 scorecards => {
@@ -221,8 +221,8 @@ export class ScorecardService {
         'average_selection': 'all',
         'shown_records': 'all',
         'show_average_in_row': false,
-        'show_league_table': false,
-        'show_league_table_all': false,
+        'show_league_table': true,
+        'show_league_table_all': true,
         'show_average_in_column': false,
         'periodType': 'Quarterly',
         'selected_periods': [{
@@ -230,7 +230,7 @@ export class ScorecardService {
           name: 'January - March 2017'
         }],
         'show_data_in_column': false,
-        'show_score': false,
+        'show_score': true,
         'show_rank': false,
         'empty_rows': true,
         'show_hierarchy': false,
@@ -307,7 +307,7 @@ export class ScorecardService {
       'high_is_good': true,
       'value': 0,
       'weight': 100,
-      'legend_display': true,
+      'legend_display': false,
       'legendset': legendset,
       'additional_label_values': {},
       'use_bottleneck_groups': true,
@@ -390,8 +390,8 @@ export class ScorecardService {
       shown_records: scorecard.data.shown_records,
       show_average_in_row: scorecard.data.show_average_in_row,
       show_average_in_column: scorecard.data.show_average_in_column,
-      show_league_table: scorecard.data.hasOwnProperty('show_league_table') ? scorecard.data.show_league_table : false,
-      show_league_table_all: scorecard.data.hasOwnProperty('show_league_table_all') ? scorecard.data.show_league_table_all : false,
+      show_league_table: scorecard.data.hasOwnProperty('show_league_table') ? scorecard.data.show_league_table : true,
+      show_league_table_all: scorecard.data.hasOwnProperty('show_league_table_all') ? scorecard.data.show_league_table_all : true,
       periodType: scorecard.data.periodType,
       selected_periods: scorecard.data.selected_periods,
       show_data_in_column: scorecard.data.show_data_in_column,
@@ -585,10 +585,10 @@ export class ScorecardService {
       scorecard.data.show_data_in_column = false;
     }
     if (!scorecard.data.hasOwnProperty('show_league_table')) {
-      scorecard.data.show_league_table = false;
+      scorecard.data.show_league_table = true;
     }
     if (!scorecard.data.hasOwnProperty('show_league_table_all')) {
-      scorecard.data.show_league_table_all = false;
+      scorecard.data.show_league_table_all = true;
     }
     return scorecard;
   }
@@ -770,7 +770,7 @@ export class ScorecardService {
     this.store.dispatch(new createActions.SetHoldersGroups(indicator_holder_groups));
   }
 
-  //  deleting indicator from score card
+  //  deleting indicator from League Table
   deleteIndicator(indicator_to_delete, indicator_holders, indicator_holder_groups): void {
     indicator_holders.forEach((holder, holder_index) => {
       holder.indicators.forEach((indicator, indicator_index) => {
@@ -801,7 +801,7 @@ export class ScorecardService {
     this.cleanUpEmptyColumns(indicator_holders, indicator_holder_groups);
   }
 
-  // load a single item for use in a score card
+  // load a single item for use in a League Table
   load_item(
     item,
     indicator_holders,

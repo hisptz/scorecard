@@ -81,10 +81,17 @@
       [attr.rowspan]="periods_list.length >1 ? 2 : 1"
       style="vertical-align: bottom;"
     >
-      <span [translate]="'Average'"> Average</span>
+      <span [translate]="'Rank'"> Rank</span>
       <!--sorting icons-->
       <span class="fa fa-sort-up pull-right  pull-right text-muted" *ngIf="!current_sorting && sorting_column == 'avg'"></span>
       <span class="fa fa-sort-down pull-right  pull-right text-muted" *ngIf="current_sorting && sorting_column == 'avg'"></span>
+    </th>
+    <th
+      class="subtotal"
+    *ngIf="scorecard.data.show_average_in_row || scorecard.data.show_league_table"
+    (click)="sortScoreCardFromColumn('avg', sortAscending, orgunits, periods_list[0].id, false)"
+      style="vertical-align: bottom;">
+      Average
     </th>
   </tr>
 
@@ -170,9 +177,9 @@
           <!--full box to cover all area-->
           <polygon points="0 0 90 0 90 35 0 35" [attr.fill]="'white'"/>
           <text fill="#000" x="30" y="20" font-size="11" font-family="Source Sans Pro">
-            <tspan>{{ findRowAverage(current_orgunit.id, periods_list,null) }}</tspan>
+            <tspan>{{ get_column_rank(current_orgunit.id, orgunits, periods_list, null) }}</tspan>
           </text>
-        <g *ngIf="has_cup1(current_orgunit.id, orgunits, periods_list, null) && scorecard.data.show_league_table">
+        <g *ngIf="scorecard.data.show_league_table">
             <title>Layer 1</title>
             <path id="svg_2" d="m298.69966,0.79977c0.00226,0.02994 0.01085,0.05736 0.02346,0.08145l0.02346,-0.0366l-0.00678,-0.0025l-0.00939,-0.00334l0.0049,-0.00855l0.01721,-0.03045l-0.05287,0l0.00001,-0.00001zm0.07206,0l-0.017,0.03003l0.0073,0.00261l0.00991,0.00355l-0.00563,0.00876l-0.03379,0.05287c0.02431,0.0369 0.05986,0.06237 0.10063,0.06789l0,0.10793l-0.06674,0l0,0.0267l0.16685,0l0,-0.0267l-0.06674,0l0,-0.10793c0.07113,-0.00951 0.12693,-0.07902 0.13348,-0.16571l-0.22828,0l0,0l0.00001,0z" stroke-width="5" stroke="null" [attr.fill]="get_cup_color(current_orgunit.id, orgunits, periods_list, null)"/>
             <g stroke="null" id="svg_1">
@@ -189,11 +196,16 @@
           </g>
         </svg>
       </td>
+      <td
+        style="font-weight: bolder; text-align: center"
+        *ngIf="scorecard.data.show_average_in_row || scorecard.data.show_league_table">
+        {{ findRowAverage(current_orgunit.id, periods_list,null) }}
+      </td>
     </tr>
 
     <tr *ngIf="showSubScorecard[current_orgunit.id]">
       <td [attr.colspan]="getSubscorecardColspan()" style="background-color: rgba(0,0,0,0.1)">
-        <!--Internal score card-->
+        <!--Internal League Table-->
         <h3
           class="text-center text-muted"
           *ngIf="!children_available[current_orgunit.id]">
@@ -256,7 +268,6 @@
     <th *ngIf="scorecard.data.show_average_in_row || scorecard.data.show_league_table"></th>
   </tr>
 </table>
-{{ scorecard.data.additional_labels }}
 <context-menu #indicatorMenu>
   <!--<ng-template contextMenuItem (execute)="loadPreview(null,$event.item,null,null, null, true)"  let-item>-->
      <!--<span *ngIf="item.indicators[0].bottleneck_indicators.length != 0">-->

@@ -126,17 +126,21 @@ export class SampleScorecardComponent implements OnInit {
   //  assign a background color to area depending on the legend set details
   assignBgColor(object, value): string {
     let color = '#BBBBBB';
-    for ( const data of object.legendset ) {
-      if (data.max === '-') {
+    if (object.legend_display) {
+      for ( const data of object.legendset ) {
+        if (data.max === '-') {
 
-        if (parseInt(value) >= parseInt(data.min) ) {
-          color = data.color;
-        }
-      }else {
-        if (parseInt(value) >= parseInt(data.min) && parseInt(value) <= parseInt(data.max)) {
-          color = data.color;
+          if (parseInt(value) >= parseInt(data.min) ) {
+            color = data.color;
+          }
+        } else {
+          if (parseInt(value) >= parseInt(data.min) && parseInt(value) <= parseInt(data.max)) {
+            color = data.color;
+          }
         }
       }
+    } else {
+      color = '#FFFFFF';
     }
     return color;
   }

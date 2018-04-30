@@ -189,7 +189,7 @@ export class DataSelectionComponent implements OnInit {
     );
   }
 
-  // load a single item for use in a score card
+  // load a single item for use in a League Table
   load_item(item, pair = false): void {
     this.scorecardService.load_item(
       item,

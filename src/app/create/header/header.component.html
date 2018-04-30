@@ -6,8 +6,8 @@
       (click)="goToHomePage()"
       [tourAnchor]="position === 'top'? 'home.start.tour' : 'home.tour'"
     >
-      <img src="scorecard.svg" style="height: 58px; width: 48px" *ngIf="position === 'top'">
-      <span style="font-size: 20px" [translate]="'Score Card'" *ngIf="position === 'top'"> Score Card</span>
+      <img src="leaguetable.svg" style="height: 58px; width: 48px" *ngIf="position === 'top'">
+      <span style="font-size: 20px" [translate]="'League Table'" *ngIf="position === 'top'"> League Table</span>
     </div>
     <div  class="col-md-7 col-xs-12">
       <h3 class="text-center" style="margin-top: 8px"  *ngIf="position === 'top'">
@@ -117,12 +117,12 @@
         class="pull-right"
         *ngIf="saving_scorecard">
         <img src="balls-4.svg" style="height: 50px;">
-        Saving score card Information, Please wait...
+        Saving League Table Information, Please wait...
       </h6>
       <h6
         class="pull-right text-danger"
         *ngIf="saving_error">
-        Something went wrong, Saving score card Information failed
+        Something went wrong, Saving League Table Information failed
       </h6>
     </div>
   </div>

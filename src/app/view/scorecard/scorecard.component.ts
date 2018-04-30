@@ -109,7 +109,7 @@ export class ScorecardComponent implements OnInit, OnDestroy {
       this.proccessed_percent = 0;
       this.loading = true;
       this.orgunits = [];
-      this.loading_message = ' Getting scorecard details ';
+      this.loading_message = ' Getting League Table details ';
       const orgUnits: any = {...this.selectedOrganisationUnit};
       const period: any = {...this.selectedPeriod};
       this.periods_list = [...this.selectedPeriod.items];
@@ -239,7 +239,6 @@ export class ScorecardComponent implements OnInit, OnDestroy {
                                 const standardDeviation = arr.standardDeviation(uniqueArr.map((v: any) => v.value));
                                 return { key: val.key, value: (val.value - mean) / standardDeviation };
                               }), ['value'], ['desc']);
-                              console.log(indicator)
                             }
                             this.shown_records = this.orgunits.length;
                             // load previous data

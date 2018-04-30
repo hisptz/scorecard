@@ -250,7 +250,7 @@ export class BottleneckComponent implements OnInit {
 
   }
 
-  // load a single item for use in a score card
+  // load a single item for use in a League Table
   load_item(item, useGroup = false, group = null): void {
     if (useGroup) {
       if (group == null) {

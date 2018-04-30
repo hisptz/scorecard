@@ -1,4 +1,4 @@
-<!--sample score card-->
+<!--sample League Table-->
 <div class="container-fluid no-left-padding" style="border-top: 1px solid blanchedalmond; padding-top: 8px">
   <app-title-area
     [template]="scorecard.data.header.template.content"
@@ -163,7 +163,7 @@
               <tspan>{{ indicator.indicators[0].value }}</tspan>
             </text>
             <!--top arrow-->
-            <path *ngIf="indicator.indicators[0].showTopArrow && !indicator.indicators[0].showBottomArrow && scorecard.data.header.show_arrows_definition" d="M2,8H12L7,3" style="fill:black;stroke:black;stroke-width:1"/>
+            <path *ngIf="indicator.indicators[0].showTopArrow && !indicator.indicators[0].showBottomArrow && scorecard.data.header.show_arrows_definition" d="M2,8H12L7,3" style="fill:black;stroke:black;stroke-width:1" />
             <!--bottom arrow showing decrease-->
             <path *ngIf="indicator.indicators[0].showBottomArrow && scorecard.data.header.show_arrows_definition" d="M2,22H12L7,30" style="fill:black;stroke:black;stroke-width:1"/>
           </svg>

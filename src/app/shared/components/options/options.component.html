@@ -5,7 +5,7 @@
   class="btn  pull-right cursor"
   [ngClass]="{'btn-outline-secondary': (showAdditionalOptions && pinAdditionalOptions), 'btn-secondary': !(showAdditionalOptions && pinAdditionalOptions)}"
   style="height: 35px;padding-top: 0px;padding-bottom: 0px"
-  title="{{ 'Customize scorecard' | translate }}"
+  title="{{ 'Customize league table' | translate }}"
   (click)="showOptions()"
   (mouseenter)="showAdditionalOptions = false">
   <i class="fa fa-cog"></i>
@@ -120,7 +120,7 @@
         <li class="list-group-item pointer" (click)="setOptionFromButton('show_score', 'boolean')">
           <i class="fa fa-check-circle text-secondary" *ngIf="options.show_score"></i>
           <i class="fa fa-circle-thin text-secondary" *ngIf="!options.show_score"></i>
-          <span [translate]="'Score'"> Score</span>
+          <span [translate]="'Score'"> Weight</span>
         </li>
         <li class="list-group-item pointer" (click)="setOptionFromButton('show_arrows_definition', 'boolean')">
           <i class="fa fa-check-circle text-secondary" *ngIf="options.show_arrows_definition"></i>

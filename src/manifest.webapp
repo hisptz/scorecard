@@ -1,13 +1,13 @@
 {
     "version": "2.4",
     "name": "Scorecard 2.4-beta-1.4",
-    "description": "Score Card Generation",
+    "description": "League Table Generation",
     "launch_path": "index.html",
     "language": "en",
     "icons": {
-        "16": "scorecard.png",
-        "48": "scorecard.png",
-        "128": "scorecard.png"
+        "16": "leaguetable.png",
+        "48": "leaguetable.png",
+        "128": "leaguetable.png"
     },
     "developer": {
         "name": "HISP Tanzania",

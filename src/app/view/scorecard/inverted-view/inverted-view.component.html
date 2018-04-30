@@ -117,7 +117,7 @@
 
     <tr *ngIf="showSubScorecard[indicator.indicators[0].id]">
       <td [attr.colspan]="getSubscorecardColspan()" style="background-color: rgba(0,0,0,0.1)">
-        <!--Internal score card-->
+        <!--Internal League Table-->
         <h3 class="text-center text-muted" *ngIf="!children_available[indicator.indicators[0].id]">This indicator has no related indicators</h3>
         <app-scorecard
           *ngIf="children_available[indicator.indicators[0].id]"

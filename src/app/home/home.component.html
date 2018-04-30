@@ -2,15 +2,15 @@
 <div class="container-fluid">
   <div class="row" @fade>
     <div class="col-md-2 col-xs-12" style="padding-left: 0px; cursor: pointer;" [routerLink]="['']" tourAnchor="home.start.tour" >
-      <img src="scorecard.svg" style="height: 58px; width: 48px" >
-      <span style="font-size: 20px" [translate]="'Score Card'"> </span>
+      <img src="leaguetable.svg" style="height: 58px; width: 48px" >
+      <span style="font-size: 20px" [translate]="'League Table'"> </span>
     </div>
     <div class="col-md-8 col-xs-12" style="margin-top: 14px">
       <input
         tourAnchor="home.search"
         type="search"
         class="form-control input-sm"
-        placeholder="{{'Search score card by name' | translate}}"
+        placeholder="{{'Search League Table by name' | translate}}"
         [(ngModel)]="queryterm">
     </div>
     <div class="col-md-2 col-xs-12 hidden-sm" style="margin-top: 14px">
@@ -135,7 +135,7 @@
   <div class="well well-lg ">
     <h5 class="text-center">
       <img src="balls-3.svg" style="height: 70px"/>
-      <span [translate]="'Loading score cards'">Loading score cards...</span>
+      <span [translate]="'Loading League Tables'">Loading League Tables...</span>
       ...
     </h5>
     <app-placeholder></app-placeholder>
@@ -151,7 +151,7 @@
   <div [@hiddenItem] = "(loading$ | async)?'notHidden':'hidden'">
     <h5 class="text-center">
       <img src="balls-3.svg" style="height: 70px"/>
-      <span [translate]="'Loading score cards'">Loading score cards</span>
+      <span [translate]="'Loading League Tables'">Loading League Tables</span>
       ( {{ complete_percent$ | async }}% )
     </h5>
     <div class="progress" style="margin-bottom: 5px">

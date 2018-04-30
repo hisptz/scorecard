@@ -14,6 +14,7 @@ export class TitleAreaComponent implements OnInit {
   @Input() template: any = '';
   @Input() show_legend_definition: boolean = false;
   @Input() legendset_definitions: any = null;
+  @Input() show_league_table: boolean = true;
   constructor(
     private store: Store<ApplicationState>
   ) { }
