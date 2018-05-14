@@ -540,7 +540,7 @@ export class ScorecardComponent implements OnInit, OnDestroy {
       }
     } else if (sortingColumn === 'avg') {
       for (const orgunit of this.orgunits) {
-        orgunit['avg'] = parseFloat(this.scorecardService.findRowAverage(orgunit.id, this.periods_list, null, this.scorecard.data.data_settings.indicator_holders, this.hidenColums));
+        orgunit['avg'] = parseFloat(this.scorecardService.findRowZAverage(orgunit.id, this.periods_list, null, this.scorecard.data.data_settings.indicator_holders, this.hidenColums));
       }
       this.orgunits = _.orderBy(this.orgunits, [sortingColumn, 'name'], [sortAscending, 'asc']);
     } else if (sortingColumn === 'sum') {

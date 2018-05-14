@@ -81,7 +81,6 @@ export class BasicViewComponent implements OnInit {
 
 
   sortScoreCardFromColumn(sortingColumn, sortAscending, orguUnits, period: string, lower_level: boolean = true) {
-    this.hideAllAverages();
     this.onSortScoreCardFromColumn.emit({sortingColumn, sortAscending, orguUnits, period, lower_level});
   }
 
@@ -207,7 +206,7 @@ export class BasicViewComponent implements OnInit {
     let counter = 0;
     for (const holder of this.scorecard.data.data_settings.indicator_holders) {
       for (const indicator of holder.indicators) {
-        for (const current_period of this.periods_list){
+        for (const current_period of this.periods_list) {
           if (this.hidenColums.indexOf(indicator.id) === -1) {
             sum++;
           }
@@ -259,7 +258,4 @@ export class BasicViewComponent implements OnInit {
     this.onHideClicked.emit({ item , type});
   }
 
-  hideAllAverages() {
-    console.log(document.querySelector('.avg_col'));
-  }
 }

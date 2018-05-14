@@ -1,6 +1,6 @@
 {
-    "version": "2.4",
-    "name": "Scorecard 2.4-beta-1.4",
+    "version": "1.0",
+    "name": "League Table",
     "description": "League Table Generation",
     "launch_path": "index.html",
     "language": "en",
