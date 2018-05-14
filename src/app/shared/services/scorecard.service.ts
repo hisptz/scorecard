@@ -239,8 +239,8 @@ export class ScorecardService {
           'title': '',
           'sub_title': '',
           'description': '',
-          'show_arrows_definition': true,
-          'show_legend_definition': true,
+          'show_arrows_definition': false,
+          'show_legend_definition': false,
           'template': {
             'display': false,
             'content': ''
