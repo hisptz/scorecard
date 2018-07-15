@@ -50,7 +50,7 @@ export class ItemDetailsComponent implements OnInit {
 
   updateIndicatorDetails(indicator) {
     const indicator_holders = this.indicator_holders;
-    const updated_indicator_holder = _.find(this.indicator_holders, {'holder_id': this.current_indicator_holder.holder_id});
+    const updated_indicator_holder: any = _.find(this.indicator_holders, {'holder_id': this.current_indicator_holder.holder_id});
     const updated_indicator_holder_index = _.findIndex(this.indicator_holders, {'holder_id': this.current_indicator_holder.holder_id});
     const updated_indicator_index = _.findIndex(updated_indicator_holder.indicators, {id: indicator.id});
     updated_indicator_holder.indicators.splice(updated_indicator_index, 1, indicator);

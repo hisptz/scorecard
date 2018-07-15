@@ -35,7 +35,7 @@
               </td>
               <td
                 dnd-droppable
-                (onDropSuccess)="onDrop($event,'columns')"
+                (onDropSuccess)="onDrop($event,'rows')"
                 class="dimension-drops"
               >
                 <div>
@@ -46,17 +46,17 @@
                   class="draggable"
                   dnd-draggable
                   [dragEnabled]="true"
-                  *ngFor="let column of columns"
-                  [dragData]="{data: column, dimension: 'columns'}"
+                  *ngFor="let row of rows"
+                  [dragData]="{data: row, dimension: 'rows'}"
                 >
-                  <img [src]="icons[column.value]"> {{column.name}}
+                  <img [src]="icons[row.value]"> {{row.name}}
                 </div>
               </td>
             </tr>
             <tr>
               <td
                 dnd-droppable
-                (onDropSuccess)="onDrop($event,'rows')"
+                (onDropSuccess)="onDrop($event,'columns')"
                 class="dimension-drops"
               >
                 <div>
@@ -67,10 +67,10 @@
                   class="draggable"
                   dnd-draggable
                   [dragEnabled]="true"
-                  *ngFor="let row of rows"
-                  [dragData]="{data: row, dimension: 'rows'}"
+                  *ngFor="let column of columns"
+                  [dragData]="{data: column, dimension: 'columns'}"
                 >
-                  <img [src]="icons[row.value]"> {{row.name}}
+                  <img [src]="icons[column.value]"> {{column.name}}
                 </div>
               </td>
               <td class="dimension-drops"></td>

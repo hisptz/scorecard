@@ -64,7 +64,7 @@ export class FavoriteService {
         return {
           dimension: filterObject.dimension,
           items: _.map(filterObject.items, (item, index) => {
-            if (index === 0) {
+            if (index === '0') {
               return this._getRefinedFavouriteSubtitle(filterObject.items, userOrgUnit);
             }
           })
