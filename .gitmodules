@@ -1,3 +1,9 @@
 [submodule "src/app/shared/components/map"]
 	path = src/app/shared/components/map
 	url = git@github.com:hisptz/map-module.git
+[submodule "ng2-dhis-menu-module"]
+	path = ng2-dhis-menu-module
+	url = https://github.com/hisptz/ng2-dhis-menu-module.git
+[submodule "src/app/shared/components/ng2-dhis-menu-module"]
+	path = src/app/shared/components/ng2-dhis-menu-module
+	url = https://github.com/hisptz/ng2-dhis-menu-module.git

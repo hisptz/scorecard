@@ -217,7 +217,7 @@ export class ScorecardComponent implements OnInit, OnDestroy {
                         ou: orgUnits.value,
                         pe: current_period.id,
                         rule: this.getFunctionRule(use_function['rules'], indicator.id),
-                        success: (data) => { // This will run on successfull function return, which will save the result to the data store for analytics
+                        success: (data) => { // This will run on successfully function return, which will save the result to the data store for analytics
                           this.doneLoadingIndicator(indicator, this.allIndicatorsLength, current_period);
                           for (const orgunit of data.metaData.ou) {
                             const value_key = orgunit + '.' + current_period.id;

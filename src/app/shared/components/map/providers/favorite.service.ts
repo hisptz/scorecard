@@ -63,8 +63,8 @@ export class FavoriteService {
       const newFavoriteFilters = _.map(favoriteFilters, filterObject => {
         return {
           dimension: filterObject.dimension,
-          items: _.map(filterObject.items, (item, index: number) => {
-            if (index === 0) {
+          items: _.map(filterObject.items, (item, index) => {
+            if (index === '0') {
               return this._getRefinedFavouriteSubtitle(filterObject.items, userOrgUnit);
             }
           })
@@ -106,7 +106,7 @@ export class FavoriteService {
 
   _getRefinedFavouriteSubtitle(subTitleItems, userOrgUnit) {
     let refinedSubtitle = '';
-    const monthNames = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+    let monthNames = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
     const subTitleFunction = {
       'THIS_YEAR': () => {
         const date = new Date();
@@ -124,14 +124,14 @@ export class FavoriteService {
         return monthNames[date.getMonth() - 1] + ' ' + date.getFullYear();
       },
       'THIS_QUARTER': () => {
-        const date = new Date(); // If no date supplied, use today
+        let date = new Date(); // If no date supplied, use today
         const quarter = ['January - March ', 'April - June ', 'July - September', 'October - December '];
         return quarter[Math.floor(date.getMonth() / 3)] + date.getFullYear();
       },
       'USER_ORGUNIT': () => {
         return userOrgUnit;
       }
-    };
+    }
 
     subTitleItems.forEach(item => {
       if (item.id.indexOf('_') < 0 && isNaN(item.id)) {
@@ -199,7 +199,7 @@ export class FavoriteService {
         /**
          * Save result to the filter array
          */
-        filters.push(filterObject);
+        filters.push(filterObject)
       }
     }
 
@@ -210,7 +210,7 @@ export class FavoriteService {
     if (dataDimensions) {
 
     }
-    return [];
+    return []
   }
 
   private _getReadableDimensionValue(dimensionArray: any, readableDimensionValues: any) {
@@ -223,7 +223,7 @@ export class FavoriteService {
                 id: item.dimensionItem,
                 name: item.displayName,
                 itemType: item.dimensionItemType
-              };
+              }
             });
           }
         }
@@ -274,15 +274,15 @@ export class FavoriteService {
                 id: item.dimensionItem,
                 name: item.displayName,
                 itemType: item.dimensionItemType
-              };
+              }
             });
 
             const itemValues = dimensionObject.items.map(item => {
-              return item.dimensionItem ? item.dimensionItem : '';
-            }).join(';');
+              return item.dimensionItem ? item.dimensionItem : ''
+            }).join(';')
             dimensionValue.value = itemValues !== '' ? itemValues : dimensionObject.filter ? dimensionObject.filter : '';
           }
-          dimensionValues.push(dimensionValue);
+          dimensionValues.push(dimensionValue)
         }
       });
     }
@@ -295,9 +295,9 @@ export class FavoriteService {
     if (filters) {
       filters.forEach((filter: any) => {
         filter.forEach(filterValue => {
-          compiledFilters.push(filterValue);
-        });
-      });
+          compiledFilters.push(filterValue)
+        })
+      })
     }
     return compiledFilters;
   }
@@ -311,17 +311,17 @@ export class FavoriteService {
             rows: this._getDimensionLayout(view.rows, view.dataElementDimensions),
             columns: this._getDimensionLayout(view.columns, view.dataElementDimensions),
             filters: this._getDimensionLayout(view.filters, view.dataElementDimensions)
-          };
-          layouts.push({id: view.id, layout: layout});
-        });
+          }
+          layouts.push({id: view.id, layout: layout})
+        })
       } else {
         const layout = {
           // todo add flexibility for attributesDimensions and programIndicatorDimensions
           rows: this._getDimensionLayout(favorite.rows, favorite.dataElementDimensions),
           columns: this._getDimensionLayout(favorite.columns, favorite.dataElementDimensions),
           filters: this._getDimensionLayout(favorite.filters, favorite.dataElementDimensions)
-        };
-        layouts.push({id: favorite.id, layout: layout});
+        }
+        layouts.push({id: favorite.id, layout: layout})
       }
     }
     return layouts;
@@ -332,14 +332,14 @@ export class FavoriteService {
     if (favorite) {
       if (favorite.mapViews) {
         favorite.mapViews.forEach(view => {
-          interpretations.push({id: view.id, interpretations: view.interpretations});
-        });
+          interpretations.push({id: view.id, interpretations: view.interpretations})
+        })
       } else {
 
-        interpretations.push({id: favorite.id, interpretations: favorite.interpretations});
+        interpretations.push({id: favorite.id, interpretations: favorite.interpretations})
       }
     }
-    return interpretations;
+    return interpretations
   }
 
   private _getDimensionLayout(dimensionArray, dataElementDimensions) {
@@ -351,7 +351,7 @@ export class FavoriteService {
           const layoutName = this._getLayoutName(layoutValue, dataElementDimensions);
           newDimensionLayoutArray.push({name: layoutName, value: layoutValue});
         }
-      });
+      })
     }
     return newDimensionLayoutArray;
   }
@@ -359,22 +359,22 @@ export class FavoriteService {
   private _getLayoutName(layoutValue, dataElementDimensions) {
     switch (layoutValue) {
       case 'ou': {
-        return 'Organisation Unit';
+        return 'Organisation Unit'
       }
 
       case 'pe': {
-        return 'Period';
+        return 'Period'
       }
 
       case 'dx': {
-        return 'Data';
+        return 'Data'
       }
 
       default: {
         let layoutName = '';
         if (dataElementDimensions) {
           const compiledDimension = dataElementDimensions.map(dataElementDimension => {
-            return dataElementDimension.dataElement;
+            return dataElementDimension.dataElement
           });
           const layoutObject = _.find(compiledDimension, ['id', layoutValue]);
           if (layoutObject) {
@@ -388,7 +388,7 @@ export class FavoriteService {
   }
 
   getFavoriteOptions(apiRootUrl) {
-    return Observable.of([]);
+    return Observable.of([])
     // return Observable.create(observer => {
     //   this.http.get(apiRootUrl + 'dataStore/idashboard/favoriteOptions').subscribe((favoriteOptions: any) => {
     //     observer.next(favoriteOptions);
@@ -412,7 +412,7 @@ export class FavoriteService {
           }, () => {
             observer.next(visualizationDetails);
             observer.complete();
-          });
+          })
       } else {
         observer.next(visualizationDetails);
         observer.complete();
@@ -448,7 +448,7 @@ export class FavoriteService {
                 }, () => {
                   observer.next(visualizationDetails);
                   observer.complete();
-                });
+                })
             }
           }, () => {
             this.http.post(visualizationDetails.apiRootUrl + 'dataStore/idashboard/favoriteOptions', [favoriteOptions])
@@ -458,19 +458,19 @@ export class FavoriteService {
               }, () => {
                 observer.next(visualizationDetails);
                 observer.complete();
-              });
+              })
           });
       } else {
         observer.next(visualizationDetails);
         observer.complete();
       }
-    });
+    })
   }
 
   createOrUpdateFavorite(visualizationDetails: any) {
     return Observable.create(observer => {
       const visualizationSettings = visualizationDetails.visualizationObject.layers.map(layer => {
-        return layer.settings;
+        return layer.settings
       });
       const additionalOptionsArray = this._prepareAdditionalFavoriteOptions(visualizationSettings);
       /**
@@ -478,7 +478,7 @@ export class FavoriteService {
        */
       Observable.forkJoin(
         visualizationSettings.map(setting => {
-          return Observable.of(setting);
+          return Observable.of(setting)
         })
       ).subscribe(() => {
         /**
@@ -489,25 +489,25 @@ export class FavoriteService {
             return this._updateAdditionalOptions({
               apiRootUrl: visualizationDetails.apiRootUrl,
               favoriteOptions: option
-            });
+            })
           })
         ).subscribe(() => {
           visualizationDetails.updateSuccess = true;
           observer.next(visualizationDetails);
-          observer.complete();
+          observer.complete()
         }, error => {
           visualizationDetails.updateSuccess = false;
           visualizationDetails.updateError = error;
           observer.next(visualizationDetails);
-          observer.complete();
-        });
+          observer.complete()
+        })
       }, favoriteError => {
         visualizationDetails.updateSuccess = false;
         visualizationDetails.updateError = favoriteError;
         observer.next(visualizationDetails);
-        observer.complete();
-      });
-    });
+        observer.complete()
+      })
+    })
   }
 
   private _prepareAdditionalFavoriteOptions(visualizationSettings) {
@@ -520,10 +520,10 @@ export class FavoriteService {
           selectedChartTypes: visualizationSetting.selectedChartTypes
         };
 
-        favoriteOptionArray.push(favoriteOption);
-      });
+        favoriteOptionArray.push(favoriteOption)
+      })
     }
-    return favoriteOptionArray;
+    return favoriteOptionArray
   }
 
   splitFavorite(favorite: any, splitCriterias: any[]) {
@@ -540,7 +540,7 @@ export class FavoriteService {
         favoriteRows = this.splitDimensionLayout(favoriteRows, criteria);
         favoriteColumns = this.splitDimensionLayout(favoriteColumns, criteria);
         favoriteFilters = this.splitDimensionLayout(favoriteFilters, criteria);
-      });
+      })
     }
 
     let favoriteIndex: number = 0;
@@ -548,7 +548,7 @@ export class FavoriteService {
       favoriteColumns.forEach(column => {
         favoriteFilters.forEach(filter => {
           const favoriteObject: any = _.clone(favorite);
-          // function to rename
+          //function to rename
           favoriteObject.rows = row;
           favoriteObject.columns = column;
           favoriteObject.filters = filter;
@@ -559,8 +559,8 @@ export class FavoriteService {
           favoriteObject.layer = 'thematic' + (favoriteIndex + 1);
           favoriteArray.push(favoriteObject);
           favoriteIndex++;
-        });
-      });
+        })
+      })
     });
 
 
@@ -577,10 +577,10 @@ export class FavoriteService {
           if (dimensionArray) {
             dimensionArray.items.forEach(item => {
               identifier += identifier !== '' ? '_' + item.id : item.id;
-            });
+            })
           }
         });
-      });
+      })
     }
     return identifier;
   }
@@ -594,10 +594,10 @@ export class FavoriteService {
         if (dataArray) {
           dataArray.items.forEach(item => {
             favoriteName += item.displayName;
-          });
+          })
         }
 
-      });
+      })
 
       dimensions.forEach(dimensionItem => {
         const periodArray = _.find(dimensionItem, ['dimension', 'pe']);
@@ -605,10 +605,10 @@ export class FavoriteService {
         if (periodArray) {
           periodArray.items.forEach(item => {
             favoriteName += favoriteName !== '' ? ' - ' + item.displayName : item.displayName;
-          });
+          })
         }
 
-      });
+      })
     }
 
     return favoriteName;
@@ -638,15 +638,15 @@ export class FavoriteService {
             const newArray: any[] = [];
             layoutDetail.forEach(nonCriteriaDetail => {
               if (nonCriteriaDetail.dimension !== criteria) {
-                newArray.push(nonCriteriaDetail);
+                newArray.push(nonCriteriaDetail)
               }
             });
 
             const concatArray = _.concat(newArray, criteriaObject);
-            splitedArray.push(concatArray);
-          });
+            splitedArray.push(concatArray)
+          })
 
-        });
+        })
 
       });
     }
@@ -682,7 +682,7 @@ export class FavoriteService {
          * merge filters
          */
         filters = this.mergeDimensionLayout(_.clone(favorite.filters), filters);
-      });
+      })
     }
 
     mergedFavorite.rows = this.mergeToCorrepondingDimension(rows);
@@ -697,11 +697,11 @@ export class FavoriteService {
      * prepare arrays for checking duplicate
      * @type {Array}
      */
-    const resultItems: any[] = [];
+    let resultItems: any[] = [];
     layoutResult.forEach(result => {
       result.items.forEach(resultItem => {
         resultItems.push(resultItem);
-      });
+      })
     });
 
     /**
@@ -713,16 +713,16 @@ export class FavoriteService {
         layoutItems.forEach(item => {
           const existingItem = _.find(resultItems, ['id', item.id]);
           if (!existingItem) {
-            layoutResult.push(result);
+            layoutResult.push(result)
           }
         });
-      });
+      })
     }
     return layoutResult;
   }
 
   mergeToCorrepondingDimension(layoutResult) {
-    const newLayoutResult: any = [];
+    let newLayoutResult: any = [];
     layoutResult.forEach(result => {
       if (newLayoutResult.length === 0) {
         newLayoutResult.push(result);
@@ -730,7 +730,7 @@ export class FavoriteService {
         const currentDimensionObject = _.find(newLayoutResult, ['dimension', result.dimension]);
         const currentDimensionIndex = _.findIndex(newLayoutResult, currentDimensionObject);
         if (currentDimensionObject) {
-          const newItemList: any = [];
+          let newItemList: any = [];
 
           /**
            * Get list from current array
@@ -741,6 +741,7 @@ export class FavoriteService {
               newItemList.push(item);
             });
           }
+          ;
 
           /**
            * Add more item list from already added list

@@ -373,7 +373,7 @@ export class ScorecardService {
 
 
   // prepare a scorecard for adding to creation state
-  getScorecardForCreation(scorecard: ScoreCard, type: string, user): CreatedScorecardState {
+  getScorecardForCreation(scorecard: ScoreCard, type: string, user): any {
     scorecard = this.sanitize_scorecard(scorecard);
     return {
       action_type: type,
@@ -951,33 +951,33 @@ export class ScorecardService {
   findRowZAverage(orgunit_id, periods_list, period, indicator_holders, hidenColums) {
     let sum = 0;
     let counter = 0;
-    if (period === null) {
-      for (const holder of indicator_holders) {
-        for (const indicator of holder.indicators) {
-          for (const per of periods_list) {
-            const use_key: any = orgunit_id + '.' + per.id;
-            const item: any = _.find(indicator.key_values, { 'key': use_key });
-            if (hidenColums.indexOf(indicator.id) === -1 && item) {
-              counter++;
-              sum += (!isNaN(item.value)) ? parseFloat(item.value) : 0;
-            }
-          }
-        }
-      }
-    } else {
-      const use_key: any = orgunit_id + '.' + period;
-      for (const holder of indicator_holders) {
-        for (const indicator of holder.indicators) {
-          const item: any = _.find(indicator.key_values, { 'key': use_key });
-          if (hidenColums.indexOf(indicator.id) === -1 && item) {
-            counter++;
-            sum += (!isNaN(item.value)) ? parseFloat(item.value) : 0;
-          }
-        }
-      }
-    }
+   if (period !== null) {
+     const use_key: any = orgunit_id + '.' + period;
+     for (const holder of indicator_holders) {
+       for (const indicator of holder.indicators) {
+         const item: any = _.find(indicator.key_values, {'key': use_key});
+         if (hidenColums.indexOf(indicator.id) === -1 && item) {
+           counter++;
+           sum += (!isNaN(item.value)) ? parseFloat(item.value) : 0;
+         }
+       }
+     }
+   } else {
+     for (const holder of indicator_holders) {
+       for (const indicator of holder.indicators) {
+         for (const per of periods_list) {
+           const use_key: any = orgunit_id + '.' + per.id;
+           const item: any = _.find(indicator.key_values, {'key': use_key});
+           if (hidenColums.indexOf(indicator.id) === -1 && item) {
+             counter++;
+             sum += (!isNaN(item.value)) ? parseFloat(item.value) : 0;
+           }
+         }
+       }
+     }
+   }
 
-    return (sum / counter).toFixed(2);
+   return (sum / counter).toFixed(2);
   }
 
   /**
