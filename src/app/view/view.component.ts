@@ -20,6 +20,7 @@ import { TourService } from 'ngx-tour-ng-bootstrap';
 import {SetSortingColumn} from '../store/actions/view.actions';
 import {fadeIn, fadeOut, fadeSmooth, zoomCard} from '../shared/animations/basic-animations';
 import {DomSanitizer} from '@angular/platform-browser';
+import * as _ from 'lodash'
 
 @Component({
   selector: 'app-view',
@@ -187,7 +188,7 @@ export class ViewComponent implements OnInit, AfterViewInit {
                   dataElement: indicator.id,
                   period: keyArr[1],
                   orgUnit: keyArr[0],
-                  value: indicator.values[key]
+                  value: _.toString(indicator.values[key])
                 };
               })
             );
@@ -247,6 +248,7 @@ export class ViewComponent implements OnInit, AfterViewInit {
       dimensions: {  }
     };
     dataValues.rows = {};
+
     this.scorecard$.subscribe(scorecard => {
       const indicators = scorecard.data.data_settings.indicator_holders.map(
         (holder) => holder.indicators  );
@@ -258,15 +260,15 @@ export class ViewComponent implements OnInit, AfterViewInit {
       const organisationUnitMetadatas = [];
       indicators.forEach(indicatorArr => {
         indicatorArr.forEach(indicator => {
-          dataValues.metaData.items[indicator.id] = {name: indicator.name};
-          indicatorMetadatas.push({id: indicator.id, name: indicator.name });
+          dataValues.metaData.items[indicator.id] = {name: indicator.name, legendSet: indicator.legendset};
+          indicatorMetadatas.push({id: indicator.id, name: indicator.name});
           if ( indicatorIds.indexOf(indicator.id) === -1) { indicatorIds.push(indicator.id); }
           Object.keys(indicator.values).forEach(key => {
             const keyArr = key.split('.');
             if ( periodIds.indexOf(keyArr[1]) === -1) { periodIds.push(keyArr[1]); }
             if ( orgunitIds.indexOf(keyArr[0]) === -1) { orgunitIds.push(keyArr[0]); }
             if (indicator.values[key]) {
-              dataValue.push([indicator.id, keyArr[1], keyArr[0], indicator.values[key]]);
+              dataValue.push([indicator.id, keyArr[1], keyArr[0], _.toString(indicator.values[key])]);
             }
           });
             // dataValue.push(...Object.keys(indicator.values).map( key => {
@@ -281,26 +283,51 @@ export class ViewComponent implements OnInit, AfterViewInit {
             // );
         });
       });
+      dataValues.headers.forEach(
+        (headerArray, index, array) => {
+          if (index < (array.length) - 1 ) {
+            dataValues.metaData.items[headerArray.name] = {name: headerArray.column};
+          }
+        }
+      );
+
+      // orgunitIds.forEach(
+      //   orgUnitsArray => {
+      //     dataValues.metaData.items[orgUnitsArray.id]  = {name: orgUnitsArray.name};
+      //   }
+      // )
+
       dataValues.metaData.dimensions['ou'] = orgunitIds;
       dataValues.metaData.dimensions['pe'] = periodIds;
       dataValues.metaData.dimensions['dx'] = indicatorIds;
+      dataValues.metaData.dimensions['co'] = [];
       orgunitIds.forEach(ou => {
         const ouI: any = {};
         const detailed_orgunit = this.organisation_unit_nodes.treeModel.getNodeById(ou);
         if (detailed_orgunit && detailed_orgunit.data.hasOwnProperty('id')) { ouI['id'] = detailed_orgunit.data.id; }
         if (detailed_orgunit && detailed_orgunit.data.hasOwnProperty('level')) { ouI['level'] = detailed_orgunit.data.level; }
         if (detailed_orgunit && detailed_orgunit.data.hasOwnProperty('name')) { ouI['name'] = detailed_orgunit.data.name; }
-        if (detailed_orgunit && detailed_orgunit.data.hasOwnProperty('parent')) { ouI['parent'] = detailed_orgunit.data.parent; }
+        if (detailed_orgunit && detailed_orgunit.data.hasOwnProperty('parent')) { ouI['parent'] = _.omit(detailed_orgunit.data.parent, ['name']); }
         organisationUnitMetadatas.push(ouI);
       });
+
+      organisationUnitMetadatas.forEach(
+        orgUnitsArray => {
+          dataValues.metaData.items[orgUnitsArray.id]  = {name: orgUnitsArray.name};
+        }
+      );
+
       dataValues.rows = dataValue;
+      dataValues.height = (dataValues.rows).length;
+      dataValues.width = (dataValues.rows[0]).length;
       const theJSON = JSON.stringify({dataValues: [dataValues]});
       const theJSON1 = JSON.stringify({
         organisationUnits: {
-          organisationUnits: organisationUnitMetadatas
+          organisationUnits: _.sortBy(organisationUnitMetadatas, ['name'])
         },
         indicators: indicatorMetadatas
       });
+
       const uri = this.sanitizer.bypassSecurityTrustUrl('data:text/json;charset=UTF-8,' + encodeURIComponent(theJSON));
       const uri1 = this.sanitizer.bypassSecurityTrustUrl('data:text/json;charset=UTF-8,' + encodeURIComponent(theJSON1));
       this.downloadJsonHref = uri;
