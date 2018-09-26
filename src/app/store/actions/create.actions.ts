@@ -21,7 +21,10 @@ export const SET_HOLDERS = '[Create] Set Holders';
 export const SET_USER_GROUP = '[Create] Set User Group';
 export const SET_HOLDER_GROUPS = '[Create] Set Holder Groups';
 export const SET_ADDITIONAL_LABELS = '[Create] Set Additional Labels';
-export const SET_EDDITING_HEADER = '[Create] Set Editing Haader';
+export const SET_EDDITING_HEADER = '[Create] Set Editing Header';
+export const SET_EDDITING_HIGHLIGHTED = '[Create] Set Editing Highlighted';
+export const SET_HIGHLIGHTED_INDICATOR = '[Create] Set Highlighted Indicator';
+export const SET_HIGHLIGHTED_INDICATOR_OU = '[Create] Set Highlighted Indicator Organisation Unit';
 export const SET_ORGUNIT_SETTINGS = '[Create] Set Orgunit Settings';
 export const SET_PERIOD_TYPE = '[Create] Set Period Type';
 export const SET_SELECTED_PERIODS = '[Create] Set Selected Period';
@@ -97,6 +100,11 @@ export class SetEdditingHeader implements Action {
   constructor(public payload: boolean) {}
 }
 
+export class SetEdditingHighlited implements Action {
+  readonly type = SET_EDDITING_HIGHLIGHTED;
+  constructor(public payload: boolean) {}
+}
+
 export class SetOptions implements Action {
   readonly type = SET_OPTIONS;
   constructor(public payload: any) {}
@@ -112,6 +120,16 @@ export class SetPeriodType implements Action {
   constructor(public payload: any) {}
 }
 
+export class SetHighlightedIndicator implements Action {
+  readonly type = SET_HIGHLIGHTED_INDICATOR;
+  constructor(public payload: any) {}
+}
+
+export class SetHighlightedIndicatorOu implements Action {
+  readonly type = SET_HIGHLIGHTED_INDICATOR_OU;
+  constructor(public payload: string) {}
+}
+
 export class SetSelectedPeriod implements Action {
   readonly type = SET_SELECTED_PERIODS;
   constructor(public payload: any) {}
@@ -125,7 +143,6 @@ export class SetUserGroups implements Action {
 export class GetScorecardToCreate implements Action {
   readonly type = GET_SCORECARD_TO_CREATE;
 }
-
 
 export type Actions =
   SetCreatedScorecard
@@ -147,4 +164,7 @@ export type Actions =
   | SetUserGroups
   | SetOrgunitSettings
   | SetPeriodType
-  | SetSelectedPeriod;
+  | SetSelectedPeriod
+  | SetEdditingHighlited
+  | SetHighlightedIndicator
+  | SetHighlightedIndicatorOu;

@@ -200,7 +200,7 @@ export class OrgUnitService {
   generateUrlBasedOnLevels (level) {
     let childrenLevels = '[]';
     for (let i = 1; i < level + 1; i++) {
-      childrenLevels = childrenLevels.replace('[]', '[id,name,level,parent[name],children[]]');
+      childrenLevels = childrenLevels.replace('[]', '[id,name,level,parent[id,name],children[]]');
     }
     let new_string = childrenLevels.substring(1);
     new_string = new_string.replace(',children[]]', '');

@@ -119,6 +119,20 @@
     </div>
   </div>
 
+  <!--model for bottleneck indicator-->
+  <div class="indicator_details" *ngIf="show_highlited_editor$ | async" [@newhiddenState]="show_highlited_editor$ | async">
+    <div class="indicator_dialog">
+      <div class="indicator-content">
+        <app-highlighted-indicators
+          (onCancelHighlightedEditor)="cancelSaveHighlighted()"
+          [scorecard]="scorecard$ | async"
+          [highlighted_indicators]="highlighted_indicators$ | async"
+          [legendset_definitions]="legendset_definitions$ | async"
+        ></app-highlighted-indicators>
+      </div>
+    </div>
+  </div>
+
   <div class="custom_header_details" [@hiddenState]="!(show_editor$ | async) ? 'hidden' : 'notHidden'">
     <div class="indicator_dialog">
       <div class="custom-header-content">

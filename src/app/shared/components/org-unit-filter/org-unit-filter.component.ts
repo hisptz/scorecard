@@ -117,7 +117,7 @@ export class OrgUnitFilterComponent implements OnInit {
         };
         this.customTemplateStringOrgunitOptions = {actionMapping};
 
-      }else if (this.orgunit_tree_config.multiple_key === 'control') { // multselect using control key
+      } else if (this.orgunit_tree_config.multiple_key === 'control') { // multselect using control key
         const actionMapping: IActionMapping = {
           mouse: {
             click: (node, tree, $event) => {
@@ -128,7 +128,7 @@ export class OrgUnitFilterComponent implements OnInit {
           }
         };
         this.customTemplateStringOrgunitOptions = {actionMapping};
-      }else if (this.orgunit_tree_config.multiple_key === 'shift') { // multselect using shift key
+      } else if (this.orgunit_tree_config.multiple_key === 'shift') { // multselect using shift key
         const actionMapping: IActionMapping = {
           mouse: {
             click: (node, tree, $event) => {
@@ -141,7 +141,7 @@ export class OrgUnitFilterComponent implements OnInit {
         this.customTemplateStringOrgunitOptions = {actionMapping};
       }
 
-    }else {
+    } else {
       const actionMapping: IActionMapping = {
         mouse: {
           dblClick: TREE_ACTIONS.TOGGLE_EXPANDED,
@@ -422,7 +422,7 @@ export class OrgUnitFilterComponent implements OnInit {
         orgunit_model.selected_user_orgunit.forEach((orgunit) => {
           organisation_unit_analytics_string += orgunit.id + ';';
         });
-    }else {
+    } else {
       // if there is only one organisation unit selected
       if ( orgunit_model.selected_orgunits.length === 1 ) {
         const detailed_orgunit = this.orgtree.treeModel.getNodeById(orgunit_model.selected_orgunits[0].id);

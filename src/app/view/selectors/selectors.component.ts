@@ -26,11 +26,16 @@ export class SelectorsComponent implements OnInit {
 
   printHovered = false;
   excelHovered = false;
+  almaHovered = false;
+  almaHovered1 = false;
   refreshHovered = false;
   editHovered = false;
 
+  @Input() downloadJsonHref;
+  @Input() downloadOUJsonHref;
   @Output() onOrgunitChange = new EventEmitter();
   @Output() onDownloadCsv = new EventEmitter();
+  @Output() onDownloadAlma = new EventEmitter();
   @Output() onUpdate = new EventEmitter();
   constructor(
     private store: Store<ApplicationState>
@@ -98,6 +103,10 @@ export class SelectorsComponent implements OnInit {
 
   loadScoreCard() {
     this.onUpdate.emit();
+  }
+
+  downloadAlma() {
+    this.onDownloadAlma.emit();
   }
 
   downloadXls() {

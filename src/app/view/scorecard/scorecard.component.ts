@@ -11,6 +11,7 @@ import * as _ from 'lodash';
 import {ContextMenuComponent, ContextMenuService} from 'ngx-contextmenu';
 import {animate, state, style, transition, trigger} from '@angular/animations';
 import {arr} from './arrayHelpers';
+import {ScoreCard} from '../../shared/models/scorecard';
 
 @Component({
   selector: 'app-scorecard',
@@ -33,7 +34,7 @@ import {arr} from './arrayHelpers';
 })
 export class ScorecardComponent implements OnInit, OnDestroy {
 
-  @Input() scorecard: any;
+  @Input() scorecard: ScoreCard;
   @Input() selectedOrganisationUnit: any;
   @Input() selectedPeriod: any;
   @Input() functions: any;
@@ -44,6 +45,7 @@ export class ScorecardComponent implements OnInit, OnDestroy {
   // Event emmiter to use once the data area in scorecard is clicked
   @Output() show_details = new EventEmitter<any>();
   @Output() onChangingSort = new EventEmitter<any>();
+  @Output() onDoneLoadingData = new EventEmitter<any>();
   // use this when loading children scorecard during drilldown
   @Input() level: string = 'top';
 
@@ -124,6 +126,33 @@ export class ScorecardComponent implements OnInit, OnDestroy {
           'analytics.json?dimension=pe:' + period.value + '&filter=ou:' + orgUnits.value + '&displayProperty=NAME&skipData=true'
         ).subscribe(
           (initialAnalyticsResult: any) => {
+            // process the additional indicators
+            const highlited_indicators = this.scorecard.data.highlighted_indicators;
+            if (highlited_indicators && highlited_indicators.definitions && highlited_indicators.definitions.length !== 0) {
+              const highlighted_indicators_dx = highlited_indicators.definitions
+                .map(item => item.id)
+                .join(';');
+              const highlighted_indicators_ou = ( highlited_indicators.ou && highlited_indicators.ou !== '' )
+                ? highlited_indicators.ou : orgUnits.value;
+              const highlighted_indicators_pe = period.value;
+              this.dataService.getIndicatorsRequest(highlighted_indicators_ou, highlighted_indicators_pe, highlighted_indicators_dx)
+                .subscribe((return_data: any ) => {
+                  const highlighted_indicators_data = this.visualizerService._sanitizeIncomingAnalytics(return_data);
+                  this.scorecard.data.highlighted_indicators.definitions.forEach((highlighted_indicator) => {
+                    const data_config = [
+                      { 'type': 'pe', 'value': highlighted_indicators_pe },
+                      { 'type': 'dx', 'value': highlighted_indicator.id },
+                      ];
+                    highlighted_indicator.value = this.visualizerService.getDataValue(highlighted_indicators_data, data_config);
+                  });
+
+
+
+                  }
+              );
+            }
+
+
             initialAnalyticsResult = this.visualizerService._sanitizeIncomingAnalytics(initialAnalyticsResult);
             // prepare organisation unit list to be displayed in scorecard
             this.orgunits = _.map(initialAnalyticsResult.metaData.ou, (ou: any) => {
@@ -336,6 +365,7 @@ export class ScorecardComponent implements OnInit, OnDestroy {
     this.proccessed_percent = (this.proccesed_indicators / totalIndicators) * 100;
     if (this.proccesed_indicators === totalIndicators) {
       this.loading = false;
+      this.onDoneLoadingData.emit();
     }
   }
 

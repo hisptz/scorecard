@@ -78,6 +78,7 @@ export class CreateComponent implements OnInit {
   show_title_warning$: Observable<boolean>;
 
   additional_labels$: Observable<any>;
+  highlighted_indicators$: Observable<any>;
   indicator_holders$: Observable<IndicatorHolder[]>;
   indicator_holder_groups$: Observable<IndicatorHolderGroup[]>;
   legendset_definitions$: Observable<Legend[]>;
@@ -86,6 +87,7 @@ export class CreateComponent implements OnInit {
   options$: Observable<any>;
   can_edit$: Observable<any>;
   show_editor$: Observable<boolean>;
+  show_highlited_editor$: Observable<boolean>;
   action_type$: Observable<string>;
   errorSavingData: boolean = false;
 
@@ -128,6 +130,7 @@ export class CreateComponent implements OnInit {
     this.show_title_warning$ = this.store.select(createSelectors.getTitleWarning);
 
     this.additional_labels$ = this.store.select(createSelectors.getAdditionalLabels);
+    this.highlighted_indicators$ = this.store.select(createSelectors.getHighlightedIndicators);
     this.indicator_holders$ = this.store.select(createSelectors.getIndicatorHolders);
     this.indicator_holder_groups$ = this.store.select(createSelectors.getHolderGroups);
     this.legendset_definitions$ = this.store.select(createSelectors.getLegendSetDefinition);
@@ -136,6 +139,7 @@ export class CreateComponent implements OnInit {
     this.options$ = this.store.select(createSelectors.getOptions);
     this.can_edit$ = this.store.select(createSelectors.getCanEdit);
     this.show_editor$ = this.store.select(createSelectors.getShowTitleEditor);
+    this.show_highlited_editor$ = this.store.select(createSelectors.getShowHighlitedEditor);
     this.action_type$ = this.store.select(createSelectors.getActionType);
     this.tourService.initialize(tourSteps);
 
@@ -180,6 +184,10 @@ export class CreateComponent implements OnInit {
 
   cancelSaveBotleneck() {
     this.show_bottleneck_indicators = !this.show_bottleneck_indicators;
+  }
+
+  cancelSaveHighlighted() {
+    this.store.dispatch(new createActions.SetEdditingHighlited(false));
   }
 
   saveBotleneck(indicator) {

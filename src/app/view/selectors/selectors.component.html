@@ -35,6 +35,27 @@
       <span *ngIf="refreshHovered" [translate]="'Refresh'">Refresh</span>
     </button>
     <!--Excel download button-->
+    <a
+      (mouseenter)="almaHovered = true"
+      (mouseleave)="almaHovered = false"
+      class="btn btn-outline-secondary btn-sm pull-right cursor"
+      style="height: 35px;margin-left: 3px;"
+      [href]="downloadJsonHref" download="data.json"
+      title="{{ 'Download Alma Metadata' | translate }}">
+      <i class="fa fa-upload"></i>
+      <span *ngIf="almaHovered" [translate]="'Export to ALMA'"> Export to ALMA</span>
+    </a>
+    <a
+      (mouseenter)="almaHovered1 = true"
+      (mouseleave)="almaHovered1 = false"
+      class="btn btn-outline-secondary btn-sm pull-right cursor"
+      style="height: 35px;margin-left: 3px;"
+      [href]="downloadOUJsonHref" download="metadata.json"
+      title="{{ 'Download Alma Metadata' | translate }}">
+      <i class="fa fa-upload"></i>
+      <span *ngIf="almaHovered1" [translate]="'Export Metadata'"> Export Metadata</span>
+    </a>
+    <!--Excel download button-->
     <button
       tourAnchor="view.excel"
       (mouseenter)="excelHovered = true"

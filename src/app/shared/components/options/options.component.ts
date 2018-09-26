@@ -78,7 +78,7 @@ export class OptionsComponent implements OnInit {
   setOptionFromButton( option, type, value = null ) {
     if (type === 'boolean') {
       this.options[option] = !this.options[option];
-    }else {
+    } else {
       this.options[option] = value;
     }
     this.onOptionUpdate.emit(this.options);

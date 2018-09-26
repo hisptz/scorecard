@@ -47,6 +47,7 @@ export function createScorecardFromStore(scorecard: CreatedScorecardState | View
 export function getScorecardOptions(data: ScorecardData) {
   return {
     show_legend_definition: data.header.show_legend_definition,
+    show_highlighted_indicator: data.highlighted_indicators.display,
     show_rank: data.show_rank,
     empty_rows: data.empty_rows,
     show_hierarchy: data.show_hierarchy,

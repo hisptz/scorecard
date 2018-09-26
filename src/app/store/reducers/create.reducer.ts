@@ -21,6 +21,7 @@ export interface CreatedScorecardState {
   next_holder_id: number;
   need_for_indicator: boolean;
   show_title_editor: boolean;
+  show_highlighed_editor?: boolean;
   orgunit_settings: OrgUnitModel;
   average_selection: string;
   shown_records: string;
@@ -50,6 +51,7 @@ export interface CreatedScorecardState {
   legendset_definitions: Legend[];
   highlighted_indicators: {
     display: false,
+    ou: string,
     definitions: any[]
   };
   indicator_holders: IndicatorHolder[];
@@ -87,6 +89,7 @@ export const InitialCreateState: CreatedScorecardState = {
   next_holder_id: null,
   need_for_indicator: false,
   show_title_editor: false,
+  show_highlighed_editor: false,
   orgunit_settings: {
     selection_mode: 'Usr_orgUnit',
     selected_levels: [],
@@ -120,8 +123,8 @@ export const InitialCreateState: CreatedScorecardState = {
     title: '',
     sub_title: '',
     description: '',
-    show_arrows_definition: false,
-    show_legend_definition: false,
+    show_arrows_definition: true,
+    show_legend_definition: true,
     template: {
       display: true,
       content: ''
@@ -153,6 +156,7 @@ export const InitialCreateState: CreatedScorecardState = {
   ],
   highlighted_indicators: {
     display: false,
+    ou: null,
     definitions: []
   },
   indicator_holders: [],
@@ -209,6 +213,10 @@ export function createReducer(
       return {...state, show_title_editor: action.payload };
     }
 
+    case (createActions.SET_EDDITING_HIGHLIGHTED): {
+      return {...state, show_highlighed_editor: action.payload };
+    }
+
     case (createActions.SET_ORGUNIT_SETTINGS): {
       return {
         ...state,
@@ -238,6 +246,20 @@ export function createReducer(
     case (createActions.SET_USER_GROUP): {
       const  user_groups = action.payload;
       return {...state, user_groups };
+    }
+
+    case (createActions.SET_HIGHLIGHTED_INDICATOR): {
+      return {...state, highlighted_indicators: {
+          ...state.highlighted_indicators,
+          definitions: action.payload
+        } };
+    }
+
+    case (createActions.SET_HIGHLIGHTED_INDICATOR_OU): {
+      return {...state, highlighted_indicators: {
+          ...state.highlighted_indicators,
+          ou: action.payload
+        } };
     }
 
     case (createActions.SET_HOLDER_GROUPS): {
@@ -281,7 +303,11 @@ export function createReducer(
           display: action.payload.show_title
         }
       };
-      return {...state, header, ...options};
+      const highlighted_indicators = {
+        ...state.highlighted_indicators,
+        display: action.payload.show_highlighted_indicator
+      };
+      return {...state, header, ...options, highlighted_indicators};
     }
   }
   return state;
@@ -295,4 +321,5 @@ export const getCurrentGroup = (state: CreatedScorecardState) => state.current_g
 export const getNextGroupId = (state: CreatedScorecardState) => state.next_group_id;
 export const getNextHolderId = (state: CreatedScorecardState) => state.next_holder_id;
 export const getShowTitleEditor = (state: CreatedScorecardState) => state.show_title_editor;
+export const getShowHighlitedEditor = (state: CreatedScorecardState) => state.show_highlighed_editor;
 export const getActionType = (state: CreatedScorecardState) => state.action_type;

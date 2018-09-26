@@ -1,7 +1,7 @@
 import {ChangeDetectionStrategy, Component, OnInit, Input} from '@angular/core';
 import {ApplicationState} from '../../store/reducers';
 import {Store} from '@ngrx/store';
-import {SetEdditingHeader} from '../../store/actions/create.actions';
+import {SetEdditingHeader, SetEdditingHighlited} from '../../store/actions/create.actions';
 
 @Component({
   selector: 'app-title-area',
@@ -23,6 +23,10 @@ export class TitleAreaComponent implements OnInit {
 
   showTextEditor() {
     this.store.dispatch(new SetEdditingHeader(true));
+  }
+
+  showHighlightedEditor() {
+    this.store.dispatch(new SetEdditingHighlited(true));
   }
 
 

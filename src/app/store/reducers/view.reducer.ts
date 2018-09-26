@@ -206,7 +206,11 @@ export function viewReducer(
           display: action.payload.show_title
         }
       };
-      return {...state, header, ...options};
+      const highlighted_indicators = {
+        ...state.highlighted_indicators,
+        display: action.payload.show_highlighted_indicator
+      };
+      return {...state, header, ...options, highlighted_indicators};
     }
   }
 

@@ -194,7 +194,7 @@ export class BasicViewComponent implements OnInit {
     let counter = 0;
     for (const holder of this.scorecard.data.data_settings.indicator_holders) {
       for (const indicator of holder.indicators) {
-        for (const current_period of this.periods_list){
+        for (const current_period of this.periods_list) {
           if (this.hidenColums.indexOf(indicator.id) === -1) {
             sum++;
           }
@@ -244,5 +244,23 @@ export class BasicViewComponent implements OnInit {
 
   hideClicked( item , type = null) {
     this.onHideClicked.emit({ item , type});
+  }
+
+  //  assign a background color to area depending on the legend set details
+  assignBgColor(object, value): string {
+    let color = '#BBBBBB';
+    for ( const data of object.legendset ) {
+      if (data.max === '-') {
+
+        if (parseInt(value) >= parseInt(data.min) ) {
+          color = data.color;
+        }
+      } else {
+        if (parseInt(value) >= parseInt(data.min) && parseInt(value) <= parseInt(data.max)) {
+          color = data.color;
+        }
+      }
+    }
+    return color;
   }
 }

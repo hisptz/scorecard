@@ -207,4 +207,22 @@ export class InvertedViewComponent implements OnInit {
     this.onHideClicked.emit({ item , type});
   }
 
+  //  assign a background color to area depending on the legend set details
+  assignBgColor(object, value): string {
+    let color = '#BBBBBB';
+    for ( const data of object.legendset ) {
+      if (data.max === '-') {
+
+        if (parseInt(value) >= parseInt(data.min) ) {
+          color = data.color;
+        }
+      } else {
+        if (parseInt(value) >= parseInt(data.min) && parseInt(value) <= parseInt(data.max)) {
+          color = data.color;
+        }
+      }
+    }
+    return color;
+  }
+
 }

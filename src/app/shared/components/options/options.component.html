@@ -51,6 +51,11 @@
           <i class="fa fa-circle-thin text-secondary" *ngIf="!options.show_average_in_column"></i>
           <span [translate]="'Average Row'"> Average Row</span>
         </li>
+        <li class="list-group-item pointer" (click)="setOptionFromButton('show_highlighted_indicator', 'boolean')">
+          <i class="fa fa-check-circle text-secondary" *ngIf="options.show_highlighted_indicator"></i>
+          <i class="fa fa-circle-thin text-secondary" *ngIf="!options.show_highlighted_indicator"></i>
+          <span [translate]="'Highlighted Indicators'"> Highlighted Indicators</span>
+        </li>
       </ul>
     </div>
     <div class="col-sm-4" *ngIf="mode == 'view'" style="padding: 0px">

@@ -132,7 +132,7 @@ export class SampleScorecardComponent implements OnInit {
         if (parseInt(value) >= parseInt(data.min) ) {
           color = data.color;
         }
-      }else {
+      } else {
         if (parseInt(value) >= parseInt(data.min) && parseInt(value) <= parseInt(data.max)) {
           color = data.color;
         }

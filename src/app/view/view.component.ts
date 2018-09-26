@@ -1,4 +1,4 @@
-import {ChangeDetectionStrategy, Component, OnInit, ViewChild} from '@angular/core';
+import {AfterViewInit, ChangeDetectionStrategy, Component, OnInit, ViewChild} from '@angular/core';
 import {Store} from '@ngrx/store';
 import {Observable} from 'rxjs/Observable';
 import {animate, state, style, transition, trigger} from '@angular/animations';
@@ -19,6 +19,7 @@ import tourSteps from '../shared/tourGuide/tour.view';
 import { TourService } from 'ngx-tour-ng-bootstrap';
 import {SetSortingColumn} from '../store/actions/view.actions';
 import {fadeIn, fadeOut, fadeSmooth, zoomCard} from '../shared/animations/basic-animations';
+import {DomSanitizer} from '@angular/platform-browser';
 
 @Component({
   selector: 'app-view',
@@ -81,7 +82,7 @@ import {fadeIn, fadeOut, fadeSmooth, zoomCard} from '../shared/animations/basic-
     ])
   ]
 })
-export class ViewComponent implements OnInit {
+export class ViewComponent implements OnInit, AfterViewInit {
 
   scorecard$: Observable<ScoreCard>;
   ordered_holder_list$: Observable<IndicatorHolder[]>;
@@ -109,10 +110,12 @@ export class ViewComponent implements OnInit {
 
   @ViewChild(ScorecardComponent)
   private childScoreCard: ScorecardComponent;
-
+  downloadJsonHref: any;
+  downloadOUJsonHref: any;
   constructor(
     private store: Store<ApplicationState>,
     private scorecardService: ScorecardService,
+    private sanitizer: DomSanitizer,
     public tourService: TourService
   ) {
     this.store.dispatch(new viewActions.GetScorecardToView());
@@ -142,8 +145,9 @@ export class ViewComponent implements OnInit {
     this.tourService.start();
   }
 
-  ngOnInit() {
-  }
+  ngOnInit() { }
+
+  ngAfterViewInit() { }
 
   goToHomePage() {
     this.store.dispatch(new Go({path: ['']}));
@@ -168,6 +172,144 @@ export class ViewComponent implements OnInit {
 
   downloadCsv() {
     this.childScoreCard.downloadCSV();
+  }
+
+  generateDownloadJsonUri() {
+    this.scorecard$.subscribe(scorecard => {
+      const indicators = scorecard.data.data_settings.indicator_holders.map(
+        (holder) => holder.indicators  );
+      const dataValue = [];
+      indicators.forEach(indicatorArr => {
+        indicatorArr.forEach(indicator => {
+            dataValue.push(...Object.keys(indicator.values).map( key => {
+                const keyArr = key.split('.');
+                return {
+                  dataElement: indicator.id,
+                  period: keyArr[1],
+                  orgUnit: keyArr[0],
+                  value: indicator.values[key]
+                };
+              })
+            );
+        });
+      });
+      const dataElements = [].concat.apply([], indicators).map((indicator) => {
+        return {
+          uid: indicator.id,
+          name: indicator.name,
+        };
+      });
+      const theJSON = JSON.stringify({dataElements: dataElements, dataValues: dataValue});
+      const uri = this.sanitizer.bypassSecurityTrustUrl('data:text/json;charset=UTF-8,' + encodeURIComponent(theJSON));
+      this.downloadJsonHref = uri;
+    });
+  }
+
+  generateDownloadOuUri() {
+    const dataValues: any = {
+      'headers': [
+        {
+          'name': 'dx',
+          'column': 'Data',
+          'valueType': 'TEXT',
+          'type': 'java.lang.String',
+          'hidden': false,
+          'meta': true
+        },
+        {
+          'name': 'pe',
+          'column': 'Period',
+          'valueType': 'TEXT',
+          'type': 'java.lang.String',
+          'hidden': false,
+          'meta': true
+        },
+        {
+          'name': 'ou',
+          'column': 'Organisation unit',
+          'valueType': 'TEXT',
+          'type': 'java.lang.String',
+          'hidden': false,
+          'meta': true
+        },
+        {
+          'name': 'value',
+          'column': 'Value',
+          'valueType': 'NUMBER',
+          'type': 'java.lang.Double',
+          'hidden': false,
+          'meta': false
+        }
+      ],
+    };
+    dataValues.metaData = {
+      items: {},
+      dimensions: {  }
+    };
+    dataValues.rows = {};
+    this.scorecard$.subscribe(scorecard => {
+      const indicators = scorecard.data.data_settings.indicator_holders.map(
+        (holder) => holder.indicators  );
+      const dataValue = [];
+      const indicatorIds = [];
+      const orgunitIds = [];
+      const periodIds = [];
+      const indicatorMetadatas = [];
+      const organisationUnitMetadatas = [];
+      indicators.forEach(indicatorArr => {
+        indicatorArr.forEach(indicator => {
+          dataValues.metaData.items[indicator.id] = {name: indicator.name};
+          indicatorMetadatas.push({id: indicator.id, name: indicator.name });
+          if ( indicatorIds.indexOf(indicator.id) === -1) { indicatorIds.push(indicator.id); }
+          Object.keys(indicator.values).forEach(key => {
+            const keyArr = key.split('.');
+            if ( periodIds.indexOf(keyArr[1]) === -1) { periodIds.push(keyArr[1]); }
+            if ( orgunitIds.indexOf(keyArr[0]) === -1) { orgunitIds.push(keyArr[0]); }
+            if (indicator.values[key]) {
+              dataValue.push([indicator.id, keyArr[1], keyArr[0], indicator.values[key]]);
+            }
+          });
+            // dataValue.push(...Object.keys(indicator.values).map( key => {
+            //     const keyArr = key.split('.');
+            //     return {
+            //       dataElement: indicator.id,
+            //       period: keyArr[1],
+            //       orgUnit: keyArr[0],
+            //       value: indicator.values[key]
+            //     };
+            //   })
+            // );
+        });
+      });
+      dataValues.metaData.dimensions['ou'] = orgunitIds;
+      dataValues.metaData.dimensions['pe'] = periodIds;
+      dataValues.metaData.dimensions['dx'] = indicatorIds;
+      orgunitIds.forEach(ou => {
+        const ouI: any = {};
+        const detailed_orgunit = this.organisation_unit_nodes.treeModel.getNodeById(ou);
+        if (detailed_orgunit && detailed_orgunit.data.hasOwnProperty('id')) { ouI['id'] = detailed_orgunit.data.id; }
+        if (detailed_orgunit && detailed_orgunit.data.hasOwnProperty('level')) { ouI['level'] = detailed_orgunit.data.level; }
+        if (detailed_orgunit && detailed_orgunit.data.hasOwnProperty('name')) { ouI['name'] = detailed_orgunit.data.name; }
+        if (detailed_orgunit && detailed_orgunit.data.hasOwnProperty('parent')) { ouI['parent'] = detailed_orgunit.data.parent; }
+        organisationUnitMetadatas.push(ouI);
+      });
+      dataValues.rows = dataValue;
+      const theJSON = JSON.stringify({dataValues: [dataValues]});
+      const theJSON1 = JSON.stringify({
+        organisationUnits: {
+          organisationUnits: organisationUnitMetadatas
+        },
+        indicators: indicatorMetadatas
+      });
+      const uri = this.sanitizer.bypassSecurityTrustUrl('data:text/json;charset=UTF-8,' + encodeURIComponent(theJSON));
+      const uri1 = this.sanitizer.bypassSecurityTrustUrl('data:text/json;charset=UTF-8,' + encodeURIComponent(theJSON1));
+      this.downloadJsonHref = uri;
+      this.downloadOUJsonHref = uri1;
+    });
+  }
+
+  downloadAlma() {
+
   }
 
   loadScorecard() {

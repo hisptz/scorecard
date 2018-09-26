@@ -9,7 +9,10 @@
   <app-selectors
     (onOrgunitChange)="setOrgunitNodes($event)"
     (onDownloadCsv)="downloadCsv()"
+    (onDownloadAlma)="downloadAlma()"
     (onUpdate)="loadScorecard()"
+    [downloadJsonHref]="downloadJsonHref"
+    [downloadOUJsonHref]="downloadOUJsonHref"
     [sorting_column]="sorting_column$ | async"
   ></app-selectors>
 </div>
@@ -40,6 +43,7 @@
       [organisation_unit_nodes]="organisation_unit_nodes"
       (show_details)="loadPreview($event)"
       (onChangingSort)="onChangeSort($event)"
+      (onDoneLoadingData)="generateDownloadOuUri()"
     ></app-scorecard>
 
     <h1 class="text-center" *ngIf="!(functions_loaded$ | async) || !(metadata_ready$ | async)">

@@ -17,6 +17,7 @@ import {CreatedScorecardState} from '../../store/reducers/create.reducer';
 import {IndicatorObject} from '../models/indicator-object';
 import {IndicatorHolder} from '../models/indicator-holder';
 import {ViewScorecardState} from '../../store/reducers/view.reducer';
+import {IndicatorHolderGroup} from '../models/indicator-holders-group';
 
 
 @Injectable()
@@ -44,7 +45,7 @@ export class ScorecardService {
       this._scorecards.forEach( ( scorecard ) => {
         // this.store.dispatch(new AddScorecardAction( scorecard ));
       });
-    }else {
+    } else {
       this.store.select(getUser).subscribe(
         (userInfo) => {
           if (userInfo) {
@@ -89,7 +90,7 @@ export class ScorecardService {
             if (route.state.url === '/create') {
               const scorecard = this.getEmptyScoreCard();
               this.store.dispatch(new createActions.SetCreatedScorecard(this.getScorecardForCreation(scorecard, 'create', {id: user.id})));
-            }else {
+            } else {
               const scorecardId = route.state.params.scorecardid;
               this.store.select(getScorecardEntites).first().subscribe(
                 scorecards => {
@@ -239,8 +240,8 @@ export class ScorecardService {
           'title': '',
           'sub_title': '',
           'description': '',
-          'show_arrows_definition': false,
-          'show_legend_definition': false,
+          'show_arrows_definition': true,
+          'show_legend_definition': true,
           'template': {
             'display': false,
             'content': ''
@@ -344,7 +345,7 @@ export class ScorecardService {
       checker_edit = true;
     }
     if (scorecard.hasOwnProperty('user_groups')) {
-      for ( const group of scorecard.user_groups){
+      for ( const group of scorecard.user_groups) {
         if ( group.id === 'all' ) {
           if (group.see) {
             checker_see = true;
@@ -354,7 +355,7 @@ export class ScorecardService {
             checker_edit = true;
           }
         }
-        for ( const user_group of user.userGroups){
+        for ( const user_group of user.userGroups) {
           if ( user_group.id === group.id ) {
             if (group.see) {
               checker_see = true;
@@ -390,8 +391,8 @@ export class ScorecardService {
       shown_records: scorecard.data.shown_records,
       show_average_in_row: scorecard.data.show_average_in_row,
       show_average_in_column: scorecard.data.show_average_in_column,
-      show_league_table: scorecard.data.hasOwnProperty('show_league_table') ? scorecard.data.empty_rows : false,
-      show_league_table_all: scorecard.data.hasOwnProperty('show_league_table_all') ? scorecard.data.empty_rows : false,
+      show_league_table: scorecard.data.hasOwnProperty('show_league_table') ? scorecard.data.show_league_table : false,
+      show_league_table_all: scorecard.data.hasOwnProperty('show_league_table_all') ? scorecard.data.show_league_table_all : false,
       periodType: scorecard.data.periodType,
       selected_periods: scorecard.data.selected_periods,
       show_data_in_column: scorecard.data.show_data_in_column,
@@ -413,7 +414,7 @@ export class ScorecardService {
     };
   }
 
-  deduceStartingIndicatorHolder(scorecard: ScoreCard) {
+  deduceStartingIndicatorHolder(scorecard: ScoreCard): {current_indicator_holder: IndicatorHolder, current_group: IndicatorHolderGroup } {
     if (scorecard.data.data_settings.indicator_holders.length === 0) {
       return {
         current_indicator_holder: {
@@ -428,7 +429,7 @@ export class ScorecardService {
           'holder_style': null
         },
       };
-    }else {
+    } else {
       return {
         current_indicator_holder: _.find(
           scorecard.data.data_settings.indicator_holders,
@@ -954,8 +955,8 @@ export class ScorecardService {
       for (const holder of indicator_holders) {
         for (const indicator of holder.indicators) {
           for (const per of periods_list) {
-            const use_key = orgunit_id + '.' + per.id;
-            const item = _.find(indicator.key_values, { 'key': use_key });
+            const use_key: any = orgunit_id + '.' + per.id;
+            const item: any = _.find(indicator.key_values, { 'key': use_key });
             if (hidenColums.indexOf(indicator.id) === -1 && item) {
               counter++;
               sum += (!isNaN(item.value)) ? parseFloat(item.value) : 0;
@@ -964,10 +965,10 @@ export class ScorecardService {
         }
       }
     } else {
-      const use_key = orgunit_id + '.' + period;
+      const use_key: any = orgunit_id + '.' + period;
       for (const holder of indicator_holders) {
         for (const indicator of holder.indicators) {
-          const item = _.find(indicator.key_values, { 'key': use_key });
+          const item: any = _.find(indicator.key_values, { 'key': use_key });
           if (hidenColums.indexOf(indicator.id) === -1 && item) {
             counter++;
             sum += (!isNaN(item.value)) ? parseFloat(item.value) : 0;

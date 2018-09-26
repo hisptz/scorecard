@@ -11,6 +11,7 @@ import { ItemDetailsComponent } from './item-details/item-details.component';
 import { BottleneckComponent } from './bottleneck/bottleneck.component';
 import { TitleAreaComponent } from './title-area/title-area.component';
 import {Ng2HighchartsModule} from 'ng2-highcharts';
+import { HighlightedIndicatorsComponent } from './highlighted-indicators/highlighted-indicators.component';
 
 @NgModule({
   imports: [
@@ -27,6 +28,7 @@ import {Ng2HighchartsModule} from 'ng2-highcharts';
     LegendComponent,
     ItemDetailsComponent,
     BottleneckComponent,
-    TitleAreaComponent]
+    TitleAreaComponent,
+    HighlightedIndicatorsComponent]
 })
 export class CreateModule { }

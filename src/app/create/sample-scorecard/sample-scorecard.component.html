@@ -8,6 +8,14 @@
 </div>
 <div class="container-fluid no-left-padding" >
   <div class="scorecard_table" tourAnchor="create.sample">
+    <div class="row" *ngIf="scorecard.data.highlighted_indicators.display">
+      <div class="col-sm-3 mb-1" *ngFor="let indicator of scorecard.data.highlighted_indicators.definitions">
+        <div class="row mr-1 ml-0"  style="border: 1px solid rgba(0,0,0,0.4)">
+          <div class="col-sm-10 p-2" style="font-size: 11px">{{ indicator.title }}</div>
+          <div class="col-sm-2 p-2" [style.backgroundColor]="assignBgColor(indicator, indicator.value)" style="background-color: #014b5a; font-size: 11px">{{ indicator.value }}</div>
+        </div>
+      </div>
+    </div>
     <table class="table table-bordered" style="margin-bottom: 3px">
       <tr>
         <!--sharing settings-->
