@@ -117,7 +117,7 @@
   "Show Colors": "Mostrar cores",
   "Min": "Min",
   "Max": "Max",
-  "Related/Bottleneck indicators": "Indicadores relacionados / de gargalo",
+  "Related indicators": "Indicadores relacionados / de gargalo",
   "activate up/down arrow if difference between previous and present value exceeds": "",
   "If you want to have two data items in the same column just select the second data item from the list on the left": "Se você quer ter dois itens de dados na mesma coluna, selecione o segundo item de dados da lista à esquerda",
   "Sorry, something went wrong while fetching data! make sure you have internet connection and try to reload the page": "Desculpe, algo deu errado ao buscar dados! Certifique-se de ter conexão com a internet e tentar recarregar a página",
