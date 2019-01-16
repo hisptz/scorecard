@@ -19,12 +19,12 @@ import { OrgUnitFilterComponent } from './components/org-unit-filter/org-unit-fi
 import { PeriodFilterComponent } from './components/period-filter/period-filter.component';
 import { SharingComponent } from './components/sharing/sharing.component';
 import { MultiselectComponent } from './components/org-unit-filter/multiselect/multiselect.component';
-import {ClickOutsideDirective} from "./directives/click-outside.directive";
+import { ClickOutsideDirective } from './directives/click-outside.directive';
 
 @NgModule({
   imports: [
     CommonModule,
-    TreeModule,
+    TreeModule.forRoot(),
     ColorPickerModule,
     DndModule.forRoot(),
     NgxPaginationModule,
@@ -33,7 +33,7 @@ import {ClickOutsideDirective} from "./directives/click-outside.directive";
     TourNgBootstrapModule.forRoot(),
     ContextMenuModule.forRoot({
       useBootstrap4: true,
-      autoFocus: true,
+      autoFocus: true
     })
   ],
   declarations: [
@@ -72,4 +72,4 @@ import {ClickOutsideDirective} from "./directives/click-outside.directive";
     MultiselectComponent
   ]
 })
-export class SharedModule { }
+export class SharedModule {}
