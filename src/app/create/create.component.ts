@@ -169,7 +169,7 @@ export class CreateComponent implements OnInit {
   onGroupTypeChange(event ) {this.group_type = event; }
 
   /**
-   * Bottleneck indicator issues
+   * Related indicators indicator issues
    * @param indicator
    */
   showBotleneckEditor(indicator) {
