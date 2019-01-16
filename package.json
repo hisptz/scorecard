@@ -5,7 +5,7 @@
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
-    "build": "ng build --aot --prod --output-hashing=all",
+    "build": "ng build --prod --aot && cd dist && zip -r -D scorecard.zip .",
     "test": "ng test",
     "lint": "ng lint",
     "e2e": "ng e2e"
