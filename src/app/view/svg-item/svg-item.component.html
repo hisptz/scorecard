@@ -1,0 +1,49 @@
+<svg *ngIf="indicator_list.length == 2" viewbox="0 0 90 35" width="90" height="35">
+  <polygon points="0 0 90 0 90 0 0 35" [attr.fill]="assignBgColor(indicator.indicators[0],indicator.indicators[0].values[value_key])" style="stroke:#CAC0C0;stroke-width:0.4"/>
+  <text fill="#000" x="3" y="18" font-size="11" font-family="Source Sans Pro">
+    <tspan>{{ indicator_list[0].values[value_key] }}</tspan>
+  </text>
+  <!--top arrow-->
+  <path *ngIf="indicator_list[0].showTopArrow[value_key] && scorecard.data.header.show_arrows_definition" d="M2,10H12L7,4" style="fill:black;stroke:black;stroke-width:1"/>
+  <!--bottom arrow showing decrease-->
+  <path *ngIf="indicator_list[0].showBottomArrow[value_key] && scorecard.data.header.show_arrows_definition" d="M2,22H12L7,30" style="fill:black;stroke:black;stroke-width:1"/>
+
+  <!--second triangle-->
+  <polygon points="0 35 90 0 90 35 0 35" [attr.fill]="assignBgColor(indicator_list[1],indicator_list[1].values[value_key])" style="stroke:#CAC0C0;stroke-width:0.0"/>
+  <!--number for the second triangle-->
+  <text fill="#000" x="54" y="22" font-size="11" font-family="Source Sans Pro">
+    <tspan>{{ indicator_list[1].values[value_key] }}</tspan>
+  </text>
+  <!--top arrow for the right triagle-->
+  <path *ngIf="indicator_list[1].showTopArrow[value_key] && scorecard.data.header.show_arrows_definition" d="M75,10H85L80,4" style="fill:black;stroke:black;stroke-width:1"/>
+  <!--below arrow for the triangle-->
+  <path *ngIf="indicator_list[1].showBottomArrow[value_key] && scorecard.data.header.show_arrows_definition" d="M75,24H85L80,31" style="fill:black;stroke:black;stroke-width:1"/>
+</svg>
+<!--if there is only one indicator to display-->
+<svg *ngIf="indicator_list.length == 1" viewbox="0 0 90 35" width="90" height="35">
+  <!--full box to cover all area-->
+  <polygon points="0 0 90 0 90 35 0 35" [attr.fill]="assignBgColor(indicator_list[0],indicator_list[0].values[value_key])"/>
+  <text fill="#000" x="30" y="20" font-size="11" font-family="Source Sans Pro">
+    <tspan>{{ indicator_list[0].values[value_key] }}</tspan>
+  </text>
+  <!--top arrow-->
+  <path *ngIf="indicator_list[0].showTopArrow[value_key] && scorecard.data.header.show_arrows_definition" d="M2,10H12L7,4" style="fill:black;stroke:black;stroke-width:1"/>
+  <!--bottom arrow showing decrease-->
+  <path *ngIf="indicator_list[0].showBottomArrow[value_key] && scorecard.data.header.show_arrows_definition" d="M2,22H12L7,30" style="fill:black;stroke:black;stroke-width:1"/>
+
+  <g *ngIf="has_cup(indicator_list[0].key_values, value_key) && scorecard.data.show_league_table && scorecard.data.show_league_table_all">
+    <title>Layer 1</title>
+    <path id="svg_2" d="m298.69966,0.79977c0.00226,0.02994 0.01085,0.05736 0.02346,0.08145l0.02346,-0.0366l-0.00678,-0.0025l-0.00939,-0.00334l0.0049,-0.00855l0.01721,-0.03045l-0.05287,0l0.00001,-0.00001zm0.07206,0l-0.017,0.03003l0.0073,0.00261l0.00991,0.00355l-0.00563,0.00876l-0.03379,0.05287c0.02431,0.0369 0.05986,0.06237 0.10063,0.06789l0,0.10793l-0.06674,0l0,0.0267l0.16685,0l0,-0.0267l-0.06674,0l0,-0.10793c0.07113,-0.00951 0.12693,-0.07902 0.13348,-0.16571l-0.22828,0l0,0l0.00001,0z" stroke-width="5" stroke="null" [attr.fill]="get_cup_color(indicator_list[0].key_values, value_key)"/>
+    <g stroke="null" id="svg_1">
+      <path stroke="null" [attr.fill]="get_cup_color(indicator_list[0].key_values, value_key)" d="m82.88651,24.52596c0,-0.42454 -0.27262,-0.76873 -0.60888,-0.76873l-2.27317,0c-0.33626,0 -0.60888,0.34417 -0.60888,0.76873l0,7.42906c0,0.42454 0.27262,0.76873 0.60888,0.76873l2.27317,0c0.33626,0 0.60888,-0.34417 0.60888,-0.76873l0,-7.42906z" id="XMLID_103_"/>
+      <g stroke="null" id="XMLID_105_">
+        <path stroke="null" [attr.fill]="get_cup_color(indicator_list[0].key_values, value_key)" d="m76.06632,22.63052c-0.70172,0 -1.41541,-0.31923 -2.00961,-0.89884c-0.5993,-0.58459 -1.05069,-1.3916 -1.30549,-2.33385c-0.65078,-2.40692 0.20706,-4.96293 1.91226,-5.69783c0.30858,-0.13298 0.63077,-0.20043 0.95758,-0.20043c0.70172,0 1.41541,0.31923 2.00965,0.89889c0.5993,0.58454 1.05074,1.3916 1.30549,2.33379c0.31028,1.14766 0.29098,2.36567 -0.05435,3.42959c-0.35714,1.10026 -1.01696,1.90582 -1.85791,2.2682c-0.30858,0.13304 -0.63077,0.20048 -0.95761,0.20048l0,-0.00002l0,-0.00002l0,-0.00002l-0.00001,0.00003l0,0.00001zm-0.44527,-7.59351c-0.19268,0 -0.3825,0.03972 -0.56416,0.11797c-1.06969,0.46102 -1.58704,2.14152 -1.15319,3.74615c0.34893,1.29059 1.23824,2.19194 2.1626,2.19194c0.19273,0 0.38254,-0.03967 0.56419,-0.11797c0.50326,-0.21688 0.90261,-0.71271 1.12449,-1.39621c0.23361,-0.71973 0.2438,-1.5543 0.0287,-2.34994c-0.34897,-1.29053 -1.23827,-2.19194 -2.16265,-2.19194l0.00001,0l0.00001,0z" id="XMLID_792_"/>
+      </g>
+      <g stroke="null" id="XMLID_106_">
+        <path stroke="null" [attr.fill]="get_cup_color(indicator_list[0].key_values, value_key)" d="m86.21574,22.63052c-0.00004,0 0,0 0,0c-0.32686,0 -0.64903,-0.06744 -0.95761,-0.20043c-0.84095,-0.36242 -1.50074,-1.16795 -1.85791,-2.2682c-0.34535,-1.06397 -0.36463,-2.28194 -0.05435,-3.42959c0.25476,-0.94225 0.70619,-1.74931 1.30549,-2.33385c0.59424,-0.57967 1.30792,-0.89889 2.00965,-0.89889c0.32681,0 0.64899,0.06744 0.95758,0.20043c1.70521,0.73491 2.56304,3.29091 1.91226,5.69783c-0.25476,0.94225 -0.70623,1.74926 -1.30549,2.33385c-0.5942,0.57956 -1.30797,0.89884 -2.00961,0.89884l0,0.00002l-0.00001,0zm0.44522,-7.59351c-0.92441,0 -1.81372,0.90136 -2.16265,2.19194c-0.2151,0.79557 -0.20491,1.63016 0.0287,2.34994c0.22184,0.68345 0.62119,1.17932 1.12449,1.39621c0.18165,0.07832 0.37146,0.11797 0.56419,0.11797c0.92436,0 1.81367,-0.90136 2.16265,-2.19194c0.43385,-1.60459 -0.08346,-3.28512 -1.15319,-3.7461c-0.18165,-0.07832 -0.37146,-0.11804 -0.56419,-0.11804l0,0.00002l0,-0.00002l0,0.00002z" id="XMLID_795_"/>
+      </g>
+      <path stroke="null" [attr.fill]="get_cup_color(indicator_list[0].key_values, value_key)" d="m86.64015,12.25327c-0.01514,-0.41092 -0.2968,-0.73469 -0.63917,-0.73469l-10.27985,0c-0.34232,0 -0.62398,0.32374 -0.63913,0.73466c-0.01425,0.38616 -0.02146,0.77221 -0.02146,1.14746c0,3.43737 0.56069,6.68108 1.57885,9.13358c1.08866,2.62247 2.58797,4.06672 4.22168,4.06672s3.13304,-1.44428 4.22172,-4.06672c1.01812,-2.45249 1.57881,-5.6962 1.57881,-9.13358c0,-0.37497 -0.00726,-0.76104 -0.02146,-1.1474l0,0l0,-0.00002l0,-0.00002l0.00001,0.00001z" id="XMLID_107_"/>
+      <path stroke="null" [attr.fill]="get_cup_color(indicator_list[0].key_values, value_key)" d="m84.33167,30.14195l-6.38133,0c-0.60251,0 -1.09266,0.61882 -1.09266,1.3795l0,1.5948c0,0.76067 0.49019,1.3795 1.09266,1.3795l6.38133,0c0.60251,0 1.09266,-0.61882 1.09266,-1.3795l0,-1.5948c0,-0.76067 -0.49015,-1.3795 -1.09266,-1.3795z" id="XMLID_108_"/>
+    </g>
+  </g>
+</svg>

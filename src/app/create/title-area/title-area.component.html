@@ -1,0 +1,35 @@
+<div
+  [innerHTML]="template | safeHtml"
+  class="cursor"
+  title="{{'Click to update' | translate}}"
+  (click)="showTextEditor()">
+</div>
+<!--legend-->
+<p class="help-block text-center">
+  <a
+    class="btn btn-xs btn-outline-primary cursor"
+    (click)="showTextEditor()"
+    title="{{ 'Update custom Header' | translate }}" style="font-size: 14px">
+    <i class="fa fa-pencil"></i>
+    <span [translate]="'customize header'">customize header</span>
+  </a>
+</p>
+<div class="row legend" style="margin-bottom: 10px" *ngIf="show_legend_definition">
+  <div class="col-sm-2 legendItem" *ngFor="let legend of legendset_definitions">
+    <table>
+      <tr>
+        <td style="padding-left: 0px;border: 1px solid #014b5a;height: 20px;width: 50px;" [style.background-color]="legend.color"></td>
+        <td style="font-size: 10px;padding-left: 5px">{{ legend.definition}}</td>
+      </tr>
+    </table>
+  </div>
+</div>
+<p class="help-block text-center">
+  <a
+    class="btn btn-xs btn-outline-primary cursor"
+    (click)="showHighlightedEditor()"
+    title="{{ 'Manage Highlighted Indicators' | translate }}" style="font-size: 14px">
+    <i class="fa fa-pencil"></i>
+    <span [translate]="'Highlighted Indicators'">Highlighted Indicators</span>
+  </a>
+</p>

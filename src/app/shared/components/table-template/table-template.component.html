@@ -1,0 +1,39 @@
+<div  class="scrollable" *ngIf="tableObject" style="padding: 3px;">
+  <!--<h4 *ngIf="tableObject.rows.length != 0" class="text-center" style="margin-bottom: 0px">{{tableObject?.title}}</h4>-->
+  <table class="table table-bordered table-condensed custom-table"
+         *ngIf="tableObject.rows.length != 0" style="font-size: 11px;">
+    <thead>
+    <!--title-->
+    <tr class="table-title">
+      <th [attr.colspan]="tableObject.rows[0].items.length">
+        <h5 style="margin: 0px" class="text-center">{{ tableObject?.title }} </h5>
+      </th>
+    </tr>
+    <!--headers-->
+    <tr *ngFor="let header of tableObject.headers; let j = index" class="header-column">
+      <th *ngIf="tableObject.hasParentOu"></th>
+      <th *ngFor="let table_column of tableObject.columns; let i = index" style="text-align: center">
+        <span *ngIf="i==tableObject.columns.length-1 && j==tableObject.headers.length-1 && tableObject.titlesAvailable">{{ tableObject.titles.rows[i] }} / {{ tableObject.titles.column[j]}}</span>
+        <span *ngIf="i != tableObject.columns.length-1">{{ tableObject.titles.rows[i] }}</span>
+        <span *ngIf="j != tableObject.headers.length-1">{{ tableObject.titles.column[j] }}</span>
+      </th>
+      <th *ngFor="let header_column of header.items; let i=index" [colSpan]="header_column.span"
+          style="text-align: center" (click)="sortData(tableObject,i+tableObject.columns.length,j+1==tableObject.headers.length)">
+        {{ header_column.name }}
+        <span *ngIf="j+1==tableObject.headers.length && current_sorting[i+tableObject.columns.length] && sort_direction[i+tableObject.columns.length] == 'asc'" class="glyphicon glyphicon-triangle-top pull-right"></span>
+        <span *ngIf="j+1==tableObject.headers.length && current_sorting[i+tableObject.columns.length] && sort_direction[i+tableObject.columns.length] == 'desc'" class="glyphicon glyphicon-triangle-bottom pull-right"></span>
+      </th>
+    </tr>
+    </thead>
+    <tbody  id="myPivotTable">
+    <tr *ngFor="let row of tableObject.rows" [ngClass]="{'sub-total': row.sub_total}">
+      <td *ngFor="let header_column of row.items;let i = index" [ngClass]="{'header-column': header_column.name != ''}"  style="text-align: center;vertical-align: middle"
+          [attr.rowspan]="header_column.row_span">
+        {{ header_column.val }}
+      </td>
+    </tr>
+    </tbody>
+  </table>
+
+
+</div>

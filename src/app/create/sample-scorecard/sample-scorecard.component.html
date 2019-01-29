@@ -1,0 +1,211 @@
+<!--sample score card-->
+<div class="container-fluid no-left-padding" style="border-top: 1px solid blanchedalmond; padding-top: 8px">
+  <app-title-area
+    [template]="scorecard.data.header.template.content"
+    [legendset_definitions]="scorecard.data.legendset_definitions"
+    [show_legend_definition]="scorecard.data.header.show_legend_definition"
+  ></app-title-area>
+</div>
+<div class="container-fluid no-left-padding" >
+  <div class="scorecard_table" tourAnchor="create.sample">
+    <div class="row" *ngIf="scorecard.data.highlighted_indicators.display">
+      <div class="col-sm-3 mb-1" *ngFor="let indicator of scorecard.data.highlighted_indicators.definitions">
+        <div class="row mr-1 ml-0"  style="border: 1px solid rgba(0,0,0,0.4)">
+          <div class="col-sm-10 p-2" style="font-size: 11px">{{ indicator.title }}</div>
+          <div class="col-sm-2 p-2" [style.backgroundColor]="assignBgColor(indicator, indicator.value)" style="background-color: #014b5a; font-size: 11px">{{ indicator.value }}</div>
+        </div>
+      </div>
+    </div>
+    <table class="table table-bordered" style="margin-bottom: 3px">
+      <tr>
+        <!--sharing settings-->
+        <th dnd-droppable (onDropSuccess)="transferDataSuccess($event,'new',null)">
+          <app-sharing
+            tourAnchor="create.sharing"
+            [user_groups]="selected_user_groups$ | async"
+            [userGroups]="user_groups$ | async"
+            [group_loading]="!( group_loading$ | async )"
+            (onGroupChange)="updateGroup($event)"
+          ></app-sharing>
+        </th>
+        <!--holder groups stays here-->
+        <th
+          *ngFor="let indicator_holder_group of indicator_holder_groups; trackBy: trackItem"
+          dnd-droppable (onDropSuccess)="transferDataSuccess($event,'group',indicator_holder_group)"
+          style="font-size: 9px; padding: 5px"
+          @fadeOut1
+          [attr.colspan]="indicator_holder_group.indicator_holder_ids.length"
+          class="sans-pro"
+          [ngClass]="{'current': current_holder_group.id == indicator_holder_group.id}"
+        >
+          <div dnd-draggable [dragEnabled]="true" [dragData]="indicator_holder_group">
+            <input
+              type="text"
+              [(ngModel)]="indicator_holder_group.name"
+              class="group-text"
+              [value]="indicator_holder_group.name"
+              (input)="updateGroupName()">
+            <span *ngIf="indicator_holder_group.id != 1 && !deleting[indicator_holder_group.id]"
+                  class="fa fa-trash text-danger"
+                  style="cursor: pointer; padding-left: 5px"
+                  (click)="deleting[indicator_holder_group.id] = true"
+            ></span>
+            <p *ngIf="indicator_holder_group.id != 1 && deleting[indicator_holder_group.id]">
+          <span [translate]="'Please Confirm, indicators will be deleted too'">
+            Please Confirm, indicators will be deleted too.
+            </span>
+              <br>
+              <button
+                class="btn btn-xs btn-warning"
+                (click)="deleting[indicator_holder_group.id] = false"
+                [translate]="'Cancel'"
+              >
+                cancel
+              </button>
+              <button
+                class="btn btn-xs btn-danger"
+                (click)="deleteGroup(indicator_holder_group)"
+                [translate]="'Delete'"
+              >  delete
+              </button>
+            </p>
+          </div>
+        </th>
+        <!--add holder groups-->
+        <th style="width: 60px" dnd-droppable (onDropSuccess)="transferDataSuccess($event,'new-group',null)">
+          <button
+            class="btn btn-sm btn-outline-secondary cursor"
+            *ngIf="(need_for_group$ | async) && !(current_holder_group.indicator_holder_ids.length == 1 && current_indicator.indicators.length == 0)"
+            (click)="createGroup()"
+          >
+            <i class="fa fa-plus"></i>
+            <span [translate]="'Add'"> Add</span>
+          </button>
+        </th>
+      </tr>
+      <tr>
+        <td style="vertical-align: bottom" dnd-droppable (onDropSuccess)="transferDataSuccess($event,'new',null)">
+          <!--period configurations-->
+          <app-period-filter
+            tourAnchor="create.pe"
+            [selected_periods]="scorecard.data.selected_periods"
+            [period_type]="scorecard.data.periodType"
+            [showUpdate]="false"
+            (onPeriodChange)= "updatePeriod($event)"
+          ></app-period-filter>
+          <!--end of period configuration-->
+        </td>
+        <td *ngFor="let indicator of holders_list$ | async; trackBy: trackItemId" style="padding: 5px;font-size: 10px;width:90px;max-width: 90px;overflow-wrap: break-word;cursor: pointer;" class="sans-pro"
+            title="{{'Click to update' | translate}} {{ getIndicatorTitle(indicator) }}"
+            [ngClass]="{'current':current_indicator.holder_id == indicator.holder_id}"
+            (click)="updateIndicator(indicator)"
+            dnd-droppable (onDropSuccess)="transferDataSuccess($event,'table_data',indicator)"
+            [@fadeOut]="'in'"
+        >
+          <div dnd-draggable [dragEnabled]="true" [dragData]="indicator">
+            {{ getIndicatorTitle(indicator) }}
+          </div>
+        </td>
+        <th style="width: 60px">
+          <button
+            title="{{ 'Add new Indicator next to the current active indicator' | translate }}"
+            class="btn btn-sm btn-outline-secondary cursor"
+            *ngIf="need_for_indicator$ | async"
+            (click)="enableAddIndicator()"
+          >
+            <i class="fa fa-plus"></i>
+            <span [translate]="'Add'"> Add</span>
+          </button>
+        </th>
+      </tr>
+      <tr>
+        <td style="vertical-align:bottom" dnd-droppable (onDropSuccess)="transferDataSuccess($event,'new',null)">
+
+          <!--organisation unit tree-->
+          <app-org-unit-filter
+            tourAnchor="create.ou"
+            *ngIf="!(orgunit_loading$ | async)"
+            [orgunit_model] = "scorecard.data.orgunit_settings"
+            [showUpdate]="false"
+            (onOrgUnitModelUpdate) = "updateOrgUnitModel($event)"
+          ></app-org-unit-filter>
+          <p *ngIf="(orgunit_loading$ | async)" class="orgunit-placeholer">
+            <span [translate]="'Loading Organisation Units'">Loading Organisation Units...</span>
+          </p>
+          <!--end of organisation unit tree-->
+        </td>
+        <th *ngFor="let indicator of holders_list$ | async"
+            style="font-size: 10px;max-width: 90px;overflow-wrap: break-word; cursor: pointer; padding: 0px;line-height: 10%"
+            class="sans-pro" [ngClass]="{'current': current_indicator.holder_id == indicator.holder_id}"
+            title="{{'Click to update' | translate}} {{ getIndicatorTitle(indicator) }}"
+            (click)="updateIndicator(indicator)"
+            [@fadeOut]="'in'"
+        >
+          <svg *ngIf="indicator.indicators.length == 2" viewbox="0 0 90 35" width="90" height="35">
+            <polygon points="0 0 90 0 90 0 0 35" [attr.fill]="assignBgColor(indicator.indicators[0],indicator.indicators[0].value)" style="stroke:#CAC0C0;stroke-width:0.4"/>
+            <text fill="#000" x="3" y="18" font-size="11" font-family="Source Sans Pro">
+              <tspan>{{ indicator.indicators[0].value }}</tspan>
+            </text>
+            <!--top arrow-->
+            <path *ngIf="indicator.indicators[0].showTopArrow && !indicator.indicators[0].showBottomArrow && scorecard.data.header.show_arrows_definition" d="M2,8H12L7,3" style="fill:black;stroke:black;stroke-width:1"/>
+            <!--bottom arrow showing decrease-->
+            <path *ngIf="indicator.indicators[0].showBottomArrow && scorecard.data.header.show_arrows_definition" d="M2,22H12L7,30" style="fill:black;stroke:black;stroke-width:1"/>
+
+            <!--second triangle-->
+            <polygon points="0 35 90 0 90 35 0 35" [attr.fill]="assignBgColor(indicator.indicators[1],indicator.indicators[1].value)" style="stroke:#CAC0C0;stroke-width:0.4"/>
+            <!--number for the second triangle-->
+            <text fill="#000" x="54" y="22" font-size="11" font-family="Source Sans Pro">
+              <tspan>{{ indicator.indicators[1].value }}</tspan>
+            </text>
+            <!--top arrow for the right triagle-->
+            <path *ngIf="indicator.indicators[1].showTopArrow && !indicator.indicators[1].showBottomArrow && scorecard.data.header.show_arrows_definition" d="M75,10H85L80,4" style="fill:black;stroke:black;stroke-width:1"/>
+            <!--below arrow for the triangle-->
+            <path *ngIf="indicator.indicators[1].showBottomArrow && scorecard.data.header.show_arrows_definition" d="M75,24H85L80,31" style="fill:black;stroke:black;stroke-width:1"/>
+          </svg>
+
+          <!--if there is only one indicator to display-->
+          <svg *ngIf="indicator.indicators.length == 1" viewbox="0 0 90 35" width="90" height="35">
+            <!--full box to cover all area-->
+            <polygon points="0 0 90 0 90 35 0 35" [attr.fill]="assignBgColor(indicator.indicators[0],indicator.indicators[0].value)"/>
+            <text fill="#000" x="33" y="24" font-size="11" font-family="Source Sans Pro">
+              <tspan>{{ indicator.indicators[0].value }}</tspan>
+            </text>
+            <!--top arrow-->
+            <path *ngIf="indicator.indicators[0].showTopArrow && !indicator.indicators[0].showBottomArrow && scorecard.data.header.show_arrows_definition" d="M2,8H12L7,3" style="fill:black;stroke:black;stroke-width:1"/>
+            <!--bottom arrow showing decrease-->
+            <path *ngIf="indicator.indicators[0].showBottomArrow && scorecard.data.header.show_arrows_definition" d="M2,22H12L7,30" style="fill:black;stroke:black;stroke-width:1"/>
+          </svg>
+        </th>
+        <th style="width: 60px">
+
+        </th>
+      </tr>
+      <tr *ngFor="let label of scorecard.data.additional_labels">
+        <th>{{ label }}</th>
+        <th *ngFor="let indicator of holders_list$ | async"
+            style="font-size: 10px;max-width: 90px;overflow-wrap: break-word; cursor: pointer; line-height: 80%;padding: 0px"
+            (click)="updateIndicator(indicator)"
+            class="sans-pro" [ngClass]="{'current':current_indicator.holder_id == indicator.holder_id}"
+            [@fadeOut]="'in'"
+        >
+          <input type="text"
+                 [(ngModel)]="indicator.indicators[0].additional_label_values[label]"
+                 *ngIf="indicator.indicators.length != 0 && current_indicator.holder_id == indicator.holder_id"
+                 style="width: 99%;height: 30px">
+          <p
+            *ngIf="!(current_indicator.holder_id == indicator.holder_id)"
+            style="padding-top: 8px;padding-left: 5px"
+          >
+            {{ getIndicatorLabel( indicator,label ) }}
+          </p>
+        </th>
+        <th style="width: 60px">
+
+        </th>
+      </tr>
+    </table>
+  </div>
+</div>
+
+
+

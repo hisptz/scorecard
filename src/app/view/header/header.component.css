@@ -1,0 +1,42 @@
+@media print {
+  .no-print *{
+    display: none;
+  }
+  .no-print{
+    display: none;
+  }
+
+  .orgUnitName{
+    min-width: 130px;
+    height: 35px;
+    max-height: 35px;
+    font-size: 9px;
+  }
+  .table-bordered td{
+    /*border-top: 0.1em;*/
+  }
+  .legendItem{
+    width: 200px;
+    float: left;
+  }
+
+}
+
+.dropdown:hover > .dropdown-menu {
+  display: block;
+}
+.dropdown > .dropdown-toggle:active {
+  /*Without this, clicking will make it sticky*/
+  pointer-events: none;
+}
+
+.language-change span{
+  border: 1px solid rgba(0,0,0,0.4);
+  padding: 3px 6px;
+  border-radius: 3px;
+  margin-left: 5px;
+  margin-right: 5px;
+  background-color: rgba(0,0,0,0.1);
+  cursor: pointer;
+}
+

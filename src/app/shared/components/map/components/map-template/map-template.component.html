@@ -1,0 +1,79 @@
+<div class="row">
+  <div class="col-lg-12 col-md-12 col-xs-12" [ngClass]="{fullScreen:isFullScreen}" style="padding-left: 0px!important;padding-right: 0px!important;">
+
+    <!--<app-error-notifier *ngIf="hasError && !loading" [errorMessage]="errorMessage"></app-error-notifier>-->
+    <div class="map-control-widgets" [ngClass]="{hide: loading||hasError,paddingFullScreen:isFullScreen}">
+      <div class="zoom-control">
+        <div class="positive-zoom-button">
+          <a (click)="zoomIn('in')"><i class="fa fa-plus"></i></a>
+        </div>
+        <div class="original-zoom">
+          <a  (click)="recenterMap(map,centeringLayer)"><i class="fa fa-home"></i></a>
+        </div>
+        <div class="negative-zoom-button">
+          <a  (click)="zoomIn('out')"><i class="fa fa-minus"></i></a>
+        </div>
+      </div>
+    </div>
+    <div class="layers-button" [ngClass]="{hide: loading||hasError,paddingFullScreen:isFullScreen}" (mouseenter)="toggleLegendContainerView()">
+      <img src="assets/img/layers-icon.png" style="width:24px;height:24px;">
+    </div>
+    <div *ngIf="!loading&&legendIsOpen" class="legendContainer"  (mouseleave)="closeMapLegend('leave')"
+    >
+
+      <app-visualization-legend
+                                [mapVsualizationObject]="visualizationObject"
+                                (updateMapLayers)="updateMapLayers($event)"
+                                (changeMapTileLayer)="changeMapTileLayer($event)"
+                                (stickyLegend)="stickyMapLegend($event)"
+                                (downloadMapAsFiles)="downloadMapAsFiles($event)"
+                                (closeLegend)="closeMapLegend()"
+                                (layerDnDAction)="dragAndDropHandler($event)"
+                                (showDataTable)="drawMapDataTable($event)"
+                                (newLayerEvent)="addNewLayer($event)"
+                                (fileUploadEvent)="processFileUpload($event)"
+      ></app-visualization-legend>
+    </div>
+
+    <div class="map-title-holder">
+      <div class="map-inner-holder">
+        <h4
+          class="forViewOnly"
+          style="margin-top: 2px;"
+        >
+          {{visualizationObject?.name}}
+        </h4>
+      </div>
+      <br>
+      <div class="map-inner-holder" style="margin-top: 2px;">
+        <h6
+          style="font-size: 12px; margin-top: 2px; margin-bottom: 2px;"
+          *ngIf="visualizationObject.subtitle"
+        >
+          {{visualizationObject?.subtitle}}
+        </h6>
+      </div>
+    </div>
+
+    <div id="map-view-port-{{visualizationObject.id}}" [ngClass]="{hide: visualizationObject.details.loading||hasError}"
+         style="width:100%;margin-top: -15px"></div>
+    <!-- MAP TABLE SECTION -->
+    <div class="map-data-table"
+         [ngStyle]="{zIndex:2000,marginLeft:'0px',padding:'5px',fontSize:'10px'}"
+         [ngClass]="{hide: loading||hasError,screenMaxWidth:isFullScreen,screenMinWidth:!isFullScreen}" *ngIf="!hideTable">
+
+      <div class="col-lg-12 col-md-12 col-xs-12" style="padding:2px!important;">
+        <div  style="padding-left: 0px!important;" class=" col-lg-11 col-md-11 col-xs-11">
+          <div style=""><h4 style="font-size: 13px !important;font-weight:bold;">{{visualizationObject.name}}</h4></div>
+        </div>
+        <div class=" col-lg-1 col-md-1 col-xs-1 pull-right" style="padding-right: 0px!important;">
+          <div style=""><a (click)="hideDataTable()" class="btn btn-default btn-default-updated btn-sm  pull-right"><i
+            class="fa fa-remove"></i></a></div>
+        </div>
+      </div>
+      <div class="col-lg-12 col-md-12 col-xs-12" style="padding:2px!important;">
+        <app-map-table [tableContents]="mapTable"></app-map-table>
+      </div>
+    </div>
+  </div>
+</div>

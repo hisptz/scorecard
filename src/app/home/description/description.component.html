@@ -1,0 +1,47 @@
+<div class="jumbotron" style="background-color: transparent" >
+  <h1 class="display-3" [translate]="'Welcome to Scorecard App!'">
+    Welcome to Scorecard App!
+  </h1>
+  <p class="lead" [translate]="'Create a score card instantly, over tea break'">
+    Create a score card instantly, over tea break...
+  </p>
+  <hr class="my-4">
+  <ol style="margin-left:20px;">
+    <li style="padding:2px;" [translate]="'Click create new, Write your score card a title and description'">
+      Click create new, Write your score card a title and description
+    </li>
+    <li style="padding:2px;" [translate]="'Write group header name for indicators you will create in next step'">
+      Write group header name for indicators you will create in next step
+    </li>
+    <li style="padding:2px;" [translate]="'Select indicator group and click indicator to add to the group'">
+      Select indicator group and click indicator to add to the group
+      <ul style="margin-left:20px;" [translate]="">
+        <li style="padding:2px;" [translate]="'Edit title to change title to use on heading'">
+          Edit title to change title to use on heading
+        </li>
+        <li style="padding:2px;" [translate]="'Enter effective gap to show increase/decrease from last period'">
+          Enter effective gap to show increase/decrease from last period
+        </li>
+        <li style="padding:2px;" [translate]="'Set minimum and maximum range for each color code'">
+          Set minimum and maximum range for each color code
+        </li>
+      </ul>
+    </li>
+    <li style="padding:2px;" [translate]="'Click Add another to add another indicator in next column in the group'">
+      Click "Add another" to add another indicator in next column in the group
+    </li>
+    <li style="padding:2px;" [translate]="'Select the second indicator to add indicator in the same group'">
+      Select the second indicator to add indicator in the same group
+    </li>
+    <li style="padding:2px;" [translate]="'Click Add another in Group row to add next group'">
+      Click "Add another" in Group row to add next group
+    </li>
+  </ol>
+  <p><a
+    class="btn btn-outline-primary btn-lg"
+    href="#"
+    role="button"
+    [routerLink]="['create']"
+    [translate]="'New Scorecard'"
+  >New Scorecard</a></p>
+</div>

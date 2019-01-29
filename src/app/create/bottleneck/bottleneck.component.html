@@ -1,0 +1,271 @@
+<div class="container-fluid" style="font-size: 11px">
+  <div class="row">
+    <div class="col-sm-12" style="margin-bottom: 2px;padding-left: 0px; border-bottom: 1px solid rgba(0,0,0,0.3)">
+      <button
+        class="btn switcher"
+        (click)="indicator.use_bottleneck_groups = true; loadPriview()"
+        [ngClass]="{ 'btn-outline-secondary': !indicator.use_bottleneck_groups,'btn-secondary': indicator.use_bottleneck_groups }"
+        [translate]="'Use Groups'"
+      >Use Groups</button>
+      <button
+        class="btn btn-outline-secondary switcher"
+        (click)="indicator.use_bottleneck_groups = false; loadPriview()"
+        [ngClass]="{ 'btn-outline-secondary': indicator.use_bottleneck_groups,'btn-secondary': !indicator.use_bottleneck_groups }"
+        [translate]="'Use Individual Items'"
+      >Use Individual Items</button>
+      <button
+        *ngIf="indicator.use_bottleneck_groups"
+        class="btn btn-sm btn-outline-secondary pull-right"
+        (click)="addGroup()"
+        [translate]="'Add Group'"
+        title="{{'Add Group' | translate}}"
+      >Add Group</button>
+      <button
+        *ngIf="indicator.use_bottleneck_groups && indicator.bottleneck_indicators_groups.length == 0"
+        class="btn btn-sm btn-outline-secondary pull-right"
+        (click)="generateGroups()"
+        [translate]="'Generate Groups'"
+        title="{{'Generate Groups Based on standard TANAHASHI Model' | translate}}"
+      >Generate Groups</button>
+    </div>
+    <div class="col-sm-7 scorecard_details">
+      <div class="row ">
+        <div class="col-sm-12" style="padding: 0px">
+          <div class="form-group">
+            <ul class="list-inline" style="margin-bottom: 0px">
+              <li class="list-inline-item">
+                <a (click)="group_type='indicators';switchType('indicators')" class="cursor btn btn-sm {{group_type=='indicators' ? 'btn-info' : 'btn-outline-secondary'}}" title="Click to see All Data">
+                  <span [translate]="'Indicators'">Indicators</span>
+                </a>
+              </li>
+              <li class="list-inline-item">
+                <a (click)="group_type='dataElements';switchType('dataElements')" class="cursor btn btn-sm {{group_type=='dataElements' ? 'btn-info' : 'btn-outline-secondary'}}" title="Click to see All Data">
+                  <span [translate]="'Data Elements'">Data Elements</span>
+                </a>
+              </li>
+              <li class="list-inline-item">
+                <a (click)="group_type='datasets';switchType('datasets')" class="cursor btn btn-sm {{group_type=='datasets' ? 'btn-info' : 'btn-outline-secondary'}}" title="Click to see All Data">
+                  <span [translate]="'Data Sets'">Data Sets</span>
+                </a>
+              </li>
+              <li class="list-inline-item">
+                <a (click)="group_type='programs';switchType('programs')" class="cursor btn btn-sm {{group_type=='programs' ? 'btn-info' : 'btn-outline-secondary'}}" title="Click to see All Data">
+                  <span [translate]="'Program Indicators'">Program Indicators</span>
+                </a>
+              </li>
+              <li class="list-inline-item">
+                <a (click)="group_type='event';switchType('event')" class="cursor btn btn-sm {{group_type=='event' ? 'btn-info' : 'btn-outline-secondary'}}" title="Click to see All Data">
+                  <span [translate]="'Event Data Items'">Event Data Items</span>
+                </a>
+              </li>
+              <li class="list-inline-item" >
+                <a (click)="group_type='functions';switchType('functions')" class="cursor btn btn-sm {{group_type=='functions' ? 'btn-info' : 'btn-outline-secondary'}}" title="Click to see All Data">
+                  <span [translate]="'Custom Functions'">Custom Functions</span>
+                </a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <!--Group selection-->
+        <div class="col-sm-6 no-left-padding1">
+          <div class="thumbnail scorecard_details2">
+            <!--<h4 style="margin-top: 0px;margin-bottom: 1px">Data Type</h4>-->
+            <img src="balls-4.svg" style="height: 70px; padding-top: 20px" *ngIf="!(_done_loading_groups$ | async)">
+            <div class="form-group" *ngIf="_done_loading_groups$ | async">
+              <input type="text" class="form-control form-control-sm" placeholder="Search group by name" style="height: 25px;padding-left: 2px; font-size: 11px" [(ngModel)]="groupQuery">
+            </div>
+            <ul class="list-group" *ngIf="_done_loading_groups$ | async">
+              <li
+                @fadeOut
+                class="list-group-item selection_link"
+                *ngFor="let group of (_current_groups$ | async) | filterByName:groupQuery | paginate: { id: 'groups', itemsPerPage: 8, currentPage: p }; trackBy: trackItem"
+                [ngClass]="{'listSelected': group.id == activeGroup}"
+                (click)="load_list(group, group_type)"
+              >
+                {{ group.name }}
+              </li>
+            </ul>
+            <pagination-controls  id="groups1" (pageChange)="p = $event" directionLinks="true" autoHide="true" previousLabel=" " nextLabel=" "></pagination-controls>
+          </div>
+
+        </div>
+
+        <!--item listing-->
+        <div class="col-sm-6 no-left-padding1">
+          <div class="thumbnail scorecard_details2" >
+            <div *ngIf="listReady">
+              <img src="balls-4.svg" style="height: 90px; padding-top: 20px" *ngIf="!(_done_loading_list$ | async)">
+              <h5 class="text-danger" *ngIf="(_error_loading_list$ | async).occurred">{{ (_error_loading_list$ | async).message}}</h5>
+              <div class="form-group" *ngIf="_done_loading_list$ | async">
+                <input type="text" class="form-control form-control-sm" placeholder="Search Item by name" style="height: 25px;padding-left: 2px; font-size: 11px" [(ngModel)]="listQuery">
+              </div>
+              <p *ngIf="(_done_loading_list$ | async) && (_current_listing$ | async).length == 0" [translate]="'No items for a selected group'">No items for a selected group</p>
+              <ul class="list-group" *ngIf="_done_loading_list$ | async">
+                <li
+                  @fadeOut
+                  class="list-group-item selection_link"
+                  [ngClass]="{'activeitemInList': botteneckIndicatorExist(item)}"
+                  *ngFor="let item of (_current_listing$ | async) | filterByName:listQuery | paginate: { id: 'list1', itemsPerPage: 8, currentPage: r }; trackBy: trackItem"
+                  (click)="load_item(item, indicator.use_bottleneck_groups, current_bottleneck_group)"
+                >
+                  <i class="fa fa-check-circle-o text-success" *ngIf="botteneckIndicatorExist(item)"></i> {{ item.name }}
+                </li>
+              </ul>
+              <pagination-controls  id="list1" (pageChange)="r = $event" directionLinks="true" autoHide="true" previousLabel=" " nextLabel=" "></pagination-controls>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-sm-5" style="padding: 0px; height: 380px">
+
+      <!--group selection-->
+      <div class="thumbnail bottleneck_scorecard_details" *ngIf="indicator.use_bottleneck_groups">
+        <div id="accordion" role="tablist" dnd-sortable-container [sortableData]="indicator.bottleneck_indicators_groups">
+          <div
+            class="card"
+            @groupFade
+            *ngFor="let group of indicator.bottleneck_indicators_groups; let i = index"
+            dnd-sortable [sortableIndex]="i"
+            [dragEnabled]="enableGroupdragOperation"
+            (onDropSuccess)="onDropSuccess($event)"
+            [ngClass]="{'activeGroup': group.id == current_bottleneck_group.id}"
+          >
+            <div
+              class="card-header"
+              style="padding: 5px"
+              role="tab"
+              id="headingOne"
+              (click)="setActiveGroup(group)"
+            >
+              <h6 class="mb-0">
+                <a [style.color]="'black'" role="button" aria-expanded="true" attr.aria-controls="{{group.id}}">
+                  <span [style.color]="group.color">
+                    <i class="fa fa-bars" style="cursor: move;"></i>
+                  </span>
+                  {{group.name}} <small style="font-size: 10px">( {{group.items.length}} {{ 'Indicators' | translate}})</small>
+                  <i class="fa fa-chevron-down pull-right"></i>
+                  <i *ngIf="!show_confirmation[group.id]" title="delete group" class="fa fa-trash-o pull-right cursor" (click)="show_confirmation = []; show_confirmation[group.id] = true; $event.preventDefault()" ></i>
+                  <span [@hiddenItem] = "show_confirmation[group.id]?'notHidden':'hidden'">
+                    <i title="cancel deleting" class="fa fa-times-circle-o pull-right cursor" (click)="show_confirmation[group.id] = false; $event.preventDefault()"></i>
+                    <i title="confirm deleting" class="fa fa-check-circle-o text-success pull-right cursor" (click)="deleteGroup(group);"></i>
+                  </span>
+                </a>
+
+              </h6>
+            </div>
+
+            <div id="{{group.id}}" class="collapse" [ngClass]="{'show':group.id == current_bottleneck_group.id}" role="tabpanel" aria-labelledby="headingOne" data-parent="#accordion">
+              <div class="card-body" style="padding: 5px">
+                <label [translate]="'Group Name'">Group Name </label>
+                <select [(ngModel)]="group.color" style="width: 100px;" [style.background-color]="group.color" (change)="prepareChart(indicator)">
+                  <option *ngFor="let color of groupColors" [value]="color" style="width: 100px;" [style.background-color]="color"></option>
+                </select>
+                <input  type="text" class="form-control" [(ngModel)]="group.name" (blur)="prepareChart(indicator)">
+                <p class="lead" *ngIf="group.items.length == 0" [translate]="'Select Indicators to add in this group'">
+                  Select Indicators to add in this group
+                </p>
+                <ul style="margin-top: 4px" class="list-group" dnd-sortable-container [sortableData]="group.items">
+                  <li
+                    @groupFade
+                    class="list-group-item"
+                    *ngFor="let item of group.items; let k = index"
+                    dnd-sortable [sortableIndex]="k"
+                    [dragEnabled]="enableItemdragOperation"
+                    (onDropSuccess)="onDropSuccess($event)"
+                  >
+                    <div style="margin-left: -15px;margin-right: -15px">
+                      <p>{{ item.name }}
+                        <a style="padding-right: 5px" (click)="removeBottleneckIndicatorFromGroup(item, group)" title="Remove from list" class="remove-bottleneck pull-right">
+                          <i class="fa fa-trash-o text-danger"></i>
+                        </a>
+                      </p>
+                      <label [translate]="'Display Name'">Display Name</label> &nbsp;
+
+                      <input class="form-control form-control-sm" [(ngModel)]="item.bottleneck_title" (blur)="prepareChart(indicator)" (click)="enableGroupdragOperation = false;">
+                    </div>
+                    <div class="container-fluid" style="padding: 0px">
+                      <div class="row">
+                        <div class="col-sm-6" style="padding-left: 0px">
+                          <label [translate]="'Baseline'">Baseline</label>
+                          <input class="form-control form-control-sm" [(ngModel)]="item.baseline" placeholder="{{ 'Baseline' | translate}}">
+                        </div>
+                        <div class="col-sm-6" style="padding-right: 0px">
+                          <label [translate]="'Target'">Target</label>
+                          <input class="form-control form-control-sm" [(ngModel)]="item.target" placeholder="{{ 'Target' | translate}}">
+                        </div>
+                      </div>
+                    </div>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!--single item selection-->
+      <div class="thumbnail bottleneck_scorecard_details"  *ngIf="!indicator.use_bottleneck_groups">
+        <ul class="list-group" dnd-sortable-container [sortableData]="indicator.bottleneck_indicators">
+          <li
+            @groupFade
+            class="list-group-item"
+            dnd-sortable [sortableIndex]="i"
+            (onDropSuccess)="onDropSuccess($event)"
+            *ngFor="let item of indicator.bottleneck_indicators | paginate: { id: 'list3', itemsPerPage: 6, currentPage: k }; let i = index"
+          >
+            <div style="margin-left: -15px;margin-right: -15px">
+              <p>{{ item.name }}
+                <a style="padding-right: 5px" (click)="removeBottleneckIndicator(item)" title="Remove from list" class="remove-bottleneck pull-right">
+                  <i class="fa fa-trash-o text-danger"></i>
+                </a>
+              </p>
+              <label [translate]="'Display Name'">Display Name</label>
+              <input class="form-control form-control-sm" [(ngModel)]="item.bottleneck_title" (blur)="prepareChart(indicator)">
+            </div>
+            <div class="container-fluid" style="padding: 0px">
+              <div class="row">
+                <div class="col-sm-6" style="padding-left: 0px">
+                  <label [translate]="'Baseline'">Baseline</label>
+                  <input class="form-control form-control-sm" [(ngModel)]="item.baseline" placeholder="{{ 'Baseline' | translate}}">
+                </div>
+                <div class="col-sm-6" style="padding-right: 0px">
+                  <label [translate]="'Target'">Target</label>
+                  <input class="form-control form-control-sm" [(ngModel)]="item.target" placeholder="{{ 'Target' | translate}}">
+                </div>
+              </div>
+            </div>
+          </li>
+        </ul>
+        <pagination-controls  id="list3" (pageChange)="k = $event" directionLinks="true" autoHide="true" previousLabel=" " nextLabel=" "></pagination-controls>
+      </div>
+    </div>
+    <!--saving buttons-->
+    <div class="container-fluid" style="padding: 0px">
+      <p class="text-right" style="font-size: 10px; margin: 0px" *ngIf="indicator.use_bottleneck_groups">Groups without indicators will be removed</p>
+      <button
+        class="btn btn-outline-secondary btn-sm pull-right cursor"
+        (click)="showBotleneckEditor(indicator)">
+        <i class="fa fa-check"></i>
+        <span [translate]="'Done'"> Done </span>
+      </button>
+      <button
+        class="btn btn-outline-warning btn-sm pull-right cursor"
+        (click)="cancelSaving()">
+        <i class="fa fa-check"></i>
+        <span [translate]="'Cancel'"> Cancel </span>
+      </button>
+    </div>
+  </div>
+  <!--sample analytics-->
+  <div class="row">
+    <div class="col-sm-12" *ngIf="chartData">
+      <div style="height: 300px; width: 100%" *ngIf="chartData && (indicator.use_bottleneck_groups ? indicator.bottleneck_indicators_groups.length != 0 : indicator.bottleneck_indicators.length != 0)"
+           [ng2-highcharts]="chartData"></div>
+    </div>
+  </div>
+
+
+</div>

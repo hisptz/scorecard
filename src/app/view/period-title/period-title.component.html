@@ -1,0 +1,23 @@
+<img
+  src="assets/img/balls-3.svg"
+  style="height: 30px"
+  *ngIf="indicator_loading[indicator.indicators[0].id+period.id]"
+  title="Loading old data for {{ indicator.title }}">
+<i
+  *ngIf="indicator_done_loading[indicator.indicators[0].id+period.id] && old_proccessed_percent != 100"
+  class="fa fa-check text-success">
+</i>
+<i
+  *ngIf="has_error[indicator.indicators[0].id+period.id]"
+  class="fa fa-warning text-warning" [title]="'There was an error loading this indicator : ' +error_text[indicator.indicators[0].id+period.id]"
+></i>
+{{ period.name }}
+<!--sorting icons-->
+<i
+  class="fa fa-sort-up pull-right text-muted"
+  *ngIf="!current_sorting && sorting_column == indicator.indicators[0].id && sorting_period == period.id">
+</i>
+<i
+  class="fa fa-sort-down pull-right text-muted"
+  *ngIf="current_sorting && sorting_column == indicator.indicators[0].id && sorting_period == period.id">
+</i>

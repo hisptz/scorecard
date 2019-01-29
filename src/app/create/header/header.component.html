@@ -1,0 +1,129 @@
+<div class="container-fluid">
+  <div class="row">
+    <div
+      class="col-md-2 col-xs-12"
+      style="padding-left: 0px; cursor: pointer;"
+      (click)="goToHomePage()"
+      [tourAnchor]="position === 'top'? 'home.start.tour' : 'home.tour'"
+    >
+      <img src="scorecard.svg" style="height: 58px; width: 48px" *ngIf="position === 'top'">
+      <span style="font-size: 20px" [translate]="'Score Card'" *ngIf="position === 'top'"> Score Card</span>
+    </div>
+    <div  class="col-md-7 col-xs-12">
+      <h3 class="text-center" style="margin-top: 8px"  *ngIf="position === 'top'">
+        <small *ngIf="name == ''" [translate]="'Create a new scorecard'">
+          Create a new scorecard
+        </small>
+        <small *ngIf="name != ''">
+          {{ name }}
+        </small>
+      </h3>
+    </div>
+    <div class="col-md-3 col-xs-12" style="margin-top: 10px">
+      <button
+        class="btn btn-outline-info btn-sm pull-right cursor"
+        (click)="save()"
+        style="height: 35px;margin-left: 5px"
+        title="{{ 'Save the Changes'| translate }}"
+        [tourAnchor]="position === 'top'? 'create.save' : 'crear'"
+      >
+        <i class="fa fa-floppy-o text-info"></i>
+        <span [translate]="'Save'">Save</span>
+      </button>
+      <button
+        class="btn btn-outline-warning btn-sm pull-right cursor"
+        (click)="cancel()"
+        style="height: 35px;margin-left: 5px"
+        title="{{ 'Cancel and Go Back' | translate }}"
+        [tourAnchor]="position === 'top'? 'create.cancel' : 'create.cancel1'"
+      >
+        <i class="fa fa-ban"></i>
+        <span [translate]="'Cancel'">Cancel</span>
+      </button>
+      <app-options
+        *ngIf="options && position === 'top'"
+        [options]="options"
+        (onOptionUpdate) = "optionUpdated($event)"
+      ></app-options>
+
+      <div class="dropdown float-md-right" style="margin-right: 3px">
+        <button style="height: 34px" class="btn btn-outline-secondary btn-sm dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          <i class="fa fa-question-circle"></i>
+        </button>
+        <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+          <a class="dropdown-item cursor" (click)="startTour()" [translate]="'Take a tour'">Take a tour</a>
+          <a class="dropdown-item cursor" [routerLink]="['/documentation']" [translate]="'User Manual'">User Manual</a>
+
+          <div class="dropdown-item language-change" href="#">
+            <span title="English" (click)="switchLanguage('en')">En</span> |
+            <span title="French" (click)="switchLanguage('fr')">Fr</span> |
+            <span title="Portuguese" (click)="switchLanguage('pt')">Pt</span>
+          </div>
+          <a class="dropdown-item cursor" *ngIf="!show_more" (click)="show_more = !show_more">More <i class="fa fa-plus"></i> </a>
+          <a class="dropdown-item cursor" *ngIf="show_more" (click)="show_more = !show_more">Less <i class="fa fa-minus"></i> </a>
+          <div class="dropdown-item language-change" *ngIf="show_more">
+            <span title="Afrikaans" (click)="switchLanguage('af')">Af</span> |
+            <span title="Danish" (click)="switchLanguage('da')">da</span> |
+            <span title="Spanish" (click)="switchLanguage('es')">es</span>
+          </div>
+          <div class="dropdown-item language-change" *ngIf="show_more">
+            <span title="Hausa" (click)="switchLanguage('ha')">ha</span> |
+            <span title="Haitian Creole" (click)="switchLanguage('ht')">ht</span> |
+            <span title="Indonesian" (click)="switchLanguage('id')">id</span>
+          </div>
+          <div class="dropdown-item language-change" *ngIf="show_more">
+            <span title="Norwegian" (click)="switchLanguage('no')">no</span> |
+            <span title="Shona" (click)="switchLanguage('sn')">sn</span> |
+            <span title="Somali" (click)="switchLanguage('so')">so</span>
+          </div>
+          <div class="dropdown-item language-change" *ngIf="show_more">
+            <span title="Sudanese" (click)="switchLanguage('su')">su</span> |
+            <span title="Swedish" (click)="switchLanguage('sv')">sv</span> |
+            <span title="Swahili" (click)="switchLanguage('sw')">sw</span>
+          </div>
+          <div class="dropdown-item language-change" *ngIf="show_more">
+            <span title="Vietnamese" (click)="switchLanguage('vi')">vi</span> |
+            <span title="Xhosa" (click)="switchLanguage('xh')">xh</span> |
+            <span title="Zuli" (click)="switchLanguage('zu')">zu</span>
+          </div>
+          <div class="dropdown-item language-change" *ngIf="show_more">
+            <span title="Amharic" (click)="switchLanguage('am')">am</span> |
+            <span title="Arabic" (click)="switchLanguage('ar')">ar</span> |
+            <span title="Bengali" (click)="switchLanguage('bn')">bn</span>
+          </div>
+          <div class="dropdown-item language-change" *ngIf="show_more">
+            <span title="Hindi" (click)="switchLanguage('hi')">hi</span> |
+            <span title="Loathian" (click)="switchLanguage('lo')">lo</span> |
+            <span title="Mongolian" (click)="switchLanguage('mn')">mn</span>
+          </div>
+          <div class="dropdown-item language-change" *ngIf="show_more">
+            <span title="Nepali" (click)="switchLanguage('ne')">ne</span> |
+            <span title="Punjabi" (click)="switchLanguage('pa')">pa</span> |
+            <span title="Russian" (click)="switchLanguage('ru')">ru</span>
+          </div>
+          <div class="dropdown-item language-change" *ngIf="show_more">
+            <span title="Sindhi" (click)="switchLanguage('sd')">sd</span> |
+            <span title="Sinhalese" (click)="switchLanguage('si')">si</span> |
+            <span title="tamil" (click)="switchLanguage('ta')">ta</span>
+          </div>
+          <div class="dropdown-item language-change" *ngIf="show_more">
+            <span title="Tajik" (click)="switchLanguage('tg')">tg</span> |
+            <span title="Urdu" (click)="switchLanguage('ur')">ur</span> |
+            <span title="Portuguese" (click)="switchLanguage('zh-CN')">zh</span>
+          </div>
+        </div>
+      </div>
+      <h6
+        class="pull-right"
+        *ngIf="saving_scorecard">
+        <img src="balls-4.svg" style="height: 50px;">
+        Saving score card Information, Please wait...
+      </h6>
+      <h6
+        class="pull-right text-danger"
+        *ngIf="saving_error">
+        Something went wrong, Saving score card Information failed
+      </h6>
+    </div>
+  </div>
+</div>

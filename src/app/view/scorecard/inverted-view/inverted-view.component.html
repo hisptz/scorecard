@@ -1,0 +1,463 @@
+<h6 *ngIf="scorecard.data.highlighted_indicators.display">
+  {{ 'Highlighted Indicators' | translate }}
+</h6>
+<div class="row" *ngIf="scorecard.data.highlighted_indicators.display">
+  <div
+    class="col-sm-3 mb-1"
+    *ngFor="let indicator of scorecard.data.highlighted_indicators.definitions"
+  >
+    <div class="row mr-1 ml-0" style="border: 1px solid rgba(0,0,0,0.4)">
+      <div class="col-sm-10 p-2" style="font-size: 11px">
+        {{ indicator.title }}
+      </div>
+      <div
+        class="col-sm-2 p-2"
+        [style.backgroundColor]="assignBgColor(indicator, indicator.value)"
+        style="background-color: #014b5a; font-size: 11px"
+      >
+        {{ indicator.value }}
+      </div>
+    </div>
+  </div>
+</div>
+<!--scorecard table data in the top orgunit on left-->
+<table
+  class="table table-bordered scorecard_table"
+  *ngIf="scorecard.data.show_data_in_column"
+>
+  <!--orgunits-->
+  <tr>
+    <th
+      *ngIf="scorecard.data.show_rank"
+      style="width: 30px;vertical-align: bottom"
+      [attr.rowspan]="periods_list.length > 1 ? 2 : 1"
+    >
+      No#
+    </th>
+    <th style="vertical-align: bottom">
+      <input
+        type="text"
+        class="form-control input-sm no-print"
+        [(ngModel)]="searchQuery"
+        placeholder="Search.."
+      />
+    </th>
+    <td
+      *ngFor="let current_orgunit of orgunits"
+      class="indicator_title"
+      style="line-height: 140%; padding: 0px;vertical-align: bottom"
+      title="Click to Sort By {{ current_orgunit.name }}"
+      [attr.colspan]="periods_list.length"
+      dnd-droppable
+      (onDropSuccess)="dragItemSuccessfull($event, 'orgunit', current_orgunit)"
+    >
+      <div
+        dnd-draggable
+        [dragEnabled]="true"
+        [dragData]="current_orgunit"
+        style="padding: 8px"
+      >
+        {{ current_orgunit.name }}
+      </div>
+      <!--sorting icons-->
+      <!--<span class="glyphicon glyphicon-chevron-up pull-right text-muted" *ngIf="!current_sorting && sorting_column == indicator.indicators[0].id"></span>-->
+      <!--<span class="glyphicon glyphicon-chevron-down pull-right text-muted" *ngIf="current_sorting && sorting_column == indicator.indicators[0].id"></span>-->
+    </td>
+    <th class="subtotal" *ngIf="show_sum_in_row">Sum</th>
+    <th
+      class="subtotal"
+      *ngIf="scorecard.data.show_average_in_row"
+      (click)="
+        sortScoreCardFromColumn(
+          'avg',
+          sortAscending,
+          orgunits,
+          periods_list[0].id,
+          false
+        )
+      "
+      [attr.rowspan]="periods_list.length > 1 ? 2 : 1"
+      style="vertical-align: bottom"
+    >
+      Average
+      <!--sorting icons-->
+      <span
+        class="glyphicon glyphicon-chevron-up pull-right text-muted"
+        *ngIf="!current_sorting && sorting_column == 'avg'"
+      ></span>
+      <span
+        class="glyphicon glyphicon-chevron-down pull-right text-muted"
+        *ngIf="current_sorting && sorting_column == 'avg'"
+      ></span>
+    </th>
+    <th
+      *ngFor="let label of scorecard.data.additional_labels"
+      style="font-size: 10px;max-width: 90px;overflow-wrap: break-word; cursor: pointer; line-height: 80%"
+      class="sans-pro"
+      [attr.rowspan]="periods_list.length > 1 ? 2 : 1"
+    >
+      {{ label }}
+    </th>
+  </tr>
+
+  <!--testing adding period dimension-->
+  <tr *ngIf="periods_list.length > 1">
+    <!--<th *ngIf="scorecard.data.show_rank"  style="width: 30px"></th>-->
+    <th style="vertical-align: bottom"></th>
+    <ng-container *ngFor="let current_orgunit of orgunits; let i = index">
+      <td
+        *ngFor="let per of periods_list"
+        class="indicator_title"
+        style="line-height: 140%"
+      >
+        {{ per.name }}
+        <!--sorting icons-->
+        <!--<span class="glyphicon glyphicon-chevron-up pull-right text-muted" *ngIf="!current_sorting && sorting_column == indicator.indicators[0].id"></span>-->
+        <!--<span class="glyphicon glyphicon-chevron-down pull-right text-muted" *ngIf="current_sorting && sorting_column == indicator.indicators[0].id"></span>-->
+      </td>
+    </ng-container>
+    <th class="subtotal" *ngIf="show_sum_in_row">Sum</th>
+    <!--<th class="subtotal" *ngIf="show_average_in_row" (click)="sortScoreCardFromColumn('avg', sortAscending, orgunits, periods_list[0].id, false)"></th>-->
+    <!--<th *ngFor="let label of scorecard.data.additional_labels" style="font-size: 10px;max-width: 90px;overflow-wrap: break-word; cursor: pointer; line-height: 80%"-->
+    <!--class="sans-pro">-->
+    <!--{{ label }}-->
+    <!--</th>-->
+  </tr>
+
+  <!--data-->
+  <tbody [@listState]="indicator_holders_list.length">
+    <ng-container
+      *ngFor="
+        let indicator of (indicator_holders_list
+          | filterIndicatorByName: searchQuery);
+        let i = index
+      "
+    >
+      <tr
+        style="height: 35px; max-height: 35px; overflow-y: hidden; line-height: 80%"
+        class="orunitTr"
+        *ngIf="
+          scorecard.data.shown_records == 'all' ||
+          i < scorecard.data.shown_records
+        "
+      >
+        <td
+          style="vertical-align: bottom;font-size: 10px;cursor: pointer;line-height: 80%;padding: 8px"
+          *ngIf="scorecard.data.show_rank"
+        >
+          {{ i + 1 }}
+        </td>
+        <td
+          style="vertical-align: bottom;font-size: 10px;cursor: pointer;line-height: 80%;padding: 2px;min-width:100px; position: relative"
+          class="orgUnitName"
+          dnd-droppable
+          (onDropSuccess)="dragItemSuccessfull($event, 'indicator', indicator)"
+          (click)="loadChildrenData(null, indicator.indicators[0])"
+          [contextMenu]="indicatorMenu"
+          [contextMenuSubject]="indicator"
+          (contextmenu)="onContextMenu($event, indicator)"
+          (mouseenter)="mouseEnter(indicator)"
+          (mouseleave)="mouseLeave(indicator)"
+        >
+          <i
+            title="For bottleneck analysis, right click any of the cells"
+            *ngIf="
+              !indicator.indicators[0].use_bottleneck_groups
+                ? indicator.indicators[0].bottleneck_indicators.length != 0
+                : indicator.indicators[0].bottleneck_indicators_groups.length !=
+                  0
+            "
+            class="fa fa-bar-chart-o no-print"
+            style="position: absolute; top:1px;right: 1px"
+          ></i>
+          <div
+            dnd-draggable
+            [dragEnabled]="true"
+            [dragData]="indicator"
+            style="padding: 8px"
+          >
+            <img
+              src="assets/img/balls-3.svg"
+              style="height: 30px"
+              *ngIf="indicator_loading[indicator.indicators[0].id]"
+              title="Loading old data for {{ getIndicatorTitle(indicator) }}"
+            />
+            <span
+              *ngIf="
+                indicator_done_loading[indicator.indicators[0].id] &&
+                old_proccessed_percent != 100
+              "
+              class="glyphicon glyphicon-ok text-success"
+            ></span>
+
+            {{ getIndicatorTitle(indicator) }}
+          </div>
+        </td>
+
+        <ng-container *ngFor="let current_orgunit of orgunits; let i = index">
+          <td
+            *ngFor="let per of periods_list"
+            style="font-size: 10px;max-width: 90px;overflow-wrap: break-word; cursor: pointer; padding: 0px;line-height: 10%;"
+            class="sans-pro"
+            (click)="loadPreview(null, indicator, current_orgunit, per)"
+            title="{{ prepareTooltip(indicator, current_orgunit.id, per.id) }}"
+            [contextMenu]="itemMenu"
+            [contextMenuSubject]="indicator"
+            (contextmenu)="
+              onItemContextMenu($event, indicator, current_orgunit, per)
+            "
+          >
+            <svg-item
+              [indicator]="indicator"
+              [current_orgunit]="current_orgunit"
+              [indicator_list]="getVisibleIndicators(indicator)"
+              [scorecard]="scorecard"
+              [period]="per.id"
+            ></svg-item>
+          </td>
+        </ng-container>
+        <td
+          style="width: 90px;max-width: 90px;line-height: 10%;padding: 0px"
+          *ngIf="show_sum_in_row"
+        >
+          <app-subtotal
+            [indicator]="indicator"
+            [orgunits]="orgunits"
+            [scorecard]="scorecard"
+            [calculation]="'sum'"
+            [indicator_list]="getVisibleIndicators(indicator)"
+            [period]="periods_list[0].id"
+          ></app-subtotal>
+        </td>
+        <td
+          style="width: 90px;max-width: 90px;line-height: 10%;padding: 0px"
+          *ngIf="scorecard.data.show_average_in_row"
+        >
+          <app-subtotal
+            [indicator]="indicator"
+            [orgunits]="orgunits"
+            [scorecard]="scorecard"
+            [calculation]="'avg'"
+            [indicator_list]="getVisibleIndicators(indicator)"
+            [period]="periods_list[0].id"
+          ></app-subtotal>
+        </td>
+        <td
+          *ngFor="let label of scorecard.data.additional_labels"
+          style="font-size: 10px;max-width: 90px;overflow-wrap: break-word; cursor: pointer; line-height: 80%"
+          class="sans-pro"
+        >
+          {{ getIndicatorLabel(indicator, label) }}
+        </td>
+      </tr>
+
+      <tr *ngIf="showSubScorecard[indicator.indicators[0].id]">
+        <td
+          [attr.colspan]="getSubscorecardColspan()"
+          style="background-color: rgba(0,0,0,0.1)"
+        >
+          <!--Internal score card-->
+          <h3
+            class="text-center text-muted"
+            *ngIf="!children_available[indicator.indicators[0].id]"
+          >
+            This indicator has no related indicators
+          </h3>
+          <app-scorecard
+            *ngIf="children_available[indicator.indicators[0].id]"
+            #childScoreCard
+            [scorecard]="subscorecard"
+            [selectedOrganisationUnit]="sub_model"
+            [selectedPeriod]="selectedPeriod"
+            [functions]="functions"
+            [organisation_unit_nodes]="organisation_unit_nodes"
+            [is_children]="true"
+            (show_details)="loadPreviewFromChild($event)"
+          ></app-scorecard>
+        </td>
+      </tr>
+    </ng-container>
+  </tbody>
+
+  <!--sum column-->
+  <tr
+    *ngIf="scorecard.data.show_sum_in_column"
+    style="height: 35px; max-height: 35px; overflow-y: hidden; line-height: 80%"
+  >
+    <th *ngIf="scorecard.data.show_rank" style="width: 30px"></th>
+    <th style="line-height: 10%">Sum</th>
+    <ng-container *ngFor="let current_orgunit of orgunits">
+      <th
+        *ngFor="let per of periods_list"
+        style="font-size: 10px;max-width: 90px;overflow-wrap: break-word;padding: 8px; line-height: 80%;"
+      ></th>
+    </ng-container>
+    <th *ngIf="show_sum_in_row">
+      {{ findRowTotalSum(orgunits, periods_list[0].id) | number: '1.2-2' }}
+    </th>
+    <th *ngIf="scorecard.data.show_average_in_row">
+      {{ findRowTotalAverage(orgunits, periods_list[0].id) }}
+    </th>
+  </tr>
+  <!--Average column-->
+  <tr
+    *ngIf="scorecard.data.show_average_in_column"
+    style="height: 35px; max-height: 35px; overflow-y: hidden; line-height: 80%"
+  >
+    <th *ngIf="scorecard.data.show_rank" style="width: 30px"></th>
+    <th>Average</th>
+    <ng-container *ngFor="let current_orgunit of orgunits">
+      <th
+        *ngFor="let per of periods_list"
+        style="font-size: 10px;max-width: 90px;overflow-wrap: break-word;padding: 8px; line-height: 80%;"
+      >
+        {{ findRowAverage(current_orgunit.id, periods_list, per.id) }}
+      </th>
+    </ng-container>
+    <th *ngIf="show_sum_in_row">
+      {{ findRowTotalSum(orgunits, periods_list[0].id) | number: '1.2-2' }}
+    </th>
+    <th *ngIf="scorecard.data.show_average_in_row">
+      {{ findRowTotalAverage(orgunits, periods_list[0].id) }}
+    </th>
+  </tr>
+</table>
+
+<context-menu #indicatorMenu>
+  <!--<ng-template contextMenuItem (execute)="loadPreview(null,$event.item,null,null, null, true)"  let-item>-->
+  <!--<span *ngIf="item.indicators[0].bottleneck_indicators.length != 0">-->
+  <!--<i class="fa fa-bar-chart"></i>-->
+  <!--<span [translate]="'Related indicators Analysis'"> Related indicators Analysis</span>-->
+  <!--</span>-->
+  <!--</ng-template>-->
+  <ng-template
+    contextMenuItem
+    (execute)="loadPreview(null, $event.item, null, null)"
+  >
+    <i class="fa fa-bar-chart-o" aria-hidden="true"></i>
+    <span [translate]="'Basic Analysis'"> Basic Analysis</span>
+  </ng-template>
+  <ng-template
+    *ngIf="indicator_holders_list.length !== 1"
+    contextMenuItem
+    (execute)="hideClicked($event.item)"
+  >
+    <i class="fa fa-eye-slash" aria-hidden="true"></i>
+    <span [translate]="'Hide'">Hide</span>
+  </ng-template>
+  <ng-template
+    *ngIf="hidenColums.length !== 0"
+    contextMenuItem
+    (execute)="hideClicked($event.item, 'all')"
+  >
+    <i class="fa fa-eye" style="margin-left:4px" aria-hidden="true"></i>
+    <span [translate]="'Show All'">Show All</span>
+  </ng-template>
+</context-menu>
+
+<context-menu #itemMenu>
+  <ng-template
+    contextMenuItem
+    (execute)="
+      loadPreview(
+        null,
+        $event.item.item,
+        $event.item.ou,
+        $event.item.pe,
+        null,
+        true
+      )
+    "
+    let-item
+  >
+    <span *ngIf="item.item.indicators[0].bottleneck_indicators.length != 0">
+      <i class="fa fa-bar-chart"></i>
+      <span [translate]="'Related indicators Analysis'">
+        Related indicators Analysis</span
+      >
+    </span>
+  </ng-template>
+  <ng-template
+    contextMenuItem
+    (execute)="
+      loadPreview(null, $event.item.item, $event.item.ou, $event.item.pe)
+    "
+  >
+    <i class="fa fa-bar-chart-o" aria-hidden="true"></i>
+    <span [translate]="'Basic Analysis'">Basic Analysis</span>
+  </ng-template>
+  <ng-template contextMenuItem [subMenu]="saySubMenu">
+    <i class="fa fa-line-chart" aria-hidden="true"></i>
+    <span [translate]="'Trend Analysis'">Trend Analysis</span>
+  </ng-template>
+  <context-menu #saySubMenu>
+    <ng-template
+      contextMenuItem
+      (execute)="
+        loadPreview(null, $event.item.item, $event.item.ou, null, {
+          id: 'LAST_3_MONTHS',
+          name: 'Last 3 Month'
+        })
+      "
+    >
+      <i class="fa fa-line-chart" aria-hidden="true"></i>
+      <span [translate]="'Last 3 Month'">Last 3 Month</span>
+    </ng-template>
+    <ng-template
+      contextMenuItem
+      (execute)="
+        loadPreview(null, $event.item.item, $event.item.ou, null, {
+          id: 'LAST_6_MONTHS',
+          name: 'Last 6 Month'
+        })
+      "
+    >
+      <i class="fa fa-line-chart" aria-hidden="true"></i>
+      <span [translate]="'Last 6 Month'">Last 6 Month</span>
+    </ng-template>
+    <ng-template
+      contextMenuItem
+      (execute)="
+        loadPreview(null, $event.item.item, $event.item.ou, null, {
+          id: 'LAST_12_MONTHS',
+          name: 'Last 12 Month'
+        })
+      "
+    >
+      <i class="fa fa-line-chart" aria-hidden="true"></i>
+      <span [translate]="'Last 12 Month'">Last 12 Month</span>
+    </ng-template>
+    <ng-template
+      contextMenuItem
+      (execute)="
+        loadPreview(null, $event.item.item, $event.item.ou, null, {
+          id: 'LAST_4_QUARTERS',
+          name: 'Last 4 Quarter'
+        })
+      "
+    >
+      <i
+        class="fa fa-line-chart"
+        style="margin-left:4px"
+        aria-hidden="true"
+      ></i>
+      <span [translate]="'Last 4 Quarter'">Last 4 Quarter</span>
+    </ng-template>
+    <ng-template
+      contextMenuItem
+      (execute)="
+        loadPreview(null, $event.item.item, $event.item.ou, null, {
+          id: 'LAST_5_YEARS',
+          name: 'Last 5 Years'
+        })
+      "
+    >
+      <i
+        class="fa fa-line-chart"
+        style="margin-left:4px"
+        aria-hidden="true"
+      ></i>
+      <span [translate]="'Last 5 Years'">Last 5 Years</span>
+    </ng-template>
+  </context-menu>
+</context-menu>

@@ -1,0 +1,159 @@
+<div class="tree-input" appClickOutside (clickOutside)="showAdditionalOptions = true" (mouseleave)="showAdditionalOptions = true">
+<button
+  tourAnchor="view.options"
+  type="button"
+  class="btn  pull-right cursor"
+  [ngClass]="{'btn-outline-secondary': (showAdditionalOptions && pinAdditionalOptions), 'btn-secondary': !(showAdditionalOptions && pinAdditionalOptions)}"
+  style="height: 35px;padding-top: 0px;padding-bottom: 0px"
+  title="{{ 'Customize scorecard' | translate }}"
+  (click)="showOptions()"
+  (mouseenter)="showAdditionalOptions = false">
+  <i class="fa fa-cog"></i>
+  <span [translate]="'Options'"> Options</span>
+</button>
+<div class="additional-options" [@showOption]="showAdditionalOptions && pinAdditionalOptions ? 'hidden': 'shown'" style="padding-top: 0px; padding-bottom: 0px">
+  <div class="row" style="font-size: 11px">
+    <div class="col-sm-4" style="padding: 0px; padding-left: 10px">
+      <h5 class="text-center text-muted" [translate]="'Show'">Show</h5>
+      <ul class="list-group btn-sec">
+        <li class="list-group-item pointer" (click)="setOptionFromButton('show_legend_definition', 'boolean')">
+          <i class="fa fa-check-circle text-secondary" *ngIf="options.show_legend_definition"></i>
+          <i class="fa fa-circle-thin text-secondary" *ngIf="!options.show_legend_definition"></i>
+          <span [translate]="'Legend'"> Legend</span>
+        </li>
+        <li class="list-group-item pointer" (click)="setOptionFromButton('show_title', 'boolean')">
+          <i class="fa fa-check-circle text-secondary" *ngIf="options.show_title"></i>
+          <i class="fa fa-circle-thin text-secondary" *ngIf="!options.show_title"></i>
+          <span [translate]="'Title'"> Title</span>
+        </li>
+        <li class="list-group-item pointer" (click)="setOptionFromButton('show_rank', 'boolean')">
+          <i class="fa fa-check-circle text-secondary" *ngIf="options.show_rank"></i>
+          <i class="fa fa-circle-thin text-secondary" *ngIf="!options.show_rank"></i>
+          <span [translate]="'Item Number'"> Item Number</span>
+        </li>
+        <li class="list-group-item pointer" (click)="setOptionFromButton('empty_rows', 'boolean')">
+          <i class="fa fa-check-circle text-secondary" *ngIf="options.empty_rows"></i>
+          <i class="fa fa-circle-thin text-secondary" *ngIf="!options.empty_rows"></i>
+          <span [translate]="'Empty Rows'"> Empty Rows</span>
+        </li>
+        <li class="list-group-item pointer" (click)="setOptionFromButton('show_hierarchy', 'boolean')">
+          <i class="fa fa-check-circle text-secondary" *ngIf="options.show_hierarchy"></i>
+          <i class="fa fa-circle-thin text-secondary" *ngIf="!options.show_hierarchy"></i>
+          <span [translate]="'Show Hierarchy'"> Show Hierarchy</span>
+        </li>
+        <li class="list-group-item pointer" (click)="setOptionFromButton('show_average_in_row', 'boolean')">
+          <i class="fa fa-check-circle text-secondary" *ngIf="options.show_average_in_row"></i>
+          <i class="fa fa-circle-thin text-secondary" *ngIf="!options.show_average_in_row"></i>
+          <span [translate]="'Average Column'"> Average Column</span>
+        </li>
+        <li class="list-group-item pointer" (click)="setOptionFromButton('show_average_in_column', 'boolean')">
+          <i class="fa fa-check-circle text-secondary" *ngIf="options.show_average_in_column"></i>
+          <i class="fa fa-circle-thin text-secondary" *ngIf="!options.show_average_in_column"></i>
+          <span [translate]="'Average Row'"> Average Row</span>
+        </li>
+        <li class="list-group-item pointer" (click)="setOptionFromButton('show_highlighted_indicator', 'boolean')">
+          <i class="fa fa-check-circle text-secondary" *ngIf="options.show_highlighted_indicator"></i>
+          <i class="fa fa-circle-thin text-secondary" *ngIf="!options.show_highlighted_indicator"></i>
+          <span [translate]="'Highlighted Indicators'"> Highlighted Indicators</span>
+        </li>
+      </ul>
+    </div>
+    <div class="col-sm-4" *ngIf="mode == 'view'" style="padding: 0px">
+      <h5 class="text-center text-muted" [translate]="'Best/Worst'">Best/Worst</h5>
+      <p class="text-muted mb-1" style="font-size: 12px" *ngIf="mode !== 'edit'">
+        <span [translate]="'Sorted By'"></span> &nbsp;
+        {{ sorting_column }}
+      </p>
+      <ul class="list-group btn-sec">
+        <li class="list-group-item pointer" (click)="setOptionFromButton('shown_records', 'value', 'all')">
+          <i class="fa fa-check-circle text-secondary" *ngIf="options.shown_records == 'all'"></i>
+          <i class="fa fa-circle-thin text-secondary" *ngIf="options.shown_records != 'all'"></i>
+          <span [translate]="'All'"> All</span>
+        </li>
+        <li class="list-group-item pointer" (click)="setOptionFromButton('shown_records', 'value', 3)">
+          <i class="fa fa-check-circle text-secondary" *ngIf="options.shown_records == 3"></i>
+          <i class="fa fa-circle-thin text-secondary" *ngIf="options.shown_records != 3"></i>
+          <span [translate]="'Top Three'"> Top Three</span>
+        </li>
+        <li class="list-group-item pointer" (click)="setOptionFromButton('shown_records', 'value', 5)">
+          <i class="fa fa-check-circle text-secondary" *ngIf="options.shown_records == 5"></i>
+          <i class="fa fa-circle-thin text-secondary" *ngIf="options.shown_records != 5"></i>
+          <span [translate]="'Top Five'"> Top Five</span>
+        </li>
+        <li class="list-group-item pointer" (click)="setOptionFromButton('shown_records', 'value', 10)">
+          <i class="fa fa-check-circle text-secondary" *ngIf="options.shown_records == 10"></i>
+          <i class="fa fa-circle-thin text-secondary" *ngIf="options.shown_records != 10"></i>
+          <span [translate]="'Top Ten'"> Top Ten</span>
+        </li>
+        <li class="list-group-item pointer" (click)="setOptionFromButton('show_league_table', 'boolean')">
+          <i class="fa fa-check-circle text-secondary" *ngIf="options.show_league_table"></i>
+          <i class="fa fa-circle-thin text-secondary" *ngIf="!options.show_league_table"></i>
+          <span [translate]="'League table'"> League table</span>
+        </li>
+        <li class="list-group-item pointer" (click)="setOptionFromButton('show_league_table_all', 'boolean')">
+          <i class="fa fa-check-circle text-secondary" *ngIf="options.show_league_table_all"></i>
+          <i class="fa fa-circle-thin text-secondary" *ngIf="!options.show_league_table_all"></i>
+          <span [translate]="'Cups in Indicators'"> Cups in Indicators</span>
+        </li>
+      </ul>
+    </div>
+    <div class="col-sm-4" style="padding: 0px">
+      <h5 class="text-center text-muted" [translate]="'Average'">Average</h5>
+      <ul class="list-group btn-sec">
+        <li class="list-group-item pointer" (click)="setOptionFromButton('average_selection', 'value', 'all')">
+          <i class="fa fa-check-circle text-secondary" *ngIf="options.average_selection == 'all'"></i>
+          <i class="fa fa-circle-thin text-secondary" *ngIf="options.average_selection != 'all'"></i>
+          <span [translate]="'All'"> All</span>
+        </li>
+        <li class="list-group-item pointer" (click)="setOptionFromButton('average_selection', 'value', 'below')">
+          <i class="fa fa-check-circle text-secondary" *ngIf="options.average_selection == 'below'"></i>
+          <i class="fa fa-circle-thin text-secondary" *ngIf="options.average_selection != 'below'"></i>
+          <span [translate]="'Below Average'"> Below Average</span>
+        </li>
+        <li class="list-group-item pointer" (click)="setOptionFromButton('average_selection', 'value', 'above')">
+          <i class="fa fa-check-circle text-secondary" *ngIf="options.average_selection == 'above'"></i>
+          <i class="fa fa-circle-thin text-secondary" *ngIf="options.average_selection != 'above'"></i>
+          <span [translate]="'Above Average'"> Above Average</span>
+        </li>
+      </ul>
+    </div>
+    <div class="col-sm-4" *ngIf="mode == 'edit'" style="padding: 0px">
+      <h5 class="text-center text-muted" [translate]="'Options'">
+        Options
+      </h5>
+      <ul class="list-group btn-sec">
+        <li class="list-group-item pointer" (click)="setOptionFromButton('show_score', 'boolean')">
+          <i class="fa fa-check-circle text-secondary" *ngIf="options.show_score"></i>
+          <i class="fa fa-circle-thin text-secondary" *ngIf="!options.show_score"></i>
+          <span [translate]="'Score'"> Score</span>
+        </li>
+        <li class="list-group-item pointer" (click)="setOptionFromButton('show_arrows_definition', 'boolean')">
+          <i class="fa fa-check-circle text-secondary" *ngIf="options.show_arrows_definition"></i>
+          <i class="fa fa-circle-thin text-secondary" *ngIf="!options.show_arrows_definition"></i>
+          <span [translate]="'Arrows'"> Arrows </span>
+        </li>
+        <li class="list-group-item pointer" (click)="setOptionFromButton('show_data_in_column', 'boolean')">
+          <i class="fa fa-check-circle text-secondary" *ngIf="options.show_data_in_column"></i>
+          <i class="fa fa-circle-thin text-secondary" *ngIf="!options.show_data_in_column"></i>
+          <span [translate]="'show data in rows'"> show data in rows </span>
+        </li>
+        <li class="list-group-item pointer" (click)="setOptionFromButton('show_league_table', 'boolean')">
+          <i class="fa fa-check-circle text-secondary" *ngIf="options.show_league_table"></i>
+          <i class="fa fa-circle-thin text-secondary" *ngIf="!options.show_league_table"></i>
+          <span [translate]="'League table'"> League table</span>
+        </li>
+        <li class="list-group-item pointer" (click)="setOptionFromButton('show_league_table_all', 'boolean')">
+          <i class="fa fa-check-circle text-secondary" *ngIf="options.show_league_table_all"></i>
+          <i class="fa fa-circle-thin text-secondary" *ngIf="!options.show_league_table_all"></i>
+          <span [translate]="'Cups in Indicators'"> Cups in Indicators</span>
+        </li>
+      </ul>
+    </div>
+  </div>
+
+  <!--<button class="btn btn-sm btn-light cursor pull-right" (click)="showOptions()" style="height: 35px">-->
+    <!--<i class="fa fa-close"></i> close-->
+  <!--</button>-->
+
+</div>
+</div>

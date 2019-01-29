@@ -1,0 +1,260 @@
+<tour-step-template></tour-step-template>
+<div class="container-fluid">
+  <div class="row" @fade>
+    <div class="col-md-2 col-xs-12" style="padding-left: 0px; cursor: pointer;" [routerLink]="['']" tourAnchor="home.start.tour" >
+      <img src="scorecard.svg" style="height: 58px; width: 48px" >
+      <span style="font-size: 20px" [translate]="'Score Card'"> </span>
+    </div>
+    <div class="col-md-8 col-xs-12" style="margin-top: 14px">
+      <input
+        tourAnchor="home.search"
+        type="search"
+        class="form-control input-sm"
+        placeholder="{{'Search score card by name' | translate}}"
+        [(ngModel)]="queryterm">
+    </div>
+    <div class="col-md-2 col-xs-12 hidden-sm" style="margin-top: 14px">
+      <button
+        tourAnchor="home.create" style="height: 34px"
+        class="btn btn-outline-secondary btn-sm float-md-right cursor"
+        (click)="createNew()">
+        <i class="fa fa-plus" aria-hidden="true"></i> {{ 'Create' | translate }}
+      </button>
+      <button
+        style="height: 34px;margin-right: 3px"
+        class="btn btn-outline-secondary btn-sm float-md-right cursor"
+        title="{{viewTitle$ | async}}"
+        (click)="changeView()"
+        tourAnchor="home.listview"
+      >
+        <i class="fa fa-list" *ngIf="viewStle == 'Thumbnail'"></i>
+        <i class="fa fa-th-large" *ngIf="viewStle == 'List'"></i>
+        <i class="fa fa-th" *ngIf="viewStle == 'Card'"></i>
+      </button>
+      <div class="dropdown float-md-right" style="margin-right: 3px">
+        <button style="height: 34px" class="btn btn-outline-secondary btn-sm dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          <i class="fa fa-question-circle"></i>
+        </button>
+        <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+          <a class="dropdown-item cursor" (click)="startTour()" [translate]="'Take a tour'">Take a tour</a>
+          <a class="dropdown-item cursor" [routerLink]="['/documentation']" [translate]="'User Manual'">User Manual</a>
+
+          <div class="dropdown-item language-change" href="#">
+            <span title="English" (click)="switchLanguage('en')">En</span> |
+            <span title="French" (click)="switchLanguage('fr')">Fr</span> |
+            <span title="Portuguese" (click)="switchLanguage('pt')">Pt</span>
+          </div>
+          <a class="dropdown-item cursor" *ngIf="!show_more" (click)="show_more = !show_more">More <i class="fa fa-plus"></i> </a>
+          <a class="dropdown-item cursor" *ngIf="show_more" (click)="show_more = !show_more">Less <i class="fa fa-minus"></i> </a>
+          <div class="dropdown-item language-change" *ngIf="show_more">
+            <span title="Afrikaans" (click)="switchLanguage('af')">Af</span> |
+            <span title="Danish" (click)="switchLanguage('da')">da</span> |
+            <span title="Spanish" (click)="switchLanguage('es')">es</span>
+          </div>
+          <div class="dropdown-item language-change" *ngIf="show_more">
+            <span title="Hausa" (click)="switchLanguage('ha')">ha</span> |
+            <span title="Haitian Creole" (click)="switchLanguage('ht')">ht</span> |
+            <span title="Indonesian" (click)="switchLanguage('id')">id</span>
+          </div>
+          <div class="dropdown-item language-change" *ngIf="show_more">
+            <span title="Norwegian" (click)="switchLanguage('no')">no</span> |
+            <span title="Shona" (click)="switchLanguage('sn')">sn</span> |
+            <span title="Somali" (click)="switchLanguage('so')">so</span>
+          </div>
+          <div class="dropdown-item language-change" *ngIf="show_more">
+            <span title="Sudanese" (click)="switchLanguage('su')">su</span> |
+            <span title="Swedish" (click)="switchLanguage('sv')">sv</span> |
+            <span title="Swahili" (click)="switchLanguage('sw')">sw</span>
+          </div>
+          <div class="dropdown-item language-change" *ngIf="show_more">
+            <span title="Vietnamese" (click)="switchLanguage('vi')">vi</span> |
+            <span title="Xhosa" (click)="switchLanguage('xh')">xh</span> |
+            <span title="Zuli" (click)="switchLanguage('zu')">zu</span>
+          </div>
+          <div class="dropdown-item language-change" *ngIf="show_more">
+            <span title="Amharic" (click)="switchLanguage('am')">am</span> |
+            <span title="Arabic" (click)="switchLanguage('ar')">ar</span> |
+            <span title="Bengali" (click)="switchLanguage('bn')">bn</span>
+          </div>
+          <div class="dropdown-item language-change" *ngIf="show_more">
+            <span title="Hindi" (click)="switchLanguage('hi')">hi</span> |
+            <span title="Loathian" (click)="switchLanguage('lo')">lo</span> |
+            <span title="Mongolian" (click)="switchLanguage('mn')">mn</span>
+          </div>
+          <div class="dropdown-item language-change" *ngIf="show_more">
+            <span title="Nepali" (click)="switchLanguage('ne')">ne</span> |
+            <span title="Punjabi" (click)="switchLanguage('pa')">pa</span> |
+            <span title="Russian" (click)="switchLanguage('ru')">ru</span>
+          </div>
+          <div class="dropdown-item language-change" *ngIf="show_more">
+            <span title="Sindhi" (click)="switchLanguage('sd')">sd</span> |
+            <span title="Sinhalese" (click)="switchLanguage('si')">si</span> |
+            <span title="tamil" (click)="switchLanguage('ta')">ta</span>
+          </div>
+          <div class="dropdown-item language-change" *ngIf="show_more">
+            <span title="Tajik" (click)="switchLanguage('tg')">tg</span> |
+            <span title="Urdu" (click)="switchLanguage('ur')">ur</span> |
+            <span title="Portuguese" (click)="switchLanguage('zh-CN')">zh</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!--if there is no scorecard created-->
+<!--<div class="container-fluid" style="padding-left: 0px; border-top: 1px solid blanchedalmond; margin-top: 20px; padding-top: 23px">-->
+<div
+  @fade
+  class="container-fluid"
+  style="padding-left: 0px;
+  border-top: 1px solid blanchedalmond;margin-top: 15px"
+  *ngIf="(scorecards$ | async).length == 0 && !(loading$ | async)">
+  <app-description></app-description>
+</div>
+
+<!--if there is no scorecard matching the search criteria-->
+<div
+  class="container-fluid"
+  style="padding-left: 0px; border-top: 1px solid rgba(0,0,0,0.2);margin-top: 14px"
+  @fadeOut
+  *ngIf="(scorecards$ | async).length != 0 && !(loading$ | async) && ((scorecards$ | async) | scoreCardFilter: queryterm).length == 0"
+>
+  <h1 class="text-center" style="padding-top: 40px;padding-bottom: 40px;"> No scorecard Matching {{ queryterm}} ...
+    <button class="btn btn-clear btn-sm" (click)="clearSearchInput()">Search Again</button>
+  </h1>
+</div>
+
+<!--if the scorecards are being loaded-->
+<div
+  class="container-fluid"
+  style="padding-left: 0px; border-top: 1px solid blanchedalmond; margin-top: 20px; padding-top: 23px"
+  *ngIf="(scorecards$ | async).length == 0 && (loading$ | async)"
+>
+  <div class="well well-lg ">
+    <h5 class="text-center">
+      <img src="balls-3.svg" style="height: 70px"/>
+      <span [translate]="'Loading score cards'">Loading score cards...</span>
+      ...
+    </h5>
+    <app-placeholder></app-placeholder>
+  </div>
+</div>
+
+
+<!--Loading indicator to show percentage completion of loading scorecard-->
+<div
+  class="container-fluid"
+  style="padding-top: 20px;padding-left: 0px; border-top: 1px solid blanchedalmond; margin-top: 20px; padding-top: 23px"
+  *ngIf="(scorecards$ | async).length != 0" >
+  <div [@hiddenItem] = "(loading$ | async)?'notHidden':'hidden'">
+    <h5 class="text-center">
+      <img src="balls-3.svg" style="height: 70px"/>
+      <span [translate]="'Loading score cards'">Loading score cards</span>
+      ( {{ complete_percent$ | async }}% )
+    </h5>
+    <div class="progress" style="margin-bottom: 5px">
+      <div
+        class="progress-bar progress-bar-striped progress-bar-animated"
+        role="progressbar"
+        [attr.aria-valuenow]="complete_percent$ | async"
+        [attr.aria-valuemin]="0"
+        [attr.aria-valuemax]="100"
+        [style.width]="(complete_percent$ | async)+'%'"
+      ></div>
+    </div>
+  </div>
+</div>
+
+<!--card view for scorecards-->
+<div *ngIf="viewStle == 'Card'">
+  <div class="card-deck">
+
+    <div
+      class="card scorecard_details col-sm-12 col-md-4 text-center cursor"
+      *ngFor="let scorecard of (scorecards$ | async) | scoreCardFilter: queryterm | paginate: paginationconfiguration "
+      [@visibilityChanged]="current_hovered_scorecard === scorecard.id ? 'hoovered': 'notHovered'"
+      (mouseenter) ="mouseEnter(scorecard.id)"
+      (mouseleave) ="mouseLeave()"
+      (click)="viewcorecard(scorecard,$event)"
+      @fadeSmooth
+    >
+      <app-scorecard-detail
+        [scorecard]="scorecard"
+        (onScorecardDelete)= "clearSearchInput()"
+        [viewType]="viewStle"
+      ></app-scorecard-detail>
+    </div>
+  </div>
+
+  <div class="row justify-content-center" style="margin-top: 25px">
+    <pagination-template #nm="paginationApi" [id]="paginationconfiguration.id" (pageChange)="paginationconfiguration.currentPage = $event">
+      <nav aria-label="Page navigation example">
+        <ul class="pagination ">
+          <li class="page-item" [class.disabled]="nm.isFirstPage()">
+            <a class="page-link" style="cursor: pointer" (click)="nm.previous()" aria-label="Previous">
+              <span aria-hidden="true">&laquo;</span>
+              <span class="sr-only">Previous</span>
+            </a>
+          </li>
+          <li class="page-item"
+              *ngFor="let page of nm.pages"
+              [class.active]="nm.getCurrent() === page.value"
+          ><a class="page-link" style="cursor: pointer" (click)="nm.setCurrent(page.value)">
+            {{ page.label }}
+          </a></li>
+          <li class="page-item" [class.disabled]="nm.isLastPage()">
+            <a class="page-link" style="cursor: pointer" (click)="nm.next()" aria-label="Next">
+              <span aria-hidden="true">&raquo;</span>
+              <span class="sr-only">Next</span>
+            </a>
+          </li>
+        </ul>
+      </nav>
+    </pagination-template>
+  </div>
+</div>
+
+<!--View style is List-->
+<div  *ngIf="viewStle == 'List'">
+  <ul class="list-group">
+    <li
+      class="list-group-item cursor"
+      *ngFor="let scorecard of (scorecards$ | async) | scoreCardFilter: queryterm"
+      [@visibilityChanged]="current_hovered_scorecard === scorecard.id ? 'hoovered': 'notHovered'"
+      (mouseenter) ="mouseEnter(scorecard.id)"
+      (mouseleave) ="mouseLeave(scorecard.id)"
+      (click)="viewcorecard(scorecard,$event)"
+      style="padding-bottom: 40px"
+      @fadeSmooth
+    >
+      <app-scorecard-detail
+        [scorecard]="scorecard"
+        (onScorecardDelete)= "clearSearchInput()"
+        [viewType]="viewStle"
+      ></app-scorecard-detail>
+    </li>
+  </ul>
+</div>
+
+<!--view style is thumbnail-->
+<div class="row"  *ngIf="viewStle == 'Thumbnail'">
+
+  <div
+    class="col-sm-6 cursor"
+    *ngFor="let scorecard of (scorecards$ | async) | scoreCardFilter: queryterm"
+    [@visibilityChanged]="current_hovered_scorecard === scorecard.id ? 'hoovered': 'notHovered'"
+    (mouseenter) ="mouseEnter(scorecard.id)"
+    (mouseleave) ="mouseLeave(scorecard.id)"
+    (click)="viewcorecard(scorecard,$event)"
+    style="padding-bottom: 40px"
+    @fadeSmooth
+  >
+    <app-scorecard-detail
+      [scorecard]="scorecard"
+      (onScorecardDelete)= "clearSearchInput()"
+      [viewType]="viewStle"
+    ></app-scorecard-detail>
+  </div>
+</div>

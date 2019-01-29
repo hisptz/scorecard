@@ -1,0 +1,168 @@
+<tour-step-template></tour-step-template>
+<div class="container-fluid" *ngIf="!(can_edit$ | async)">
+  <h1 class="text-center" style="margin-top: 50px">You have no permission to edit this scorecard</h1>
+  <h1 class="text-center">
+    <button (click)="cancelSaving()" class="btn btn-outline-primary">Go Back</button>
+  </h1>
+</div>
+
+<div class="container-fluid" *ngIf="can_edit$ | async">
+  <app-create-header
+    [scorecard]="scorecard$ | async"
+    [action_type]="action_type$ | async"
+    [position]="'top'"
+    [name]="scorecard_name$ | async"
+    [options]="options$ | async"
+    (onGoHomePage)="goToHomePage()"
+    (onCancel)="cancelSaving()"
+    (onSave)="showError($event)"
+    (onStartTour)="startTour()"
+  ></app-create-header>
+
+  <app-sample-scorecard
+    [scorecard]="scorecard$ | async"
+    [current_holder_group]="current_holder_group$ | async"
+    [current_indicator]="current_indicator_holder$ | async"
+    [indicator_holders]="indicator_holders$ | async"
+    [indicator_holder_groups]="indicator_holder_groups$ | async"
+    [legendset_definitions]="legendset_definitions$ | async"
+    [additional_labels]="additional_labels$ | async"
+    [group_type]="group_type"
+    [active_group]="active_group"
+  ></app-sample-scorecard>
+
+
+  <div
+    class="container-fluid warning-wrapper" *ngIf="show_title_warning$ | async">
+    <span
+      class="text-muted"
+      [translate]="'Write the title, Description and start by picking indicators for your scorecard'"
+    >
+      Write the title, Description and start by picking indicators for your scorecard.
+    </span>
+  </div>
+
+  <div
+    class="container-fluid" class="warning-wrapper">
+    <div
+      class="alert alert-danger"
+      style="margin: 0px; padding: 10px" role="alert"
+      *ngIf="errorSavingData"
+      [translate]="'Make sure to write the title, Description and pick at least one indicators for your score card'"
+    >
+      Make sure to write the title, Description and pick at least one indicators for your score card.
+    </div>
+  </div>
+
+  <div class="container-fluid" style="font-size: 11px">
+    <div class="row">
+      <!--basic details of the scorecard-->
+      <div class="col-sm-3 no-left-padding1">
+        <app-basic-details
+          [legendset_definitions]="legendset_definitions$ | async"
+          [additional_labels]="additional_labels$ | async"
+          [indicator_holders]="indicator_holders$ | async"
+          [header]="scorecard_header$ | async"
+        >
+        </app-basic-details>
+      </div>
+
+      <!--data selection area-->
+      <div class="col-sm-4 scorecard_details">
+        <app-data-selection
+          [scorecard]="scorecard$ | async"
+          [indicator_holders]="indicator_holders$ | async"
+          [indicator_holder_groups]="indicator_holder_groups$ | async"
+          [ordered_holder_list]="ordered_holder_list$ | async"
+          [legendset_definitions]="legendset_definitions$ | async"
+          [additional_labels]="additional_labels$ | async"
+          [current_indicator_holder]="current_indicator_holder$ | async"
+          [current_holder_group]="current_holder_group$ | async"
+          (onGroupActivate)="onGroupActivate($event)"
+          (onGroupTypeChange)="onGroupTypeChange($event)"
+        ></app-data-selection>
+      </div>
+
+      <!--item details-->
+      <div class="col-sm-5 no-left-padding1 singleItem" style="padding-right: 0px">
+        <app-item-details
+          [indicator_holders]="indicator_holders$ | async"
+          [indicator_holder_groups]="indicator_holder_groups$ | async"
+          [current_indicator_holder]="current_indicator_holder$ | async"
+          [legendset_definitions]="legendset_definitions$ | async"
+          [additional_labels]="additional_labels$ | async"
+          (onShowBottleneckEditor)="showBotleneckEditor($event)"
+        ></app-item-details>
+      </div>
+    </div>
+  </div>
+
+  <!--model for bottleneck indicator-->
+  <div class="indicator_details" *ngIf="show_bottleneck_indicators" [@newhiddenState]="show_bottleneck_indicators">
+    <div class="indicator_dialog">
+      <div class="indicator-content">
+        <app-bottleneck
+          [scorecard]="scorecard$ | async"
+          [indicator_holders]="indicator_holders$ | async"
+          [indicator_holder_groups]="indicator_holder_groups$ | async"
+          [ordered_holder_list]="ordered_holder_list$ | async"
+          [legendset_definitions]="legendset_definitions$ | async"
+          [additional_labels]="additional_labels$ | async"
+          [current_indicator_holder]="current_indicator_holder$ | async"
+          [current_holder_group]="current_holder_group$ | async"
+          [indicator]="bottleneck_card_indicator"
+          [current_bottleneck_group]="selected_bottleneck_group"
+          (onShowBottleneckEditor)="saveBotleneck($event)"
+          (onCancelBottleneckEditor)="cancelSaveBotleneck()"
+        ></app-bottleneck>
+      </div>
+    </div>
+  </div>
+
+  <!--model for bottleneck indicator-->
+  <div class="indicator_details" *ngIf="show_highlited_editor$ | async" [@newhiddenState]="show_highlited_editor$ | async">
+    <div class="indicator_dialog">
+      <div class="indicator-content">
+        <app-highlighted-indicators
+          (onCancelHighlightedEditor)="cancelSaveHighlighted()"
+          [scorecard]="scorecard$ | async"
+          [highlighted_indicators]="highlighted_indicators$ | async"
+          [legendset_definitions]="legendset_definitions$ | async"
+        ></app-highlighted-indicators>
+      </div>
+    </div>
+  </div>
+
+  <div class="custom_header_details" [@hiddenState]="!(show_editor$ | async) ? 'hidden' : 'notHidden'">
+    <div class="indicator_dialog">
+      <div class="custom-header-content">
+        <span class="glyphicon glyphicon-remove pull-right" style="cursor: pointer" (click)="hideTextEditor()"></span>
+        <div style="padding: 15px">
+          <ckeditor
+            [(ngModel)]="header.template.content"
+            [config]="{uiColor: '#99000'}"
+            [readonly]="false"
+            (change)="onTitleChange($event)"
+            (ready)="onTitleReady($event)"
+            (blur)="onTitleBlur($event)"
+            debounce="300">
+          </ckeditor>
+          <button class="btn btn-sm btn-secondary pull-right cursor" (click)="hideTextEditor()"> <i class="fa fa-check"></i> Done </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <app-create-header
+    [scorecard]="scorecard$ | async"
+    [action_type]="action_type$ | async"
+    [position]="'bottom'"
+    [name]="scorecard_name$ | async"
+    [options]="options$ | async"
+    (onGoHomePage)="goToHomePage()"
+    (onCancel)="cancelSaving()"
+    (onSave)="saveScorecard()"
+  ></app-create-header>
+
+</div>
+

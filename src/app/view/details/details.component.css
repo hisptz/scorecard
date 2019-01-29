@@ -1,0 +1,81 @@
+.highcharts-xaxis-labels {
+  word-break: break-all;
+}
+.card {
+  border-radius: 0px;
+  border: 0px;
+  box-shadow: 0 8px 17px 0 rgba(0,0,0,0.2), 0 6px 20px 0 rgba(0,0,0,0.19);
+  min-height: 400px;
+}
+.card-footer .btn-outline-success{
+  border-color: #00796b;
+  color: #00796b;
+}
+.card-footer .btn-outline-success:hover {
+  color: #fff;
+  background-color: #00796b;
+  border-color: #00796b;
+}
+
+.text-warning{
+  margin-top: 100px;
+  text-align: center;
+}
+.options-block {
+  -webkit-transition: all .2s ease-in-out;
+  -moz-transition: all .2s ease-in-out;
+  -o-transition: all .2s ease-in-out;
+  -ms-transition: all .2s ease-in-out;
+  transition: all .2s ease-in-out;
+  position: absolute;
+  border-left: solid 1px #ececec;
+  border-right: solid 1px #ececec;
+  top: 20px;
+  bottom: 0px;
+  right: 0px;
+  width: 40px;
+  height: 75%;
+  border-style: none;
+  background-color: transparent;
+}
+
+.options-block ul > li > a {
+  cursor: pointer;
+  margin: 4px;
+  padding: 5px;
+  padding-top: 12px;
+  font-size: 11px;
+  /* height: 30px; */
+  /* width: 30px; */
+  /* border: solid 1px #e0ecfc; */
+  border-radius: 15px;
+  /*background-color: transparent;*/
+}
+
+.options-block a:hover {
+  -webkit-transform: scale(1.2);
+  -moz-transform: scale(1.2);
+  -o-transform: scale(1.2);
+  -ms-transform: scale(1.2);
+  transform: scale(1.2);
+  /*background-color: #e0ecfc;*/
+}
+
+.chart-option-icon {
+  margin: auto;
+  height: 20px;
+  width: 20px;
+  margin-bottom: 13px;
+}
+
+.active-type {
+  background-color: #e0ecfc;
+}
+
+.chart-active {
+  background-color: #e1dede;
+}
+
+.btn-disabled{
+  color: red;
+}

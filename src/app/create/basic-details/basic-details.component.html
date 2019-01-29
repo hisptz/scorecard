@@ -1,0 +1,166 @@
+<div class="thumbnail scorecard_details">
+  <div class="form-group" >
+    <label for="title" style="padding-top: 3px" >
+      <span [translate]="'Title'"> Title</span>
+      <span class="text-danger">*</span>
+    </label>
+    <input
+      tourAnchor="create.name"
+      type="text"
+      class="form-control form-control-sm"
+      #title
+      id="title"
+      placeholder="{{ 'Title' | translate }}"
+      style="height: 25px; margin-top: 5px"
+      [value]="header.title"
+      [(ngModel)]="header.title"
+      (input)="updateHeader()">
+  </div>
+
+  <div class="form-group">
+    <label for="description">
+      <span [translate]="'Description'"> Description</span>
+      <span class="text-danger">*</span>
+    </label>
+    <textarea
+      tourAnchor="create.description"
+      class="form-control form-control-sm"
+      #description
+      id="description"
+      placeholder="{{ 'Scorecard description' | translate }}"
+      [value]="header.description"
+      [(ngModel)]="header.description"
+      (input)="updateHeader()">
+    </textarea>
+  </div>
+
+  <!--legend definition-->
+  <div class="form-group container-fluid" tourAnchor="create.newlegend">
+    <label style="margin-left:-15px;margin-bottom: 1px;margin-top: 10px" tourAnchor="create.legend" [translate]="'Legend Definition'">Legend Definition</label>
+    <div *ngFor="let legend of legendset_definitions; let i = index" class="row">
+      <div class="col-sm-3" style="padding-right: 2px;padding-left: 2px">
+        <input
+          style="height: 25px"
+          [(colorPicker)]="legend.color"
+          [style.background]="legend.color"
+          [value]="legend.color"
+          [(ngModel)]="legend.color"
+          (colorPickerChange)="updateLegend()"
+          class="form-control color-input form-control-sm"/>
+      </div>
+      <div class="col-sm-9" style="padding-left: 2px;padding-right: 2px">
+        <div class="row" style="margin: 0px">
+          <div class="col-sm-11" style="padding: 0px">
+            <input
+              [value]="legend.definition"
+              [(ngModel)]="legend.definition"
+              (input)="updateLegend()"
+              class="form-control color-input form-control-sm"
+              style="height: 25px;"/>
+          </div>
+          <div class="col-sm-1" style="padding: 6px" *ngIf="!legend.default">
+            <i class="fa fa-trash-o text-danger" style="cursor: pointer" title="{{ 'click to delete' | translate}}" (click)="showDeleteWarnig(i)"></i>
+          </div>
+        </div>
+      </div>
+      <!--nice warning when trying to delete legend-->
+      <div *ngIf="show_delete_legend[i] && indicator_holders.length != 0" class="col-sm-11" style="padding: 5px">
+        <span [translate]="'Deleting this legend will reset legend definition for all indicators'">
+          Deleting this legend will reset legend definition for all indicators
+        </span><br>
+        <button class="btn btn-default btn-sm" style="border-radius: 50%" (click)="cancelDeleteLegend(i)" title="{{ 'Cancel' | translate}}">
+          <i class="fa fa-remove text-warning" style="cursor: pointer"  ></i>
+        </button>
+        <button class="btn btn-default btn-sm" style="border-radius: 50%" (click)="deleteLegand(i)" title="{{ 'Confirm Deletion' | translate}}">
+          <i class="fa fa-check text-success" style="cursor: pointer"  ></i>
+        </button>
+      </div>
+    </div>
+    <label style="margin-left:-15px;margin-bottom: 1px;margin-top: 10px " [translate]="'New Legend'">New Legend</label>
+    <div class="row" >
+
+      <div class="col-sm-3" style="padding-right: 2px;padding-left: 2px">
+        <input
+          title="{{ 'Choose a color for new Legend' | translate }}"
+          style="height: 25px" [(colorPicker)]="new_color"
+          [style.background]="new_color"
+          [(ngModel)]="new_color"
+          class="form-control color-input form-control-sm"/>
+      </div>
+      <div class="col-sm-9" style="padding-left: 2px;padding-right: 2px">
+        <div class="row" style="margin: 0px">
+          <div class="col-sm-11" style="padding: 0px">
+            <input
+              [(ngModel)]="new_definition"
+              class="form-control color-input form-control-sm"
+              style="height: 25px;"
+              placeholder="{{ 'Type to add new definition here' | translate }}"/>
+          </div>
+          <div class="col-sm-1" style="padding: 6px">
+            <i
+              *ngIf="!show_add_legend && new_definition != ''"
+              class="fa fa-plus text-primary"
+              style="cursor: pointer"
+              title="{{ 'Add Legend Set' | translate }}"
+              (click)="showAddWarning()"></i>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!--nice warning when trying to add new legend-->
+    <div *ngIf="show_add_legend && indicator_holders.length != 0" class="col-sm-11" style="padding: 5px">
+      <span [translate]="'Adding new legend will reset legend definition for all indicators'">
+        Adding new legend will reset legend definition for all indicators
+      </span><br>
+      <button
+        class="btn btn-outline-secondary btn-sm cursor"
+        style="border-radius: 50%" title="Add Legend Set" (click)="cancelAddLegend()">
+        <i class="fa fa-remove text-warning"></i>
+      </button>
+      <button
+        class="btn btn-outline-secondary btn-sm cursor"
+        style="border-radius: 50%" title="{{ 'Add Legend Set' | translate }}"
+        (click)="addLegend()">
+        <i class="fa fa-check text-success"></i>
+      </button>
+    </div>
+  </div>
+
+  <!--additional labels-->
+  <div class="form-group container-fluid" tourAnchor="create.label" >
+    <label
+      title="this will be used to add additional information about the scorecard item (eg. source of data)"
+      style="margin-top: 5px;margin-left: -15px"
+      [translate]="'Additional labels'"
+    >
+      Additional labels
+    </label>
+    <div class="row" style="margin-bottom: 5px">
+      <div class="col-sm-10" style="padding-left: 2px">
+        <input class="form-control form-control-sm" style="height: 25px" [(ngModel)]="newLabel"></div>
+      <div class="col-sm-2" >
+        <button
+          title="{{ 'click to add new label example, source of data for indicator' | translate }}"
+          class="btn btn-sm btn-outline-success pull-right cursor"
+          (click)="addAditionalLabel()" style="height: 25px; padding-top: 2px">
+          <i class="fa fa-plus"></i>
+        </button>
+      </div>
+    </div>
+    <div class="row" style="padding-left: 2px; margin-top: 5px" *ngFor="let label of additional_labels">
+      <div class="col-sm-10" style="padding-left: 2px">{{ label }}</div>
+      <div class="col-sm-2">
+        <button
+          title="{{ 'click to delete' | translate }} {{ label }}"
+          class="btn btn-sm btn-outline-danger pull-right cursor"
+          style="height: 23px; padding-top: 1px"
+          (click)="deleteAdditionalLabel(label)">
+          <i class="fa fa-trash-o"></i>
+        </button>
+      </div>
+      <hr>
+    </div>
+
+  </div>
+
+</div>

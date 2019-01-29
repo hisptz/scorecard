@@ -1,0 +1,242 @@
+<div *ngIf="viewType == 'Card'">
+  <h1 class="text-center text-muted " style="padding-top: 20px" >
+    <img src="assets/img/scorecardplaceholder.jpg" style="height: 120px">
+  </h1>
+  <!--<img class="card-img-top" src="assets/img/scorecardplaceholder.jpg" style="height: 160px; width: 280px;margin-right: 20%" alt="{{ scorecard.dcreate-headerader.title }}">-->
+  <div class="card-body">
+    <h4 class="card-title text-center">{{ scorecard.data.header.title }}</h4>
+    <p class="lead text-center">{{ scorecard.data.header.description }}</p>
+  </div>
+  <div class="card-footer" style="border-top: 0px;background-color: rgba(0,0,0,0.0)">
+    <h1 class="text-center" *ngIf="!confirm_deleting && !deleting && !error_deleting">
+      <a
+        style="cursor: pointer"
+        class="btn btn-outline-primary sans-pro"
+        role="button"
+        title="{{ 'Open' | translate}} {{ scorecard.data.header.title }}"
+        [translate]="'View'"
+      >
+        View
+      </a>
+      <a  *ngIf="scorecard.can_edit"
+          title="{{ 'Edit' | translate}} {{ scorecard.data.header.title }}"
+          (click)="openScorecardForEditing(scorecard,$event)"
+          class="btn btn-outline-info sans-pro"
+          role="button"
+          style="cursor: pointer"
+      >
+        <i class="fa fa-pencil text-primary"></i>
+      </a>
+      <button
+        *ngIf="scorecard.can_edit"
+        title="{{ 'Delete' | translate}} {{ scorecard.data.header.title }}"
+        (click)="enableDeleting($event)"
+        class="btn btn-outline-dark sans-pro"
+        role="button"
+        style="cursor: pointer"
+      >
+        <i class="fa fa-trash-o text-danger"></i>
+      </button>
+    </h1>
+    <p
+      class="icons"
+       *ngIf="confirm_deleting"
+      style="padding: 5px; font-size: 12px"
+
+    >
+      <span [translate]="'Are you sure you want to delete this score card?'">
+        Are you sure you want to delete this score card?
+      </span>
+      <button
+        class="btn btn-sm btn-outline-danger cursor"
+        (click)="deleteScoreCard(scorecard,$event)"
+        title="{{ 'Delete' | translate}}"
+        [translate]="'Delete'"
+      >
+        Delete
+      </button>
+      <button
+        class="btn btn-sm btn-outline-success cursor"
+        (click)="cancelDeleting($event)"
+        title="{{ 'Cancel' | translate}}"
+        [translate]="'Cancel'"
+      >
+        Cancel
+      </button>
+    </p>
+
+    <p class="icons" *ngIf="deleting" style="padding: 5px; font-size: 12px">
+      <img src="balls-5.svg" style="height: 50px;">
+      <span [translate]="'Deleting Scorecard...'"> Deleting Scorecard...</span>
+    </p>
+    <p class="icons text-danger"
+       *ngIf="error_deleting"
+       style="padding: 5px; font-size: 12px"
+       [translate]="'Something went wrong, Scorecard was not deleted'"
+    >
+      Something went wrong, Scorecard was not deleted
+    </p>
+  </div>
+</div>
+
+
+<div *ngIf="viewType == 'List'">
+  <div class="row">
+    <div class="col-md-3">
+      <img src="assets/img/scorecardplaceholder.jpg" class="pull-left" style="height: 120px">
+    </div>
+    <div class="col-md-9">
+      <h4 class="card-title text-left">{{ scorecard.data.header.title }}</h4>
+      <p class="lead text-left">{{ scorecard.data.header.description }}</p>
+      <div class="pull-left" style="border-top: 0px;background-color: rgba(0,0,0,0.0)">
+        <h1 class="text-center" *ngIf="!confirm_deleting && !deleting && !error_deleting">
+          <a
+            style="cursor: pointer"
+            class="btn btn-outline-primary sans-pro"
+            role="button"
+            title="{{ 'Open' | translate}} {{ scorecard.data.header.title }}"
+            [translate]="'View'"
+          >
+            View
+          </a>
+          <a  *ngIf="scorecard.can_edit"
+              title="{{ 'Edit' | translate}} {{ scorecard.data.header.title }}"
+              (click)="openScorecardForEditing(scorecard,$event)"
+              class="btn btn-outline-info sans-pro"
+              role="button"
+              style="cursor: pointer"
+          >
+            <i class="fa fa-pencil text-primary"></i>
+          </a>
+          <button
+            *ngIf="scorecard.can_edit"
+            title="{{ 'Delete' | translate}} {{ scorecard.data.header.title }}"
+            (click)="enableDeleting($event)"
+            class="btn btn-outline-dark sans-pro"
+            role="button"
+            style="cursor: pointer"
+          >
+            <i class="fa fa-trash-o text-danger"></i>
+          </button>
+        </h1>
+        <p
+          class="icons"
+          *ngIf="confirm_deleting"
+          style="padding: 5px; font-size: 12px"
+        >
+          <span [translate]="'Are you sure you want to delete this score card?'">
+        Are you sure you want to delete this score card?
+      </span>
+          <button
+            class="btn btn-sm btn-outline-danger cursor"
+            (click)="deleteScoreCard(scorecard,$event)"
+            title="{{ 'Delete' | translate}}"
+            [translate]="'Delete'"
+          >
+            Delete
+          </button>
+          <button
+            class="btn btn-sm btn-outline-success cursor"
+            (click)="cancelDeleting($event)"
+            title="{{ 'Cancel' | translate}}"
+            [translate]="'Cancel'"
+          >
+            Cancel
+          </button>
+        </p>
+
+        <p class="icons" *ngIf="deleting" style="padding: 5px; font-size: 12px">
+          <img src="balls-5.svg" style="height: 50px;">
+          <span [translate]="'Deleting Scorecard...'"> Deleting Scorecard...</span>
+        </p>
+        <p class="icons text-danger"
+           *ngIf="error_deleting"
+           style="padding: 5px; font-size: 12px"
+           [translate]="'Something went wrong, Scorecard was not deleted'"
+        >
+          Something went wrong, Scorecard was not deleted
+        </p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div *ngIf="viewType == 'Thumbnail'">
+  <div class="row">
+    <div class="col-md-4">
+      <img src="assets/img/scorecardplaceholder.jpg" class="pull-left" style="height: 100px">
+    </div>
+    <div class="col-md-8">
+      <h4 class="card-title text-left">{{ scorecard.data.header.title }}</h4>
+      <p class="lead text-left">{{ scorecard.data.header.description }}</p>
+      <div class="pull-left" style="border-top: 0px;background-color: rgba(0,0,0,0.0)">
+        <h1 class="text-center" *ngIf="!confirm_deleting && !deleting && !error_deleting">
+          <a
+            style="cursor: pointer"
+            class="btn btn-outline-primary sans-pro"
+            role="button"
+            title="{{ 'Open' | translate}} {{ scorecard.data.header.title }}"
+            [translate]="'View'"
+          >
+            View
+          </a>
+          <a  *ngIf="scorecard.can_edit"
+              title="{{ 'Edit' | translate}} {{ scorecard.data.header.title }}"
+              (click)="openScorecardForEditing(scorecard,$event)"
+              class="btn btn-outline-info sans-pro"
+              role="button"
+              style="cursor: pointer"
+          >
+            <i class="fa fa-pencil text-primary"></i>
+          </a>
+          <button
+            *ngIf="scorecard.can_edit"
+            title="{{ 'Delete' | translate}} {{ scorecard.data.header.title }}"
+            (click)="enableDeleting($event)"
+            class="btn btn-outline-dark sans-pro"
+            role="button"
+            style="cursor: pointer"
+          >
+            <i class="fa fa-trash-o text-danger"></i>
+          </button>
+        </h1>
+        <p
+          class="icons"
+          *ngIf="confirm_deleting"
+          style="padding: 5px; font-size: 12px"
+        >
+         <span [translate]="'Are you sure you want to delete this score card?'">
+        Are you sure you want to delete this score card?
+      </span>
+          <button
+            class="btn btn-sm btn-outline-danger cursor"
+            (click)="deleteScoreCard(scorecard,$event)"
+            title="{{ 'Delete' | translate}}"
+            [translate]="'Delete'"
+          >
+            Delete
+          </button>
+          <button
+            class="btn btn-sm btn-outline-success cursor"
+            (click)="cancelDeleting($event)"
+            title="{{ 'Cancel' | translate}}"
+            [translate]="'Cancel'"
+          >
+            Cancel
+          </button>
+        </p>
+
+        <p class="icons" *ngIf="deleting" style="padding: 5px; font-size: 12px">
+          <img src="balls-5.svg" style="height: 50px;">
+          <span [translate]="'Deleting Scorecard...'"> Deleting Scorecard...</span>
+        </p>
+        <p class="icons text-danger"
+           *ngIf="error_deleting"
+           style="padding: 5px; font-size: 12px"
+           [translate]="'Something went wrong, Scorecard was not deleted'"
+        >
+          Something went wrong, Scorecard was not deleted
+        </p></div>
+    </div>
+  </div>
+</div>
