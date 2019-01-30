@@ -448,13 +448,13 @@ export class ScorecardService {
 				}
 			};
 		} else {
-		/*	return {
+			return {
 				current_indicator_holder: _.find(scorecard.data.data_settings.indicator_holders, {
 					holder_id: scorecard.data.data_settings.indicator_holder_groups[0].indicator_holder_ids[0],
           
 				}),
 				current_group: scorecard.data.data_settings.indicator_holder_groups[0]
-      };*/
+      };
 		}
 	}
 
