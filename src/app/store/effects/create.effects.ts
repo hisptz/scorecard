@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 
-import { Effect, Actions } from '@ngrx/effects';
+import { Effect, Actions, ofType } from '@ngrx/effects';
 import * as createActions from '../actions/create.actions';
 
 import { of } from 'rxjs/observable/of';
@@ -18,7 +18,8 @@ export class CreateEffects {
   ) {  }
 
   @Effect({ dispatch: false })
-  navigate$ = this.actions$.ofType(createActions.GET_SCORECARD_TO_CREATE).pipe(
+  navigate$ = this.actions$.pipe(
+    ofType(createActions.GET_SCORECARD_TO_CREATE),
     tap(() => {
       this.scorecardService.getCreatedScorecard();
     })

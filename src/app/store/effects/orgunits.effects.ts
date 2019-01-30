@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import * as orgunitAction from '../actions/orgunits.actions';
 
-import { Effect, Actions } from '@ngrx/effects';
+import { Effect, Actions,ofType } from '@ngrx/effects';
 import { tap } from 'rxjs/operators';
 import { OrgUnitService } from '../../shared/services/org-unit.service';
 
@@ -14,7 +14,8 @@ export class OrgunitsEffects {
   ) {  }
 
   @Effect({ dispatch: false })
-  loadScorecard$ = this.actions$.ofType(orgunitAction.LOAD_ORGANASATION_UNIT_ITEMS).pipe(
+  loadScorecard$ = this.actions$.pipe(
+    ofType(orgunitAction.LOAD_ORGANASATION_UNIT_ITEMS),
     tap(() => {
       this.orgUnitService.prepareOrgunits('report');
     })

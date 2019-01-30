@@ -1,6 +1,6 @@
 import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 
-import {Angular2Csv} from 'angular2-csv';
+import { Angular5Csv } from 'angular5-csv/dist/Angular5-csv';
 import {VisualizerService} from '../../shared/services/visualizer.service';
 import {Subscription} from 'rxjs/Subscription';
 import * as _ from 'lodash';
@@ -237,7 +237,7 @@ export class DetailsComponent implements OnInit {
       showTitle: false
     };
 
-    new Angular2Csv(data, 'My Report', {headers: Object.keys(data[0])});
+    new Angular5Csv(data, 'My Report', {headers: Object.keys(data[0])});
   }
 
   getStartingLayout(type): LayoutModel {

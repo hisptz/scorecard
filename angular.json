@@ -19,13 +19,33 @@
             "polyfills": "src/polyfills.ts",
             "tsConfig": "src/tsconfig.app.json",
             "assets": [
+              "src/assets",
               "src/favicon.ico",
-              "src/assets"
+              "src/icon.png",
+              "src/balls-3.svg",
+              "src/balls-4.svg",
+              "src/balls-5.svg",
+              "src/scorecard.svg",
+              "src/scorecard.png",
+              "src/manifest.webapp"
             ],
             "styles": [
-              "src/styles.css"
+              "src/styles.css",
+              "node_modules/bootstrap/dist/css/bootstrap.css",
+              "node_modules/bootstrap/dist/css/bootstrap.min.css",
+              "node_modules/font-awesome/css/font-awesome.css"
             ],
-            "scripts": []
+            "scripts": [
+              "node_modules/jquery/dist/jquery.min.js",
+              "node_modules/popper.js/dist/umd/popper.min.js",
+              "node_modules/bootstrap/dist/js/bootstrap.min.js",
+              "node_modules/highcharts/highcharts.js",
+              "node_modules/highcharts/highcharts-more.js",
+              "node_modules/highcharts/modules/solid-gauge.js",
+              "src/assets/grouped-categories.js",
+              "node_modules/highcharts/modules/exporting.js",
+              "node_modules/highcharts/modules/offline-exporting.js"
+            ]
           },
           "configurations": {
             "production": {
@@ -79,12 +99,32 @@
             "tsConfig": "src/tsconfig.spec.json",
             "karmaConfig": "src/karma.conf.js",
             "styles": [
-              "src/styles.css"
+              "src/styles.css",
+              "node_modules/bootstrap/dist/css/bootstrap.css",
+              "node_modules/bootstrap/dist/css/bootstrap.min.css",
+              "node_modules/font-awesome/css/font-awesome.css"
             ],
-            "scripts": [],
+            "scripts": [
+              "node_modules/jquery/dist/jquery.min.js",
+              "node_modules/popper.js/dist/umd/popper.min.js",
+              "node_modules/bootstrap/dist/js/bootstrap.min.js",
+              "node_modules/highcharts/highcharts.js",
+              "node_modules/highcharts/highcharts-more.js",
+              "node_modules/highcharts/modules/solid-gauge.js",
+              "assets/grouped-categories.js",
+              "node_modules/highcharts/modules/exporting.js",
+              "node_modules/highcharts/modules/offline-exporting.js"
+            ],
             "assets": [
-              "src/favicon.ico",
-              "src/assets"
+              "assets",
+              "favicon.ico",
+              "icon.png",
+              "balls-3.svg",
+              "balls-4.svg",
+              "balls-5.svg",
+              "scorecard.svg",
+              "scorecard.png",
+              "manifest.webapp"
             ]
           }
         },

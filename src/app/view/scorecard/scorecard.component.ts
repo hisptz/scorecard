@@ -2,7 +2,7 @@ import {Component, OnInit, Input, OnDestroy, EventEmitter, Output, ViewChild} fr
 import {ScorecardService} from '../../shared/services/scorecard.service';
 import {Subscription} from 'rxjs/Subscription';
 import {FilterService} from '../../shared/services/filter.service';
-import {Angular2Csv} from 'angular2-csv';
+import { Angular5Csv } from 'angular5-csv/dist/Angular5-csv';
 import {DataService} from '../../shared/services/data.service';
 import {HttpClientService} from '../../shared/services/http-client.service';
 import {VisualizerService} from '../../shared/services/visualizer.service';
@@ -431,7 +431,7 @@ export class ScorecardComponent implements OnInit, OnDestroy {
       showTitle: false
     };
 
-    new Angular2Csv(data, 'My Report', {headers: Object.keys(data[0])});
+    new Angular5Csv(data, 'My Report', {headers: Object.keys(data[0])});
   }
 
 

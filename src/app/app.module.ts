@@ -14,7 +14,9 @@ import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 import { ScoreCardRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { HomeComponent } from './home/home.component';
-import { MenuModule } from './shared/components/ng2-dhis-menu-module/menu.module';
+/*import { MenuModule } from './shared/components/ng2-dhis-menu-module/menu.module';*/
+import { NgxDhis2MenuModule } from "@hisptz/ngx-dhis2-menu";
+
 
 import { environment } from '../environments/environment';
 import { CreateModule } from './create/create.module';
@@ -66,7 +68,8 @@ export function HttpLoaderFactory(http: HttpClient) {
     BrowserModule,
     BrowserAnimationsModule,
     HttpClientModule,
-    MenuModule,
+    /*MenuModule,*/
+    NgxDhis2MenuModule,
     FormsModule,
     ReactiveFormsModule,
     ScoreCardRoutingModule,
