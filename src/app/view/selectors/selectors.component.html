@@ -41,9 +41,9 @@
       class="btn btn-outline-secondary btn-sm pull-right cursor"
       style="height: 35px;margin-left: 3px;"
       [href]="downloadJsonHref" download="data.json"
-      title="{{ 'Download Alma Metadata' | translate }}">
+      title="{{ 'Data export for ALMA and external DHIS2' | translate }}">
       <i class="fa fa-upload"></i>
-      <span *ngIf="almaHovered" [translate]="'Export to ALMA'"> Export to ALMA</span>
+      <span *ngIf="almaHovered" [translate]="'Export Data'"> Export Data</span>
     </a>
     <a
       (mouseenter)="almaHovered1 = true"
@@ -51,7 +51,7 @@
       class="btn btn-outline-secondary btn-sm pull-right cursor"
       style="height: 35px;margin-left: 3px;"
       [href]="downloadOUJsonHref" download="metadata.json"
-      title="{{ 'Download Alma Metadata' | translate }}">
+      title="{{ 'Data/Metadata export for ALMA and external DHIS2' | translate }}">
       <i class="fa fa-upload"></i>
       <span *ngIf="almaHovered1" [translate]="'Export Metadata'"> Export Metadata</span>
     </a>
