@@ -1,0 +1,5 @@
+<!--<div [ngStyle]="{'height':visualizationObject.details.cardHeight,'width':'100%'}">-->
+<div >
+  <app-map-loader *ngIf="!visualizationObject.details.loaded"></app-map-loader>
+  <app-map-template *ngIf="visualizationObject.details.loaded" [visualizationObject]="visualizationObject"></app-map-template>
+</div>

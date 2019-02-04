@@ -1,0 +1,181 @@
+<div class="thumbnail scorecard_details">
+  <div class="row" *ngFor="let indicator of current_indicator_holder.indicators" style="border-bottom: 1px solid #B3B3B3; padding-top: 3px;margin-left: 0px">
+    <div class="container-fluid" style="margin-right: 20px">
+      <div class="row">
+        <div class="col-sm-12" style="padding: 0px">
+          <button
+            class="btn btn-outline-danger btn-sm pull-right cursor"
+            (click)="deleteIndicator(indicator)"
+            style="padding-top:2px; height: 27px">
+            <span class="fa fa-trash-o" ></span>
+          </button>
+        </div>
+      </div>
+
+    </div>
+    <div class="row" style="margin: 0px">
+      <div class="col-sm-7" style="padding-left: 5px">
+        <div class="row" style="padding-bottom: 5px">
+          <div class="col-sm-3">
+            <label class="sans-pro lebal" [translate]="'Name'">Name:</label>
+          </div>
+          <div class="col-sm-9">
+            <input
+              [value]="indicator.name"
+              class="form-control form-control-sm" disabled/>
+          </div>
+        </div>
+        <div class="row" style="padding-bottom: 5px">
+          <div class="col-sm-3">
+            <label class="sans-pro lebal" [translate]="'Label'">Label:</label>
+          </div>
+          <div class="col-sm-9">
+            <input
+              [(ngModel)]="indicator.title"
+              (input)="updateIndicatorDetails(indicator)"
+              class="form-control form-control-sm"/>
+          </div>
+        </div>
+        <div class="row"  style="padding-bottom: 5px">
+          <div class="col-sm-3">
+            <label class="sans-pro lebal" [translate]="'Weight'">Weight:</label>
+          </div>
+          <div class="col-sm-9">
+            <input
+              type="number"
+              min="0"
+              max="200"
+              [(ngModel)]="indicator.weight"
+              (input)="updateIndicatorDetails(indicator)"
+              class="form-control form-control-sm"
+              [disabled]="!(show_score$ | async)"/>
+          </div>
+        </div>
+        <div class="row"  style="padding-bottom: 5px">
+          <div class="col-sm-3">
+            <label
+              class="sans-pro lebal"
+              title="{{ 'activate up/down arrow if difference between previous and present value exceeds' | translate}} {{indicator.arrow_settings.effective_gap}}">Effective Gap:</label>
+          </div>
+          <div class="col-sm-3">
+            <input
+              type="number"
+              min="0"
+              [(ngModel)]="indicator.arrow_settings.effective_gap"
+              (input)="updateIndicatorDetails(indicator)"
+              class="form-control form-control-sm"
+              [disabled]="!indicator.arrow_settings.display"
+              title="{{ 'activate up/down arrow if difference between previous and present value exceeds' | translate}} {{indicator.arrow_settings.effective_gap}}"/>
+          </div>
+          <div class="col-sm-4">
+            <label class="sans-pro lebal" [translate]="'Display arrows'">Display arrows:</label>
+          </div>
+          <div class="col-sm-2">
+            <input
+              type="checkbox"
+              (change)="updateIndicatorDetails(indicator)"
+              [(ngModel)]="indicator.arrow_settings.display" >
+          </div>
+        </div>
+        <div class="row" style="padding-bottom: 5px">
+          <div class="col-sm-4">
+            <label class="sans-pro lebal" [translate]="'High is good'">High is good:</label>
+          </div>
+          <div class="col-sm-2">
+            <input
+              type="checkbox"
+              (change)="updateIndicatorDetails(indicator)"
+              [(ngModel)]="indicator.high_is_good" >
+          </div>
+
+          <div class="col-sm-4">
+            <label class="sans-pro lebal">Show Colors:</label>
+          </div>
+          <div class="col-sm-2">
+            <input
+              type="checkbox"
+              (change)="updateIndicatorDetails(indicator)"
+              [(ngModel)]="indicator.legend_display" >
+          </div>
+        </div>
+      </div>
+      <!--Legend set definition-->
+      <div class="col-sm-5" style="padding-bottom: 5px">
+        <div *ngFor="let legend of indicator.legendset; let i = index;">
+          <div class="row" style="padding-top: 2px">
+            <div class="col-sm-12">
+              <span [style.background-color]="legendset_definitions[i].color">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>&nbsp;
+              <label class="sans-pro lebal">{{ legendset_definitions[i].definition }}</label>
+            </div>
+
+          </div>
+
+          <div class="row">
+            <div class="col-sm-6">
+              <div class="row">
+                <div class="col-sm-3"><label class="sans-pro lebal" [translate]="'Min'">Min</label></div>
+                <div class="col-sm-9">
+                  <input
+                    type="text"
+                    [(ngModel)]="legend.min"
+                    class="form-control form-control-sm"
+                    (input)="updateIndicatorDetails(indicator)"
+                    [disabled]="!indicator.legend_display">
+                </div>
+              </div>
+
+            </div>
+            <div class="col-sm-6">
+              <div class="row">
+                <div class="col-sm-3"><label class="sans-pro lebal" [translate]="'Max'">Max</label></div>
+                <div class="col-sm-9">
+                  <input
+                    type="text"
+                    [(ngModel)]="legend.max"
+                    (input)="updateIndicatorDetails(indicator)"
+                    class="form-control form-control-sm"
+                    [disabled]="!indicator.legend_display">
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+      <!--additinal labels-->
+      <div class="col-sm-7" *ngFor="let label of additional_labels">
+        <div style="padding-bottom: 5px" class="row">
+          <div class="col-sm-3">
+            <label class="sans-pro lebal">{{ label }}:</label>
+          </div>
+          <div class="col-sm-9">
+            <input
+              [(ngModel)]="indicator.additional_label_values[label]"
+              class="form-control form-control-sm"/>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <a (click)="showBotleneckEditor(indicator)"
+       style="padding: 3px; margin-left: 5px; margin-bottom: 10px; font-size: 12px"
+       class="btn btn-sm btn-outline-secondary cursor"
+       title="Click to manage indicators related to {{ indicator.title }}">
+      <span class="fa fa-pencil"></span> Related/Bottleneck indicators
+      <span class="badge badge-pill badge-secondary"> {{ !indicator.use_bottleneck_groups ? indicator.bottleneck_indicators.length : indicator.bottleneck_indicators_groups.length }} </span>
+    </a>
+
+  </div>
+  <span
+    style="margin-left: 5px"
+    class="help-block pull-left"
+    *ngIf="current_indicator_holder.indicators.length != 0"
+    [translate]="'If you want to have two data items in the same column just select the second data item from the list on the left'"
+  >
+    If you want to have two data items in the same column just
+    select the second data item from the list on the left
+  </span>
+  <!--<button class="btn btn-sm btn-default pull-right" (click)="enableAddIndicator()" *ngIf="current_indicator_holder.indicators.length != 0">-->
+  <!--<span class="glyphicon glyphicon-plus"></span>Add-->
+  <!--</button>-->
+</div>

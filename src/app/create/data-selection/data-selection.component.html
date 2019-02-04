@@ -1,0 +1,115 @@
+<div class="row ">
+  <div class="col-sm-12" style="padding: 0px">
+    <div class="form-group">
+      <ul class="list-inline" style="margin-bottom: 0px"  tourAnchor="create.type_selection">
+        <li class="list-inline-item">
+          <a (click)="group_type='indicators';switchType('indicators')" class="cursor btn btn-sm {{group_type=='indicators' ? 'btn-info' : 'btn-outline-secondary'}}" title="Click to see All Data">
+            <span [translate]="'Indicators'">Indicators</span>
+          </a>
+        </li>
+        <li class="list-inline-item">
+          <a (click)="group_type='dataElements';switchType('dataElements')" class="cursor btn btn-sm {{group_type=='dataElements' ? 'btn-info' : 'btn-outline-secondary'}}" title="Click to see All Data">
+            <span [translate]="'Data Elements'">Data Elements</span>
+          </a>
+        </li>
+        <li class="list-inline-item">
+          <a (click)="group_type='datasets';switchType('datasets')" class="cursor btn btn-sm {{group_type=='datasets' ? 'btn-info' : 'btn-outline-secondary'}}" title="Click to see All Data">
+            <span [translate]="'Data Sets'">Data Sets</span>
+          </a>
+        </li>
+        <li class="list-inline-item">
+          <a (click)="group_type='programs';switchType('programs')" class="cursor btn btn-sm {{group_type=='programs' ? 'btn-info' : 'btn-outline-secondary'}}" title="Click to see All Data">
+            <span [translate]="'Program Indicators'">Program Indicators</span>
+          </a>
+        </li>
+        <li class="list-inline-item">
+          <a (click)="group_type='event';switchType('event')" class="cursor btn btn-sm {{group_type=='event' ? 'btn-info' : 'btn-outline-secondary'}}" title="Click to see All Data">
+            <span [translate]="'Event Data Items'">Event Data Items</span>
+          </a>
+        </li>
+        <li class="list-inline-item" >
+          <a (click)="group_type='functions';switchType('functions')" class="cursor btn btn-sm {{group_type=='functions' ? 'btn-info' : 'btn-outline-secondary'}}" title="Click to see All Data">
+            <span [translate]="'Custom Functions'">Custom Functions</span>
+          </a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</div>
+<div class="row">
+  <!--Group selection-->
+  <div class="col-sm-6 no-left-padding1">
+    <div class="thumbnail scorecard_details2" tourAnchor="create.group_selection">
+      <!--<h4 style="margin-top: 0px;margin-bottom: 1px">Data Type</h4>-->
+      <img src="balls-4.svg" style="height: 70px; padding-top: 20px" *ngIf="!(_done_loading_groups$ | async)">
+      <div class="form-group" *ngIf="_done_loading_groups$ | async">
+        <input type="text" class="form-control form-control-sm" placeholder="Search group by name" style="height: 25px;padding-left: 2px; font-size: 11px" [(ngModel)]="groupQuery">
+      </div>
+      <ul class="list-group" *ngIf="_done_loading_groups$ | async">
+        <li
+          @fadeOut
+          class="list-group-item selection_link"
+          *ngFor="let group of (_current_groups$ | async) | filterByName:groupQuery | paginate: { id: 'groups', itemsPerPage: 8, currentPage: p }; trackBy: trackItem"
+          [ngClass]="{'listSelected': group.id == activeGroup}"
+          (click)="load_list(group.id, group_type)"
+        >
+          {{ group.name }}
+        </li>
+      </ul>
+      <pagination-controls  id="groups" (pageChange)="p = $event" directionLinks="true" autoHide="true" previousLabel=" " nextLabel=" "></pagination-controls>
+    </div>
+
+  </div>
+
+  <!--item listing-->
+  <div class="col-sm-6 no-left-padding1">
+    <div class="thumbnail scorecard_details2" tourAnchor="create.item_selection">
+      <div *ngIf="listReady">
+        <img src="balls-4.svg" style="height: 90px; padding-top: 20px" *ngIf="!(_done_loading_list$ | async)">
+        <h5 class="text-danger" *ngIf="(_error_loading_list$ | async).occurred">{{ (_error_loading_list$ | async).message}}</h5>
+        <div class="form-group" *ngIf="_done_loading_list$ | async">
+          <input type="text" class="form-control form-control-sm" placeholder="Search Item by name" style="height: 25px;padding-left: 2px; font-size: 11px" [(ngModel)]="listQuery">
+        </div>
+        <p *ngIf="(_done_loading_list$ | async) && (_current_listing$ | async).length == 0" [translate]="'No items for a selected group'">No items for a selected group</p>
+        <ul class="list-group" *ngIf="_done_loading_list$ | async">
+          <li
+            @fadeOut
+            class="list-group-item selection_link"
+            *ngFor="let item of (_current_listing$ | async) | filterByName:listQuery | paginate: { id: 'list', itemsPerPage: 8, currentPage: r }; trackBy: trackItem"
+            [ngClass]="{'already_selected': indicatorExist(indicator_holders, item)}"
+            (click)="load_item(item)"
+            dnd-draggable [dragEnabled]="true" [dragData]="item"
+            [contextMenu]="contextMenu"
+            [contextMenuSubject]="item"
+            (contextmenu)="onContextMenu($event, item)"
+          >
+            <span class="fa fa-check-circle-o text-success" *ngIf="indicatorExist(indicator_holders, item)"></span> {{ item.name }}
+          </li>
+        </ul>
+        <pagination-controls  id="list" (pageChange)="r = $event" directionLinks="true" autoHide="true" previousLabel=" " nextLabel=" "></pagination-controls>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!--right click option for indicator selection-->
+<context-menu>
+  <ng-template contextMenuItem (execute)="load_item($event.item)" let-item>
+        <span *ngIf="!indicatorExist(indicator_holders, item)">
+          <i class="fa fa-plus"></i>
+          <span [translate]="'Add'"> Add</span>
+        </span>
+  </ng-template>
+  <ng-template contextMenuItem (execute)="load_item($event.item)" let-item>
+        <span *ngIf="indicatorExist(indicator_holders, item)">
+          <i class="fa fa-trash"></i>
+          <span [translate]="'Remove'"> Remove</span>
+        </span>
+  </ng-template>
+  <ng-template contextMenuItem (execute)="load_item($event.item, true)" let-item *ngIf="ordered_holder_list.length != 0">
+        <span  *ngIf="!indicatorExist(indicator_holders, item)">
+          <i class="fa fa-chain"></i> Pair With Current
+        </span>
+  </ng-template>
+</context-menu>

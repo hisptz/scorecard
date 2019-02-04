@@ -1,0 +1,49 @@
+
+.orgunit-placeholer{
+  position: relative;
+  float: left;
+  display: inline-block;
+  text-align: center;
+  cursor: pointer;
+  border: 1px solid #c6c6c6;
+  padding: 8px 8px;
+  margin: 0px;
+  font-size: 14px;
+  min-height: 35px!important;
+  border-radius: 4px;
+  color: #555;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  -o-user-select: none;
+  user-select: none;
+  white-space: normal;
+  background-color: #fff;
+  background-image: linear-gradient(#fff,#f7f7f7);
+  width: 420px;
+  height: 34px;
+}
+
+@media print {
+  .no-print *{
+    display: none;
+  }
+  .no-print{
+    display: none;
+  }
+
+  .orgUnitName{
+    min-width: 130px;
+    height: 35px;
+    max-height: 35px;
+    font-size: 9px;
+  }
+  .table-bordered td{
+    /*border-top: 0.1em;*/
+  }
+  .legendItem{
+    width: 200px;
+    float: left;
+  }
+
+}

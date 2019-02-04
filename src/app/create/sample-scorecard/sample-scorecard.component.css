@@ -1,0 +1,100 @@
+.current{
+  -webkit-box-shadow: 0 0 10px rgba(0,0,0,0.1);
+  box-shadow: 0 0 10px rgba(0,0,0,0.1);
+  background-color: rgba(0,0,0,0.3);
+}
+
+.orgunit-placeholer{
+  position: relative;
+  float: left;
+  display: inline-block;
+  text-align: center;
+  cursor: pointer;
+  border: 1px solid #c6c6c6;
+  padding: 8px 8px;
+  margin: 0px;
+  font-size: 14px;
+  min-height: 35px!important;
+  border-radius: 4px;
+  color: #555;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  -o-user-select: none;
+  user-select: none;
+  white-space: normal;
+  background-color: #fff;
+  background-image: linear-gradient(#fff,#f7f7f7);
+  width: 420px;
+  height: 34px;
+}
+
+.scorecard_table::-webkit-scrollbar {
+  width: 5px;
+}
+
+.scorecard_table::-webkit-scrollbar-track {
+  -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.2);
+  border-radius: 10px;
+}
+
+.scorecard_table::-webkit-scrollbar-thumb {
+  border-radius: 10px;
+  -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.2);
+}
+
+.scorecard_table{
+  max-width: 100%;
+  overflow: auto;
+  width: 100%;
+}
+.dnd-drag-start {
+  -moz-transform:scale(0.8);
+  -webkit-transform:scale(0.8);
+  transform:scale(0.8);
+  opacity:0.7;
+  border: 2px dashed #000;
+}
+
+.dnd-drag-enter {
+  opacity:0.7;
+  border: 2px dashed #000;
+}
+
+.dnd-drag-over {
+  border: 2px dashed #000;
+}
+
+.dnd-sortable-drag {
+  -moz-transform:scale(0.9);
+  -webkit-transform:scale(0.9);
+  transform:scale(0.9);
+  opacity:0.7;
+  border: 1px dashed #000;
+}
+
+.group-text{
+  width: 90%;
+  height: 24px;
+  padding: 3px 6px;
+  font-size: 11px;
+  line-height: 1.128571429;
+  color: #555;
+  vertical-align: middle;
+  background-color: #fff;
+  background-image: none;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  webkit-box-shadow: inset 0 1px 1px rgba(0,0,0,0.075);
+  box-shadow: inset 0 1px 1px rgba(0,0,0,0.075);
+  -webkit-transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
+  transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
+}
+
+.table td, .table th {
+  padding: 0px;
+}
+
+.no-left-padding{
+  padding-left: 0px;
+}

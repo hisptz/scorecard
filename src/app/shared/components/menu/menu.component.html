@@ -1,0 +1,193 @@
+<div
+  id="menu-container"
+  class="no-print"
+  [style.background-color]="backgroundColor"
+>
+  <div
+    id="menu-left-block"
+  >
+    <div id="menu-brand">
+      <a [href]="rootUrl + 'dhis-web-commons-about/redirect.action'">
+        <img [src]="rootUrl + 'api/staticContent/logo_banner'" alt="">
+      </a>
+    </div>
+    <div
+      id="menu-title-block"
+    >
+      <a
+        [href]="rootUrl + 'dhis-web-commons-about/redirect.action'"
+        id="menu-title"
+      >
+        {{applicationTitle}}
+      </a>
+    </div>
+  </div>
+  <div
+    id="menu-search-block"
+  >
+    <div
+      id="menu-search-input-block"
+    >
+      <input
+        type="text"
+        id="menu-search-input"
+        placeholder="Search Apps"
+        [attr.size]="searchWidth"
+        (focus)="widdenSearch($event)"
+        [(ngModel)]="filteredApp"
+        (ngModelChange)="updateMenuModules()"
+        *ngIf="!loadingModules"
+      >
+    </div>
+    <div
+      id="menu-list-block"
+      [ngClass]="{
+        'menu-list-hidden': !showApps
+      }"
+      (mouseleave)="reduceSearch($event)"
+    >
+      <div *ngIf="(apps | filter: filteredApp).length !== 0" id="menu-inner-list-block">
+        <a
+          *ngFor="let app of  apps | filter: filteredApp"
+          [href]="app.defaultAction"
+          class="app-menu-btn">
+          <img  alt="" [src]="app.icon">
+          <div class="app-menu-name">{{app.displayName}}</div>
+        </a>
+      </div>
+      <div id="menu-inner-list-block-no-match" *ngIf="(apps | filter: filteredApp).length == 0">
+        <p>No match found!</p>
+      </div>
+      <div id="menu-app-management-block">
+        <a
+          [href]="rootUrl + 'dhis-web-menu-management/'"
+          id="app-management-btn"
+        >
+          Manage my apps
+        </a>
+      </div>
+    </div>
+  </div>
+  <a (click)="toggleSearch($event)" id="menu-toggle-link">
+    <svg
+    class="menu-toggle-icon"
+    viewBox="0 0 24 24"
+  >
+    <path d="M4 8h4V4H4v4zm6 12h4v-4h-4v4zm-6 0h4v-4H4v4zm0-6h4v-4H4v4zm6 0h4v-4h-4v4zm6-10v4h4V4h-4zm-6 4h4V4h-4v4zm6 6h4v-4h-4v4zm0 6h4v-4h-4v4z"></path>
+  </svg>
+  </a>
+  <div
+    id="menu-profile-block"
+  >
+    <div
+      id="menu-profile-inner-block"
+    >
+      <a
+        class="menu-profile-icon"
+        (mouseenter)="showProfile = true"
+      >
+        {{currentUser?.AbbreviatedName}}
+      </a>
+      <div
+        id="profile-list-block"
+        [ngClass]="{
+        'profile-list-hidden': !showProfile
+        }"
+        (mouseleave)="showProfile = false"
+      >
+        <div id="profile-menus-list">
+          <a
+            *ngFor="let profileMenu of profileMenus"
+            [href]="rootUrl + profileMenu.defaultAction"
+            class="profile-menu-btn">
+            <img  alt="" [src]="profileMenu.icon">
+            <div class="profile-menu-name">{{profileMenu.name}}</div>
+          </a>
+        </div>
+        <div id="user-profile-block">
+          <div  class="user-profile-logo" *ngIf="!loadingUser">{{currentUser?.AbbreviatedName}}</div>
+          <div id="user-profile-name">
+            <span *ngIf="!loadingUser"><b>{{currentUser?.name}}</b></span>
+          </div>
+          <div><small *ngIf="!loadingUser">{{currentUser?.email}}</small></div>
+          <a
+            id="logout-btn"
+            [href]="rootUrl + 'dhis-web-commons-security/logout.action'"
+            *ngIf="!loadingUser"
+          >
+            Log Out
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div
+    id="menu-toggle-button"
+  >
+    <a
+      (click)="toggleSideBar($event)"
+    >
+      <svg
+        class="menu-toggle-icon"
+        viewBox="0 0 24 24"
+      >
+        <path d="M4 8h4V4H4v4zm6 12h4v-4h-4v4zm-6 0h4v-4H4v4zm0-6h4v-4H4v4zm6 0h4v-4h-4v4zm6-10v4h4V4h-4zm-6 4h4V4h-4v4zm6 6h4v-4h-4v4zm0 6h4v-4h-4v4z"></path>
+      </svg>
+    </a>
+  </div>
+  <div
+    id="sidebar-menu-nav"
+    [ngClass]="{
+      'sidebar-hidden': !showSidebar
+    }"
+  >
+    <div id="sidebar-user-profile-block">
+      <div  id="sidebar-user-profile-logo" *ngIf="!loadingUser">{{currentUser?.AbbreviatedName}}</div>
+      <div id="sidebar-user-profile-info">
+        <h4 *ngIf="!loadingUser">{{currentUser?.name}}</h4>
+        <h6 *ngIf="!loadingUser">{{currentUser?.email}}</h6>
+      </div>
+    </div>
+    <ul id="sidebar-list-block">
+      <li>
+        <a (click)="toggleSidebarMenus($event)">Apps</a>
+      </li>
+      <li
+        [ngClass]="{
+          'sidebar-app-hidden': !showSidebarApps
+        }"
+      >
+        <input
+          type="text"
+          id="sidebar-app-input"
+          placeholder="Search Apps"
+          [(ngModel)]="filteredApp"
+          (ngModelChange)="updateMenuModules()"
+        >
+      </li>
+      <li
+        id="sidebar-app-list"
+        [ngClass]="{
+          'sidebar-app-hidden': !showSidebarApps
+        }"
+      >
+        <a
+          *ngFor="let app of  apps | filter: filteredApp"
+          [href]="app.defaultAction"
+          class="app-menu-btn sidebar-app-menu-btn">
+          <img  alt="" [src]="app.icon" title="{{app.displayName}}">
+          <div class="app-menu-name">{{app.displayName}}</div>
+        </a>
+      </li>
+      <li *ngFor="let profileMenu of profileMenus">
+        <a [href]="rootUrl + profileMenu.defaultAction">
+          <img  alt="" [src]="profileMenu.icon">
+          {{profileMenu.name}}
+        </a>
+      </li>
+      <li>
+        <a [href]="rootUrl + 'dhis-web-commons-security/logout.action'">Log Out</a>
+      </li>
+    </ul>
+  </div>
+</div>

@@ -1,0 +1,373 @@
+<table class="table table-bordered scorecard_table" *ngIf="!scorecard.data.show_data_in_column">
+  <!--Groups-->
+  <tr [ngClass]="{'hide_no_group': scorecard.data.data_settings.indicator_holder_groups.length == 1}" style="line-height: 140%">
+    <!--numbering-->
+    <th *ngIf="scorecard.data.show_rank" style="width: 30px"></th>
+    <!--orgunit area/for sorting orgunit-->
+    <th class="orgUnitName"
+        (click)="sortScoreCardFromColumn('none', sortAscending, orgunits, periods_list[0].id, false)"
+        title="{{ 'Sort scorecard by organisation unit' | translate}}">
+      <!--sorting icons-->
+      <span class="fa fa-sort-desc pull-right text-muted" *ngIf="!current_sorting && sorting_column == 'none'"></span>
+      <span class="fa fa-sort-asc pull-right text-muted" *ngIf="current_sorting && sorting_column == 'none'"></span>
+    </th>
+    <!--display each group-->
+    <th
+      style="font-size: 11px; cursor: pointer"
+      *ngFor="let indicator_holder_group of scorecard.data.data_settings.indicator_holder_groups"
+      [attr.colspan]="getGroupColspan(indicator_holder_group.indicator_holder_ids)"
+      [ngClass]="{'hide_no_group': getGroupColspan(indicator_holder_group.indicator_holder_ids) == 0}"
+      (click)="loadPreview(indicator_holder_group,null,null,null)"
+      title="Click to analyse indicators for {{ indicator_holder_group.name }}"
+      dnd-droppable (onDropSuccess)="dragItemSuccessfull($event,'group',indicator_holder_group)"
+    >
+      <div dnd-draggable [dragEnabled]="true" [dragData]="indicator_holder_group">
+        {{ indicator_holder_group.name }}
+      </div>
+    </th>
+    <th *ngIf="show_sum_in_row"></th>
+    <th *ngIf="scorecard.data.show_average_in_row || scorecard.data.show_league_table"></th>
+  </tr>
+  <!--indicator titles-->
+  <tr>
+    <th *ngIf="scorecard.data.show_rank"  style="width: 30px;vertical-align: bottom;" [attr.rowspan]="periods_list.length >1 ? 2 : 1" [translate]="'No#'">No#</th>
+    <th style="vertical-align: bottom" (click)="sortScoreCardFromColumn('none', sortAscending, orgunits, periods_list[0].id, false)">
+      <!--sorting icons-->
+      <input
+        type="text"
+        class="form-control form-control-sm no-print"
+        [(ngModel)]="searchQuery"
+        placeholder="{{ 'Search for orgunits here' | translate }}">
+      <span class="fa fa-sort-up pull-right pull-right text-muted" *ngIf="!current_sorting && sorting_column == 'none' && scorecard.data.data_settings.indicator_holder_groups.length == 1"></span>
+      <span class="fa fa-sort-down pull-right pull-right text-muted" *ngIf="current_sorting && sorting_column == 'none' && scorecard.data.data_settings.indicator_holder_groups.length == 1"></span>
+    </th>
+    <td *ngFor="let indicator of indicator_holders_list" class="indicator_title"
+        style="line-height: 140%; padding: 0px;vertical-align: bottom; position: relative"
+        title="{{ 'Click to Sort By' | translate }} {{ getIndicatorTitle(indicator) }} {{ indicator.indicators[0].bottleneck_indicators.length == 0 ? '': ', For bottleneck analysis, right click any of the cells' }}"
+        (click)="sortScoreCardFromColumn(indicator.indicators[0].id, sortAscending, orgunits, periods_list[0].id, false)"
+        (dblclick)="loadPreview(null,indicator,null,null)"
+        [attr.colspan]="periods_list.length"
+        dnd-droppable (onDropSuccess)="dragItemSuccessfull($event,'indicator',indicator)"
+        [contextMenu]="indicatorMenu"
+        [contextMenuSubject]="indicator"
+        (contextmenu)="onContextMenu($event, indicator)"
+        (mouseenter) ="mouseEnter(indicator)"
+        (mouseleave) ="mouseLeave(indicator)"
+    >
+      <i title="For bottleneck analysis, right click any of the cells"
+         *ngIf="!indicator.indicators[0].use_bottleneck_groups ? indicator.indicators[0].bottleneck_indicators.length != 0 : indicator.indicators[0].bottleneck_indicators_groups.length != 0"
+         class="fa fa-bar-chart-o no-print"
+         style="position: absolute; top:1px;right: 1px; opacity: 0.5">
+      </i>
+      <div dnd-draggable [dragEnabled]="true" [dragData]="indicator" style="padding: 8px;">
+        <app-indicator-title
+          [indicator]="indicator"
+          [indicator_done_loading]="indicator_done_loading"
+          [indicator_loading]="indicator_loading"
+          [periods_list]="periods_list"
+          [old_proccessed_percent]="old_proccessed_percent"
+          [sorting_column]="sorting_column"
+          [current_sorting]="current_sorting"
+          [has_error]="has_error"
+          [error_text]="error_text"
+        ></app-indicator-title>
+      </div>
+    </td>
+    <th class="subtotal" *ngIf="show_sum_in_row">Sum</th>
+    <th
+      class="subtotal"
+      *ngIf="scorecard.data.show_average_in_row || scorecard.data.show_league_table"
+      (click)="sortScoreCardFromColumn('avg', sortAscending, orgunits, periods_list[0].id, false)"
+      [attr.rowspan]="periods_list.length >1 ? 2 : 1"
+      style="vertical-align: bottom;"
+    >
+      <span [translate]="'Rank'"> Rank</span>
+      <!--sorting icons-->
+      <span class="fa fa-sort-up pull-right  pull-right text-muted" *ngIf="!current_sorting && sorting_column == 'avg'"></span>
+      <span class="fa fa-sort-down pull-right  pull-right text-muted" *ngIf="current_sorting && sorting_column == 'avg'"></span>
+    </th>
+    <th
+      class="subtotal"
+    *ngIf="scorecard.data.show_average_in_row || scorecard.data.show_league_table"
+    (click)="sortScoreCardFromColumn('avg', sortAscending, orgunits, periods_list[0].id, false)"
+      style="vertical-align: bottom;">
+      Average
+    </th>
+  </tr>
+
+  <!-- period dimension-->
+  <tr *ngIf="periods_list.length > 1">
+    <th style="vertical-align: bottom">
+
+    </th>
+    <ng-container *ngFor="let indicator of indicator_holders_list">
+      <td *ngFor="let per of periods_list" class="indicator_title"
+          style="line-height: 140%"
+          title="{{ 'Click to Sort By' | translate }} {{ indicator.title }}"
+          (click)="sortScoreCardFromColumn(indicator.indicators[0].id, sortAscending, orgunits, per.id, false)"
+          (dblclick)="loadPreview(null,indicator,null,per)"
+      >
+        <app-period-title
+          [indicator]="indicator"
+          [period]="per"
+          [indicator_done_loading]="indicator_done_loading"
+          [indicator_loading]="indicator_loading"
+          [periods_list]="periods_list"
+          [old_proccessed_percent]="old_proccessed_percent"
+          [sorting_column]="sorting_column"
+          [sorting_period]="sorting_period"
+          [current_sorting]="current_sorting"
+          [has_error]="has_error"
+          [error_text]="error_text"
+        ></app-period-title>
+      </td>
+    </ng-container>
+    <th class="subtotal" *ngIf="show_sum_in_row">Sum</th>
+    <!--<th class="subtotal" *ngIf="show_average_in_row" (click)="sortScoreCardFromColumn('avg', sortAscending, orgunits, periods_list[0].id, false)"></th>-->
+  </tr>
+
+  <!--data-->
+  <tbody [@listState]="orgunits.length">
+  <ng-container *ngFor="let current_orgunit of orgunits | filterByName:searchQuery; let i=index" >
+    <tr
+      style="height: 35px; max-height: 35px; overflow-y: hidden; line-height: 80%"
+      class="orunitTr"
+      *ngIf="scorecard.data.shown_records == 'all' || i < scorecard.data.shown_records"
+      [ngClass]="{'hide_no_group': isRowEmpty(current_orgunit.id) || averageHidden(current_orgunit.id,periods_list[0].id)}"
+    >
+      <td style="vertical-align: bottom;font-size: 10px;cursor: pointer;line-height: 80%;padding: 8px" *ngIf="scorecard.data.show_rank">{{ i+1 }}</td>
+      <td style="vertical-align: bottom;font-size: 10px;cursor: pointer;line-height: 80%;padding: 0px;min-width:150px"
+          class="orgUnitName"
+          (click)="loadChildrenData(current_orgunit,null)"
+          [style.cursor]="current_orgunit.is_parent ? 'default' : 'pointer'"
+          dnd-droppable (onDropSuccess)="dragItemSuccessfull($event,'orgunit',current_orgunit)"
+      >
+        <div dnd-draggable [dragEnabled]="true" [dragData]="current_orgunit" style="padding: 8px">
+          <span *ngIf="scorecard.data.show_hierarchy">{{ current_orgunit.parent }} / </span>  {{ current_orgunit.name }}
+        </div>
+      </td>
+      <ng-container *ngFor="let indicator of indicator_holders_list">
+        <td *ngFor="let per of periods_list"
+            style="font-size: 10px;max-width: 90px;overflow-wrap: break-word; cursor: pointer; padding: 0px;line-height: 10%;"
+            class="sans-pro"
+            (click)="loadPreview(null,indicator,current_orgunit,per)"
+            title="{{ prepareTooltip(indicator,current_orgunit.id,per.id) }}"
+        >
+          <svg-item
+            [indicator]="indicator"
+            [current_orgunit]="current_orgunit"
+            [indicator_list]="getVisibleIndicators(indicator)"
+            [scorecard]="scorecard"
+            [period]="per.id"
+            [contextMenu]="itemMenu"
+            [contextMenuSubject]="indicator"
+            (contextmenu)="onItemContextMenu($event, indicator, current_orgunit,per )"
+          >
+          </svg-item>
+        </td>
+      </ng-container>
+      <td
+        style="font-size: 10px;max-width: 90px;overflow-wrap: break-word;padding: 8px; line-height: 80%;"
+        *ngIf="show_sum_in_row">
+      </td>
+      <td
+        style="padding: 0px;"
+        *ngIf="scorecard.data.show_average_in_row || scorecard.data.show_league_table">
+        <svg viewbox="0 0 90 35" width="90" height="35">
+          <!--full box to cover all area-->
+          <polygon points="0 0 90 0 90 35 0 35" [attr.fill]="'white'"/>
+          <text fill="#000" x="30" y="20" font-size="11" font-family="Source Sans Pro">
+            <tspan>{{ get_column_rank(current_orgunit.id, orgunits, periods_list, null) }}</tspan>
+          </text>
+        <g *ngIf="scorecard.data.show_league_table">
+            <title>Layer 1</title>
+            <path id="svg_2" d="m298.69966,0.79977c0.00226,0.02994 0.01085,0.05736 0.02346,0.08145l0.02346,-0.0366l-0.00678,-0.0025l-0.00939,-0.00334l0.0049,-0.00855l0.01721,-0.03045l-0.05287,0l0.00001,-0.00001zm0.07206,0l-0.017,0.03003l0.0073,0.00261l0.00991,0.00355l-0.00563,0.00876l-0.03379,0.05287c0.02431,0.0369 0.05986,0.06237 0.10063,0.06789l0,0.10793l-0.06674,0l0,0.0267l0.16685,0l0,-0.0267l-0.06674,0l0,-0.10793c0.07113,-0.00951 0.12693,-0.07902 0.13348,-0.16571l-0.22828,0l0,0l0.00001,0z" stroke-width="5" stroke="null" [attr.fill]="get_cup_color(current_orgunit.id, orgunits, periods_list, null)"/>
+            <g stroke="null" id="svg_1">
+              <path stroke="null" [attr.fill]="get_cup_color(current_orgunit.id, orgunits, periods_list, null)" d="m82.88651,24.52596c0,-0.42454 -0.27262,-0.76873 -0.60888,-0.76873l-2.27317,0c-0.33626,0 -0.60888,0.34417 -0.60888,0.76873l0,7.42906c0,0.42454 0.27262,0.76873 0.60888,0.76873l2.27317,0c0.33626,0 0.60888,-0.34417 0.60888,-0.76873l0,-7.42906z" id="XMLID_103_"/>
+              <g stroke="null" id="XMLID_105_">
+                <path stroke="null" [attr.fill]="get_cup_color(current_orgunit.id, orgunits, periods_list, null)" d="m76.06632,22.63052c-0.70172,0 -1.41541,-0.31923 -2.00961,-0.89884c-0.5993,-0.58459 -1.05069,-1.3916 -1.30549,-2.33385c-0.65078,-2.40692 0.20706,-4.96293 1.91226,-5.69783c0.30858,-0.13298 0.63077,-0.20043 0.95758,-0.20043c0.70172,0 1.41541,0.31923 2.00965,0.89889c0.5993,0.58454 1.05074,1.3916 1.30549,2.33379c0.31028,1.14766 0.29098,2.36567 -0.05435,3.42959c-0.35714,1.10026 -1.01696,1.90582 -1.85791,2.2682c-0.30858,0.13304 -0.63077,0.20048 -0.95761,0.20048l0,-0.00002l0,-0.00002l0,-0.00002l-0.00001,0.00003l0,0.00001zm-0.44527,-7.59351c-0.19268,0 -0.3825,0.03972 -0.56416,0.11797c-1.06969,0.46102 -1.58704,2.14152 -1.15319,3.74615c0.34893,1.29059 1.23824,2.19194 2.1626,2.19194c0.19273,0 0.38254,-0.03967 0.56419,-0.11797c0.50326,-0.21688 0.90261,-0.71271 1.12449,-1.39621c0.23361,-0.71973 0.2438,-1.5543 0.0287,-2.34994c-0.34897,-1.29053 -1.23827,-2.19194 -2.16265,-2.19194l0.00001,0l0.00001,0z" id="XMLID_792_"/>
+              </g>
+              <g stroke="null" id="XMLID_106_">
+                <path stroke="null" [attr.fill]="get_cup_color(current_orgunit.id, orgunits, periods_list, null)" d="m86.21574,22.63052c-0.00004,0 0,0 0,0c-0.32686,0 -0.64903,-0.06744 -0.95761,-0.20043c-0.84095,-0.36242 -1.50074,-1.16795 -1.85791,-2.2682c-0.34535,-1.06397 -0.36463,-2.28194 -0.05435,-3.42959c0.25476,-0.94225 0.70619,-1.74931 1.30549,-2.33385c0.59424,-0.57967 1.30792,-0.89889 2.00965,-0.89889c0.32681,0 0.64899,0.06744 0.95758,0.20043c1.70521,0.73491 2.56304,3.29091 1.91226,5.69783c-0.25476,0.94225 -0.70623,1.74926 -1.30549,2.33385c-0.5942,0.57956 -1.30797,0.89884 -2.00961,0.89884l0,0.00002l-0.00001,0zm0.44522,-7.59351c-0.92441,0 -1.81372,0.90136 -2.16265,2.19194c-0.2151,0.79557 -0.20491,1.63016 0.0287,2.34994c0.22184,0.68345 0.62119,1.17932 1.12449,1.39621c0.18165,0.07832 0.37146,0.11797 0.56419,0.11797c0.92436,0 1.81367,-0.90136 2.16265,-2.19194c0.43385,-1.60459 -0.08346,-3.28512 -1.15319,-3.7461c-0.18165,-0.07832 -0.37146,-0.11804 -0.56419,-0.11804l0,0.00002l0,-0.00002l0,0.00002z" id="XMLID_795_"/>
+              </g>
+              <path stroke="null" [attr.fill]="get_cup_color(current_orgunit.id, orgunits, periods_list, null)" d="m86.64015,12.25327c-0.01514,-0.41092 -0.2968,-0.73469 -0.63917,-0.73469l-10.27985,0c-0.34232,0 -0.62398,0.32374 -0.63913,0.73466c-0.01425,0.38616 -0.02146,0.77221 -0.02146,1.14746c0,3.43737 0.56069,6.68108 1.57885,9.13358c1.08866,2.62247 2.58797,4.06672 4.22168,4.06672s3.13304,-1.44428 4.22172,-4.06672c1.01812,-2.45249 1.57881,-5.6962 1.57881,-9.13358c0,-0.37497 -0.00726,-0.76104 -0.02146,-1.1474l0,0l0,-0.00002l0,-0.00002l0.00001,0.00001z" id="XMLID_107_"/>
+              <path stroke="null" [attr.fill]="get_cup_color(current_orgunit.id, orgunits, periods_list, null)" d="m84.33167,30.14195l-6.38133,0c-0.60251,0 -1.09266,0.61882 -1.09266,1.3795l0,1.5948c0,0.76067 0.49019,1.3795 1.09266,1.3795l6.38133,0c0.60251,0 1.09266,-0.61882 1.09266,-1.3795l0,-1.5948c0,-0.76067 -0.49015,-1.3795 -1.09266,-1.3795z" id="XMLID_108_"/>
+            </g>
+          </g>
+        </svg>
+      </td>
+      <td
+        style="font-weight: bolder; text-align: center"
+        *ngIf="scorecard.data.show_average_in_row || scorecard.data.show_league_table">
+        {{ findRowAverage(current_orgunit.id, periods_list,null) }}
+      </td>
+    </tr>
+
+    <tr *ngIf="showSubScorecard[current_orgunit.id]">
+      <td [attr.colspan]="getSubscorecardColspan()" style="background-color: rgba(0,0,0,0.1)">
+        <!--Internal League Table-->
+        <h3
+          class="text-center text-muted"
+          *ngIf="!children_available[current_orgunit.id]">
+          {{ current_orgunit.name }}
+          <span [translate]="'has no Children'"> has no Children</span>
+        </h3>
+        <app-scorecard
+          *ngIf="children_available[current_orgunit.id]"
+          #childScoreCard
+          [scorecard]="subscorecard"
+          [selectedOrganisationUnit]="sub_model"
+          [selectedPeriod]="selectedPeriod"
+          [functions]="functions"
+          [organisation_unit_nodes]="organisation_unit_nodes"
+          [is_children]="true"
+          (show_details)="loadPreviewFromChild($event)"
+        ></app-scorecard>
+      </td>
+    </tr>
+  </ng-container>
+
+  </tbody>
+
+  <!--sum column-->
+  <tr *ngIf="scorecard.data.show_sum_in_column" style="height: 35px; max-height: 35px; overflow-y: hidden; line-height: 80%">
+    <th *ngIf="scorecard.data.show_rank" style="width: 30px"></th>
+    <th style="line-height: 10%">Sum</th>
+    <ng-container *ngFor="let indicator of indicator_holders_list">
+      <th *ngFor="let per of periods_list" style="width: 90px;max-width: 90px;line-height: 10%;padding: 0px">
+        <app-subtotal [indicator]="indicator" [orgunits]="orgunits" [scorecard]="scorecard" [calculation]="'sum'" [indicator_list]="getVisibleIndicators(indicator)" [period]="per.id"></app-subtotal>
+      </th>
+    </ng-container>
+    <th *ngIf="scorecard.data.show_sum_in_row">{{ findRowTotalSum(orgunits,periods_list[0].id) | number : '1.2-2'}}</th>
+    <th *ngIf="scorecard.data.show_average_in_row || scorecard.data.show_league_table">{{ findRowTotalAverage(orgunits,periods_list[0].id)}}</th>
+  </tr>
+  <!--Average column-->
+  <tr *ngIf="scorecard.data.show_average_in_column" style="height: 35px; max-height: 35px; overflow-y: hidden; line-height: 80%">
+    <th *ngIf="scorecard.data.show_rank" style="width: 30px"></th>
+    <th [translate]="'Average'">Average</th>
+    <ng-container *ngFor="let indicator of indicator_holders_list">
+      <th *ngFor="let per of periods_list" style="width: 90px;max-width: 90px;line-height: 10%;padding: 0px">
+        <app-subtotal [indicator]="indicator" [orgunits]="orgunits" [scorecard]="scorecard" [calculation]="'avg'" [indicator_list]="getVisibleIndicators(indicator)" [period]="per.id"></app-subtotal>
+      </th>
+    </ng-container>
+    <th *ngIf="show_sum_in_row">{{ findRowTotalSum(orgunits,periods_list[0].id)  | number : '1.2-2'}}</th>
+    <th *ngIf="scorecard.data.show_average_in_row || scorecard.data.show_league_table">{{ findRowTotalAverage(orgunits,periods_list[0].id)}}</th>
+  </tr>
+  <!--additinal label-->
+  <tr *ngFor="let label of scorecard.data.additional_labels">
+    <th *ngIf="scorecard.data.show_rank" style="width: 30px"></th>
+    <th>{{ label }}</th>
+    <ng-container *ngFor="let indicator of indicator_holders_list">
+      <th *ngFor="let per of periods_list"
+          style="font-size: 10px;max-width: 90px;overflow-wrap: break-word; cursor: pointer; line-height: 80%"
+          class="sans-pro">
+        {{ getIndicatorLabel( indicator,label ) }}
+      </th>
+    </ng-container>
+    <th *ngIf="show_sum_in_row"></th>
+    <th *ngIf="scorecard.data.show_average_in_row || scorecard.data.show_league_table"></th>
+  </tr>
+</table>
+<context-menu #indicatorMenu>
+  <!--<ng-template contextMenuItem (execute)="loadPreview(null,$event.item,null,null, null, true)"  let-item>-->
+     <!--<span *ngIf="item.indicators[0].bottleneck_indicators.length != 0">-->
+          <!--<i class="fa fa-bar-chart"></i>-->
+          <!--<span [translate]="'Bottleneck Analysis'"> Bottleneck Analysis</span>-->
+        <!--</span>-->
+  <!--</ng-template>-->
+  <ng-template contextMenuItem (execute)="loadPreview(null,$event.item,null,null)">
+    <i class="fa fa-bar-chart-o" aria-hidden="true"></i>
+    <span [translate]="'Basic Analysis'"> Further Analysis</span>
+  </ng-template>
+  <ng-template contextMenuItem (execute)="sortScoreCardFromColumn($event.item.indicators[0].id, true, orgunits, periods_list[0].id, false)">
+    <i class="fa fa-sort-amount-asc" aria-hidden="true"></i>
+    <span [translate]="'Sort Asc'">Sort Asc </span>
+  </ng-template>
+  <ng-template contextMenuItem (execute)="sortScoreCardFromColumn($event.item.indicators[0].id, false, orgunits, periods_list[0].id, false)">
+    <i class="fa fa-sort-amount-desc" aria-hidden="true"></i>
+    <span [translate]="'Sort Desc'"> Sort Desc</span>
+  </ng-template>
+
+  <ng-template contextMenuItem [subMenu]="orderSubmenu">
+    <i class="fa fa-sort" aria-hidden="true"></i>
+    <span [translate]="'Best/Worst'" >Best/Worst</span>
+  </ng-template>
+  <context-menu #orderSubmenu>
+    <ng-template contextMenuItem (execute)="sortBestWorst('all', $event.item.indicators[0].id, false, orgunits, periods_list[0].id, false)">
+      <i class="fa fa-list" aria-hidden="true"></i>
+      <span [translate]="'All'"> All</span>
+    </ng-template>
+    <ng-template contextMenuItem (execute)="sortBestWorst(3, $event.item.indicators[0].id, false, orgunits, periods_list[0].id, false)">
+      <i class="fa fa-sort-numeric-desc" style="margin-left:4px" aria-hidden="true"></i>
+      <span [translate]="'Top Three'"> Top Three</span>
+    </ng-template>
+    <ng-template  contextMenuItem (execute)="sortBestWorst(5, $event.item.indicators[0].id, false, orgunits, periods_list[0].id, false)">
+      <i class="fa fa-sort-numeric-desc" aria-hidden="true"></i>
+      <span [translate]="'Top Five'"> Top Five</span>
+    </ng-template>
+    <ng-template contextMenuItem (execute)="sortBestWorst(10, $event.item.indicators[0].id, false, orgunits, periods_list[0].id, false)">
+      <i class="fa fa-sort-numeric-desc" aria-hidden="true"></i>
+      <span [translate]="'Top Ten'"> Top Ten</span>
+    </ng-template>
+    <ng-template contextMenuItem (execute)="sortBestWorst(3, $event.item.indicators[0].id, true, orgunits, periods_list[0].id, false)">
+      <i class="fa fa-sort-numeric-asc" style="margin-left:4px" aria-hidden="true"></i> Last Three
+    </ng-template>
+    <ng-template  contextMenuItem (execute)="sortBestWorst(5, $event.item.indicators[0].id, true, orgunits, periods_list[0].id, false)">
+      <i class="fa fa-sort-numeric-asc" aria-hidden="true"></i>
+      <span [translate]="'Last Five'"> Last Five</span>
+    </ng-template>
+    <ng-template contextMenuItem (execute)="sortBestWorst(10, $event.item.indicators[0].id, true, orgunits, periods_list[0].id, false)">
+      <i class="fa fa-sort-numeric-asc" aria-hidden="true"></i>
+      <span [translate]="'Last Ten'"> Last Ten</span>
+    </ng-template>
+  </context-menu>
+
+  <ng-template *ngIf="indicator_holders_list.length !== 1" contextMenuItem (execute)="hideClicked($event.item)">
+    <i class="fa fa-eye-slash" aria-hidden="true"></i>
+    <span [translate]="'Hide'">Hide</span>
+  </ng-template>
+  <ng-template  *ngIf="hidenColums.length !== 0" contextMenuItem (execute)="hideClicked($event.item, 'all')">
+    <i class="fa fa-eye" style="margin-left:4px" aria-hidden="true"></i>
+    <span [translate]="'Show All'">Show All</span>
+  </ng-template>
+</context-menu>
+
+<context-menu #itemMenu>
+  <ng-template contextMenuItem (execute)="loadPreview(null, $event.item.item, $event.item.ou, $event.item.pe, null, true)"  let-item>
+    <span *ngIf="!item.item.indicators[0].use_bottleneck_groups ? item.item.indicators[0].bottleneck_indicators.length != 0 : item.item.indicators[0].bottleneck_indicators_groups.length != 0">
+          <i class="fa fa-bar-chart"></i>
+          <span [translate]="'Bottleneck Analysis'"> Bottleneck Analysis</span>
+        </span>
+  </ng-template>
+  <ng-template contextMenuItem (execute)="loadPreview(null, $event.item.item, $event.item.ou, $event.item.pe)">
+    <i class="fa fa-bar-chart-o" aria-hidden="true"></i>
+    <span [translate]="'Basic Analysis'">Basic Analysis</span>
+  </ng-template>
+  <ng-template contextMenuItem [subMenu]="saySubMenu">
+    <i class="fa fa-line-chart" aria-hidden="true"></i>
+    <span [translate]="'Trend Analysis'">Trend Analysis</span>
+  </ng-template>
+  <context-menu #saySubMenu>
+    <ng-template contextMenuItem (execute)="loadPreview(null, $event.item.item, $event.item.ou, null, {id:'LAST_3_MONTHS',name:'Last 3 Month'})">
+      <i class="fa fa-line-chart" aria-hidden="true"></i>
+      <span [translate]="'Last 3 Month'">Last 3 Month</span>
+    </ng-template>
+    <ng-template contextMenuItem (execute)="loadPreview(null, $event.item.item, $event.item.ou, null, {id:'LAST_6_MONTHS',name:'Last 6 Month'})">
+      <i class="fa fa-line-chart" aria-hidden="true"></i>
+      <span [translate]="'Last 6 Month'">Last 6 Month</span>
+    </ng-template>
+    <ng-template  contextMenuItem (execute)="loadPreview(null, $event.item.item, $event.item.ou, null, {id:'LAST_12_MONTHS',name:'Last 12 Month'})">
+      <i class="fa fa-line-chart" aria-hidden="true"></i>
+      <span [translate]="'Last 12 Month'">Last 12 Month</span>
+    </ng-template>
+    <ng-template contextMenuItem (execute)="loadPreview(null, $event.item.item, $event.item.ou, null, {id:'LAST_4_QUARTERS',name:'Last 4 Quarter'})">
+      <i class="fa fa-line-chart" style="margin-left:4px" aria-hidden="true"></i>
+      <span [translate]="'Last 4 Quarter'">Last 4 Quarter</span>
+    </ng-template>
+    <ng-template contextMenuItem (execute)="loadPreview(null, $event.item.item, $event.item.ou, null, {id:'LAST_5_YEARS',name:'Last 5 Years'})">
+      <i class="fa fa-line-chart" style="margin-left:4px" aria-hidden="true"></i>
+      <span [translate]="'Last 5 Years'">Last 5 Years</span>
+    </ng-template>
+  </context-menu>
+
+</context-menu>

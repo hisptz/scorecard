@@ -1,0 +1,159 @@
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-md-4" *ngIf="!showBottleneck">
+      <app-org-unit-filter
+        *ngIf="orgUnitModel"
+        [orgunit_model]="orgUnitModel"
+        [showUpdate]="true"
+        [pickChildren]="false"
+        (onOrgUnitChange)= "changeOrgUnit($event)"
+        (onOrgUnitUpdate)= "updateOrgUnit($event)"
+      >
+      </app-org-unit-filter>
+    </div>
+    <div class="col-md-4">
+      <app-period-filter
+        *ngIf="selectedPeriod"
+        [showUpdate]="true"
+        [selected_periods]="selectedPeriod"
+        [starting_year]="year"
+        (onPeriodUpdate) = "updatePeriod($event)"
+        (onPeriodChange) = "changePeriod($event)"
+      >
+      </app-period-filter>
+    </div>
+    <div class="col-md-3" style="padding-right: 5px" *ngIf="!showBottleneck">
+      <app-layout
+        *ngIf="visualizer_config.type != 'info'"
+        [visualizationType]="layoutVisualizationType"
+        [layoutModel]="layoutModel"
+        (onLayoutUpdate)="updateLayout($event)"
+      ></app-layout>
+    </div>
+    <div class="col-md-1" *ngIf="!showBottleneck">
+      <div class="row">
+        <button
+          style="height: 35px"
+          class="btn btn-sm btn-outline-secondary btn-block"
+          title="{{ 'click to refresh information' | translate }}"
+          (click)="updateType(visualizer_config.type)"
+        >
+          <i class="fa fa-refresh"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div class="row">
+
+    <!--chart labels switching-->
+    <label *ngIf="visualizer_config.type == 'chart'">
+      &nbsp;&nbsp;&nbsp;&nbsp;<input type="checkbox" [(ngModel)]="show_labels" (change)="updateType((showBottleneck) ? '' : visualizer_config.type)">
+      <span [translate]="'Chart Labels'" >Chart Labels</span>
+    </label>
+    <div class="card" style="width: 100%; position: absolute; bottom: 5px; top:80px">
+      <div class="card-body">
+        <div class="lead" *ngIf="loading && !error_occured">
+          <h3 class="lead text-center">{{prepareCardTitle(indicator)}}</h3>
+          <app-placeholder
+            [loadingMessage]="'Getting  data' | translate"></app-placeholder>
+        </div>
+        <app-metadata-dictionary
+          [metadataidentifiers]="details_indicators"
+          *ngIf="!loading && visualizer_config.type == 'info' && !error_occured"
+        ></app-metadata-dictionary>
+        <div *ngIf="!loading && visualizer_config.type == 'chart' && !error_occured"
+             [ng2-highcharts]="chartData"></div>
+        <div *ngIf="!loading && visualizer_config.type == 'table' && !error_occured">
+          <app-table-template [tableObject]="tableData"></app-table-template>
+        </div>
+        <div *ngIf="!loading && visualizer_config.type == 'map' && !error_occured">
+          <app-map-container [analyticsObject]="current_analytics_data" [current_title]="current_title"></app-map-container>
+        </div>
+
+
+        <div class="options-block"
+             *ngIf="visualizer_config.type == 'chart' && !error_occured && !showBottleneck">
+          <ul class="nav nav-stacked">
+            <li *ngFor="let chartType of chartTypes">
+              <a
+                (click)="updateChartType(chartType.type)"
+                title="{{chartType.description}}"
+                [ngClass]="{ 'chart-active': (currentChartType == chartType.type) }"
+              >
+                <img [src]="chartType.icon" class="chart-option-icon" alt="">
+              </a>
+            </li>
+          </ul>
+        </div>
+
+        <!--error handling-->
+        <div class="lead text-warning" *ngIf="error_occured">
+          <i class="fa fa-warning"></i>
+          <span [translate]="'Sorry, something went wrong while fetching data! make sure you have internet connection and try to reload the page'">
+          Sorry, something went wrong while fetching data!
+          </span>
+        </div>
+      </div>
+
+      <div class="card-footer text-muted" style="margin-right: 5px">
+        <button class="btn btn-sm cursor"
+                [ngClass]="{ 'btn-outline-success': (visualizer_config.type != 'table'),'btn-secondary':(visualizer_config.type == 'table') }"
+                (click)="updateType('table')">
+          <i class="fa fa-table"></i>
+          <span [translate]="'Table'"> Table</span>
+        </button>
+        <button class="btn btn-sm cursor"
+                [ngClass]="{ 'btn-outline-success': (visualizer_config.type != 'chart' || showBottleneck),'btn-secondary':(visualizer_config.type == 'chart' && !showBottleneck) }"
+                (click)="updateType('chart')">
+          <img [src]="'assets/img/'+currentChartType+'.png'" class="chart-option-icon" alt="" style="margin: 0px">
+          <span [translate]="'Chart'"> Chart</span>
+        </button>
+        <button class="btn btn-sm cursor"
+                [ngClass]="{ 'btn-outline-success': (visualizer_config.type != 'map'),'btn-secondary':(visualizer_config.type == 'map')}"
+                (click)="updateType('map')"
+                [disabled]="(visualizer_config.type == 'map')"
+        >
+          <i class="fa fa-map"></i>
+          <span [translate]="'Map'"> Map</span>
+        </button>
+        <a class="btn btn-outline-success btn-sm cursor" (click)="updateType('csv')" >
+          <i class="fa fa-file-excel-o"></i>
+          <span [translate]="'Excel'">Excel</span>
+        </a>
+        <a
+          class="btn btn-sm cursor"
+          (click)="updateType('info')"
+          [ngClass]="{ 'btn-outline-info': (visualizer_config.type != 'info'),'btn-secondary':(visualizer_config.type == 'info') }"
+        >
+          <i class="fa fa-info-circle" [ngClass]="{ 'text-white':(visualizer_config.type == 'info') }"></i>
+          <span [ngClass]="{ 'text-white':(visualizer_config.type == 'info') }" [translate]="'Info'">
+            Info
+          </span>
+        </a>
+        <!--bootleneck analysis switching-->
+
+        <a
+          *ngIf="indicator.length == 1 && getIndicatorLength(indicator[0])"
+          class="btn btn-sm cursor"
+          (click)="showBottleneck = true;updateType('')"
+          [ngClass]="{ 'btn-outline-info': (!showBottleneck),'btn-secondary':(showBottleneck) }"
+        >
+          <i class="fa fa-road" [ngClass]="{ 'text-white':(showBottleneck) }"></i>
+
+          <span [ngClass]="{ 'text-white':(showBottleneck) }" [translate]="'Bottleneck Analysis'">Bottleneck Analysis</span>
+        </a>
+        <a
+          class="btn btn-sm pull-right btn-outline-secondary cursor"
+          (click)="closeModel()"
+          title="{{'Close' | translate}}"
+        >
+          <i class="fa fa-window-close-o"></i>
+          <span [translate]="'Close'">
+            Close
+          </span>
+        </a>
+      </div>
+    </div>
+  </div>
+</div>

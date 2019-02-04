@@ -1,0 +1,84 @@
+<div class="row no-print">
+  <div class="col-lg-4 col-sm-12" style="padding-left: 0px; cursor: pointer;" tourAnchor="view.ou">
+    <!--organisation unit tree-->
+    <app-org-unit-filter
+      *ngIf="!(orgunit_loading$ | async)"
+      [orgunit_model] = "orgunit_settings$ | async"
+      [showUpdate]="true"
+      (onOrgUnitChange)= "changeOrgUnit($event)"
+      (onOrgUnitUpdate)= "updateOrgUnit($event)"
+    ></app-org-unit-filter>
+    <p *ngIf="(orgunit_loading$ | async)" class="orgunit-placeholer">
+      <span [translate]="'Loading Organisation Units'">Loading Organisation Units...</span>
+    </p>
+  </div>
+  <div  class="col-lg-4 col-sm-12" tourAnchor="view.pe">
+    <app-period-filter
+      #periodComponent
+      [showUpdate]="true"
+      [selected_periods]="selected_periods$ | async"
+      [period_type]="period_type$ | async"
+      (onPeriodUpdate) = "updatePeriod($event)"
+      (onPeriodChange) = "changePeriod($event)"
+    ></app-period-filter>
+  </div>
+  <div class="col-lg-4 col-sm-12">
+    <!--Scorecard refresh button-->
+    <button
+      tourAnchor="view.refresh"
+      (mouseenter)="refreshHovered = true"
+      (mouseleave)="refreshHovered = false"
+      class="btn btn-outline-secondary btn-sm pull-right cursor"
+      (click)="loadScoreCard()" style="height: 35px;margin-left: 3px"
+      title="{{'Refresh' | translate }}">
+      <i class="fa fa-refresh"></i>
+      <span *ngIf="refreshHovered" [translate]="'Refresh'">Refresh</span>
+    </button>
+    <!--Excel download button-->
+    <button
+      tourAnchor="view.excel"
+      (mouseenter)="excelHovered = true"
+      (mouseleave)="excelHovered = false"
+      class="btn btn-outline-secondary btn-sm pull-right cursor"
+      style="height: 35px;margin-left: 3px"
+      (click)="downloadXls()"
+      title="{{ 'Download Excel' | translate }}">
+      <i class="fa fa-file-excel-o"></i>
+      <span *ngIf="excelHovered" [translate]="'Excel'"> Excel</span>
+    </button>
+    <!--Printing button-->
+    <button
+      tourAnchor="view.print"
+      (mouseenter)="printHovered = true"
+      (mouseleave)="printHovered = false"
+      class="btn btn-outline-secondary btn-sm pull-right cursor"
+      (click)="browserPrint()"
+      style="height: 35px;margin-left: 3px" title="{{ 'Print' | translate }}"
+    >
+      <i class="fa fa-print"></i>
+      <span *ngIf="printHovered" [translate]="'Print'">Print</span>
+    </button>
+    <!--Editing button-->
+    <button
+      tourAnchor="view.edit"
+      (mouseenter)="editHovered = true"
+      (mouseleave)="editHovered = false"
+      class="btn btn-outline-secondary btn-sm pull-right cursor"
+      style="height: 35px;margin-right: 3px; margin-left: 3px"
+      *ngIf="can_edit$ | async"
+      (click)="openScorecardForEditing()"
+    >
+      <i class="fa fa-pencil-square-o"></i>
+      <span *ngIf="editHovered" [translate]="'Edit'">Edit</span>
+    </button>
+    <!--Additional options for a scorecard-->
+    <app-options
+      [mode]="'view'"
+      [sorting_column]="sorting_column"
+      [options]="options$ | async"
+      (onOptionUpdate) = "optionUpdated($event)"
+    ></app-options>
+
+
+  </div>
+</div>

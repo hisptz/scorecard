@@ -1,0 +1,59 @@
+<div class="tree-input" title="{{ 'Select groups that will be able to view or edit your scorecard' | translate }}" appClickOutside (clickOutside)="showShareTree = true">
+  <div>
+    <div class="show_items" (click)="displayShareTree()">
+            <span *ngIf="user_groups.length > 3">
+          <span class="selected-item" [translate]="'items Selected'" [translateParams]="{value: user_groups[0].name}">
+            {{ user_groups[0].name }} selected
+          </span>
+              <span class="selected-item" [translate]="'items Selected'" [translateParams]="{value: user_groups[1].name}">
+            {{ user_groups[1].name }} selected
+          </span><span class="selected-item" [translate]="'and items more'" [translateParams]="{value: user_groups.length -2}">
+            and {{ user_groups.length -2 }} more
+          </span>
+        </span>
+      <span *ngIf="user_groups.length <= 3">
+              <span *ngFor="let item of user_groups" class="selected-item ng-binding ng-scope">
+                {{ item.name }}
+              </span>
+            </span>
+      <span class="no-selection"*ngIf="user_groups.length == 0 && !group_loading" [translate]="'Only You'">
+        Only You
+      </span>
+      <i class="fa fa-caret-down pull-right" *ngIf="!group_loading"></i>
+      <span *ngIf="group_loading" [translate]="'Loading user groups'">Loading user groups</span>
+    </div>
+    <div class="tree-view" [@showOption]="showShareTree ? 'hidden': 'shown'">
+      <div class="search-area">
+        <form *ngIf="!group_loading" style="border-bottom: solid 1px blanchedalmond;">
+          <input [(ngModel)]="share_filter" placeholder="{{ 'Search' | translate }}" name="share_search_field"/>
+        </form>
+      </div>
+      <div *ngIf="group_loading" [translate]="'Loading user groups'">Loading Groups</div>
+      <div class="tree-area" *ngIf="!group_loading">
+        <ul class="list-unstyled">
+          <li *ngFor="let group of userGroups | filterByName:share_filter" style="padding: 5px" [title]="group.title || ''">
+            <button
+              [ngClass]="{'btn-primary': getGroupActiveState('see',group),'btn-outline-dark': !getGroupActiveState('see',group)}"
+              class="btn btn-sm"
+              (click)="toogleGroup('see',group, $event)">
+              <i class="fa fa-eye"></i>
+            </button>
+            <button
+              [ngClass]="{'btn-primary': getGroupActiveState('edit',group), 'btn-outline-dark': !getGroupActiveState('edit',group)}"
+              class="btn btn-sm"
+              (click)="toogleGroup('edit',group, $event)">
+              <i class="fa fa-pencil"></i>
+            </button>
+            {{ group.name }}
+          </li>
+        </ul>
+      </div>
+      <div class="close-area">
+        <button class="btn btn-outline-dark pull-right btn-sm"  (click)="displayShareTree()">
+          <i class="fa fa-remove"></i>
+          <span [translate]="'Close'"> Close</span>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

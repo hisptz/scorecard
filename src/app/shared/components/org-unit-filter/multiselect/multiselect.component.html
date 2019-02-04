@@ -1,0 +1,40 @@
+<div class="tree-input" appClickOutside (clickOutside)="hideOptions = true">
+  <div class="show_items" (click)="displayPerTree()">
+    <span *ngIf="selected_items.length == 1">{{ prefix }}</span>
+    <span *ngIf="selected_items.length > 1">{{ prefix_multiple }}</span>
+    <span *ngIf="selected_items.length > 3">
+      <span class="selected-item">
+        {{ selected_items[0].name }}
+        <a (click)="deActivateNode(selected_items[0],$event)" class="removeitem" >x</a>
+      </span>
+      <span class="selected-item">
+        {{ selected_items[1].name }}
+        <a (click)="deActivateNode(selected_items[1],$event)" class="removeitem">x</a>
+      </span>
+      <span class="selected-item">
+        &nbsp; and {{ selected_items.length - 2 }} more
+      </span>
+    </span>
+    <span *ngIf="selected_items.length <= 3">
+       <span *ngFor="let item of selected_items" class="selected-item ng-binding ng-scope">
+        {{ item.name }}
+         <a (click)="deActivateNode(item,$event)" class="removeitem">x</a>
+      </span>
+    </span>
+    <span *ngIf="selected_items.length == 0">
+      {{ placeholder }}
+    </span>
+    <span class="fa fa-caret-down pull-right text-muted"></span>
+  </div>
+  <div class="tree-view" [ngClass]="{'hiddenTree':hideOptions}">
+    <ul class="nav nav-pills flex-column">
+      <li *ngFor="let item of items"
+          class="period" (click)="selectItem(item)"
+          [ngClass]="{'selected': checkItemAvailabilty(item,selected_items)}"
+          title="Click to select"
+      >
+        {{ item.name }}
+      </li>
+    </ul>
+  </div>
+</div>

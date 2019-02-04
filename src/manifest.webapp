@@ -1,0 +1,22 @@
+{
+    "version": "1.0.0-alpha.1",
+    "name": "League Table",
+    "description": "League Table Generation",
+    "launch_path": "index.html",
+    "language": "en",
+    "icons": {
+        "16": "leaguetable.png",
+        "48": "leaguetable.png",
+        "128": "leaguetable.png"
+    },
+    "developer": {
+        "name": "HISP Tanzania",
+        "url": "http://hisptanzania.org/"
+    },
+    "default_locale": "en",
+    "activities": {
+        "dhis": {
+            "href": "../../.."
+        }
+    }
+}

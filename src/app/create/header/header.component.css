@@ -1,0 +1,22 @@
+h6{
+  font-size: 12px;
+}
+
+
+.dropdown:hover > .dropdown-menu {
+  display: block;
+}
+.dropdown > .dropdown-toggle:active {
+  /*Without this, clicking will make it sticky*/
+  pointer-events: none;
+}
+
+.language-change span{
+  border: 1px solid rgba(0,0,0,0.4);
+  padding: 3px 6px;
+  border-radius: 3px;
+  margin-left: 5px;
+  margin-right: 5px;
+  background-color: rgba(0,0,0,0.1);
+  cursor: pointer;
+}

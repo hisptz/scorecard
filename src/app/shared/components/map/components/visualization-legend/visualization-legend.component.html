@@ -1,0 +1,310 @@
+<div class="map-legend-container row" (mouseover)="showButtonIcons()" (mouseout)="hideButtonIcons()">
+  <div class="col-lg-12 col-md-12 col-xs-12"
+
+       style="padding-left: 0px!important;padding-right: 0px!important;">
+    <div *ngFor="let legend of visualizationLegends;let i = index;"
+         >
+      <div class="row legend-header" *ngIf="legend.name!='Boundaries'"
+           style="border-bottom: 1px solid #cccccc;">
+        <div class="col-lg-1 col-md-1 col-xs-1 legend-draggable-icon" style="padding-right: 20px;padding-left: 5px;">
+          <a><i class="fa fa-th" style="color:#000000;"></i></a>
+        </div>
+        <div class="col-lg-9 col-md-9 col-xs-9 class-container">
+          <div class="header parent-inner-header" (click)="toggleLegendView(legend,i)">
+            <span title="{{legend.name}} {{legend.description}}">{{shortenTitle(legend.name)}}&nbsp;</span>
+          </div>
+          <div class="body" [ngClass]="{hideLegend:!legend.opened}">
+            <br/>
+            <p>&nbsp;{{legend.description}}</p>
+            <div *ngIf="legend.isFacility">
+              <div *ngFor="let class of legend.classes">
+                <table class="legend-table">
+                  <tr>
+                    <td><img [src]="baseHref+'images/orgunitgroup/'+class.icon"></td>
+                    <td>{{class.name}} ({{class.count}}) ({{class.percentage}})</td>
+                  </tr>
+                </table>
+              </div>
+            </div>
+            <div *ngIf="legend.isThematic">
+              <div *ngFor="let class of legend.classes">
+                <table class="legend-table">
+                  <tr>
+                    <td></td>
+                    <td [ngStyle]="{fontWeight:'bold'}">{{class.label}}</td>
+                  </tr>
+                  <tr>
+                    <td rowspan="2"
+                        [ngStyle]="{backgroundColor:class.color,width:'50px',height:'20px'}">&nbsp;
+                    </td>
+                    <td>
+                      <span >{{class.min}} - {{class.max}}</span><span *ngIf="class.max!=0&&class.min!=class.max"
+                    >({{class.count}}) {{class.percentage==''?'':'('+class.percentage+')'}}</span>
+                    </td>
+                  </tr>
+                </table>
+              </div>
+            </div>
+            <div *ngIf="legend.isEvent">
+              <div *ngFor="let class of legend.classes">
+                <table class="legend-table">
+                  <tr>
+                    <td>
+                  <tr>
+                    <td
+                      [ngStyle]="{backgroundColor:class.color,width:(class.radius*4)+'px',height:(class.radius*4)+'px',borderRadius:(class.radius*4)+'px'}"
+                      style="box-shadow: 0 1px 4px rgba(0, 0, 0, 0.65);opacity:0.95;"></td>
+                    <td>Clusters</td>
+                  </tr>
+                  <br/>
+                  <tr>
+                    <td><i class="fa fa-map-marker fa-2x" style="color:#276696"></i></td>
+                    <td>Event Points</td>
+                  </tr>
+                  </td>
+                  </tr>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-1 col-md-1 col-xs-1 eye-container">
+          <a (click)="toggleLayerView(legend,'normal',$event)" *ngIf="!legend.hidden"
+             [ngClass]="{'hide-button-icons': !showButtonIncons}"
+             style="margin-left:-6px!important;"><i
+            class="fa fa-eye"></i></a>
+          <a (click)="toggleLayerView(legend,'normal',$event)" *ngIf="legend.hidden"
+             [ngClass]="{'hide-button-icons': !showButtonIncons,pinned: legend.hidden}"
+             style="margin-left:-6px!important;"><i class="fa fa-eye-slash"></i></a>
+        </div>
+      </div>
+
+      <div class="row legend-header" *ngIf="legend.isBoundary"
+           style="border-bottom: 1px solid #cccccc;"
+      >
+        <div class="col-lg-1 col-md-1 col-xs-1 legend-draggable-icon" (click)="toggleBoundaryLayer()">
+          <a><i class="fa fa-connectdevelop" style="color:#000000;"></i></a>
+        </div>
+        <div class="col-lg-9 col-md-9 col-xs-9 class-container" style="cursor: pointer">
+          <div class="header parent-inner-header" style="padding-left: 5px!important;" (click)="toggleBoundaryLayer()">
+            <span>Boundaries</span>
+          </div>
+          <div class="body" *ngIf="toggleBoundary">
+            <br/>
+            <div *ngFor="let class of boundaryLegend[0].classes">
+              <table class="legend-table">
+                <tr>
+                  <td rowspan="2" *ngIf="!boundaryLegend[0].isEvent"
+                      [ngStyle]="{width:'50px',height:'20px'}">
+                    <div [ngStyle]="{backgroundColor:class.color,width:'50px'}" style="height:2px!important;"> &nbsp;
+                    </div>
+                  </td>
+                  <td></td>
+                </tr>
+                <tr>
+                  <td [ngStyle]="{fontSize:'12px'}"><span *ngIf="class.name">{{class.name}}</span><span>({{class.count}})({{class.percentage}})</span>
+                  </td>
+                  <td></td>
+                </tr>
+                <tr>
+                  <td></td>
+                </tr>
+              </table>
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-1 col-md-1 col-xs-1 eye-container" style="padding-left: 15px!important;">
+          <a (click)="toggleLayerView(boundaryLegend[0],'boundary',$event)" *ngIf="!boundaryLegend[0].hidden"
+             style="margin-left:-6px!important;"
+             [ngClass]="{'hide-button-icons': !showButtonIncons}"><i
+            class="fa fa-eye"></i></a>
+          <a (click)="toggleLayerView(boundaryLegend[0],'boundary',$event)" *ngIf="boundaryLegend[0].hidden"
+             [ngClass]="{'hide-button-icons': !showButtonIncons}"
+             style="margin-left:-6px!important;color:#000000;"><i class="fa fa-eye-slash"></i></a>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="legend-view-container col-lg-12 col-md-12 col-xs-12">
+    <div class="legend-header row" style="border-bottom: 1px solid #cccccc">
+        <div class="col-lg-1 col-md-1 col-xs-1 legend-draggable-icon" style="padding-right: 20px;padding-left: 5px;"
+             (click)="toggleTileLegendView()">
+          <a><i class="fa fa-map-o" style="color:#000000;"></i></a>
+        </div>
+        <div class="col-lg-5 col-md-5 col-xs-5 class-container" style="cursor: pointer">
+          <div class="header parent-inner-header" (click)="toggleTileLegendView()">
+            <span>Base Maps </span>
+          </div>
+          <div class="body" [ngClass]="{hideLegend:!openTileLegend}">
+            <div class="base-map-container">
+
+              <table class="tiles-table" style="margin-top: 5px;">
+                <tr>
+                  <td *ngIf="visualizationTileLayersLegends[0]">
+                    <a class="map-tile-icons "
+                       (click)="changeTileLayer(visualizationTileLayersLegends[0])">
+
+                      <img [src]="visualizationTileLayersLegends[0].image"
+                           [ngClass]="{rowActive:visualizationTileLayersLegends[0].active}"
+                           style="width:60px;height:60px;border-radius:5px;border: 1px solid #CDD2D4;margin-bottom: 5px;"/>
+                    </a>
+                  </td>
+                  <td *ngIf="visualizationTileLayersLegends[1]">
+                    <a class="map-tile-icons" title="{{visualizationTileLayersLegends[1].label}}"
+                       (click)="changeTileLayer(visualizationTileLayersLegends[1])">
+                      <img [src]="visualizationTileLayersLegends[1].image"
+                           [ngClass]="{rowActive:visualizationTileLayersLegends[1].active}"
+
+                           style="width:60px;height:60px;border-radius:5px;border: 1px solid #CDD2D4;margin-bottom: 5px;"/>
+                    </a>
+                  </td>
+                  <td *ngIf="visualizationTileLayersLegends[2]">
+                    <a class="map-tile-icons" title="{{visualizationTileLayersLegends[2].label}}"
+                       (click)="changeTileLayer(visualizationTileLayersLegends[2])">
+                      <img [src]="visualizationTileLayersLegends[2].image"
+                           [ngClass]="{rowActive:visualizationTileLayersLegends[2].active}"
+
+                           style="width:60px;height:60px;border-radius:5px;border: 1px solid #CDD2D4;margin-bottom: 5px;"/>
+                    </a>
+                  </td>
+                </tr>
+                <tr>
+                  <td *ngIf="visualizationTileLayersLegends[3]">
+                    <a class="map-tile-icons" title="{{visualizationTileLayersLegends[3].label}}"
+                       (click)="changeTileLayer(visualizationTileLayersLegends[3])">
+                      <img [src]="visualizationTileLayersLegends[3].image"
+                           [ngClass]="{rowActive:visualizationTileLayersLegends[3].active}"
+
+                           style="width:60px;height:60px;border-radius:5px;border: 1px solid #CDD2D4;margin-bottom: 5px;"/>
+                    </a>
+                  </td>
+                  <td *ngIf="visualizationTileLayersLegends[4]">
+                    <a class="map-tile-icons" title="{{visualizationTileLayersLegends[4].label}}"
+                       (click)="changeTileLayer(visualizationTileLayersLegends[4])">
+                      <img [src]="visualizationTileLayersLegends[4].image"
+                           [ngClass]="{rowActive:visualizationTileLayersLegends[4].active}"
+
+                           style="width:60px;height:60px;border-radius:5px;border: 1px solid #CDD2D4;margin-bottom: 5px;"/>
+                    </a>
+                  </td>
+                  <td *ngIf="visualizationTileLayersLegends[5]">
+                    <a class="map-tile-icons" title="{{visualizationTileLayersLegends[5].label}}"
+                       (click)="changeTileLayer(visualizationTileLayersLegends[5])">
+                      <img [src]="visualizationTileLayersLegends[5].image"
+                           [ngClass]="{rowActive:visualizationTileLayersLegends[5].active}"
+
+                           style="width:60px;height:60px;border-radius:5px;border: 1px solid #CDD2D4;margin-bottom: 5px;"/>
+                    </a>
+                  </td>
+                </tr>
+                <tr>
+                  <td *ngIf="visualizationTileLayersLegends[6]">
+                    <a class="map-tile-icons" title="{{visualizationTileLayersLegends[6].label}}"
+                       (click)="changeTileLayer(visualizationTileLayersLegends[6])">
+                      <img [src]="visualizationTileLayersLegends[6].image"
+                           [ngClass]="{rowActive:visualizationTileLayersLegends[6].active}"
+
+                           style="width:60px;height:60px;border-radius:5px;border: 1px solid #CDD2D4;margin-bottom: 5px;"/>
+                    </a>
+                  </td>
+                  <td *ngIf="visualizationTileLayersLegends[7]">
+                    <a class="map-tile-icons" title="{{visualizationTileLayersLegends[7].label}}"
+                       (click)="changeTileLayer(visualizationTileLayersLegends[7])">
+                      <img [src]="visualizationTileLayersLegends[7].image"
+                           [ngClass]="{rowActive:visualizationTileLayersLegends[7].active}"
+
+                           style="width:60px;height:60px;border-radius:5px;border: 1px solid #CDD2D4;margin-bottom: 5px;"/>
+                    </a>
+                  </td>
+                  <td *ngIf="visualizationTileLayersLegends[8]">
+                    <a class="map-tile-icons" title="{{visualizationTileLayersLegends[8].label}}"
+                       (click)="changeTileLayer(visualizationTileLayersLegends[8])">
+                      <img [src]="visualizationTileLayersLegends[8].image"
+                           [ngClass]="{rowActive:visualizationTileLayersLegends[8].active}"
+
+                           style="width:60px;height:60px;border-radius:5px;border: 1px solid #CDD2D4;margin-bottom: 5px;"/>
+                    </a>
+                  </td>
+                </tr>
+
+              </table>
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-1 col-md-1 col-xs-1 eye-container" style="padding-right: 25px!important;">
+          &nbsp;
+        </div>
+        <div class="col-lg-1 col-md-1 col-xs-1 eye-container" style="padding-right: 26px!important;">
+          &nbsp;
+        </div>
+        <div class="col-lg-1 col-md-1 col-xs-1 eye-container" style="padding-right: 28px!important;">
+          &nbsp;
+        </div>
+      </div>
+  </div>
+  <div class="legend-view-container col-lg-12 col-md-12 col-xs-12">
+    <div [ngClass]="{hide:showUpload}" class="row legend-header-lower-bar" style="border-bottom: 1px solid #cccccc;background-color: transparent!important;">
+      <div class="col-lg-4 col-md-4 col-xs-4 legend-draggable-icon-2" style="padding-left: 2px!important;">
+          <table class="legend-button-table" [ngClass]="{displayNone:displayNone}" style="background-color:transparent">
+            <tr>
+              <td>
+                <a title="Show map data table"
+                   class="btn btn-default btn-default-updated btn-sm"
+                   (click)="showDataTableAction()"><i
+                  class="fa fa-table"></i></a>
+                <!--<a class="btn btn-default btn-default-updated" -->
+                <!--style="border-color: transparent!important;height:10px!important;cursor: default!important;">&nbsp;</a>-->
+              </td>
+            </tr>
+          </table>
+        </div>
+      <div class="col-lg-8 col-md-8 col-xs-8" *ngIf="!layerSelectionForm"
+             style="padding-right: 2px!important;">
+          <table class="legend-button-table" [ngClass]="{displayNone:displayNone}"
+                 style="background-color: transparent;">
+            <tr>
+              <td>
+                <a class="btn btn-default btn-default-updated"
+                   style="border-color: transparent!important;height:10px!important;cursor: default!important;">&nbsp;</a>
+              </td>
+              <td>
+                <a style="cursor: pointer;" title="Upload GeoJson file"
+                   class="btn btn-default btn-default-updated btn-sm"
+                   (click)="showUploadContainer()"><i class="fa fa-upload"></i></a>
+              </td>
+
+              <td>
+                <a style="cursor: pointer;color:grey;" title="Stick Legend" [ngClass]="{sticky:sticky}"
+                   class="btn btn-default btn-default-updated btn-sm"
+                   (click)="stickLegendContainer()"><i class="fa fa-thumb-tack"></i></a>
+              </td>
+              <td>
+                <a style="cursor: pointer" title="Close Legend" class="btn btn-default btn-default-updated btn-sm"
+                   (click)="removeLegendContainer()"><i class="fa fa-remove"></i></a>
+              </td>
+            </tr>
+          </table>
+        </div>
+      <div class="col-lg-12 col-md-12 col-xs-12 " [ngClass]="{hide:!showUpload}">
+        <table>
+          <tr>
+            <td>
+              <form>
+                <input type="file" id="fileInput" title="Format (GeoJSON,SLD,GML,Shape file)" (change)="uploadFile($event)"
+                       style="width:180px;"
+                       placeholder="(GeoJSON,SLD,GML)">
+              </form>
+            </td>
+            <td>
+              <a class="btn btn-default btn-default-updated btn-sm" title="Back" (click)="removeUploadContainer()">
+                <i class="fa fa-arrow-right"></i>
+              </a>
+            </td>
+          </tr>
+        </table>
+
+      </div>
+    </div>
+  </div>
+</div>
+
