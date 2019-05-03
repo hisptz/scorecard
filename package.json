@@ -55,7 +55,7 @@
     "ng2-dragula": "^2.1.1",
     "ng2-highcharts": "^1.0.0",
     "ngx-color-picker": "^7.5.0",
-    "ngx-contextmenu": "^5.1.1",
+    "ngx-contextmenu": "5.1.1",
     "ngx-pagination": "^3.0.3",
     "ngx-tour-ng-bootstrap": "4.0.1",
     "popper.js": "^1.12.9",
