@@ -50,7 +50,7 @@
     "leaflet-compass": "^1.4.1",
     "leaflet.markercluster": "^1.0.5",
     "lodash": "^4.17.10",
-    "ng2-ckeditor": "^1.1.14",
+    "ng2-ckeditor": "^1.2.3",
     "ng2-dnd": "^5.0.2",
     "ng2-dragula": "^2.1.1",
     "ng2-highcharts": "^1.0.0",
