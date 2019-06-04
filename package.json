@@ -43,7 +43,7 @@
     "bootstrap": "4.3.1",
     "core-js": "^3.0.1",
     "font-awesome": "^4.7.0",
-    "highcharts": "^7.1.1",
+    "highcharts": "^7.1.2",
     "immutable": "^3.8.2",
     "jquery": "^3.3.1",
     "leaflet": "^1.0.3",
