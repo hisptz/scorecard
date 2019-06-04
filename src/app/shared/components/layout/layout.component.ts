@@ -1,6 +1,6 @@
-import {Component, OnInit, Input, Output, EventEmitter} from '@angular/core';
-import {INITIAL_LAYOUT_MODEL} from './layout-model';
-import {DragulaService} from 'ng2-dragula';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+
+import { INITIAL_LAYOUT_MODEL } from './layout-model';
 
 export interface Header {
   name: string;
@@ -20,7 +20,6 @@ export interface Configuration {
   styleUrls: ['./layout.component.css']
 })
 export class LayoutComponent implements OnInit {
-
   @Input() layoutModel = INITIAL_LAYOUT_MODEL;
   @Input() visualizationType: string;
   @Output() onLayoutUpdate = new EventEmitter();
@@ -34,7 +33,7 @@ export class LayoutComponent implements OnInit {
   rowName: string;
 
   showLayout: boolean = true;
-  constructor(private dragulaService: DragulaService) {
+  constructor() {
     this.icons = {
       dx: 'assets/img/data.png',
       ou: 'assets/img/tree.png',
@@ -49,7 +48,7 @@ export class LayoutComponent implements OnInit {
     if (this.visualizationType === 'CHART') {
       this.rowName = 'Categories dimensions';
       this.columnName = 'Series dimensions';
-    }else {
+    } else {
       this.columnName = 'Column dimensions';
       this.rowName = 'Row dimensions';
     }
@@ -68,7 +67,10 @@ export class LayoutComponent implements OnInit {
   }
 
   onDrop(event, dimension) {
-    this.layoutModel[event.dragData.dimension].splice(this.layoutModel[event.dragData.dimension].indexOf(event.dragData.data), 1);
+    this.layoutModel[event.dragData.dimension].splice(
+      this.layoutModel[event.dragData.dimension].indexOf(event.dragData.data),
+      1
+    );
     this.layoutModel[dimension].push(event.dragData.data);
   }
 
