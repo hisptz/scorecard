@@ -1,18 +1,18 @@
-import {Component, Input, OnInit, ViewChild} from '@angular/core';
+import { Component, Input, OnInit, ViewChild } from '@angular/core';
 import 'leaflet';
 import 'leaflet.markercluster';
-import {MapVisualizationService} from '../../providers/map-visualization.service';
-import {TileLayers} from '../../constants/tile-layers';
+import { MapVisualizationService } from '../../providers/map-visualization.service';
+import { TileLayers } from '../../constants/tile-layers';
 
 declare var L;
 import * as _ from 'lodash';
-import {VisualizationLegendComponent} from '../visualization-legend/visualization-legend.component';
-import {Visualization} from '../../model/visualization';
+import { VisualizationLegendComponent } from '../visualization-legend/visualization-legend.component';
+import { Visualization } from '../../model/visualization';
 
 @Component({
   selector: 'app-map-template',
   templateUrl: './map-template.component.html',
-  styleUrls: ['./map-template.component.css'],
+  styleUrls: ['./map-template.component.css']
 })
 export class MapTemplateComponent implements OnInit {
   @Input() visualizationObject: any;
@@ -33,21 +33,27 @@ export class MapTemplateComponent implements OnInit {
   isFullScreen: boolean = false;
   hideTable: boolean = true;
   mapOptions: any;
-  mapTable: any = {headers: [], rows: [], mapLegend: this.mapLegend};
-  @ViewChild(VisualizationLegendComponent)
+  mapTable: any = { headers: [], rows: [], mapLegend: this.mapLegend };
+  @ViewChild(VisualizationLegendComponent, { static: true })
   visualizationLegendComponent: VisualizationLegendComponent;
 
-  constructor(private mapVisualizationService: MapVisualizationService,
-              private tileLayers: TileLayers) {
-  }
+  constructor(
+    private mapVisualizationService: MapVisualizationService,
+    private tileLayers: TileLayers
+  ) {}
 
   ngOnInit() {
     if (this.visualizationObject.details.loaded) {
       if (!this.visualizationObject.details.hasError) {
         setTimeout(() => {
           this.visualizationObject = this.getSubtitle(this.visualizationObject);
-          this.mapHeight = this.refineHeight(this.visualizationObject.details.itemHeight);
-          this.drawMap(this.visualizationObject, this.visualizationObject.details.updateAvailable);
+          this.mapHeight = this.refineHeight(
+            this.visualizationObject.details.itemHeight
+          );
+          this.drawMap(
+            this.visualizationObject,
+            this.visualizationObject.details.updateAvailable
+          );
         }, 10);
         //     this.hasError = false;
       } else {
@@ -58,74 +64,80 @@ export class MapTemplateComponent implements OnInit {
     }
   }
 
-
   drawMap(visualizationObject: Visualization, prioritizeFilter?: boolean) {
-    const mapObject = this.mapVisualizationService.drawMap(L, visualizationObject, prioritizeFilter);
-    const container = this.prepareMapContainer(mapObject.id, this.mapHeight, this.mapWidth, this.isFullScreen);
+    const mapObject = this.mapVisualizationService.drawMap(
+      L,
+      visualizationObject,
+      prioritizeFilter
+    );
+    const container = this.prepareMapContainer(
+      mapObject.id,
+      this.mapHeight,
+      this.mapWidth,
+      this.isFullScreen
+    );
     this.mapOptions = mapObject.options;
     this.map = L.map(container, mapObject.options);
     this.centeringLayer = mapObject.centeringLayer;
     this.mapLegend = mapObject.mapLegend;
     this.operatingLayers = mapObject.operatingLayers;
-    L.control.scale({position: 'bottomleft', metric: true, updateWhenIdle: true}).addTo(this.map);
+    L.control
+      .scale({ position: 'bottomleft', metric: true, updateWhenIdle: true })
+      .addTo(this.map);
     this.updateOnLayerLoad(mapObject);
     this.isFullScreen = visualizationObject.details.showFullScreen;
     if (this.isFullScreen === true) {
       this.map.scrollWheelZoom.enable();
     }
-
   }
 
   recenterMap(map, layer) {
-
     if (layer instanceof L.LayerGroup) {
       if (layer.getLayers().length === 2) {
         layer = layer.getLayers()[0];
       }
     }
 
-
-    const bounds = Array.isArray(layer) ? new L.LatLngBounds(layer) : layer.getBounds();
+    const bounds = Array.isArray(layer)
+      ? new L.LatLngBounds(layer)
+      : layer.getBounds();
     if (this._checkIfValidCoordinate(bounds)) {
       try {
         map.fitBounds(bounds);
-      } catch (e) {
-      }
-
+      } catch (e) {}
     } else {
       this.hasError = true;
       this.errorMessage = 'Invalid organisation unit boundaries found!';
     }
-
   }
 
   /**
    * Update map Zoom Level
    * */
   zoomIn(zoomType) {
-    zoomType === 'in' ? this.map.zoomIn() :
-      zoomType === 'out' ? this.map.zoomOut() :
-        this.map.setZoom(this.mapOptions.zoom);
+    zoomType === 'in'
+      ? this.map.zoomIn()
+      : zoomType === 'out'
+      ? this.map.zoomOut()
+      : this.map.setZoom(this.mapOptions.zoom);
   }
 
   updateOnLayerLoad(mapObject) {
     if (Array.isArray(this.centeringLayer)) {
       this.loading = false;
       setTimeout(() => {
-        this.map.invalidateSize({pan: true});
+        this.map.invalidateSize({ pan: true });
         this.recenterMap(this.map, mapObject.centeringLayer);
       }, 10);
     } else {
       if (this.map.hasLayer(this.centeringLayer)) {
         this.loading = false;
         setTimeout(() => {
-          this.map.invalidateSize({pan: true});
+          this.map.invalidateSize({ pan: true });
           this.recenterMap(this.map, mapObject.centeringLayer);
         }, 10);
-
       }
     }
-
   }
 
   getSubtitle(visualizationObject) {
@@ -134,12 +146,11 @@ export class MapTemplateComponent implements OnInit {
       if (layer.settings.subtitle) {
         visualizationObject['subtitle'] = layer.settings.subtitle;
       }
-    })
+    });
     return visualizationObject;
   }
 
   private _checkIfValidCoordinate(bounds) {
-
     const boundLength = Object.getOwnPropertyNames(bounds).length;
     if (boundLength > 0) {
       return true;
@@ -149,8 +160,12 @@ export class MapTemplateComponent implements OnInit {
   }
 
   prepareMapContainer(mapObjectId, height, width, isFullscreen) {
-    const parentElement = document.getElementById('map-view-port-' + mapObjectId);
-    const mapContainer = document.getElementById(mapObjectId + '-child-view-port');
+    const parentElement = document.getElementById(
+      'map-view-port-' + mapObjectId
+    );
+    const mapContainer = document.getElementById(
+      mapObjectId + '-child-view-port'
+    );
     if (mapContainer) {
       mapContainer.parentNode.removeChild(mapContainer);
     }
@@ -186,22 +201,24 @@ export class MapTemplateComponent implements OnInit {
   updateMapLayers(event) {
     let layerActedUpon: any = null;
     this.operatingLayers.forEach(layer => {
+      const layerIdentifier = event.layer.id
+        ? event.layer.id
+        : event.layer.name;
 
-      const layerIdentifier = event.layer.id ? event.layer.id : event.layer.name;
-
-      if (layer[layerIdentifier]){
+      if (layer[layerIdentifier]) {
         layerActedUpon = layer[layerIdentifier];
       }
-    })
+    });
 
     if (event.layer.hasOwnProperty('url')) {
-      layerActedUpon = this.mapVisualizationService.prepareTileLayer(L, this.tileLayers.getTileLayer(event.layer.name));
+      layerActedUpon = this.mapVisualizationService.prepareTileLayer(
+        L,
+        this.tileLayers.getTileLayer(event.layer.name)
+      );
     }
-
 
     if (layerActedUpon) {
       if (event.action === 'HIDE') {
-
         layerActedUpon.removeFrom(this.map);
         this.map.removeLayer(layerActedUpon);
       }
@@ -209,9 +226,7 @@ export class MapTemplateComponent implements OnInit {
       if (event.action === 'SHOW') {
         this.map.addLayer(layerActedUpon);
       }
-
     }
-
   }
 
   stickyMapLegend(event) {
@@ -228,12 +243,20 @@ export class MapTemplateComponent implements OnInit {
   }
 
   downloadMap(fileFormat) {
-    this.mapVisualizationService.downLoadMapAsFiles(fileFormat, this.visualizationObject);
+    this.mapVisualizationService.downLoadMapAsFiles(
+      fileFormat,
+      this.visualizationObject
+    );
   }
 
   processFileUpload(event) {
     if (event.hasOwnProperty('type') && event.type === 'FeatureCollection') {
-      this.drawUploadedlLayer(this.mapVisualizationService.prepareGeoJsonLayerFromFileContents(event, L));
+      this.drawUploadedlLayer(
+        this.mapVisualizationService.prepareGeoJsonLayerFromFileContents(
+          event,
+          L
+        )
+      );
     } else {
       console.warn('THIS IS NOT VALID GEOJSON FILE');
     }
@@ -252,7 +275,6 @@ export class MapTemplateComponent implements OnInit {
       this.pinned = false;
       this.legendIsOpen = false;
     }
-
   }
 
   dragAndDropHandler(event) {
@@ -270,10 +292,10 @@ export class MapTemplateComponent implements OnInit {
       layers.forEach((layer, layerIndex) => {
         if (event.id === layer.settings.id) {
           newLayers[eventIndex] = layer;
-          testlayers.push(layer.settings.name)
+          testlayers.push(layer.settings.name);
         }
-      })
-    })
+      });
+    });
     return newLayers;
   }
 
@@ -283,28 +305,25 @@ export class MapTemplateComponent implements OnInit {
 
     event.legend.forEach(legendItem => {
       legendClasses = legendItem.classes;
-    })
+    });
 
     this.hideTable = false;
     this.mapTable.headers = this.prepareTableHeaders(layers);
     this.mapTable.rows = this.prepareTableRows(layers, legendClasses);
   }
 
-  addNewLayer() {
-  }
+  addNewLayer() {}
 
   refineHeight(mapHeight) {
-
     let height = '';
     if (mapHeight.indexOf('vh') >= 0) {
       const splitMap = mapHeight.split('vh');
-      height = ((+splitMap[0]) + 7) + 'vh';
+      height = +splitMap[0] + 7 + 'vh';
     }
 
     if (mapHeight.indexOf('px') >= 0) {
-
       const splitMap = mapHeight.split('px');
-      height = ((+splitMap[0]) + 25) + 'px';
+      height = +splitMap[0] + 25 + 'px';
     }
     return height;
   }
@@ -314,7 +333,6 @@ export class MapTemplateComponent implements OnInit {
   }
 
   prepareTableHeaders(layers) {
-
     const headers: any = [];
     layers.forEach((layer, index) => {
       if (layer.analytics && layer.analytics.hasOwnProperty('headers')) {
@@ -332,7 +350,10 @@ export class MapTemplateComponent implements OnInit {
         const headers = layer.analytics.headers;
         const names = layer.analytics.metaData.names;
         const indexOU = _.findIndex(layer.analytics.headers, ['name', 'ou']);
-        const indexVal = _.findIndex(layer.analytics.headers, ['name', 'value']);
+        const indexVal = _.findIndex(layer.analytics.headers, [
+          'name',
+          'value'
+        ]);
         layer.analytics.rows.forEach(row => {
           const columns = [];
           columns.push(names[row[indexOU]]);
@@ -341,10 +362,10 @@ export class MapTemplateComponent implements OnInit {
           columns.push(classItem.min + ' - ' + classItem.max);
           columns.push(classItem.color);
           rows.push(columns);
-        })
+        });
         rowArray[layer.settings.name + '$' + index] = rows;
       }
-    })
+    });
     return rowArray;
   }
 
@@ -358,8 +379,7 @@ export class MapTemplateComponent implements OnInit {
       if (classItem.max <= value) {
         legendItem = classItem;
       }
-
-    })
+    });
 
     return legendItem;
   }

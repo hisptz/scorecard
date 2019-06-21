@@ -35,10 +35,10 @@ export class BasicDetailsComponent implements OnInit {
   new_color = '#fff';
   newLabel = '';
 
-  @ViewChild('title')
+  @ViewChild('title', { static: true })
   title_element: ElementRef;
 
-  @ViewChild('description')
+  @ViewChild('description', { static: true })
   discription_element: ElementRef;
 
   constructor(private store: Store<ApplicationState>) {}

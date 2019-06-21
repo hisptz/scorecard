@@ -1,9 +1,17 @@
-import {ChangeDetectionStrategy, Component, EventEmitter, Input, OnInit, Output, ViewChild} from '@angular/core';
-import {ScoreCard} from '../../../shared/models/scorecard';
-import {ScorecardService} from '../../../shared/services/scorecard.service';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  EventEmitter,
+  Input,
+  OnInit,
+  Output,
+  ViewChild
+} from '@angular/core';
+import { ScoreCard } from '../../../shared/models/scorecard';
+import { ScorecardService } from '../../../shared/services/scorecard.service';
 import * as _ from 'lodash';
-import {ContextMenuComponent, ContextMenuService} from 'ngx-contextmenu';
-import {listStateTrigger} from '../../../shared/animations/basic-animations';
+import { ContextMenuComponent, ContextMenuService } from 'ngx-contextmenu';
+import { listStateTrigger } from '../../../shared/animations/basic-animations';
 
 @Component({
   selector: 'app-inverted-view',
@@ -15,12 +23,12 @@ import {listStateTrigger} from '../../../shared/animations/basic-animations';
 export class InvertedViewComponent implements OnInit {
   @Input() scorecard: ScoreCard;
   @Input() sorting_column: string = 'none';
-  @Input() sortAscending: boolean =  true;
-  @Input() current_sorting: boolean =  true;
-  @Input() orgunits: any =  [];
-  @Input() periods_list: any =  [];
-  @Input() hidenColums: any =  [];
-  @Input() indicator_holders_list: any =  [];
+  @Input() sortAscending: boolean = true;
+  @Input() current_sorting: boolean = true;
+  @Input() orgunits: any = [];
+  @Input() periods_list: any = [];
+  @Input() hidenColums: any = [];
+  @Input() indicator_holders_list: any = [];
   @Input() indicator_done_loading: any;
   @Input() indicator_loading: any;
   @Input() old_proccessed_percent: any;
@@ -47,41 +55,73 @@ export class InvertedViewComponent implements OnInit {
   show_sum_in_column: boolean = false;
   searchQuery: string = '';
   has_bottleneck: boolean[] = [];
-  @ViewChild('indicatorMenu') public indicatorMenu: ContextMenuComponent;
-  @ViewChild('itemMenu') public itemMenu: ContextMenuComponent;
+  @ViewChild('indicatorMenu', { static: true })
+  public indicatorMenu: ContextMenuComponent;
+  @ViewChild('itemMenu', { static: true })
+  public itemMenu: ContextMenuComponent;
   constructor(
     private scorecardService: ScorecardService,
-    private contextMenuService: ContextMenuService) { }
+    private contextMenuService: ContextMenuService
+  ) {}
 
-  ngOnInit() {
-  }
+  ngOnInit() {}
   // context menu options
   public onContextMenu($event: MouseEvent, item: any): void {
     this.contextMenuService.show.next({
       // Optional - if unspecified, all context menu components will open
       contextMenu: this.indicatorMenu,
       event: $event,
-      'item': item,
+      item: item
     });
   }
 
   // context menu options
-  public onItemContextMenu($event: MouseEvent, item: any, ou: any, pe: any): void {
+  public onItemContextMenu(
+    $event: MouseEvent,
+    item: any,
+    ou: any,
+    pe: any
+  ): void {
     this.contextMenuService.show.next({
       // Optional - if unspecified, all context menu components will open
       contextMenu: this.itemMenu,
       event: $event,
-      'item': {'item': item, 'ou': ou, 'pe': pe},
+      item: { item: item, ou: ou, pe: pe }
     });
   }
 
-
-  sortScoreCardFromColumn(sortingColumn, sortAscending, orguUnits, period: string, lower_level: boolean = true) {
-    this.onSortScoreCardFromColumn.emit({sortingColumn, sortAscending, orguUnits, period, lower_level});
+  sortScoreCardFromColumn(
+    sortingColumn,
+    sortAscending,
+    orguUnits,
+    period: string,
+    lower_level: boolean = true
+  ) {
+    this.onSortScoreCardFromColumn.emit({
+      sortingColumn,
+      sortAscending,
+      orguUnits,
+      period,
+      lower_level
+    });
   }
 
-  sortBestWorst(type: any, sortingColumn, sortAscending, orguUnits, period: string, lower_level: boolean = true) {
-    this.onSortBestWorst.emit({type, sortingColumn, sortAscending, orguUnits, period, lower_level});
+  sortBestWorst(
+    type: any,
+    sortingColumn,
+    sortAscending,
+    orguUnits,
+    period: string,
+    lower_level: boolean = true
+  ) {
+    this.onSortBestWorst.emit({
+      type,
+      sortingColumn,
+      sortAscending,
+      orguUnits,
+      period,
+      lower_level
+    });
   }
 
   getGroupColspan(indicator_holder_group) {
@@ -89,11 +129,16 @@ export class InvertedViewComponent implements OnInit {
       indicator_holder_group,
       this.scorecard.data.data_settings.indicator_holders,
       this.periods_list,
-      this.hidenColums);
+      this.hidenColums
+    );
   }
 
   getSubscorecardColspan() {
-    return this.scorecardService.getSubscorecardColspan(this.scorecard, this.periods_list, this.hidenColums);
+    return this.scorecardService.getSubscorecardColspan(
+      this.scorecard,
+      this.periods_list,
+      this.hidenColums
+    );
   }
 
   // simplify title displaying by switching between two or on indicator
@@ -101,8 +146,22 @@ export class InvertedViewComponent implements OnInit {
     return this.scorecardService.getIndicatorTitle(holder, this.hidenColums);
   }
 
-  loadPreview(holderGroup, indicator, ou, period, periods = null, bottleneck = false) {
-    this.onLoadPreview.emit({holderGroup, indicator, ou, period, periods, bottleneck});
+  loadPreview(
+    holderGroup,
+    indicator,
+    ou,
+    period,
+    periods = null,
+    bottleneck = false
+  ) {
+    this.onLoadPreview.emit({
+      holderGroup,
+      indicator,
+      ou,
+      period,
+      periods,
+      bottleneck
+    });
   }
 
   loadPreviewFromChild(event) {
@@ -110,7 +169,7 @@ export class InvertedViewComponent implements OnInit {
   }
 
   dragItemSuccessfull($event, drop_area: string, object: any) {
-    this.onDragItemSuccessfull.emit({$event, drop_area, object});
+    this.onDragItemSuccessfull.emit({ $event, drop_area, object });
   }
 
   getIndicatorLabel(indicator, label) {
@@ -118,19 +177,35 @@ export class InvertedViewComponent implements OnInit {
   }
 
   findRowAverage(orgunit_id, periods_list, period) {
-    return this.scorecardService.findRowAverage(orgunit_id, periods_list, period, this.scorecard.data.data_settings.indicator_holders, this.hidenColums);
+    return this.scorecardService.findRowAverage(
+      orgunit_id,
+      periods_list,
+      period,
+      this.scorecard.data.data_settings.indicator_holders,
+      this.hidenColums
+    );
   }
 
   findRowTotalAverage(orgunits, period) {
-    return this.scorecardService.findRowTotalAverage(orgunits, period, this.scorecard.data.data_settings.indicator_holders, this.hidenColums);
+    return this.scorecardService.findRowTotalAverage(
+      orgunits,
+      period,
+      this.scorecard.data.data_settings.indicator_holders,
+      this.hidenColums
+    );
   }
 
   findRowTotalSum(orgunits, period) {
-    return this.scorecardService.findRowTotalSum(orgunits, period, this.scorecard.data.data_settings.indicator_holders, this.hidenColums);
+    return this.scorecardService.findRowTotalSum(
+      orgunits,
+      period,
+      this.scorecard.data.data_settings.indicator_holders,
+      this.hidenColums
+    );
   }
 
   loadChildrenData(selectedorgunit, indicator) {
-    this.onLoadChildrenData.emit({selectedorgunit, indicator});
+    this.onLoadChildrenData.emit({ selectedorgunit, indicator });
   }
 
   // prepare a proper tooltip to display to counter multiple indicators in the same td
@@ -147,7 +222,10 @@ export class InvertedViewComponent implements OnInit {
 
   // get number of visible indicators from a holder
   getVisibleIndicators(holder) {
-    return _.filter(holder.indicators, (indicator: any) => !_.includes(this.hidenColums, indicator.id));
+    return _.filter(
+      holder.indicators,
+      (indicator: any) => !_.includes(this.hidenColums, indicator.id)
+    );
   }
 
   // check if a column is empty
@@ -157,16 +235,17 @@ export class InvertedViewComponent implements OnInit {
     let counter = 0;
     for (const holder of this.scorecard.data.data_settings.indicator_holders) {
       for (const indicator of holder.indicators) {
-        for (const current_period of this.periods_list){
+        for (const current_period of this.periods_list) {
           if (this.hidenColums.indexOf(indicator.id) === -1) {
             sum++;
           }
-          if (this.hidenColums.indexOf(indicator.id) === -1 && indicator.values[orgunit_id + '.' + current_period.id] === null) {
+          if (
+            this.hidenColums.indexOf(indicator.id) === -1 &&
+            indicator.values[orgunit_id + '.' + current_period.id] === null
+          ) {
             counter++;
           }
         }
-
-
       }
     }
     if (counter === sum && !this.scorecard.data.empty_rows) {
@@ -175,18 +254,38 @@ export class InvertedViewComponent implements OnInit {
     return checker;
   }
 
-
   averageHidden(orgunit_id: string, period: string): boolean {
     let checker = false;
-    const avg = this.scorecardService.findRowTotalAverage(this.orgunits, period, this.scorecard.data.data_settings.indicator_holders, this.hidenColums);
+    const avg = this.scorecardService.findRowTotalAverage(
+      this.orgunits,
+      period,
+      this.scorecard.data.data_settings.indicator_holders,
+      this.hidenColums
+    );
     if (this.scorecard.data.average_selection === 'all') {
       checker = false;
     } else if (this.scorecard.data.average_selection === 'below') {
-      if (this.scorecardService.findRowAverage(orgunit_id, this.periods_list, null, this.scorecard.data.data_settings.indicator_holders, this.hidenColums) >= avg) {
+      if (
+        this.scorecardService.findRowAverage(
+          orgunit_id,
+          this.periods_list,
+          null,
+          this.scorecard.data.data_settings.indicator_holders,
+          this.hidenColums
+        ) >= avg
+      ) {
         checker = true;
       }
     } else if (this.scorecard.data.average_selection === 'above') {
-      if (this.scorecardService.findRowAverage(orgunit_id, this.periods_list, null, this.scorecard.data.data_settings.indicator_holders, this.hidenColums) <= avg) {
+      if (
+        this.scorecardService.findRowAverage(
+          orgunit_id,
+          this.periods_list,
+          null,
+          this.scorecard.data.data_settings.indicator_holders,
+          this.hidenColums
+        ) <= avg
+      ) {
         checker = true;
       }
     }
@@ -203,26 +302,27 @@ export class InvertedViewComponent implements OnInit {
     this.has_bottleneck[indicator.indicators[0].id] = false;
   }
 
-  hideClicked( item , type = null) {
-    this.onHideClicked.emit({ item , type});
+  hideClicked(item, type = null) {
+    this.onHideClicked.emit({ item, type });
   }
 
   //  assign a background color to area depending on the legend set details
   assignBgColor(object, value): string {
     let color = '#BBBBBB';
-    for ( const data of object.legendset ) {
+    for (const data of object.legendset) {
       if (data.max === '-') {
-
-        if (parseInt(value) >= parseInt(data.min) ) {
+        if (parseInt(value) >= parseInt(data.min)) {
           color = data.color;
         }
       } else {
-        if (parseInt(value) >= parseInt(data.min) && parseInt(value) <= parseInt(data.max)) {
+        if (
+          parseInt(value) >= parseInt(data.min) &&
+          parseInt(value) <= parseInt(data.max)
+        ) {
           color = data.color;
         }
       }
     }
     return color;
   }
-
 }

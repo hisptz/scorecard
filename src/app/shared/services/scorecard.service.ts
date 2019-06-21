@@ -503,38 +503,52 @@ export class ScorecardService {
 	}
 
 	sanitize_holders(holders) {
-		for (const holder of holders) {
-			for (const indicator of holder) {
-				if (!indicator.hasOwnProperty('use_bottleneck_groups')) {
-					indicator.use_bottleneck_groups = false;
-				}
-				if (!indicator.hasOwnProperty('values')) {
-					indicator.values = [];
-				}
-				if (!indicator.hasOwnProperty('showTopArrow')) {
-					indicator.showTopArrow = [];
-				} else {
-					if (indicator.showTopArrow instanceof Array) {
-					} else {
-						indicator.showTopArrow = [];
-					}
-				}
+		// for (const holder of holders) {
+		// 	for (const indicator of holder.indicators) {
+		// 		if (!indicator.hasOwnProperty('use_bottleneck_groups')) {
+		// 			indicator.use_bottleneck_groups = false;
+		// 		}
+		// 		if (!indicator.hasOwnProperty('values')) {
+		// 			indicator.values = [];
+		// 		}
+		// 		if (!indicator.hasOwnProperty('showTopArrow')) {
+		// 			indicator.showTopArrow = [];
+		// 		} else {
+		// 			if (indicator.showTopArrow instanceof Array) {
+		// 			} else {
+		// 				indicator.showTopArrow = [];
+		// 			}
+		// 		}
 
-				if (!indicator.hasOwnProperty('showBottomArrow')) {
-					indicator.showBottomArrow = [];
-				} else {
-					if (indicator.showBottomArrow instanceof Array) {
-					} else {
-						indicator.showBottomArrow = [];
-					}
-				}
+		// 		if (!indicator.hasOwnProperty('showBottomArrow')) {
+		// 			indicator.showBottomArrow = [];
+		// 		} else {
+		// 			if (indicator.showBottomArrow instanceof Array) {
+		// 			} else {
+		// 				indicator.showBottomArrow = [];
+		// 			}
+		// 		}
 
-				if (!indicator.hasOwnProperty('bottleneck_indicators_groups')) {
-					indicator.bottleneck_indicators_groups = [];
-				}
+		// 		if (!indicator.hasOwnProperty('bottleneck_indicators_groups')) {
+		// 			indicator.bottleneck_indicators_groups = [];
+		// 		}
+		// 	}
+		// }
+		return (holders || []).map((holder: any) => {
+			return {
+				...holder,
+				indicators: (holder.indicators || []).map((indicator: any) => {
+					return {
+						...indicator,
+						use_bottleneck_groups: indicator.hasOwnProperty('use_bottleneck_groups') ? indicator.use_bottleneck_groups : false,
+						values: indicator.hasOwnProperty('values') ? indicator.values : [],
+						showTopArrow: indicator.hasOwnProperty('showTopArrow') && indicator.showTopArrow instanceof Array ? indicator.showTopArrow : [],
+						showBottomArrow: indicator.hasOwnProperty('showBottomArrow') && indicator.showBottomArrow instanceof Array ? indicator.showBottomArrow : [],
+						bottleneck_indicators_groups: indicator.hasOwnProperty('bottleneck_indicators_groups') ? indicator.bottleneck_indicators_groups : [],
+					}
+				})
 			}
-		}
-		return holders;
+		})
 	}
 
 	sanitize_scorecard(scorecard) {

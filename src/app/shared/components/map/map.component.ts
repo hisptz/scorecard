@@ -1,5 +1,5 @@
-import {Component, Input, OnInit, ViewChild} from '@angular/core';
-import {MapTemplateComponent} from './components/map-template/map-template.component';
+import { Component, Input, OnInit, ViewChild } from '@angular/core';
+import { MapTemplateComponent } from './components/map-template/map-template.component';
 
 @Component({
   selector: 'app-map',
@@ -7,13 +7,12 @@ import {MapTemplateComponent} from './components/map-template/map-template.compo
   styleUrls: ['./map.component.css']
 })
 export class MapComponent implements OnInit {
-
   @Input() visualizationObject: any;
   @Input() downloadOptions: any;
   mapHasError: boolean;
   errorMessage: string;
   loaded: boolean;
-  @ViewChild(MapTemplateComponent)
+  @ViewChild(MapTemplateComponent, { static: true })
   mapTemplateComponent: MapTemplateComponent;
 
   constructor() {
@@ -29,6 +28,4 @@ export class MapComponent implements OnInit {
     this.errorMessage = this.visualizationObject.details.errorMessage;
     this.loaded = this.visualizationObject.details.loaded;
   }
-
-
 }

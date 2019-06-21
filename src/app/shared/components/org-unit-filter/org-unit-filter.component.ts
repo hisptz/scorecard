@@ -96,10 +96,10 @@ export class OrgUnitFilterComponent implements OnInit {
   root_url = '../../../';
   nodes: any[] = null;
   orgunit_levels: any[] = [];
-  @ViewChild('orgtree')
+  @ViewChild('orgtree', { static: true })
   orgtree: TreeComponent;
 
-  @ViewChild('period_selector')
+  @ViewChild('period_selector', { static: true })
   period_selector: MultiselectComponent;
 
   organisationunits: any[] = [];

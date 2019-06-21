@@ -1,10 +1,17 @@
-import {ChangeDetectionStrategy, Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
-import {ApplicationState} from '../../store/reducers';
-import {Store} from '@ngrx/store';
-import {Observable} from 'rxjs/Observable';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  EventEmitter,
+  Input,
+  OnInit,
+  Output
+} from '@angular/core';
+import { ApplicationState } from '../../store/reducers';
+import { Store } from '@ngrx/store';
+import { Observable } from 'rxjs/Observable';
 import * as viewSelectors from '../../store/selectors/view.selectors';
 import * as viewActions from '../../store/actions/view.actions';
-import {Go} from '../../store/actions/router.action';
+import { Go } from '../../store/actions/router.action';
 import * as orgunitSelector from '../../store/selectors/orgunits.selectors';
 
 @Component({
@@ -14,7 +21,6 @@ import * as orgunitSelector from '../../store/selectors/orgunits.selectors';
   styleUrls: ['./selectors.component.css']
 })
 export class SelectorsComponent implements OnInit {
-
   @Input() sorting_column: string = 'none';
   orgunit_settings$: Observable<any>;
   selected_periods$: Observable<any>;
@@ -37,27 +43,26 @@ export class SelectorsComponent implements OnInit {
   @Output() onDownloadCsv = new EventEmitter();
   @Output() onDownloadAlma = new EventEmitter();
   @Output() onUpdate = new EventEmitter();
-  constructor(
-    private store: Store<ApplicationState>
-  ) {
+  constructor(private store: Store<ApplicationState>) {
     this.orgunit_settings$ = store.select(viewSelectors.getOrgUnitSettings);
     this.selected_periods$ = store.select(viewSelectors.getSelectedPeriod);
     this.period_type$ = store.select(viewSelectors.getPeriodType);
     this.can_edit$ = store.select(viewSelectors.getCanEdit);
     this.options$ = store.select(viewSelectors.getOptions);
     this.orgunit_loading$ = store.select(orgunitSelector.getOrgunitLoading);
-    store.select(viewSelectors.getScorecardId).subscribe((id) => this.scorecardid = id);
-
+    store
+      .select(viewSelectors.getScorecardId)
+      .subscribe(id => (this.scorecardid = id));
   }
 
-  ngOnInit() {
-  }
+  ngOnInit() {}
 
   changeOrgUnit(event) {
     this.onOrgunitChange.emit(event);
-    const items = event.items.map((item) => {
+    const items = event.items.map(item => {
       return {
-        id: item.id, name: item.name
+        id: item.id,
+        name: item.name
       };
     });
     if (event.value) {
@@ -73,9 +78,10 @@ export class SelectorsComponent implements OnInit {
 
   updateOrgUnit(event) {
     this.onOrgunitChange.emit(event);
-    const items = event.items.map((item) => {
+    const items = event.items.map(item => {
       return {
-        id: item.id, name: item.name
+        id: item.id,
+        name: item.name
       };
     });
     if (event.value) {
@@ -90,10 +96,12 @@ export class SelectorsComponent implements OnInit {
     this.onUpdate.emit();
   }
   updatePeriod(event) {
+    console.log(event);
     this.store.dispatch(new viewActions.SetSelectedPe(event));
     this.onUpdate.emit();
   }
   changePeriod(event) {
+    console.log(event);
     this.store.dispatch(new viewActions.SetSelectedPe(event));
   }
 
@@ -119,8 +127,10 @@ export class SelectorsComponent implements OnInit {
   }
 
   openScorecardForEditing() {
-    this.store.dispatch(new Go({
-      path: ['edit', this.scorecardid],
-    }));
+    this.store.dispatch(
+      new Go({
+        path: ['edit', this.scorecardid]
+      })
+    );
   }
 }
