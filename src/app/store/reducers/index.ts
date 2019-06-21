@@ -8,7 +8,7 @@ import {staticDataReducer, StaticDataState} from './static-data.reducer';
 import {orgunitReducer, OrgunitState} from './orgunits.reducer';
 import {viewReducer, ViewScorecardState} from './view.reducer';
 import {environment} from '../../../environments/environment';
-import {storeFreeze} from 'ngrx-store-freeze';
+
 
 export  interface ApplicationState {
   scorecards: ScorecardState;
@@ -29,7 +29,7 @@ export const reducers: ActionReducerMap<ApplicationState> = {
   routerReducer: fromRouter.routerReducer,
 };
 
-export const metaReducers: MetaReducer<ApplicationState>[] = !environment.production ? [storeFreeze] : [];
+export const metaReducers: MetaReducer<ApplicationState>[] = !environment.production ? [] : [];
 
 export const getRouterState = createFeatureSelector<
   fromRouter.RouterReducerState<RouterStateUrl>

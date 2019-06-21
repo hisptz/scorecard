@@ -75,8 +75,8 @@ export function HttpLoaderFactory(http: HttpClient) {
     ScoreCardRoutingModule,
     NgxPaginationModule,
     TourNgBootstrapModule.forRoot(),
-    StoreModule.forRoot(reducers),
-    StoreRouterConnectingModule,
+    StoreModule.forRoot(reducers, { runtimeChecks: { strictStateImmutability: true, strictActionImmutability: true }}),
+    StoreRouterConnectingModule.forRoot(),
     EffectsModule.forRoot(effects),
     TranslateModule.forRoot({
       loader: {
