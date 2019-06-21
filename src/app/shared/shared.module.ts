@@ -20,6 +20,7 @@ import { PeriodFilterComponent } from './components/period-filter/period-filter.
 import { SharingComponent } from './components/sharing/sharing.component';
 import { MultiselectComponent } from './components/org-unit-filter/multiselect/multiselect.component';
 import { ClickOutsideDirective } from './directives/click-outside.directive';
+import { NgxDhis2PeriodFilterModule } from '@iapps/ngx-dhis2-period-filter';
 
 @NgModule({
   imports: [
@@ -34,7 +35,8 @@ import { ClickOutsideDirective } from './directives/click-outside.directive';
     ContextMenuModule.forRoot({
       useBootstrap4: true,
       autoFocus: true
-    })
+    }),
+    NgxDhis2PeriodFilterModule
   ],
   declarations: [
     ClickOutsideDirective,
@@ -69,7 +71,8 @@ import { ClickOutsideDirective } from './directives/click-outside.directive';
     OrgUnitFilterComponent,
     PeriodFilterComponent,
     SharingComponent,
-    MultiselectComponent
+    MultiselectComponent,
+    NgxDhis2PeriodFilterModule
   ]
 })
 export class SharedModule {}
