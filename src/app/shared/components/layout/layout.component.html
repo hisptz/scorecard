@@ -2,13 +2,15 @@
   <div class="show_items" (click)="displayLayout()">
     Layout
   </div>
-  <div class="tree-view" [ngClass]="{'hiddenTree':showLayout}" id="tree_view">
+  <div class="tree-view" [ngClass]="{ hiddenTree: showLayout }" id="tree_view">
     <div class="container-fluid">
       <div class="row">
         <div class="col-sm-12">
-          <h5><b [translate]="'Table / Chart Layout'">Table / Chart Layout</b></h5>
+          <h5>
+            <b [translate]="'Table / Chart Layout'">Table / Chart Layout</b>
+          </h5>
           <table class="table table-bordered" style="font-size: 12px">
-            <tr >
+            <tr>
               <!--<td rowspan="2" dnd-droppable (onDropSuccess)="onDrop($event,'excluded')">-->
               <!--<div>-->
               <!--<label>Excluded dimension</label>-->
@@ -17,7 +19,7 @@
               <!--</td>-->
               <td
                 dnd-droppable
-                (onDropSuccess)="onDrop($event,'filters')"
+                (onDropSuccess)="onDrop($event, 'filters')"
                 class="dimension-drops"
               >
                 <div>
@@ -28,61 +30,66 @@
                   dnd-draggable
                   [dragEnabled]="true"
                   *ngFor="let filter of filters"
-                  [dragData]="{data: filter, dimension: 'filters'}"
+                  [dragData]="{ data: filter, dimension: 'filters' }"
                 >
-                  <img [src]="icons[filter.value]"> {{filter.name}}
+                  <img [src]="icons[filter.value]" /> {{ filter.name }}
                 </div>
               </td>
               <td
                 dnd-droppable
-                (onDropSuccess)="onDrop($event,'rows')"
+                (onDropSuccess)="onDrop($event, 'rows')"
                 class="dimension-drops"
               >
                 <div>
-                  <label *ngIf="visualizationType === 'CHART'">{{'Series dimensions' | translate }}</label>
-                  <label *ngIf="visualizationType !== 'CHART'">{{'Column dimensions' | translate }}</label>
+                  <label *ngIf="visualizationType === 'CHART'">{{
+                    'Series dimensions' | translate
+                  }}</label>
+                  <label *ngIf="visualizationType !== 'CHART'">{{
+                    'Column dimensions' | translate
+                  }}</label>
                 </div>
                 <div
                   class="draggable"
                   dnd-draggable
                   [dragEnabled]="true"
                   *ngFor="let row of rows"
-                  [dragData]="{data: row, dimension: 'rows'}"
+                  [dragData]="{ data: row, dimension: 'rows' }"
                 >
-                  <img [src]="icons[row.value]"> {{row.name}}
+                  <img [src]="icons[row.value]" /> {{ row.name }}
                 </div>
               </td>
             </tr>
             <tr>
               <td
                 dnd-droppable
-                (onDropSuccess)="onDrop($event,'columns')"
+                (onDropSuccess)="onDrop($event, 'columns')"
                 class="dimension-drops"
               >
                 <div>
-                  <label *ngIf="visualizationType === 'CHART'">{{'Categories dimensions' | translate }}</label>
-                  <label *ngIf="visualizationType !== 'CHART'">{{'Row dimensions' | translate }}</label>
+                  <label *ngIf="visualizationType === 'CHART'">{{
+                    'Categories dimensions' | translate
+                  }}</label>
+                  <label *ngIf="visualizationType !== 'CHART'">{{
+                    'Row dimensions' | translate
+                  }}</label>
                 </div>
                 <div
                   class="draggable"
                   dnd-draggable
                   [dragEnabled]="true"
                   *ngFor="let column of columns"
-                  [dragData]="{data: column, dimension: 'columns'}"
+                  [dragData]="{ data: column, dimension: 'columns' }"
                 >
-                  <img [src]="icons[column.value]"> {{column.name}}
+                  <img [src]="icons[column.value]" /> {{ column.name }}
                 </div>
               </td>
               <td class="dimension-drops"></td>
             </tr>
-            </tbody>
           </table>
         </div>
         <div class="col-sm-12">
           <div class="pull-right">
-            <button
-              class="btn btn-default btn-sm"
-              (click)="updateLayout()">
+            <button class="btn btn-default btn-sm" (click)="updateLayout()">
               <i class="fa fa-refresh"></i>
               <span [translate]="'Update'"> Update</span>
             </button>

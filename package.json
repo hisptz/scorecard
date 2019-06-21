@@ -11,16 +11,16 @@
   },
   "private": true,
   "dependencies": {
-    "@angular/animations": "~7.2.0",
-    "@angular/cdk": "^7.3.0",
-    "@angular/common": "~7.2.0",
-    "@angular/compiler": "~7.2.0",
-    "@angular/core": "~7.2.0",
-    "@angular/forms": "~7.2.0",
+    "@angular/animations": "~8.0.2",
+    "@angular/cdk": "^8.0.1",
+    "@angular/common": "~8.0.2",
+    "@angular/compiler": "~8.0.2",
+    "@angular/core": "~8.0.2",
+    "@angular/forms": "~8.0.2",
     "@angular/material": "^8.0.1",
-    "@angular/platform-browser": "~7.2.0",
-    "@angular/platform-browser-dynamic": "~7.2.0",
-    "@angular/router": "~7.2.0",
+    "@angular/platform-browser": "~8.0.2",
+    "@angular/platform-browser-dynamic": "~8.0.2",
+    "@angular/router": "~8.0.2",
     "@hisptz/ngx-dhis2-menu": "^1.0.7",
     "@hisptz/ngx-dhis2-org-unit-filter": "^1.0.0",
     "@iapps/ngx-dhis2-period-filter": "file:../ngx-dhis2-period-filter/dist/ngx-dhis2-period-filter/iapps-ngx-dhis2-period-filter-1.0.0-beta.8.tgz",
@@ -63,17 +63,17 @@
     "ngx-tour-core": "^4.0.1",
     "ngx-tour-ng-bootstrap": "^4.0.1",
     "popper.js": "^1.14.7",
-    "rxjs": "^6.3.3",
+    "rxjs": "^6.5.2",
     "rxjs-compat": "^6.3.3",
     "tslib": "^1.9.3",
     "web-animations-js": "^2.3.1",
-    "zone.js": "^0.8.29"
+    "zone.js": "^0.9.1"
   },
   "devDependencies": {
     "@angular-devkit/build-angular": "~0.12.0",
     "@angular/cli": "~7.2.3",
-    "@angular/compiler-cli": "~7.2.0",
-    "@angular/language-service": "~7.2.0",
+    "@angular/compiler-cli": "~8.0.2",
+    "@angular/language-service": "~8.0.2",
     "@types/jasmine": "~2.8.8",
     "@types/jasminewd2": "~2.0.3",
     "@types/node": "~8.9.4",
@@ -90,7 +90,7 @@
     "protractor": "~5.4.0",
     "ts-node": "~7.0.0",
     "tslint": "~5.11.0",
-    "typescript": "~3.2.2"
+    "typescript": "~3.4.5"
   },
   "config": {
     "commitizen": {
