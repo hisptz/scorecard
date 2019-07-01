@@ -15,6 +15,7 @@ import { Observable } from 'rxjs/Observable';
 import { IndicatorHolder } from '../../shared/models/indicator-holder';
 import { Legend } from '../../shared/models/legend';
 import * as createActions from '../../store/actions/create.actions';
+import * as _ from 'lodash';
 
 @Component({
   selector: 'app-basic-details',
@@ -30,10 +31,14 @@ export class BasicDetailsComponent implements OnInit {
   @Output() onSave = new EventEmitter();
 
   show_delete_legend: boolean[] = [];
-  show_add_legend: boolean = false;
+  show_add_legend = false;
   new_definition: '';
   new_color = '#fff';
   newLabel = '';
+
+  // Objects to handling mutation on creation of score card
+  header_object: any = {};
+  legendset_definitions_array = [];
 
   @ViewChild('title', { static: true })
   title_element: ElementRef;
@@ -43,7 +48,18 @@ export class BasicDetailsComponent implements OnInit {
 
   constructor(private store: Store<ApplicationState>) {}
 
-  ngOnInit() {}
+  ngOnInit() {
+    Object.keys(this.header).map(key => {
+      this.header_object[key] = this.header[key];
+    });
+    this.legendset_definitions_array = _.map(
+      this.legendset_definitions,
+      legend => {
+        const new_legend = { ...{}, ...legend };
+        return new_legend;
+      }
+    );
+  }
 
   //  remove a set of legend
   showDeleteWarnig(index) {
@@ -55,19 +71,15 @@ export class BasicDetailsComponent implements OnInit {
   }
 
   updateHeader() {
-    const header = {
-      title: this.header.title,
-      sub_title: this.header.sub_title,
-      description: this.header.description,
-      show_arrows_definition: this.header.show_arrows_definition,
-      show_legend_definition: this.header.show_legend_definition,
-      template: this.header.template
-    };
+    const header = { ...{}, ...this.header_object };
     this.store.dispatch(new createActions.SetHeader(header));
   }
 
   updateLegend() {
-    const legends = this.legendset_definitions.slice();
+    const legends = _.map(this.legendset_definitions_array, legend => {
+      const new_legend = { ...{}, ...legend };
+      return new_legend;
+    });
     this.store.dispatch(new createActions.SetLegend(legends));
   }
 
