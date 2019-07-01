@@ -21,7 +21,7 @@ import { IndicatorHolderGroup } from '../models/indicator-holders-group';
 
 @Injectable()
 export class ScorecardService {
-	_scorecards: ScoreCard[] = [];
+_scorecards: ScoreCard[] = [];
 
 	constructor(
 		private http: HttpClientService,
@@ -335,15 +335,9 @@ export class ScorecardService {
 		};
 	}
 
-	/**
-   *
-   * @param scorecard_groups
-   * @param user_groups
-   * @returns {{see: boolean, edit: boolean}}
-   */
 	checkForUserGroupInScorecard(scorecard, user): any {
-		let checker_see: boolean = false;
-		let checker_edit: boolean = false;
+		let checker_see = false;
+		let checker_edit = false;
 		if (scorecard.hasOwnProperty('user')) {
 			if (user.id === scorecard.user.id) {
 				checker_see = true;
@@ -450,8 +444,7 @@ export class ScorecardService {
 		} else {
 			return {
 				current_indicator_holder: _.find(scorecard.data.data_settings.indicator_holders, {
-					holder_id: scorecard.data.data_settings.indicator_holder_groups[0].indicator_holder_ids[0],
-          
+					holder_id: scorecard.data.data_settings.indicator_holder_groups[0].indicator_holder_ids[0]
 				}),
 				current_group: scorecard.data.data_settings.indicator_holder_groups[0]
       };
@@ -502,38 +495,7 @@ export class ScorecardService {
 		};
 	}
 
-	sanitize_holders(holders) {
-		// for (const holder of holders) {
-		// 	for (const indicator of holder.indicators) {
-		// 		if (!indicator.hasOwnProperty('use_bottleneck_groups')) {
-		// 			indicator.use_bottleneck_groups = false;
-		// 		}
-		// 		if (!indicator.hasOwnProperty('values')) {
-		// 			indicator.values = [];
-		// 		}
-		// 		if (!indicator.hasOwnProperty('showTopArrow')) {
-		// 			indicator.showTopArrow = [];
-		// 		} else {
-		// 			if (indicator.showTopArrow instanceof Array) {
-		// 			} else {
-		// 				indicator.showTopArrow = [];
-		// 			}
-		// 		}
-
-		// 		if (!indicator.hasOwnProperty('showBottomArrow')) {
-		// 			indicator.showBottomArrow = [];
-		// 		} else {
-		// 			if (indicator.showBottomArrow instanceof Array) {
-		// 			} else {
-		// 				indicator.showBottomArrow = [];
-		// 			}
-		// 		}
-
-		// 		if (!indicator.hasOwnProperty('bottleneck_indicators_groups')) {
-		// 			indicator.bottleneck_indicators_groups = [];
-		// 		}
-		// 	}
-		// }
+	sanitize_holders(holders: any) {
 		return (holders || []).map((holder: any) => {
 			return {
 				...holder,
@@ -543,12 +505,12 @@ export class ScorecardService {
 						use_bottleneck_groups: indicator.hasOwnProperty('use_bottleneck_groups') ? indicator.use_bottleneck_groups : false,
 						values: indicator.hasOwnProperty('values') ? indicator.values : [],
 						showTopArrow: indicator.hasOwnProperty('showTopArrow') && indicator.showTopArrow instanceof Array ? indicator.showTopArrow : [],
-						showBottomArrow: indicator.hasOwnProperty('showBottomArrow') && indicator.showBottomArrow instanceof Array ? indicator.showBottomArrow : [],
-						bottleneck_indicators_groups: indicator.hasOwnProperty('bottleneck_indicators_groups') ? indicator.bottleneck_indicators_groups : [],
-					}
+showBottomArrow: indicator.hasOwnProperty('showBottomArrow') && indicator.showBottomArrow instanceof Array ? indicator.showBottomArrow : [],
+						bottleneck_indicators_groups: indicator.hasOwnProperty('bottleneck_indicators_groups') ? indicator.bottleneck_indicators_groups : []
+					};
 				})
-			}
-		})
+			};
+		});
 	}
 
 	sanitize_scorecard(scorecard) {
@@ -718,17 +680,22 @@ export class ScorecardService {
 	addHolderGroups(indicator_holder_groups, holder_group, holder, current_id: any = null): void {
 		this.store.dispatch(new createActions.SetNeedForGroup(true));
 		let add_new = true;
-		let new_holder_groups = indicator_holder_groups.slice();
+		const old_holder_groups = indicator_holder_groups.slice();
+		let new_holder_groups = [];
 		const new_holder_group = { ...holder_group };
-		for (const group of new_holder_groups) {
+		for (let group of old_holder_groups) {
 			if (group.id === holder_group.id) {
 				if (group.indicator_holder_ids.indexOf(holder.holder_id) === -1) {
 					const index = this.findSelectedIndicatorIndex(current_id, group);
-					group.indicator_holder_ids.splice(index, 0, holder.holder_id);
+					let indicator_holder_ids = group.indicator_holder_ids;
+					indicator_holder_ids = indicator_holder_ids.concat(holder.holder_id);
+					group = {...group, indicator_holder_ids };
 				}
 				add_new = false;
 			}
+			new_holder_groups.push(group);
 		}
+
 		if (add_new) {
 			// TODO: check what this is doing --->> this.deleting[holder_group.id] = false;
 			if (new_holder_group.indicator_holder_ids.indexOf(holder.holder_id) === -1) {
@@ -765,23 +732,25 @@ export class ScorecardService {
 	cleanUpEmptyColumns(indicator_holders_list, indicator_holder_group_list) {
 		let deleted_id = null;
 		const indicator_holders = indicator_holders_list.slice();
-		const indicator_holder_groups = indicator_holder_group_list.slice();
+		const old_indicator_holder_groups = indicator_holder_group_list.slice();
+		const indicator_holder_groups = [];
 		indicator_holders.forEach((item, index) => {
 			if (item.indicators.length === 0) {
 				deleted_id = item.holder_id;
 				indicator_holders.splice(index, 1);
 			}
 		});
-
-		indicator_holder_groups.forEach((group, groupIndex) => {
+		old_indicator_holder_groups.forEach((group, groupIndex) => {
+			const indicator_holder_ids = [];
 			group.indicator_holder_ids.forEach((item, index) => {
-				if (item === deleted_id) {
-					group.indicator_holder_ids.splice(index, 1);
+				if (item !== deleted_id) {
+					indicator_holder_ids.push(item);
 				}
-				if (group.indicator_holder_ids.length === 0) {
-					indicator_holder_groups.splice(groupIndex, 1);
-				}
+				group = {...group, indicator_holder_ids};
 			});
+			if (group.indicator_holder_ids.length > 0) {
+				indicator_holder_groups.push(group);
+			}
 		});
 		this.store.dispatch(new createActions.SetHolders(indicator_holders));
 		this.store.dispatch(new createActions.SetHoldersGroups(indicator_holder_groups));
@@ -809,17 +778,21 @@ export class ScorecardService {
 
 	//  deleting indicator from score card
 	deleteIndicator(indicator_to_delete, indicator_holders, indicator_holder_groups): void {
-		indicator_holders.forEach((holder, holder_index) => {
+		const new_indicator_holders = [];
+		indicator_holders.forEach((holder) => {
+			const indicators = [];
 			holder.indicators.forEach((indicator, indicator_index) => {
-				if (indicator.id === indicator_to_delete.id) {
-					holder.indicators.splice(indicator_index, 1);
+				if (indicator.id !== indicator_to_delete.id) {
+					indicators.push(indicator);
 				}
 			});
+			holder = {...holder, indicators};
+			new_indicator_holders.push(holder);
 		});
-		this.store.dispatch(new createActions.SetHolders(indicator_holders));
+		this.store.dispatch(new createActions.SetHolders(new_indicator_holders));
 		this.store.dispatch(new createActions.SetHoldersGroups(indicator_holder_groups));
 		setTimeout(() => {
-			this.cleanUpEmptyColumns(indicator_holders, indicator_holder_groups);
+			this.cleanUpEmptyColumns(new_indicator_holders, indicator_holder_groups);
 		});
 	}
 
@@ -967,10 +940,6 @@ export class ScorecardService {
 		return labels.join(' / ');
 	}
 
-	/**
-   * finding the row average
-   * @param orgunit_id
-   */
 	findRowAverage(orgunit_id, periods_list, period, indicator_holders, hidenColums) {
 		let sum = 0;
 		let counter = 0;
@@ -1001,10 +970,6 @@ export class ScorecardService {
 		return (sum / counter).toFixed(2);
 	}
 
-	/**
-   * finding the row average
-   * @param orgunit_id
-   */
 	findRowZAverage(orgunit_id, periods_list, period, indicator_holders, hidenColums) {
 		let sum = 0;
 		let counter = 0;
@@ -1037,10 +1002,7 @@ export class ScorecardService {
 		return (sum / counter).toFixed(2);
 	}
 
-	/**
-   * finding the row average
-   * @param orgunit_id
-   */
+
 	findRowTotalAverage(orgunits, period, indicator_holders, hidenColums) {
 		let sum = 0;
 		let n = 0;
@@ -1062,10 +1024,6 @@ export class ScorecardService {
 		return (sum / n).toFixed(2);
 	}
 
-	/**
-   * finding the row average
-   * @param orgunit_id
-   */
 	findRowTotalSum(orgunits, period, indicator_holders, hidenColums) {
 		let sum = 0;
 		let n = 0;

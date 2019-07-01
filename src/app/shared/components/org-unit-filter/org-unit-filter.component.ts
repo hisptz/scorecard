@@ -85,8 +85,8 @@ export class OrgUnitFilterComponent implements OnInit {
     placeholder: 'Select Organisation Unit'
   };
 
-  @Input() showUpdate: boolean = false;
-  @Input() pickChildren: boolean = true;
+  @Input() showUpdate = false;
+  @Input() pickChildren = true;
 
   @Output() onOrgUnitUpdate: EventEmitter<any> = new EventEmitter<any>();
   @Output() onOrgUnitChange: EventEmitter<any> = new EventEmitter<any>();
@@ -106,7 +106,7 @@ export class OrgUnitFilterComponent implements OnInit {
   selected_orgunits: any[] = [];
 
   // this variable controls the visibility of of the tree
-  showOrgTree: boolean = true;
+  showOrgTree = true;
 
   customTemplateStringOrgunitOptions: any;
 
