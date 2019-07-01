@@ -205,7 +205,8 @@ export class OrgUnitFilterComponent implements OnInit {
             level,
             userOrgunit
           );
-          const use_level = parseInt(all_levels) - (parseInt(level) - 1);
+          const use_level =
+            parseInt(all_levels, 10) - (parseInt(level, 10) - 1);
           // load inital orgiunits to speed up loading speed
           this.orgunitService.getInitialOrgunitsForTree(orgunits).subscribe(
             initial_data => {
@@ -348,15 +349,16 @@ export class OrgUnitFilterComponent implements OnInit {
   deactivateOrg($event) {
     this.period_selector.reset();
     if (this.orgunit_model.selection_mode === 'Usr_orgUnit') {
-      this.orgunit_model.selection_mode = 'orgUnit';
+      this.orgunit_model = { ...this.orgunit_model, selection_mode: 'orgUnit' };
       this.period_selector.reset();
     }
     this.orgunit_model.selected_orgunits.forEach((item, index) => {
       if ($event.node.data.id === item.id) {
-        this.orgunit_model.selected_orgunits = [
+        const selected_orgunits = [
           ...this.orgunit_model.selected_orgunits.slice(0, index),
           ...this.orgunit_model.selected_orgunits.slice(index + 1)
         ];
+        this.orgunit_model = { ...this.orgunit_model, selected_orgunits };
       }
     });
 
@@ -369,7 +371,7 @@ export class OrgUnitFilterComponent implements OnInit {
   activateOrg = $event => {
     this.period_selector.reset();
     if (this.orgunit_model.selection_mode === 'Usr_orgUnit') {
-      this.orgunit_model.selection_mode = 'orgUnit';
+      this.orgunit_model = { ...this.orgunit_model, selection_mode: 'orgUnit' };
       this.period_selector.reset();
     }
     this.selected_orgunits = [$event.node.data];
@@ -379,10 +381,11 @@ export class OrgUnitFilterComponent implements OnInit {
         this.orgunit_model.selected_orgunits
       )
     ) {
-      this.orgunit_model.selected_orgunits = [
+      const selected_orgunits = [
         ...this.orgunit_model.selected_orgunits,
         $event.node.data
       ];
+      this.orgunit_model = { ...this.orgunit_model, selected_orgunits };
     }
     this.orgUnit = $event.node.data;
     this.emit(false);
@@ -434,19 +437,19 @@ export class OrgUnitFilterComponent implements OnInit {
 
   // set selected groups
   setSelectedGroups(selected_groups) {
-    this.orgunit_model.selected_groups = selected_groups;
+    this.orgunit_model = { ...this.orgunit_model, selected_groups };
     this.onOrgUnitModelUpdate.emit(this.orgunit_model);
   }
 
   // set selected groups
   setSelectedUserOrg(selected_user_orgunit) {
-    this.orgunit_model.selected_user_orgunit = selected_user_orgunit;
+    this.orgunit_model = { ...this.orgunit_model, selected_user_orgunit };
     this.emit(false);
   }
 
   // set selected groups
   setSelectedLevels(selected_levels) {
-    this.orgunit_model.selected_levels = selected_levels;
+    this.orgunit_model = { ...this.orgunit_model, selected_levels };
     this.emit(false);
   }
 
@@ -469,21 +472,21 @@ export class OrgUnitFilterComponent implements OnInit {
         this.orgunit_model.selected_groups.length === 0
           ? ''
           : this.orgunit_model.selected_groups
-              .map(group => group.name)
+              .map((group_obj: any) => group_obj.name)
               .join(', ') + ' in';
     } else if (this.orgunit_model.selected_user_orgunit.length !== 0) {
       name =
         this.orgunit_model.selected_user_orgunit.length === 0
           ? ''
           : this.orgunit_model.selected_user_orgunit
-              .map(level => level.name)
+              .map((level: any) => level.name)
               .join(', ');
     } else if (this.orgunit_model.selection_mode === 'Level') {
       name =
         this.orgunit_model.selected_levels.length === 0
           ? ''
           : this.orgunit_model.selected_levels
-              .map(level => level.name)
+              .map((level: any) => level.name)
               .join(', ') + ' in';
     } else {
       name = '';
@@ -533,8 +536,9 @@ export class OrgUnitFilterComponent implements OnInit {
         });
       }
       if (orgunit_model.selection_mode === 'Group') {
-        orgunit_model.selected_groups.forEach(group => {
-          organisation_unit_analytics_string += 'OU_GROUP-' + group.id + ';';
+        orgunit_model.selected_groups.forEach((group_obj: any) => {
+          organisation_unit_analytics_string +=
+            'OU_GROUP-' + group_obj.id + ';';
         });
       }
     }
