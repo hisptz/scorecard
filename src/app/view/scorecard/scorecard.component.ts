@@ -47,13 +47,13 @@ export class ScorecardComponent implements OnInit, OnDestroy {
   @Output() onChangingSort = new EventEmitter<any>();
   @Output() onDoneLoadingData = new EventEmitter<any>();
   // use this when loading children scorecard during drilldown
-  @Input() level: string = 'top';
+  @Input() level = 'top';
 
   private indicatorCalls: Subscription[] = [];
-  searchQuery: string = '';
+  searchQuery = '';
   orgunits: any[] = [];
   proccessed_percent = 0;
-  loading: boolean = true;
+  loading = true;
   loading_message: string;
   showSubScorecard: any[] = [];
   periods_list: any = [];
@@ -66,13 +66,13 @@ export class ScorecardComponent implements OnInit, OnDestroy {
   old_proccessed_percent = 0;
   proccesed_indicators = 0;
   shown_records: any;
-  show_sum_in_row: boolean = false;
+  show_sum_in_row = false;
   current_sorting = true;
-  sortAscending: boolean = true;
+  sortAscending = true;
   sorting_period = '';
   hidenColums: any[] = [];
-  organisation_unit_title: string = '';
-  period_title: string = '';
+  organisation_unit_title = '';
+  period_title = '';
   allIndicatorsLength = 0;
   children_available: boolean[] = [];
   subscorecard: any;
@@ -185,7 +185,8 @@ export class ScorecardComponent implements OnInit, OnDestroy {
             this.allIndicatorsLength = allIndicators.length * this.periods_list.length;
             // go through all indicators groups and then through all indicators in a group
             _.each(this.scorecard.data.data_settings.indicator_holders, (holder: any) => {
-              holder.title = this.scorecardService.getIndicatorTitle(holder, this.hidenColums);
+              const title = this.scorecardService.getIndicatorTitle(holder, this.hidenColums);
+              holder = {...holder, title};
               _.each(holder.indicators, (indicator: any) => {
                 indicator['values'] = indicator.hasOwnProperty('values') ? indicator.values : [];
                 indicator['key_values'] = indicator.hasOwnProperty('key_values') ? indicator.key_values : [];
@@ -217,7 +218,8 @@ export class ScorecardComponent implements OnInit, OnDestroy {
                         ou: orgUnits.value,
                         pe: current_period.id,
                         rule: this.getFunctionRule(use_function['rules'], indicator.id),
-                        success: (data) => { // This will run on successfully function return, which will save the result to the data store for analytics
+                        success: (data) => {
+                           // This will run on successfully function return, which will save the result to the data store for analytics
                           this.doneLoadingIndicator(indicator, this.allIndicatorsLength, current_period);
                           for (const orgunit of data.metaData.ou) {
                             const value_key = orgunit + '.' + current_period.id;
@@ -270,7 +272,7 @@ export class ScorecardComponent implements OnInit, OnDestroy {
                             }
                             this.shown_records = this.orgunits.length;
                             // load previous data
-                            const effective_gap = parseInt(indicator.arrow_settings.effective_gap);
+                            const effective_gap = parseInt(indicator.arrow_settings.effective_gap, 10);
                             this.indicatorCalls.push(this.dataService.getIndicatorsRequest(orgUnits.value, this.filterService.getLastPeriod(current_period.id), indicator.id)
                               .subscribe(
                                 (olddata: any) => {
@@ -283,9 +285,9 @@ export class ScorecardComponent implements OnInit, OnDestroy {
                                     for (const key in indicator.values) {
                                       if (indicator.values.hasOwnProperty(key)) {
                                         const splited_key = key.split('.');
-                                        if (parseInt(indicator.previous_values[key]) !== 0) {
-                                          const checkTopArrow = parseInt(indicator.values[key]) > (parseInt(indicator.previous_values[key]) + effective_gap );
-                                          const checkBottomArror = parseInt(indicator.values[key]) < (parseInt(indicator.previous_values[key]) - effective_gap );
+                                        if (parseInt(indicator.previous_values[key], 10) !== 0) {
+                                          const checkTopArrow = parseInt(indicator.values[key], 10) > (parseInt(indicator.previous_values[key], 10) + effective_gap );
+                                          const checkBottomArror = parseInt(indicator.values[key], 10) < (parseInt(indicator.previous_values[key], 10) - effective_gap );
                                           // A check to make sure the arrows are always arrays before assignment
                                           if (!(indicator.showTopArrow instanceof Array)) {
                                             indicator.showTopArrow = [];
@@ -296,7 +298,7 @@ export class ScorecardComponent implements OnInit, OnDestroy {
                                           indicator.showTopArrow[key] = checkTopArrow;
                                           indicator.showBottomArrow[key] = checkBottomArror;
                                           if (indicator.showTopArrow[key] && indicator.values[key] !== null && indicator.previous_values[key] !== null && olddata.metaData.names.hasOwnProperty(splited_key[0])) {
-                                            const changeInValue = indicator.values[key] - parseInt(indicator.previous_values[key]);
+                                            const changeInValue = indicator.values[key] - parseInt(indicator.previous_values[key], 10);
                                             indicator.tooltip[key] = indicator.title + ' has raised by ' + changeInValue.toFixed(2) + ' from ' + this.filterService.getPeriodName(current_period.id) + ' for ' + data.metaData.names[splited_key[0]] + ' (Minimum gap ' + indicator.arrow_settings.effective_gap + ')';
                                           }
                                           if (indicator.showBottomArrow[key] && indicator.values[key] !== null && indicator.previous_values[key] !== null && olddata.metaData.names.hasOwnProperty(splited_key[0])) {
@@ -334,7 +336,9 @@ export class ScorecardComponent implements OnInit, OnDestroy {
                   }
                 });
               });
+              console.log({holder});
             });
+            console.log("final :" ,this.scorecard.data.data_settings.indicator_holders)
           }, (error) => {
 
           }
@@ -452,7 +456,7 @@ export class ScorecardComponent implements OnInit, OnDestroy {
         for (const holder of this.scorecard.data.data_settings.indicator_holders) {
           if (holder.holder_id === holders_list) {
             // check if indicators in a card are hidden so don show them
-            let hide_this: boolean = true;
+            let hide_this = true;
             for (const indicator of holder.indicators) {
               if (this.hidenColums.indexOf(indicator.id) === -1) {
                 hide_this = false;
@@ -533,10 +537,6 @@ export class ScorecardComponent implements OnInit, OnDestroy {
     return sum;
   }
 
-  /**
-   * finding the row average
-   * @param orgunit_id
-   */
   findRowSum(orgunit_id: string, period: string) {
     let sum = 0;
     const use_key = orgunit_id + '.' + period;
@@ -601,7 +601,7 @@ export class ScorecardComponent implements OnInit, OnDestroy {
 
   // hack to find a value of indicator for a specific orgunit
   private findOrgunitIndicatorValue(orgunit_id: string, indicator_id: string, period: string) {
-    let val: number = 0;
+    let val = 0;
     const use_key = orgunit_id + '.' + period;
     for (const holder of this.scorecard.data.data_settings.indicator_holders) {
       for (const indicator of holder.indicators) {
