@@ -140,7 +140,6 @@ export class ScorecardComponent implements OnInit, OnDestroy {
         orgUnits.starting_name + ' ' + this.getSummarizedName(orgUnits.items);
       this.period_title = this.getSummarizedName(period.items);
       this.proccesed_indicators = 0;
-      let old_proccesed_indicators = 0;
       // create a list of all indicators
       const allIndicators = _.flatten(
         _.map(
@@ -251,208 +250,377 @@ export class ScorecardComponent implements OnInit, OnDestroy {
               this.allIndicatorsLength =
                 allIndicators.length * this.periods_list.length;
               // go through all indicators groups and then through all indicators in a group
-              _.each(
-                this.scorecard.data.data_settings.indicator_holders,
-                (holder: any) => {
-                  const title = this.scorecardService.getIndicatorTitle(
-                    holder,
-                    this.hidenColums
-                  );
-                  holder = { ...holder, title };
-                  // copy array to un immutable array
-                  const holder_indicators = _.map(holder.indicators, _.clone);
-                  _.each(holder_indicators, (indicator: any) => {
-                    indicator['values'] = indicator.hasOwnProperty('values')
-                      ? indicator.values
-                      : [];
-                    indicator['key_values'] = indicator.hasOwnProperty(
-                      'key_values'
-                    )
-                      ? indicator.key_values
-                      : [];
-                    indicator['showTopArrow'] = indicator.hasOwnProperty(
-                      'showTopArrow'
-                    )
-                      ? indicator.showTopArrow
-                      : [];
-                    indicator['showBottomArrow'] = indicator.hasOwnProperty(
-                      'showBottomArrow'
-                    )
-                      ? indicator.showBottomArrow
-                      : [];
-                    indicator['tooltip'] = indicator.hasOwnProperty('tooltip')
-                      ? indicator.tooltip
-                      : [];
-                    indicator['previous_values'] = indicator.hasOwnProperty(
-                      'previous_values'
-                    )
-                      ? indicator.previous_values
-                      : [];
-                    if (indicator.bottleneck_indicators.length !== 0) {
-                      this.has_bottleneck = true;
-                    }
-                    if (
-                      indicator.hasOwnProperty(
-                        'bottleneck_indicators_groups'
-                      ) &&
-                      indicator.bottleneck_indicators_groups.length !== 0
-                    ) {
-                      this.has_bottleneck = true;
-                    }
-                    if (
-                      this.level === 'top' ||
-                      this.scorecard.data.is_bottleck
-                    ) {
-                    }
 
-                    // go through all selected period for scorecard
-                    _.each(this.periods_list, (current_period: any) => {
-                      const loading_key = indicator.id + current_period.id;
-                      this.indicator_loading[loading_key] = true;
-                      // check if the indicator is supposed to come from function
-                      if (indicator.hasOwnProperty('calculation') && indicator.calculation === 'custom_function') {
-                        const use_function = this.getFunction(indicator.function_to_use);
-                        // Check first if the function still exist in maintenance
-                        if (use_function) {
-                          const parameters = {
-                            dx: indicator.id,
-                            ou: orgUnits.value,
-                            pe: current_period.id,
-                            rule: this.getFunctionRule(use_function['rules'], indicator.id),
-                            success: (data) => {
-                               // This will run on successfully function return, which will save the result to the data store for analytics
-                              this.doneLoadingIndicator(indicator, this.allIndicatorsLength, current_period);
-                              for (const orgunit of data.metaData.ou) {
-                                const value_key = orgunit + '.' + current_period.id;
-                                const data_config = [
-                                  {'type': 'ou', 'value': orgunit},
-                                  {'type': 'pe', 'value': current_period.id}];
-                                indicator.values[value_key] = this.visualizerService.getDataValue(data, data_config);
-                              }
-                              this.shown_records = this.orgunits.length;
-                              this.indicator_loading[loading_key] = false;
-                              old_proccesed_indicators++;
-                              this.old_proccessed_percent = (old_proccesed_indicators / this.allIndicatorsLength) * 100;
-                            },
-                            error: (error) => {
-                              this.errorLoadingIndicator(indicator);
-                              indicator.has_error = true;
-                              this.error_occured = true;
-                            },
-                            progress: (progress) => {
-                            }
-                          };
-                          const execute = Function('parameters', use_function['function']);
-                          execute(parameters);
-                        } else { // set all values to default if the function cannot be found in store
-                          old_proccesed_indicators++;
-                          this.old_proccessed_percent = (old_proccesed_indicators / this.allIndicatorsLength) * 100;
-                          this.doneLoadingIndicator(indicator, this.allIndicatorsLength, current_period);
-                        }
-                      } else {
-                        this.indicatorCalls.push(
-                          this.dataService.getIndicatorsRequest(orgUnits.value, current_period.id, indicator.id)
-                            .subscribe(
-                              (data: any) => {
-                                data = this.visualizerService._sanitizeIncomingAnalytics(data);
-                                this.doneLoadingIndicator(indicator, this.allIndicatorsLength, current_period);
-                                for (const orgunit of data.metaData.ou) {
-                                  const value_key = orgunit + '.' + current_period.id;
-                                  const data_config = [{'type': 'ou', 'value': orgunit}, {
-                                    'type': 'pe',
-                                    'value': current_period.id
-                                  }];
-                                  indicator.values[value_key] = this.visualizerService.getDataValue(data, data_config);
-                                  indicator.key_values.push({key: value_key, value: this.visualizerService.getDataValue(data, data_config)});
-                                  const uniqueArr = _.uniqBy(indicator.key_values, 'key');
-                                  indicator.key_values = _.orderBy(uniqueArr.map((val: any) => {
-                                    const mean = arr.mean(uniqueArr.map((v: any) => v.value));
-                                    const standardDeviation = arr.standardDeviation(uniqueArr.map((v: any) => v.value));
-                                    return { key: val.key, value: (val.value - mean) / standardDeviation };
-                                  }), ['value'], ['desc']);
-                                }
-                                this.shown_records = this.orgunits.length;
-                                // load previous data
-                                const effective_gap = parseInt(indicator.arrow_settings.effective_gap, 10);
-                                this.indicatorCalls.push(this.dataService.getIndicatorsRequest(orgUnits.value, this.filterService.getLastPeriod(current_period.id), indicator.id)
-                                  .subscribe(
-                                    (olddata: any) => {
-                                      olddata = this.visualizerService._sanitizeIncomingAnalytics(olddata);
-                                      for (const prev_orgunit of this.orgunits) {
-                                        const prev_key = prev_orgunit.id + '.' + current_period.id;
-                                        indicator.previous_values[prev_key] = this.dataService.getIndicatorData(prev_orgunit.id, this.filterService.getLastPeriod(current_period.id), olddata);
-                                      }
-                                      if (indicator.hasOwnProperty('arrow_settings')) {
-                                        for (const key in indicator.values) {
-                                          if (indicator.values.hasOwnProperty(key)) {
-                                            const splited_key = key.split('.');
-                                            if (parseInt(indicator.previous_values[key], 10) !== 0) {
-                                              const checkTopArrow = parseInt(indicator.values[key], 10) > (parseInt(indicator.previous_values[key], 10) + effective_gap );
-                                              const checkBottomArror = parseInt(indicator.values[key], 10) < (parseInt(indicator.previous_values[key], 10) - effective_gap );
-                                              // A check to make sure the arrows are always arrays before assignment
-                                              if (!(indicator.showTopArrow instanceof Array)) {
-                                                indicator.showTopArrow = [];
-                                              }
-                                              if (!(indicator.showBottomArrow instanceof Array)) {
-                                                indicator.showBottomArrow = [];
-                                              }
-                                              indicator.showTopArrow[key] = checkTopArrow;
-                                              indicator.showBottomArrow[key] = checkBottomArror;
-                                              if (indicator.showTopArrow[key] && indicator.values[key] !== null && indicator.previous_values[key] !== null && olddata.metaData.names.hasOwnProperty(splited_key[0])) {
-                                                const changeInValue = indicator.values[key] - parseInt(indicator.previous_values[key], 10);
-                                                indicator.tooltip[key] = indicator.title + ' has raised by ' + changeInValue.toFixed(2) + ' from ' + this.filterService.getPeriodName(current_period.id) + ' for ' + data.metaData.names[splited_key[0]] + ' (Minimum gap ' + indicator.arrow_settings.effective_gap + ')';
-                                              }
-                                              if (indicator.showBottomArrow[key] && indicator.values[key] !== null && indicator.previous_values[key] !== null && olddata.metaData.names.hasOwnProperty(splited_key[0])) {
-                                                const changeInValue = parseFloat(indicator.previous_values[key]) - indicator.values[key];
-                                                indicator.tooltip[key] = indicator.title + ' has decreased by ' + changeInValue.toFixed(2) + ' from ' + this.filterService.getPeriodName(current_period.id) + ' for ' + data.metaData.names[splited_key[0]] + ' (Minimum gap ' + indicator.arrow_settings.effective_gap + ')';
-                                              }
-                                            }
-                                          }
-                                        }
-                                      }
-                                      this.indicator_loading[loading_key] = false;
-                                      this.indicator_done_loading[loading_key] = true;
-                                      old_proccesed_indicators++;
-                                      this.old_proccessed_percent = (old_proccesed_indicators / this.allIndicatorsLength) * 100;
-                                      if (this.old_proccessed_percent === 100) {
-                                      }
-                                    })
-                                );
-                              },
-                              error => {
-                                console.warn(error);
-                                this.indicator_loading[loading_key] = false;
-                                this.has_error[loading_key] = true;
-                                this.error_occured = true;
-                                this.error_text[loading_key] = error.statusText + ' (' + error.status + ')';
-                                this.doneLoadingIndicator(indicator, this.allIndicatorsLength, current_period);
-                                this.indicator_done_loading[loading_key] = true;
-                                old_proccesed_indicators++;
-                                this.old_proccessed_percent = (old_proccesed_indicators / this.allIndicatorsLength) * 100;
-                                if (this.old_proccessed_percent === 100) {
-                                  // this.updatedScorecard.emit(this.scorecard);
-                                }
-                              }
-                            ));
-                      }
-                    });
-                  });
-                  // return all indicator to holder object
-                  holder = { ...holder, indicators: holder_indicators };
-                  console.log({ d: holder.indicators, holder_indicators });
-                  // console.log({ holder });
-                }
+              // copy array to un immutable array
+              const indicator_holders = _.map(
+                this.scorecard.data.data_settings.indicator_holders,
+                _.clone
               );
-              console.log(
-                'final :',
-                this.scorecard.data.data_settings.indicator_holders
+              const indicator_holder_obj = {};
+              _.each(indicator_holders, (holder: any) => {
+                const title = this.scorecardService.getIndicatorTitle(
+                  holder,
+                  this.hidenColums
+                );
+                // copy array to un immutable array
+                const holder_indicators = _.map(holder.indicators, _.clone);
+                _.each(holder_indicators, (indicator: any) => {
+                  indicator['values'] = indicator.hasOwnProperty('values')
+                    ? indicator.values
+                    : [];
+                  indicator['key_values'] = indicator.hasOwnProperty(
+                    'key_values'
+                  )
+                    ? indicator.key_values
+                    : [];
+                  indicator['showTopArrow'] = indicator.hasOwnProperty(
+                    'showTopArrow'
+                  )
+                    ? indicator.showTopArrow
+                    : [];
+                  indicator['showBottomArrow'] = indicator.hasOwnProperty(
+                    'showBottomArrow'
+                  )
+                    ? indicator.showBottomArrow
+                    : [];
+                  indicator['tooltip'] = indicator.hasOwnProperty('tooltip')
+                    ? indicator.tooltip
+                    : [];
+                  indicator['previous_values'] = indicator.hasOwnProperty(
+                    'previous_values'
+                  )
+                    ? indicator.previous_values
+                    : [];
+                  if (indicator.bottleneck_indicators.length !== 0) {
+                    this.has_bottleneck = true;
+                  }
+                  if (
+                    indicator.hasOwnProperty('bottleneck_indicators_groups') &&
+                    indicator.bottleneck_indicators_groups.length !== 0
+                  ) {
+                    this.has_bottleneck = true;
+                  }
+                  if (this.level === 'top' || this.scorecard.data.is_bottleck) {
+                  }
+                });
+                // reassign all holder_indicators into holder object
+                holder = { ...holder, title, indicators: holder_indicators };
+                indicator_holder_obj[holder.holder_id] = holder;
+              });
+              const transformed_holders = _.map(
+                Object.keys(indicator_holder_obj),
+                key => indicator_holder_obj[key]
               );
+              this.scorecard.data.data_settings = {
+                ...this.scorecard.data.data_settings,
+                indicator_holders: transformed_holders
+              };
+              this.loadScoreCardData(orgUnits);
             },
             error => {}
           );
-      } else {
       }
     }
+  }
+
+  loadScoreCardData(orgUnits) {
+    let old_proccesed_indicators = 0;
+    // copy array to un immutable array
+    const indicator_holders = _.map(
+      this.scorecard.data.data_settings.indicator_holders,
+      _.clone
+    );
+    const indicator_holder_obj = {};
+    _.each(indicator_holders, (holder: any) => {
+      // copy array to un immutable array
+      const holder_indicators = _.map(holder.indicators, _.clone);
+      _.each(holder_indicators, (indicator: any) => {
+        // go through all selected period for scorecard
+        _.each(this.periods_list, (current_period: any) => {
+          const loading_key = indicator.id + current_period.id;
+          this.indicator_loading[loading_key] = true;
+          // check if the indicator is supposed to come from function
+          if (
+            indicator.hasOwnProperty('calculation') &&
+            indicator.calculation === 'custom_function'
+          ) {
+            const use_function = this.getFunction(indicator.function_to_use);
+            // Check first if the function still exist in maintenance
+            if (use_function) {
+              const parameters = {
+                dx: indicator.id,
+                ou: orgUnits.value,
+                pe: current_period.id,
+                rule: this.getFunctionRule(use_function['rules'], indicator.id),
+                success: data => {
+                  // This will run on successfully function return, which will save the result to the data store for analytics
+                  this.doneLoadingIndicator(
+                    indicator,
+                    this.allIndicatorsLength,
+                    current_period
+                  );
+                  for (const orgunit of data.metaData.ou) {
+                    const value_key = orgunit + '.' + current_period.id;
+                    const data_config = [
+                      { type: 'ou', value: orgunit },
+                      { type: 'pe', value: current_period.id }
+                    ];
+                    indicator.values[
+                      value_key
+                    ] = this.visualizerService.getDataValue(data, data_config);
+                  }
+                  this.shown_records = this.orgunits.length;
+                  this.indicator_loading[loading_key] = false;
+                  old_proccesed_indicators++;
+                  this.old_proccessed_percent =
+                    (old_proccesed_indicators / this.allIndicatorsLength) * 100;
+                },
+                error: error => {
+                  this.errorLoadingIndicator(indicator);
+                  indicator.has_error = true;
+                  this.error_occured = true;
+                },
+                progress: progress => {}
+              };
+              const execute = Function('parameters', use_function['function']);
+              execute(parameters);
+            } else {
+              // set all values to default if the function cannot be found in store
+              old_proccesed_indicators++;
+              this.old_proccessed_percent =
+                (old_proccesed_indicators / this.allIndicatorsLength) * 100;
+              this.doneLoadingIndicator(
+                indicator,
+                this.allIndicatorsLength,
+                current_period
+              );
+            }
+          } else {
+            this.indicatorCalls.push(
+              this.dataService
+                .getIndicatorsRequest(
+                  orgUnits.value,
+                  current_period.id,
+                  indicator.id
+                )
+                .subscribe(
+                  (data: any) => {
+                    data = this.visualizerService._sanitizeIncomingAnalytics(
+                      data
+                    );
+                    this.doneLoadingIndicator(
+                      indicator,
+                      this.allIndicatorsLength,
+                      current_period
+                    );
+                    // for (const orgunit of data.metaData.ou) {
+                    //   const value_key = orgunit + '.' + current_period.id;
+                    //   const data_config = [
+                    //     { type: 'ou', value: orgunit },
+                    //     {
+                    //       type: 'pe',
+                    //       value: current_period.id
+                    //     }
+                    //   ];
+                    //   indicator.values[
+                    //     value_key
+                    //   ] = this.visualizerService.getDataValue(
+                    //     data,
+                    //     data_config
+                    //   );
+                    //   indicator.key_values.push({
+                    //     key: value_key,
+                    //     value: this.visualizerService.getDataValue(
+                    //       data,
+                    //       data_config
+                    //     )
+                    //   });
+                    //   const uniqueArr = _.uniqBy(indicator.key_values, 'key');
+                    //   indicator.key_values = _.orderBy(
+                    //     uniqueArr.map((val: any) => {
+                    //       const mean = arr.mean(
+                    //         uniqueArr.map((v: any) => v.value)
+                    //       );
+                    //       const standardDeviation = arr.standardDeviation(
+                    //         uniqueArr.map((v: any) => v.value)
+                    //       );
+                    //       return {
+                    //         key: val.key,
+                    //         value: (val.value - mean) / standardDeviation
+                    //       };
+                    //     }),
+                    //     ['value'],
+                    //     ['desc']
+                    //   );
+                    // }
+                    this.shown_records = this.orgunits.length;
+                    // load previous data
+                    const effective_gap = parseInt(
+                      indicator.arrow_settings.effective_gap,
+                      10
+                    );
+                    this.indicatorCalls.push(
+                      this.dataService
+                        .getIndicatorsRequest(
+                          orgUnits.value,
+                          this.filterService.getLastPeriod(current_period.id),
+                          indicator.id
+                        )
+                        .subscribe((olddata: any) => {
+                          olddata = this.visualizerService._sanitizeIncomingAnalytics(
+                            olddata
+                          );
+                          // for (const prev_orgunit of this.orgunits) {
+                          //   const prev_key =
+                          //     prev_orgunit.id + '.' + current_period.id;
+                          //   indicator.previous_values[
+                          //     prev_key
+                          //   ] = this.dataService.getIndicatorData(
+                          //     prev_orgunit.id,
+                          //     this.filterService.getLastPeriod(
+                          //       current_period.id
+                          //     ),
+                          //     olddata
+                          //   );
+                          // }
+                          // if (indicator.hasOwnProperty('arrow_settings')) {
+                          //   for (const key in indicator.values) {
+                          //     if (indicator.values.hasOwnProperty(key)) {
+                          //       const splited_key = key.split('.');
+                          //       if (
+                          //         parseInt(
+                          //           indicator.previous_values[key],
+                          //           10
+                          //         ) !== 0
+                          //       ) {
+                          //         const checkTopArrow =
+                          //           parseInt(indicator.values[key], 10) >
+                          //           parseInt(
+                          //             indicator.previous_values[key],
+                          //             10
+                          //           ) +
+                          //             effective_gap;
+                          //         const checkBottomArror =
+                          //           parseInt(indicator.values[key], 10) <
+                          //           parseInt(
+                          //             indicator.previous_values[key],
+                          //             10
+                          //           ) -
+                          //             effective_gap;
+                          //         // A check to make sure the arrows are always arrays before assignment
+                          //         if (
+                          //           !(indicator.showTopArrow instanceof Array)
+                          //         ) {
+                          //           indicator.showTopArrow = [];
+                          //         }
+                          //         if (
+                          //           !(
+                          //             indicator.showBottomArrow instanceof Array
+                          //           )
+                          //         ) {
+                          //           indicator.showBottomArrow = [];
+                          //         }
+                          //         indicator.showTopArrow[key] = checkTopArrow;
+                          //         indicator.showBottomArrow[
+                          //           key
+                          //         ] = checkBottomArror;
+                          //         if (
+                          //           indicator.showTopArrow[key] &&
+                          //           indicator.values[key] !== null &&
+                          //           indicator.previous_values[key] !== null &&
+                          //           olddata.metaData.names.hasOwnProperty(
+                          //             splited_key[0]
+                          //           )
+                          //         ) {
+                          //           const changeInValue =
+                          //             indicator.values[key] -
+                          //             parseInt(
+                          //               indicator.previous_values[key],
+                          //               10
+                          //             );
+                          //           indicator.tooltip[key] =
+                          //             indicator.title +
+                          //             ' has raised by ' +
+                          //             changeInValue.toFixed(2) +
+                          //             ' from ' +
+                          //             this.filterService.getPeriodName(
+                          //               current_period.id
+                          //             ) +
+                          //             ' for ' +
+                          //             data.metaData.names[splited_key[0]] +
+                          //             ' (Minimum gap ' +
+                          //             indicator.arrow_settings.effective_gap +
+                          //             ')';
+                          //         }
+                          //         if (
+                          //           indicator.showBottomArrow[key] &&
+                          //           indicator.values[key] !== null &&
+                          //           indicator.previous_values[key] !== null &&
+                          //           olddata.metaData.names.hasOwnProperty(
+                          //             splited_key[0]
+                          //           )
+                          //         ) {
+                          //           const changeInValue =
+                          //             parseFloat(
+                          //               indicator.previous_values[key]
+                          //             ) - indicator.values[key];
+                          //           indicator.tooltip[key] =
+                          //             indicator.title +
+                          //             ' has decreased by ' +
+                          //             changeInValue.toFixed(2) +
+                          //             ' from ' +
+                          //             this.filterService.getPeriodName(
+                          //               current_period.id
+                          //             ) +
+                          //             ' for ' +
+                          //             data.metaData.names[splited_key[0]] +
+                          //             ' (Minimum gap ' +
+                          //             indicator.arrow_settings.effective_gap +
+                          //             ')';
+                          //         }
+                          //       }
+                          //     }
+                          //   }
+                          // }
+                          this.indicator_loading[loading_key] = false;
+                          this.indicator_done_loading[loading_key] = true;
+                          old_proccesed_indicators++;
+                          this.old_proccessed_percent =
+                            (old_proccesed_indicators /
+                              this.allIndicatorsLength) *
+                            100;
+                          if (this.old_proccessed_percent === 100) {
+                          }
+                        })
+                    );
+                  },
+                  error => {
+                    console.warn(error);
+                    this.indicator_loading[loading_key] = false;
+                    this.has_error[loading_key] = true;
+                    this.error_occured = true;
+                    this.error_text[loading_key] =
+                      error.statusText + ' (' + error.status + ')';
+                    this.doneLoadingIndicator(
+                      indicator,
+                      this.allIndicatorsLength,
+                      current_period
+                    );
+                    this.indicator_done_loading[loading_key] = true;
+                    old_proccesed_indicators++;
+                    this.old_proccessed_percent =
+                      (old_proccesed_indicators / this.allIndicatorsLength) *
+                      100;
+                    if (this.old_proccessed_percent === 100) {
+                      // this.updatedScorecard.emit(this.scorecard);
+                    }
+                  }
+                )
+            );
+          }
+        });
+      });
+    });
   }
 
   getSummarizedName(items) {
@@ -467,6 +635,7 @@ export class ScorecardComponent implements OnInit, OnDestroy {
   }
 
   doneLoadingIndicator(indicator, totalIndicators, current_period) {
+    console.log({ indicator });
     indicator.loading = false;
     this.loading_message =
       ' Done Fetching data for ' + indicator.title + ' ' + current_period.name;

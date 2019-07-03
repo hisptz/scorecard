@@ -1,5 +1,13 @@
-import {ChangeDetectionStrategy, Component, EventEmitter, Input, OnInit, Output, ViewChild} from '@angular/core';
-import {ContextMenuComponent, ContextMenuService} from 'ngx-contextmenu';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  EventEmitter,
+  Input,
+  OnInit,
+  Output,
+  ViewChild
+} from '@angular/core';
+import { ContextMenuComponent, ContextMenuService } from 'ngx-contextmenu';
 
 @Component({
   selector: 'app-indicator-title',
@@ -8,7 +16,6 @@ import {ContextMenuComponent, ContextMenuService} from 'ngx-contextmenu';
   styleUrls: ['./indicator-title.component.css']
 })
 export class IndicatorTitleComponent implements OnInit {
-
   @Input() indicator: any = null;
   @Input() indicator_loading: any[] = [];
   @Input() indicator_done_loading: any[] = [];
@@ -23,11 +30,7 @@ export class IndicatorTitleComponent implements OnInit {
   @Output() sortItem = new EventEmitter<any>();
   @Output() hideItem = new EventEmitter<any>();
 
-  constructor() { }
+  constructor() {}
 
-  ngOnInit() {
-  }
-
-
-
+  ngOnInit() {}
 }
