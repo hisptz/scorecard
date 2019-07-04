@@ -354,26 +354,33 @@ export class ScorecardComponent implements OnInit, OnDestroy {
                 rule: this.getFunctionRule(use_function['rules'], indicator.id),
                 success: data => {
                   // This will run on successfully function return, which will save the result to the data store for analytics
-                  this.doneLoadingIndicator(
-                    indicator,
-                    this.allIndicatorsLength,
-                    current_period
-                  );
+                  const values = [];
                   for (const orgunit of data.metaData.ou) {
                     const value_key = orgunit + '.' + current_period.id;
                     const data_config = [
                       { type: 'ou', value: orgunit },
                       { type: 'pe', value: current_period.id }
                     ];
-                    indicator.values[
-                      value_key
-                    ] = this.visualizerService.getDataValue(data, data_config);
+                    values[value_key] = this.visualizerService.getDataValue(
+                      data,
+                      data_config
+                    );
                   }
+                  indicator = { ...indicator, values };
+                  indicator_holder_obj[
+                    `${holder.holder_id}_${indicator.id}`
+                  ] = indicator;
+                  console.log(indicator_holder_obj);
                   this.shown_records = this.orgunits.length;
                   this.indicator_loading[loading_key] = false;
                   old_proccesed_indicators++;
                   this.old_proccessed_percent =
                     (old_proccesed_indicators / this.allIndicatorsLength) * 100;
+                  this.doneLoadingIndicator(
+                    indicator,
+                    this.allIndicatorsLength,
+                    current_period
+                  );
                 },
                 error: error => {
                   this.errorLoadingIndicator(indicator);
@@ -408,51 +415,51 @@ export class ScorecardComponent implements OnInit, OnDestroy {
                     data = this.visualizerService._sanitizeIncomingAnalytics(
                       data
                     );
-                    this.doneLoadingIndicator(
-                      indicator,
-                      this.allIndicatorsLength,
-                      current_period
-                    );
-                    // for (const orgunit of data.metaData.ou) {
-                    //   const value_key = orgunit + '.' + current_period.id;
-                    //   const data_config = [
-                    //     { type: 'ou', value: orgunit },
-                    //     {
-                    //       type: 'pe',
-                    //       value: current_period.id
-                    //     }
-                    //   ];
-                    //   indicator.values[
-                    //     value_key
-                    //   ] = this.visualizerService.getDataValue(
-                    //     data,
-                    //     data_config
-                    //   );
-                    //   indicator.key_values.push({
-                    //     key: value_key,
-                    //     value: this.visualizerService.getDataValue(
-                    //       data,
-                    //       data_config
-                    //     )
-                    //   });
-                    //   const uniqueArr = _.uniqBy(indicator.key_values, 'key');
-                    //   indicator.key_values = _.orderBy(
-                    //     uniqueArr.map((val: any) => {
-                    //       const mean = arr.mean(
-                    //         uniqueArr.map((v: any) => v.value)
-                    //       );
-                    //       const standardDeviation = arr.standardDeviation(
-                    //         uniqueArr.map((v: any) => v.value)
-                    //       );
-                    //       return {
-                    //         key: val.key,
-                    //         value: (val.value - mean) / standardDeviation
-                    //       };
-                    //     }),
-                    //     ['value'],
-                    //     ['desc']
-                    //   );
-                    // }
+                    const values = [];
+                    const key_values = [];
+                    for (const orgunit of data.metaData.ou) {
+                      const vData = Math.random();
+                      const value_key = orgunit + '.' + current_period.id;
+                      const data_config = [
+                        { type: 'ou', value: orgunit },
+                        {
+                          type: 'pe',
+                          value: current_period.id
+                        }
+                      ];
+                      values[value_key] = this.visualizerService.getDataValue(
+                        data,
+                        data_config
+                      );
+                      values[value_key] = vData;
+                      key_values.push({ key: value_key, value: vData });
+                      // key_values.push({
+                      //   key: value_key,
+                      //   value: this.visualizerService.getDataValue(
+                      //     data,
+                      //     data_config
+                      //   )
+                      // });
+                      // update key_value and values
+                      indicator = { ...indicator, values };
+                      const uniqueArr = _.uniqBy(key_values, 'key');
+                      indicator.key_values = _.orderBy(
+                        uniqueArr.map((val: any) => {
+                          const mean = arr.mean(
+                            uniqueArr.map((v: any) => v.value)
+                          );
+                          const standardDeviation = arr.standardDeviation(
+                            uniqueArr.map((v: any) => v.value)
+                          );
+                          return {
+                            key: val.key,
+                            value: (val.value - mean) / standardDeviation
+                          };
+                        }),
+                        ['value'],
+                        ['desc']
+                      );
+                    }
                     this.shown_records = this.orgunits.length;
                     // load previous data
                     const effective_gap = parseInt(
@@ -470,118 +477,125 @@ export class ScorecardComponent implements OnInit, OnDestroy {
                           olddata = this.visualizerService._sanitizeIncomingAnalytics(
                             olddata
                           );
-                          // for (const prev_orgunit of this.orgunits) {
-                          //   const prev_key =
-                          //     prev_orgunit.id + '.' + current_period.id;
-                          //   indicator.previous_values[
-                          //     prev_key
-                          //   ] = this.dataService.getIndicatorData(
-                          //     prev_orgunit.id,
-                          //     this.filterService.getLastPeriod(
-                          //       current_period.id
-                          //     ),
-                          //     olddata
-                          //   );
-                          // }
-                          // if (indicator.hasOwnProperty('arrow_settings')) {
-                          //   for (const key in indicator.values) {
-                          //     if (indicator.values.hasOwnProperty(key)) {
-                          //       const splited_key = key.split('.');
-                          //       if (
-                          //         parseInt(
-                          //           indicator.previous_values[key],
-                          //           10
-                          //         ) !== 0
-                          //       ) {
-                          //         const checkTopArrow =
-                          //           parseInt(indicator.values[key], 10) >
-                          //           parseInt(
-                          //             indicator.previous_values[key],
-                          //             10
-                          //           ) +
-                          //             effective_gap;
-                          //         const checkBottomArror =
-                          //           parseInt(indicator.values[key], 10) <
-                          //           parseInt(
-                          //             indicator.previous_values[key],
-                          //             10
-                          //           ) -
-                          //             effective_gap;
-                          //         // A check to make sure the arrows are always arrays before assignment
-                          //         if (
-                          //           !(indicator.showTopArrow instanceof Array)
-                          //         ) {
-                          //           indicator.showTopArrow = [];
-                          //         }
-                          //         if (
-                          //           !(
-                          //             indicator.showBottomArrow instanceof Array
-                          //           )
-                          //         ) {
-                          //           indicator.showBottomArrow = [];
-                          //         }
-                          //         indicator.showTopArrow[key] = checkTopArrow;
-                          //         indicator.showBottomArrow[
-                          //           key
-                          //         ] = checkBottomArror;
-                          //         if (
-                          //           indicator.showTopArrow[key] &&
-                          //           indicator.values[key] !== null &&
-                          //           indicator.previous_values[key] !== null &&
-                          //           olddata.metaData.names.hasOwnProperty(
-                          //             splited_key[0]
-                          //           )
-                          //         ) {
-                          //           const changeInValue =
-                          //             indicator.values[key] -
-                          //             parseInt(
-                          //               indicator.previous_values[key],
-                          //               10
-                          //             );
-                          //           indicator.tooltip[key] =
-                          //             indicator.title +
-                          //             ' has raised by ' +
-                          //             changeInValue.toFixed(2) +
-                          //             ' from ' +
-                          //             this.filterService.getPeriodName(
-                          //               current_period.id
-                          //             ) +
-                          //             ' for ' +
-                          //             data.metaData.names[splited_key[0]] +
-                          //             ' (Minimum gap ' +
-                          //             indicator.arrow_settings.effective_gap +
-                          //             ')';
-                          //         }
-                          //         if (
-                          //           indicator.showBottomArrow[key] &&
-                          //           indicator.values[key] !== null &&
-                          //           indicator.previous_values[key] !== null &&
-                          //           olddata.metaData.names.hasOwnProperty(
-                          //             splited_key[0]
-                          //           )
-                          //         ) {
-                          //           const changeInValue =
-                          //             parseFloat(
-                          //               indicator.previous_values[key]
-                          //             ) - indicator.values[key];
-                          //           indicator.tooltip[key] =
-                          //             indicator.title +
-                          //             ' has decreased by ' +
-                          //             changeInValue.toFixed(2) +
-                          //             ' from ' +
-                          //             this.filterService.getPeriodName(
-                          //               current_period.id
-                          //             ) +
-                          //             ' for ' +
-                          //             data.metaData.names[splited_key[0]] +
-                          //             ' (Minimum gap ' +
-                          //             indicator.arrow_settings.effective_gap +
-                          //             ')';
-                          //         }
-                          //       }
-                          //     }
-                          //   }
-                          // }
+                          const previous_values = [];
+                          for (const prev_orgunit of this.orgunits) {
+                            const prev_key =
+                              prev_orgunit.id + '.' + current_period.id;
+                            previous_values[
+                              prev_key
+                            ] = this.dataService.getIndicatorData(
+                              prev_orgunit.id,
+                              this.filterService.getLastPeriod(
+                                current_period.id
+                              ),
+                              olddata
+                            );
+                          }
+                          indicator = { ...indicator, previous_values };
+                          if (indicator.hasOwnProperty('arrow_settings')) {
+                            const showTopArrow = [];
+                            const showBottomArrow = [];
+                            for (const key in indicator.values) {
+                              if (indicator.values.hasOwnProperty(key)) {
+                                const splited_key = key.split('.');
+                                if (
+                                  parseInt(
+                                    indicator.previous_values[key],
+                                    10
+                                  ) !== 0
+                                ) {
+                                  const checkTopArrow =
+                                    parseInt(indicator.values[key], 10) >
+                                    parseInt(
+                                      indicator.previous_values[key],
+                                      10
+                                    ) +
+                                      effective_gap;
+                                  const checkBottomArror =
+                                    parseInt(indicator.values[key], 10) <
+                                    parseInt(
+                                      indicator.previous_values[key],
+                                      10
+                                    ) -
+                                      effective_gap;
+                                  // A check to make sure the arrows are always arrays before assignment
+                                  if (
+                                    !(indicator.showTopArrow instanceof Array)
+                                  ) {
+                                    indicator.showTopArrow = [];
+                                  }
+                                  if (
+                                    !(
+                                      indicator.showBottomArrow instanceof Array
+                                    )
+                                  ) {
+                                    indicator.showBottomArrow = [];
+                                  }
+                                  showTopArrow[key] = checkTopArrow;
+                                  showBottomArrow[key] = checkBottomArror;
+                                  if (
+                                    indicator.showTopArrow[key] &&
+                                    indicator.values[key] !== null &&
+                                    indicator.previous_values[key] !== null &&
+                                    olddata.metaData.names.hasOwnProperty(
+                                      splited_key[0]
+                                    )
+                                  ) {
+                                    const changeInValue =
+                                      indicator.values[key] -
+                                      parseInt(
+                                        indicator.previous_values[key],
+                                        10
+                                      );
+                                    indicator.tooltip[key] =
+                                      indicator.title +
+                                      ' has raised by ' +
+                                      changeInValue.toFixed(2) +
+                                      ' from ' +
+                                      this.filterService.getPeriodName(
+                                        current_period.id
+                                      ) +
+                                      ' for ' +
+                                      data.metaData.names[splited_key[0]] +
+                                      ' (Minimum gap ' +
+                                      indicator.arrow_settings.effective_gap +
+                                      ')';
+                                  }
+                                  if (
+                                    indicator.showBottomArrow[key] &&
+                                    indicator.values[key] !== null &&
+                                    indicator.previous_values[key] !== null &&
+                                    olddata.metaData.names.hasOwnProperty(
+                                      splited_key[0]
+                                    )
+                                  ) {
+                                    const changeInValue =
+                                      parseFloat(
+                                        indicator.previous_values[key]
+                                      ) - indicator.values[key];
+                                    indicator.tooltip[key] =
+                                      indicator.title +
+                                      ' has decreased by ' +
+                                      changeInValue.toFixed(2) +
+                                      ' from ' +
+                                      this.filterService.getPeriodName(
+                                        current_period.id
+                                      ) +
+                                      ' for ' +
+                                      data.metaData.names[splited_key[0]] +
+                                      ' (Minimum gap ' +
+                                      indicator.arrow_settings.effective_gap +
+                                      ')';
+                                  }
+                                }
+                              }
+                            }
+                            indicator = {
+                              ...indicator,
+                              showBottomArrow,
+                              showTopArrow
+                            };
+                          }
                           this.indicator_loading[loading_key] = false;
                           this.indicator_done_loading[loading_key] = true;
                           old_proccesed_indicators++;
@@ -589,6 +603,15 @@ export class ScorecardComponent implements OnInit, OnDestroy {
                             (old_proccesed_indicators /
                               this.allIndicatorsLength) *
                             100;
+                          indicator_holder_obj[
+                            `${holder.holder_id}_${indicator.id}`
+                          ] = indicator;
+                          console.log(indicator_holder_obj);
+                          this.doneLoadingIndicator(
+                            indicator,
+                            this.allIndicatorsLength,
+                            current_period
+                          );
                           if (this.old_proccessed_percent === 100) {
                           }
                         })
@@ -644,7 +667,7 @@ export class ScorecardComponent implements OnInit, OnDestroy {
       (this.proccesed_indicators / totalIndicators) * 100;
     if (this.proccesed_indicators === totalIndicators) {
       this.loading = false;
-      this.onDoneLoadingData.emit();
+      // this.onDoneLoadingData.emit();
     }
   }
 
