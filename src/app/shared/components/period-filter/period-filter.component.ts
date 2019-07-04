@@ -17,6 +17,12 @@ import {
 import * as _ from 'lodash';
 import { PeriodFilterConfig } from '@iapps/ngx-dhis2-period-filter';
 
+import {
+  NgxDhis2HttpClientService,
+  SystemInfo
+} from '@iapps/ngx-dhis2-http-client';
+import { catchError } from 'rxjs/operators';
+import { of } from 'rxjs';
 const PERIOD_TYPE: Array<any> = [
   { value: 'Monthly', name: 'Monthly', shown: true },
   { value: 'BiMonthly', name: 'BiMonthly', shown: true },
@@ -100,8 +106,10 @@ export class PeriodFilterComponent implements OnInit {
   year: number = new Date().getFullYear();
   period_type_config: Array<any>;
   periodFilterConfig: PeriodFilterConfig;
+  calendar: string;
+  disabled: boolean;
 
-  constructor() {
+  constructor(private httpClient: NgxDhis2HttpClientService) {
     const date = new Date();
     date.setDate(0);
     this.period_tree_config.starting_year = date.getFullYear();
@@ -114,23 +122,35 @@ export class PeriodFilterComponent implements OnInit {
     if (!this.period_tree_config.hasOwnProperty('multiple_key')) {
       this.period_tree_config.multiple_key = 'none';
     }
+    this.disabled = true;
   }
 
   ngOnInit() {
     this.periodFilterConfig = {
       emitOnSelection: true
     };
+
     this.period_type_config = PERIOD_TYPE;
     if (this.period_type !== '') {
       this.changePeriodType();
       this.emitPeriod();
     }
 
-    // this.getRelativePeriodText('LAST_5_YEARS');
+    this.httpClient
+      .systemInfo()
+      .pipe(catchError(() => of(null)))
+      .subscribe((systemInfo: SystemInfo) => {
+        if (systemInfo) {
+          this.calendar = systemInfo.keyCalendar;
+        }
+        this.disabled = false;
+      });
   }
 
-  displayPerTree() {
-    this.showPeriodSelection = !this.showPeriodSelection;
+  displayPeriodSelection() {
+    if (!this.disabled) {
+      this.showPeriodSelection = !this.showPeriodSelection;
+    }
   }
 
   transferDataSuccess(data, current) {
@@ -293,6 +313,7 @@ export class PeriodFilterComponent implements OnInit {
   onPeriodChange(periodSelection: any) {
     this.selectedPeriods = periodSelection.items;
   }
+
   emitPeriod() {
     this.periodUpdate.emit({
       items: this.selectedPeriods,

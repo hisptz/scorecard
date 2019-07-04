@@ -5,7 +5,7 @@
   (clickOutside)="showPeriodSelection = false"
 >
   <div>
-    <div class="show_items" (click)="displayPerTree()">
+    <div class="show_items" (click)="displayPeriodSelection()">
       <span *ngIf="selectedPeriods.length > 2">
         <span class="selected-item">
           {{ selectedPeriods[0].name }}
@@ -82,6 +82,7 @@
       <ngx-dhis2-period-filter
         [selectedPeriods]="selectedPeriods"
         [periodFilterConfig]="periodFilterConfig"
+        [calendar]="calendar"
         (change)="onPeriodChange($event)"
         (update)="updatePeriods($event)"
         (close)="onPeriodClose($event)"
