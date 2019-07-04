@@ -418,7 +418,9 @@ export class ViewComponent implements OnInit, AfterViewInit {
   downloadAlma() {}
 
   loadScorecard() {
-    this.childScoreCard.loadScoreCard();
+    if (this.childScoreCard) {
+      this.childScoreCard.loadScoreCard();
+    }
   }
 
   onChangeSort(sorting_column) {
