@@ -6,7 +6,10 @@ import { HttpClientModule, HttpClient } from '@angular/common/http';
 import { NgxPaginationModule } from 'ngx-pagination';
 import { TourNgBootstrapModule } from 'ngx-tour-ng-bootstrap';
 import { StoreModule } from '@ngrx/store';
-import { RouterStateSerializer, StoreRouterConnectingModule } from '@ngrx/router-store';
+import {
+  RouterStateSerializer,
+  StoreRouterConnectingModule
+} from '@ngrx/router-store';
 
 import { TranslateModule, TranslateLoader } from '@ngx-translate/core';
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
@@ -15,8 +18,7 @@ import { ScoreCardRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { HomeComponent } from './home/home.component';
 /*import { MenuModule } from './shared/components/ng2-dhis-menu-module/menu.module';*/
-import { NgxDhis2MenuModule } from "@hisptz/ngx-dhis2-menu";
-
+import { NgxDhis2MenuModule } from '@hisptz/ngx-dhis2-menu';
 
 import { environment } from '../environments/environment';
 import { CreateModule } from './create/create.module';
@@ -32,27 +34,25 @@ import { StoreDevtoolsModule } from '@ngrx/store-devtools';
 import { PlaceholderComponent } from './home/placeholder/placeholder.component';
 import { DescriptionComponent } from './home/description/description.component';
 import { ScorecardDetailComponent } from './home/scorecard-detail/scorecard-detail.component';
-import {ScoreCardFilterPipe} from './home/score-card-filter.pipe';
+import { ScoreCardFilterPipe } from './home/score-card-filter.pipe';
 
 import * as fromGuards from './guards';
-import {OrgUnitService} from './shared/services/org-unit.service';
-import {FunctionService} from './shared/services/function.service';
-import {IndicatorGroupService} from './shared/services/indicator-group.service';
-import {DataElementGroupService} from './shared/services/data-element-group.service';
-import {ProgramIndicatorsService} from './shared/services/program-indicators.service';
-import {DatasetService} from './shared/services/dataset.service';
-import {EventDataService} from './shared/services/event-data.service';
-import {VisualizerService} from './shared/services/visualizer.service';
-import {FilterService} from './shared/services/filter.service';
+import { OrgUnitService } from './shared/services/org-unit.service';
+import { FunctionService } from './shared/services/function.service';
+import { IndicatorGroupService } from './shared/services/indicator-group.service';
+import { DataElementGroupService } from './shared/services/data-element-group.service';
+import { ProgramIndicatorsService } from './shared/services/program-indicators.service';
+import { DatasetService } from './shared/services/dataset.service';
+import { EventDataService } from './shared/services/event-data.service';
+import { VisualizerService } from './shared/services/visualizer.service';
+import { FilterService } from './shared/services/filter.service';
 import { DocumentationComponent } from './documentation/documentation.component';
+import { NgxDhis2HttpClientModule } from '@iapps/ngx-dhis2-http-client';
 
 // Add a function, that returns a “TranslateHttpLoader” and export it (needed by AoT)
 export function HttpLoaderFactory(http: HttpClient) {
-  return new TranslateHttpLoader(http,
-    './assets/i18n/',
-    '.json');
+  return new TranslateHttpLoader(http, './assets/i18n/', '.json');
 }
-
 
 @NgModule({
   declarations: [
@@ -75,7 +75,17 @@ export function HttpLoaderFactory(http: HttpClient) {
     ScoreCardRoutingModule,
     NgxPaginationModule,
     TourNgBootstrapModule.forRoot(),
-    StoreModule.forRoot(reducers, { runtimeChecks: { strictStateImmutability: true, strictActionImmutability: true }}),
+    NgxDhis2HttpClientModule.forRoot({
+      namespace: 'scorecard',
+      version: 1,
+      models: {}
+    }),
+    StoreModule.forRoot(reducers, {
+      runtimeChecks: {
+        strictStateImmutability: true,
+        strictActionImmutability: true
+      }
+    }),
     StoreRouterConnectingModule.forRoot(),
     EffectsModule.forRoot(effects),
     TranslateModule.forRoot({
@@ -87,7 +97,9 @@ export function HttpLoaderFactory(http: HttpClient) {
     }),
     CreateModule,
     ViewModule,
-    !environment.production ? StoreDevtoolsModule.instrument({maxAge: 100}) : []
+    !environment.production
+      ? StoreDevtoolsModule.instrument({ maxAge: 100 })
+      : []
   ],
   providers: [
     { provide: RouterStateSerializer, useClass: CustomSerializer },
@@ -107,4 +119,4 @@ export function HttpLoaderFactory(http: HttpClient) {
   ],
   bootstrap: [AppComponent]
 })
-export class AppModule { }
+export class AppModule {}
