@@ -22,10 +22,10 @@
     <app-period-filter
       #periodComponent
       [showUpdate]="true"
-      [selected_periods]="selected_periods$ | async"
+      [selectedPeriods]="selected_periods$ | async"
       [period_type]="period_type$ | async"
-      (onPeriodUpdate)="updatePeriod($event)"
-      (onPeriodChange)="changePeriod($event)"
+      (periodUpdate)="updatePeriod($event)"
+      (periodChange)="changePeriod($event)"
     ></app-period-filter>
   </div>
   <div class="col-lg-4 col-sm-12">

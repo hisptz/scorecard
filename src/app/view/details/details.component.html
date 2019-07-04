@@ -15,10 +15,10 @@
       <app-period-filter
         *ngIf="selectedPeriod"
         [showUpdate]="true"
-        [selected_periods]="selectedPeriod"
+        [selectedPeriods]="selectedPeriod"
         [starting_year]="year"
-        (onPeriodUpdate)="updatePeriod($event)"
-        (onPeriodChange)="changePeriod($event)"
+        (periodUpdate)="updatePeriod($event)"
+        (periodChange)="changePeriod($event)"
       >
       </app-period-filter>
     </div>
