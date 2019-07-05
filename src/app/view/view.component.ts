@@ -143,7 +143,7 @@ export class ViewComponent implements OnInit, AfterViewInit {
   sorting_column = 'none';
 
   @ViewChild(ScorecardComponent, { static: true })
-  private childScoreCard: ScorecardComponent;
+  childScoreCard: ScorecardComponent;
   downloadJsonHref: any;
   downloadOUJsonHref: any;
   constructor(
@@ -406,6 +406,8 @@ export class ViewComponent implements OnInit, AfterViewInit {
   loadScorecard() {
     if (this.childScoreCard) {
       this.childScoreCard.loadScoreCard();
+    } else {
+      console.log('here we are');
     }
   }
 

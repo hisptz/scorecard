@@ -514,8 +514,9 @@ showBottomArrow: indicator.hasOwnProperty('showBottomArrow') && indicator.showBo
 	}
 
 	sanitize_scorecard(scorecard) {
+		const data = _.clone(scorecard.data);
 		if (!scorecard.data.hasOwnProperty('orgunit_settings')) {
-			scorecard.data.orgunit_settings = {
+			data.orgunit_settings = {
 				selection_mode: 'Usr_orgUnit',
 				selected_levels: [],
 				show_update_button: true,
@@ -528,7 +529,7 @@ showBottomArrow: indicator.hasOwnProperty('showBottomArrow') && indicator.showBo
 				selected_user_orgunit: []
 			};
 		} else if (!scorecard.data.orgunit_settings.hasOwnProperty('selected_orgunits')) {
-			scorecard.data.orgunit_settings = {
+			data.orgunit_settings = {
 				selection_mode: 'Usr_orgUnit',
 				selected_levels: [],
 				show_update_button: true,
@@ -541,7 +542,7 @@ showBottomArrow: indicator.hasOwnProperty('showBottomArrow') && indicator.showBo
 				selected_user_orgunit: []
 			};
 		} else if (!this.isArray(scorecard.data.orgunit_settings.selected_levels)) {
-			scorecard.data.orgunit_settings = {
+			data.orgunit_settings = {
 				selection_mode: 'Usr_orgUnit',
 				selected_levels: [],
 				show_update_button: true,
@@ -555,38 +556,38 @@ showBottomArrow: indicator.hasOwnProperty('showBottomArrow') && indicator.showBo
 			};
 		}
 		if (scorecard.data.selected_periods.length === 0) {
-			scorecard.data.selected_periods = [ { name: 'Last Quarter', id: 'LAST_QUARTER' } ];
+			data.selected_periods = [ { name: 'Last Quarter', id: 'LAST_QUARTER' } ];
 		}
 		// attach average_selection if none is defined
 		if (!scorecard.data.hasOwnProperty('average_selection')) {
-			scorecard.data.average_selection = 'all';
+			data.average_selection = 'all';
 		}
 		// attach shown_records if none is defined
 		if (!scorecard.data.hasOwnProperty('shown_records')) {
-			scorecard.data.shown_records = 'all';
+			data.shown_records = 'all';
 		}
 		// attach show_average_in_row if none is defined
 		if (!scorecard.data.hasOwnProperty('show_average_in_row')) {
-			scorecard.data.show_average_in_row = false;
+			data.show_average_in_row = false;
 		}
 		// attach show_average_in_column if none is defined
 		if (!scorecard.data.hasOwnProperty('show_average_in_column')) {
-			scorecard.data.show_average_in_column = false;
+			data.show_average_in_column = false;
 		}
 		// attach a property empty row if none is defined
 		if (!scorecard.data.hasOwnProperty('empty_rows')) {
-			scorecard.data.empty_rows = true;
+			data.empty_rows = true;
 		}
 		if (!scorecard.data.hasOwnProperty('show_data_in_column')) {
-			scorecard.data.show_data_in_column = false;
+			data.show_data_in_column = false;
 		}
 		if (!scorecard.data.hasOwnProperty('show_league_table')) {
-			scorecard.data.show_league_table = false;
+			data.show_league_table = false;
 		}
 		if (!scorecard.data.hasOwnProperty('show_league_table_all')) {
-			scorecard.data.show_league_table_all = false;
+			data.show_league_table_all = false;
 		}
-		return scorecard;
+		return {...scorecard, data};
 	}
 
 	isArray(o) {
