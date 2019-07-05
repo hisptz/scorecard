@@ -142,7 +142,7 @@ export class ViewComponent implements OnInit, AfterViewInit {
   showPreview = false;
   sorting_column = 'none';
 
-  @ViewChild(ScorecardComponent, { static: true })
+  @ViewChild(ScorecardComponent, { static: false })
   childScoreCard: ScorecardComponent;
   downloadJsonHref: any;
   downloadOUJsonHref: any;
