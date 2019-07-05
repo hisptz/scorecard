@@ -116,7 +116,11 @@ export class ScorecardComponent implements OnInit, OnDestroy {
   }
 
   // load scorecard after changes has occur
-  loadScoreCard() {
+  loadScoreCard(selection?: any) {
+    this.selectedPeriod =
+      selection && selection.type === 'pe'
+        ? selection.content
+        : this.selectedPeriod;
     if (
       this.selectedOrganisationUnit.value === '' ||
       this.selectedPeriod.value === ''

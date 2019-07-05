@@ -96,9 +96,8 @@ export class SelectorsComponent implements OnInit {
     this.onUpdate.emit();
   }
   updatePeriod(event) {
-    console.log(event);
     this.store.dispatch(new viewActions.SetSelectedPe(event));
-    this.onUpdate.emit();
+    this.onUpdate.emit({ type: 'pe', content: event });
   }
   changePeriod(event) {
     console.log(event);

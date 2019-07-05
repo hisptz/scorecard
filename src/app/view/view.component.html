@@ -1,16 +1,21 @@
-
 <app-view-header
   @fade
- (onGoHomePage)="goToHomePage()"
- (onTourStart)="startTour()"
+  (onGoHomePage)="goToHomePage()"
+  (onTourStart)="startTour()"
 ></app-view-header>
 
-<div id="options" class="container-fluid " style="margin-top: 20px" *ngIf="(loaded$ | async)" @fade>
+<div
+  id="options"
+  class="container-fluid "
+  style="margin-top: 20px"
+  *ngIf="loaded$ | async"
+  @fade
+>
   <app-selectors
     (onOrgunitChange)="setOrgunitNodes($event)"
     (onDownloadCsv)="downloadCsv()"
     (onDownloadAlma)="downloadAlma()"
-    (onUpdate)="loadScorecard()"
+    (onUpdate)="loadScorecard($event)"
     [downloadJsonHref]="downloadJsonHref"
     [downloadOUJsonHref]="downloadOUJsonHref"
     [sorting_column]="sorting_column$ | async"
@@ -18,24 +23,24 @@
 </div>
 
 <div class="container-fluid">
-  <div class="ourmodel"
-       [@visibilityChanged]="hoverState || 'notHovered'"
-  >
-    <p><a class="btn btn-light btn-sm pull-right" (click)="closeModel()"><i class="fa fa-close"></i> </a></p>
+  <div class="ourmodel" [@visibilityChanged]="hoverState || 'notHovered'">
+    <p>
+      <a class="btn btn-light btn-sm pull-right" (click)="closeModel()"
+        ><i class="fa fa-close"></i>
+      </a>
+    </p>
     <app-details
       *ngIf="showPreview"
       (onClose)="closeModel()"
       [indicatorDetails]="indicatorDetails"
-
     ></app-details>
   </div>
 </div>
 
 <div class="row" @fade>
-  <div class="col-sm-12"  tourAnchor="view.scorecard">
+  <div class="col-sm-12" tourAnchor="view.scorecard">
     <app-scorecard
       *ngIf="(functions_loaded$ | async) && (metadata_ready$ | async)"
-      #childScoreCard
       [scorecard]="scorecard$ | async"
       [selectedOrganisationUnit]="selectedOrganisationUnits$ | async"
       [selectedPeriod]="selectedPeriod$ | async"
@@ -46,7 +51,11 @@
       (onDoneLoadingData)="generateDownloadOuUri()"
     ></app-scorecard>
 
-    <h1 class="text-center" *ngIf="!(functions_loaded$ | async) || !(metadata_ready$ | async)">
-      <img src="assets/img/balls-3.svg">Getting scorecard ready</h1>
+    <h1
+      class="text-center"
+      *ngIf="!(functions_loaded$ | async) || !(metadata_ready$ | async)"
+    >
+      <img src="assets/img/balls-3.svg" />Getting scorecard ready
+    </h1>
   </div>
 </div>

@@ -142,7 +142,7 @@ export class ViewComponent implements OnInit, AfterViewInit {
   showPreview = false;
   sorting_column = 'none';
 
-  @ViewChild(ScorecardComponent, { static: true })
+  @ViewChild(ScorecardComponent, { static: false })
   childScoreCard: ScorecardComponent;
   downloadJsonHref: any;
   downloadOUJsonHref: any;
@@ -403,11 +403,9 @@ export class ViewComponent implements OnInit, AfterViewInit {
 
   downloadAlma() {}
 
-  loadScorecard() {
+  loadScorecard(selection: any) {
     if (this.childScoreCard) {
-      this.childScoreCard.loadScoreCard();
-    } else {
-      console.log('here we are');
+      this.childScoreCard.loadScoreCard(selection);
     }
   }
 
