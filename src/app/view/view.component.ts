@@ -140,7 +140,7 @@ export class ViewComponent implements OnInit, AfterViewInit {
   hoverState = 'notHovered';
   indicatorDetails = null;
   showPreview = false;
-  sorting_column: string = 'none';
+  sorting_column = 'none';
 
   @ViewChild(ScorecardComponent, { static: true })
   private childScoreCard: ScorecardComponent;
@@ -332,18 +332,10 @@ export class ViewComponent implements OnInit, AfterViewInit {
                 keyArr[0],
                 _.toString(indicator.values[key])
               ]);
+            } else {
+              dataValue.push([indicator.id, keyArr[1], keyArr[0], '']);
             }
           });
-          // dataValue.push(...Object.keys(indicator.values).map( key => {
-          //     const keyArr = key.split('.');
-          //     return {
-          //       dataElement: indicator.id,
-          //       period: keyArr[1],
-          //       orgUnit: keyArr[0],
-          //       value: indicator.values[key]
-          //     };
-          //   })
-          // );
         });
       });
       dataValues.headers.forEach((headerArray, index, array) => {
@@ -353,13 +345,6 @@ export class ViewComponent implements OnInit, AfterViewInit {
           };
         }
       });
-
-      // orgunitIds.forEach(
-      //   orgUnitsArray => {
-      //     dataValues.metaData.items[orgUnitsArray.id]  = {name: orgUnitsArray.name};
-      //   }
-      // )
-
       dataValues.metaData.dimensions['ou'] = orgunitIds;
       dataValues.metaData.dimensions['pe'] = periodIds;
       dataValues.metaData.dimensions['dx'] = indicatorIds;
@@ -392,33 +377,36 @@ export class ViewComponent implements OnInit, AfterViewInit {
           name: orgUnitsArray.name
         };
       });
+      if (dataValue && dataValue.length > 0) {
+        dataValues.rows = dataValue;
+        dataValues.height = dataValues.rows.length;
+        dataValues.width = dataValues.rows[0].length;
+        const theJSON = JSON.stringify({ dataValues: [dataValues] });
+        const theJSON1 = JSON.stringify({
+          organisationUnits: {
+            organisationUnits: _.sortBy(organisationUnitMetadatas, ['name'])
+          },
+          indicators: indicatorMetadatas
+        });
 
-      dataValues.rows = dataValue;
-      dataValues.height = dataValues.rows.length;
-      dataValues.width = dataValues.rows[0].length;
-      const theJSON = JSON.stringify({ dataValues: [dataValues] });
-      const theJSON1 = JSON.stringify({
-        organisationUnits: {
-          organisationUnits: _.sortBy(organisationUnitMetadatas, ['name'])
-        },
-        indicators: indicatorMetadatas
-      });
-
-      const uri = this.sanitizer.bypassSecurityTrustUrl(
-        'data:text/json;charset=UTF-8,' + encodeURIComponent(theJSON)
-      );
-      const uri1 = this.sanitizer.bypassSecurityTrustUrl(
-        'data:text/json;charset=UTF-8,' + encodeURIComponent(theJSON1)
-      );
-      this.downloadJsonHref = uri;
-      this.downloadOUJsonHref = uri1;
+        const uri = this.sanitizer.bypassSecurityTrustUrl(
+          'data:text/json;charset=UTF-8,' + encodeURIComponent(theJSON)
+        );
+        const uri1 = this.sanitizer.bypassSecurityTrustUrl(
+          'data:text/json;charset=UTF-8,' + encodeURIComponent(theJSON1)
+        );
+        this.downloadJsonHref = uri;
+        this.downloadOUJsonHref = uri1;
+      }
     });
   }
 
   downloadAlma() {}
 
   loadScorecard() {
-    this.childScoreCard.loadScoreCard();
+    if (this.childScoreCard) {
+      this.childScoreCard.loadScoreCard();
+    }
   }
 
   onChangeSort(sorting_column) {
