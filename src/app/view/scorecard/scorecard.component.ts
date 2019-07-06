@@ -371,7 +371,10 @@ export class ScorecardComponent implements OnInit, OnDestroy {
                       data_config
                     );
                   }
-                  indicator = { ...indicator, values };
+                  indicator = {
+                    ...indicator,
+                    values: { ...indicator.values, ...values }
+                  };
                   this.all_indicator_holder_obj[
                     `${holder.holder_id}_${indicator.id}`
                   ] = { ...indicator, loading: false };
@@ -442,23 +445,32 @@ export class ScorecardComponent implements OnInit, OnDestroy {
                         )
                       });
                       // update key_value and values
-                      indicator = { ...indicator, values };
+                      indicator = {
+                        ...indicator,
+                        values: { ...indicator.values, ...values }
+                      };
                       const uniqueArr = _.uniqBy(key_values, 'key');
-                      indicator.key_values = _.orderBy(
-                        uniqueArr.map((val: any) => {
-                          const mean = arr.mean(
-                            uniqueArr.map((v: any) => v.value)
-                          );
-                          const standardDeviation = arr.standardDeviation(
-                            uniqueArr.map((v: any) => v.value)
-                          );
-                          return {
-                            key: val.key,
-                            value: (val.value - mean) / standardDeviation
-                          };
-                        }),
-                        ['value'],
-                        ['desc']
+                      indicator.key_values = _.uniqBy(
+                        _.concat(
+                          indicator.key_values,
+                          _.orderBy(
+                            uniqueArr.map((val: any) => {
+                              const mean = arr.mean(
+                                uniqueArr.map((v: any) => v.value)
+                              );
+                              const standardDeviation = arr.standardDeviation(
+                                uniqueArr.map((v: any) => v.value)
+                              );
+                              return {
+                                key: val.key,
+                                value: (val.value - mean) / standardDeviation
+                              };
+                            }),
+                            ['value'],
+                            ['desc']
+                          )
+                        ),
+                        'key'
                       );
                     }
                     this.shown_records = this.orgunits.length;
@@ -492,7 +504,13 @@ export class ScorecardComponent implements OnInit, OnDestroy {
                               olddata
                             );
                           }
-                          indicator = { ...indicator, previous_values };
+                          indicator = {
+                            ...indicator,
+                            previous_values: {
+                              ...indicator.previous_values,
+                              ...previous_values
+                            }
+                          };
                           if (indicator.hasOwnProperty('arrow_settings')) {
                             const showTopArrow = [];
                             const showBottomArrow = [];
@@ -658,7 +676,6 @@ export class ScorecardComponent implements OnInit, OnDestroy {
   }
 
   doneLoadingIndicator(indicator, totalIndicators, current_period) {
-    // indicator.loading = false;
     this.updateScorecardIndicatorsWithData();
     this.loading_message =
       ' Done Fetching data for ' + indicator.title + ' ' + current_period.name;
