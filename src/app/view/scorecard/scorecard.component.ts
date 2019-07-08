@@ -259,7 +259,7 @@ export class ScorecardComponent implements OnInit, OnDestroy {
               // copy array to un immutable array
               const indicator_holders = _.map(
                 this.scorecard.data.data_settings.indicator_holders,
-                _.clone
+                _.cloneDeep
               );
               const indicator_holder_obj = {};
               _.each(indicator_holders, (holder: any) => {
@@ -333,12 +333,12 @@ export class ScorecardComponent implements OnInit, OnDestroy {
     // copy array to un immutable array
     const indicator_holders = _.map(
       this.scorecard.data.data_settings.indicator_holders,
-      _.clone
+      _.cloneDeep
     );
     const indicator_holder_obj = {};
     _.each(indicator_holders, (holder: any) => {
       // copy array to un immutable array
-      const holder_indicators = _.map(holder.indicators, _.clone);
+      const holder_indicators = _.map(holder.indicators, _.cloneDeep);
       _.each(holder_indicators, (indicator: any) => {
         // go through all selected period for scorecard
         _.each(this.periods_list, (current_period: any) => {
@@ -692,12 +692,12 @@ export class ScorecardComponent implements OnInit, OnDestroy {
     // copy array to un immutable array
     const indicator_holders = _.map(
       this.scorecard.data.data_settings.indicator_holders,
-      _.clone
+      _.cloneDeep
     );
     const indicator_holder_obj = {};
     _.each(indicator_holders, (holder: any) => {
       // copy array to un immutable array
-      const old_holder_indicators = _.map(holder.indicators, _.clone);
+      const old_holder_indicators = _.map(holder.indicators, _.cloneDeep);
       const holder_indicators = _.map(
         old_holder_indicators,
         (holder_indicator: any) => {
