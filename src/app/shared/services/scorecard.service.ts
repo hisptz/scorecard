@@ -18,13 +18,15 @@ import { IndicatorObject } from '../models/indicator-object';
 import { IndicatorHolder } from '../models/indicator-holder';
 import { ViewScorecardState } from '../../store/reducers/view.reducer';
 import { IndicatorHolderGroup } from '../models/indicator-holders-group';
+import { NgxDhis2HttpClientService, SystemInfo } from '@iapps/ngx-dhis2-http-client';
+import { Fn} from '@iapps/function-analytics';
 
 @Injectable()
 export class ScorecardService {
 _scorecards: ScoreCard[] = [];
 
 	constructor(
-		private http: HttpClientService,
+		private http: NgxDhis2HttpClientService,
 		private dataService: DataService,
 		private store: Store<ApplicationState>
 	) {}
@@ -83,30 +85,34 @@ _scorecards: ScoreCard[] = [];
 	getCreatedScorecard() {
 		this.store.select(getRouterState).pipe(first()).subscribe((route) => {
 			this.store.select(getUser).pipe(first()).subscribe((user) => {
-				if (route.state.url === '/create') {
-					const scorecard = this.getEmptyScoreCard();
-					this.store.dispatch(
-						new createActions.SetCreatedScorecard(
-							this.getScorecardForCreation(scorecard, 'create', {
-								id: user.id
-							})
-						)
-					);
-				} else {
-					const scorecardId = route.state.params.scorecardid;
-					this.store.select(getScorecardEntites).pipe(first()).subscribe((scorecards) => {
-						if (scorecards) {
-							const scorecard_copy = { ...scorecards };
-							this.store.dispatch(
-								new createActions.SetCreatedScorecard(
-									this.getScorecardForCreation({ ...scorecard_copy[scorecardId] }, 'edit', {
-										id: user.id
-									})
-								)
-							);
-						}
-					});
-				}
+				this.http.systemInfo().subscribe((systemInfo: SystemInfo) => {
+					
+
+					if (route.state.url === '/create') {
+						const scorecard = this.getEmptyScoreCard(systemInfo);
+						this.store.dispatch(
+							new createActions.SetCreatedScorecard(
+								this.getScorecardForCreation(scorecard, 'create', {
+									id: user.id
+								})
+							)
+						);
+					} else {
+						const scorecardId = route.state.params.scorecardid;
+						this.store.select(getScorecardEntites).pipe(first()).subscribe((scorecards) => {
+							if (scorecards) {
+								const scorecard_copy = { ...scorecards };
+								this.store.dispatch(
+									new createActions.SetCreatedScorecard(
+										this.getScorecardForCreation({ ...scorecard_copy[scorecardId] }, 'edit', {
+											id: user.id
+										})
+									)
+								);
+							}
+						});
+					}
+				})
 			});
 		});
 	}
@@ -208,7 +214,12 @@ _scorecards: ScoreCard[] = [];
 	}
 
 	// Define default scorecard sample
-	getEmptyScoreCard(): ScoreCard {
+	getEmptyScoreCard(systemInfo: SystemInfo): ScoreCard {
+		const periodInstance = new Fn.Period();
+
+		periodInstance.setType('Quarterly').setCalendar(systemInfo.keyCalendar).get();
+		const selectedPeriods = [(periodInstance.list() || [])[0]];
+
 		return {
 			id: this.makeid(),
 			name: '',
@@ -234,12 +245,7 @@ _scorecards: ScoreCard[] = [];
 				show_league_table_all: false,
 				show_average_in_column: false,
 				periodType: 'Quarterly',
-				selected_periods: [
-					{
-						id: '2017Q1',
-						name: 'January - March 2017'
-					}
-				],
+				selected_periods: selectedPeriods,
 				show_data_in_column: false,
 				show_score: false,
 				show_rank: false,
