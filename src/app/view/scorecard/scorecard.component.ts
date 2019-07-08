@@ -108,7 +108,8 @@ export class ScorecardComponent implements OnInit, OnDestroy {
     private filterService: FilterService,
     private scorecardService: ScorecardService,
     private visualizerService: VisualizerService,
-    private httpService: NgxDhis2HttpClientService
+    private httpService: HttpClientService,
+    private httpClient: NgxDhis2HttpClientService
   ) {}
 
   ngOnInit() {
@@ -1371,7 +1372,7 @@ export class ScorecardComponent implements OnInit, OnDestroy {
           this.children_available[indicator.id] = true;
           // this.subscorecard = this.createScorecardByIndicators(indicator,indicator.bottleneck_indicators);
 
-          this.httpService.systemInfo().subscribe((systemInfo: SystemInfo) => {
+          this.httpClient.systemInfo().subscribe((systemInfo: SystemInfo) => {
             const created_scorecard = this.scorecardService.getEmptyScoreCard(
               systemInfo
             );

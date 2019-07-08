@@ -26,7 +26,8 @@ export class ScorecardService {
 _scorecards: ScoreCard[] = [];
 
 	constructor(
-		private http: NgxDhis2HttpClientService,
+		private http: HttpClientService,
+		private httpClient: NgxDhis2HttpClientService,
 		private dataService: DataService,
 		private store: Store<ApplicationState>
 	) {}
@@ -85,9 +86,7 @@ _scorecards: ScoreCard[] = [];
 	getCreatedScorecard() {
 		this.store.select(getRouterState).pipe(first()).subscribe((route) => {
 			this.store.select(getUser).pipe(first()).subscribe((user) => {
-				this.http.systemInfo().subscribe((systemInfo: SystemInfo) => {
-					
-
+				this.httpClient.systemInfo().subscribe((systemInfo: SystemInfo) => {
 					if (route.state.url === '/create') {
 						const scorecard = this.getEmptyScoreCard(systemInfo);
 						this.store.dispatch(
