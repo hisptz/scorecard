@@ -264,7 +264,7 @@ export class ScorecardComponent implements OnInit, OnDestroy {
               // copy array to un immutable array
               const indicator_holders = _.map(
                 this.scorecard.data.data_settings.indicator_holders,
-                _.clone
+                _.cloneDeep
               );
               const indicator_holder_obj = {};
               _.each(indicator_holders, (holder: any) => {
@@ -338,12 +338,12 @@ export class ScorecardComponent implements OnInit, OnDestroy {
     // copy array to un immutable array
     const indicator_holders = _.map(
       this.scorecard.data.data_settings.indicator_holders,
-      _.clone
+      _.cloneDeep
     );
     const indicator_holder_obj = {};
     _.each(indicator_holders, (holder: any) => {
       // copy array to un immutable array
-      const holder_indicators = _.map(holder.indicators, _.clone);
+      const holder_indicators = _.map(holder.indicators, _.cloneDeep);
       _.each(holder_indicators, (indicator: any) => {
         // go through all selected period for scorecard
         _.each(this.periods_list, (current_period: any) => {
@@ -376,7 +376,10 @@ export class ScorecardComponent implements OnInit, OnDestroy {
                       data_config
                     );
                   }
-                  indicator = { ...indicator, values };
+                  indicator = {
+                    ...indicator,
+                    values: { ...indicator.values, ...values }
+                  };
                   this.all_indicator_holder_obj[
                     `${holder.holder_id}_${indicator.id}`
                   ] = { ...indicator, loading: false };
@@ -447,23 +450,32 @@ export class ScorecardComponent implements OnInit, OnDestroy {
                         )
                       });
                       // update key_value and values
-                      indicator = { ...indicator, values };
+                      indicator = {
+                        ...indicator,
+                        values: { ...indicator.values, ...values }
+                      };
                       const uniqueArr = _.uniqBy(key_values, 'key');
-                      indicator.key_values = _.orderBy(
-                        uniqueArr.map((val: any) => {
-                          const mean = arr.mean(
-                            uniqueArr.map((v: any) => v.value)
-                          );
-                          const standardDeviation = arr.standardDeviation(
-                            uniqueArr.map((v: any) => v.value)
-                          );
-                          return {
-                            key: val.key,
-                            value: (val.value - mean) / standardDeviation
-                          };
-                        }),
-                        ['value'],
-                        ['desc']
+                      indicator.key_values = _.uniqBy(
+                        _.concat(
+                          indicator.key_values,
+                          _.orderBy(
+                            uniqueArr.map((val: any) => {
+                              const mean = arr.mean(
+                                uniqueArr.map((v: any) => v.value)
+                              );
+                              const standardDeviation = arr.standardDeviation(
+                                uniqueArr.map((v: any) => v.value)
+                              );
+                              return {
+                                key: val.key,
+                                value: (val.value - mean) / standardDeviation
+                              };
+                            }),
+                            ['value'],
+                            ['desc']
+                          )
+                        ),
+                        'key'
                       );
                     }
                     this.shown_records = this.orgunits.length;
@@ -497,7 +509,13 @@ export class ScorecardComponent implements OnInit, OnDestroy {
                               olddata
                             );
                           }
-                          indicator = { ...indicator, previous_values };
+                          indicator = {
+                            ...indicator,
+                            previous_values: {
+                              ...indicator.previous_values,
+                              ...previous_values
+                            }
+                          };
                           if (indicator.hasOwnProperty('arrow_settings')) {
                             const showTopArrow = [];
                             const showBottomArrow = [];
@@ -663,7 +681,6 @@ export class ScorecardComponent implements OnInit, OnDestroy {
   }
 
   doneLoadingIndicator(indicator, totalIndicators, current_period) {
-    // indicator.loading = false;
     this.updateScorecardIndicatorsWithData();
     this.loading_message =
       ' Done Fetching data for ' + indicator.title + ' ' + current_period.name;
@@ -680,12 +697,12 @@ export class ScorecardComponent implements OnInit, OnDestroy {
     // copy array to un immutable array
     const indicator_holders = _.map(
       this.scorecard.data.data_settings.indicator_holders,
-      _.clone
+      _.cloneDeep
     );
     const indicator_holder_obj = {};
     _.each(indicator_holders, (holder: any) => {
       // copy array to un immutable array
-      const old_holder_indicators = _.map(holder.indicators, _.clone);
+      const old_holder_indicators = _.map(holder.indicators, _.cloneDeep);
       const holder_indicators = _.map(
         old_holder_indicators,
         (holder_indicator: any) => {

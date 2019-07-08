@@ -93,9 +93,9 @@ export class PeriodFilterComponent implements OnInit {
     placeholder: 'Select period'
   };
   @Input() selectedPeriods: any[] = [];
-  @Input() period_type: string = 'Monthly';
+  @Input() period_type = 'Monthly';
   @Input() starting_year: number = new Date().getFullYear();
-  @Input() showUpdate: boolean = false;
+  @Input() showUpdate = false;
   @Output() periodUpdate: EventEmitter<any> = new EventEmitter<any>();
   @Output() periodChange: EventEmitter<any> = new EventEmitter<any>();
   @Output() yearUpdate: EventEmitter<any> = new EventEmitter<any>();
