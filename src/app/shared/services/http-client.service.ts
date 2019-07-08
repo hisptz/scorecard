@@ -1,11 +1,11 @@
 import { Injectable } from '@angular/core';
-import {HttpClient, HttpHeaders} from '@angular/common/http';
-import {Constants} from './costants';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { Constants } from './costants';
 
 @Injectable()
 export class HttpClientService {
   public APIURL = '../../../api/';
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient) {}
 
   createAuthorizationHeader(headers: HttpHeaders, options?) {
     if (options) {
@@ -26,7 +26,7 @@ export class HttpClientService {
   get_from_base(url) {
     const headers = new HttpHeaders();
     this.createAuthorizationHeader(headers);
-    return this.http.get<any>( url, {
+    return this.http.get<any>(url, {
       headers: headers
     });
   }
@@ -53,5 +53,4 @@ export class HttpClientService {
       headers: headers
     });
   }
-
 }

@@ -26,6 +26,10 @@ import {
 } from '@angular/animations';
 import { arr } from './arrayHelpers';
 import { ScoreCard } from '../../shared/models/scorecard';
+import {
+  SystemInfo,
+  NgxDhis2HttpClientService
+} from '@iapps/ngx-dhis2-http-client';
 
 @Component({
   selector: 'app-scorecard',
@@ -104,7 +108,8 @@ export class ScorecardComponent implements OnInit, OnDestroy {
     private filterService: FilterService,
     private scorecardService: ScorecardService,
     private visualizerService: VisualizerService,
-    private httpService: HttpClientService
+    private httpService: HttpClientService,
+    private httpClient: NgxDhis2HttpClientService
   ) {}
 
   ngOnInit() {
@@ -1383,51 +1388,56 @@ export class ScorecardComponent implements OnInit, OnDestroy {
         } else {
           this.children_available[indicator.id] = true;
           // this.subscorecard = this.createScorecardByIndicators(indicator,indicator.bottleneck_indicators);
-          const created_scorecard = this.scorecardService.getEmptyScoreCard();
-          const legendSet = indicator.legendset;
-          const holder_ids = [];
-          data.forEach((item, item_index) => {
-            // check first if it is a function or not
-            const indicator_structure = this.scorecardService.getIndicatorStructure(
-              item.name,
-              item.id,
-              legendSet,
-              item.bottleneck_title
-            );
-            if (item.hasOwnProperty('function')) {
-              indicator_structure.calculation = 'custom_function';
-              indicator_structure.function_to_use = item.function;
-            } else {
-              indicator_structure.calculation = 'analytics';
-            }
-            const indicator_holder = {
-              holder_id: item_index + 1,
-              indicators: [indicator_structure]
-            };
-            holder_ids.push(item_index + 1);
-            created_scorecard.data.data_settings.indicator_holders.push(
-              indicator_holder
-            );
-          });
 
-          created_scorecard.data.data_settings.indicator_holder_groups = [
-            {
-              id: '1',
-              name: 'New Group',
-              indicator_holder_ids: holder_ids,
-              background_color: '#ffffff',
-              holder_style: null
-            }
-          ];
-          this.sub_model = { ...this.selectedOrganisationUnit };
-          created_scorecard.data.show_data_in_column = true;
-          created_scorecard.data.is_bottleck = true;
-          created_scorecard.data.name =
-            'Related Indicators for ' + indicator.name;
-          created_scorecard.data.header.title =
-            'Related Indicators for ' + indicator.name;
-          this.subscorecard = created_scorecard;
-          this.showSubScorecard[indicator.id] = true;
+          this.httpClient.systemInfo().subscribe((systemInfo: SystemInfo) => {
+            const created_scorecard = this.scorecardService.getEmptyScoreCard(
+              systemInfo
+            );
+            const legendSet = indicator.legendset;
+            const holder_ids = [];
+            data.forEach((item, item_index) => {
+              // check first if it is a function or not
+              const indicator_structure = this.scorecardService.getIndicatorStructure(
+                item.name,
+                item.id,
+                legendSet,
+                item.bottleneck_title
+              );
+              if (item.hasOwnProperty('function')) {
+                indicator_structure.calculation = 'custom_function';
+                indicator_structure.function_to_use = item.function;
+              } else {
+                indicator_structure.calculation = 'analytics';
+              }
+              const indicator_holder = {
+                holder_id: item_index + 1,
+                indicators: [indicator_structure]
+              };
+              holder_ids.push(item_index + 1);
+              created_scorecard.data.data_settings.indicator_holders.push(
+                indicator_holder
+              );
+            });
+
+            created_scorecard.data.data_settings.indicator_holder_groups = [
+              {
+                id: '1',
+                name: 'New Group',
+                indicator_holder_ids: holder_ids,
+                background_color: '#ffffff',
+                holder_style: null
+              }
+            ];
+            this.sub_model = { ...this.selectedOrganisationUnit };
+            created_scorecard.data.show_data_in_column = true;
+            created_scorecard.data.is_bottleck = true;
+            created_scorecard.data.name =
+              'Related Indicators for ' + indicator.name;
+            created_scorecard.data.header.title =
+              'Related Indicators for ' + indicator.name;
+            this.subscorecard = created_scorecard;
+            this.showSubScorecard[indicator.id] = true;
+          });
         }
       }
     }

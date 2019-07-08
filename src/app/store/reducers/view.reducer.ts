@@ -1,9 +1,9 @@
-import {User} from '../../shared/models/user';
-import {UserGroup} from '../../shared/models/user-group';
-import {IndicatorHolder} from '../../shared/models/indicator-holder';
-import {IndicatorHolderGroup} from '../../shared/models/indicator-holders-group';
-import {OrgUnitModel} from '../../shared/models/org-unit-model';
-import {Legend} from '../../shared/models/legend';
+import { User } from '../../shared/models/user';
+import { UserGroup } from '../../shared/models/user-group';
+import { IndicatorHolder } from '../../shared/models/indicator-holder';
+import { IndicatorHolderGroup } from '../../shared/models/indicator-holders-group';
+import { OrgUnitModel } from '../../shared/models/org-unit-model';
+import { Legend } from '../../shared/models/legend';
 import * as viewActions from '../actions/view.actions';
 
 export interface ViewScorecardState {
@@ -26,30 +26,30 @@ export interface ViewScorecardState {
   show_hierarchy?: boolean;
   rank_position_last: boolean;
   header: {
-    title: string,
-    sub_title: string,
-    description: string,
-    show_arrows_definition: boolean,
-    show_legend_definition: boolean,
+    title: string;
+    sub_title: string;
+    description: string;
+    show_arrows_definition: boolean;
+    show_legend_definition: boolean;
     template: {
-      display: boolean,
-      content: string
-    }
+      display: boolean;
+      content: string;
+    };
   };
   legendset_definitions: Legend[];
   highlighted_indicators: {
-    display: false,
-    definitions: any[]
+    display: false;
+    definitions: any[];
   };
   indicator_holders: IndicatorHolder[];
   indicator_holder_groups: IndicatorHolderGroup[];
   additional_labels: any[];
   footer: {
-    display_generated_date: string,
-    display_title: boolean,
-    sub_title: string,
-    description: string,
-    template: string
+    display_generated_date: string;
+    display_title: boolean;
+    sub_title: string;
+    description: string;
+    template: string;
   };
   indicator_dataElement_reporting_rate_selection: string;
   user: User;
@@ -86,10 +86,7 @@ export const initialViewState: ViewScorecardState = {
   show_league_table_all: false,
   show_average_in_column: false,
   periodType: 'Quarterly',
-  selected_periods: [{
-    id: '2017Q1',
-    name: 'January - March 2017'
-  }],
+  selected_periods: [],
   show_data_in_column: false,
   show_score: false,
   show_rank: false,
@@ -161,29 +158,28 @@ export function viewReducer(
   state: ViewScorecardState = initialViewState,
   action: viewActions.Actions
 ): ViewScorecardState {
-
   switch (action.type) {
-    case (viewActions.SET_VIEWED_SCORECARD): {
+    case viewActions.SET_VIEWED_SCORECARD: {
       const scorecard = action.payload;
       const loaded = true;
-      return {...state, ...scorecard, loaded};
+      return { ...state, ...scorecard, loaded };
     }
 
-    case (viewActions.SET_SELECTED_PE): {
+    case viewActions.SET_SELECTED_PE: {
       const period = action.payload;
-      return {...state, period};
+      return { ...state, period };
     }
 
-    case (viewActions.SET_SELECTED_OU): {
+    case viewActions.SET_SELECTED_OU: {
       const orgunit = action.payload;
-      return {...state, orgunit};
+      return { ...state, orgunit };
     }
 
-    case (viewActions.SET_SORTING_COLUMN): {
-      return {...state, sortingColumn: action.payload};
+    case viewActions.SET_SORTING_COLUMN: {
+      return { ...state, sortingColumn: action.payload };
     }
 
-    case (viewActions.SET_SCORECARD_OPTIONS): {
+    case viewActions.SET_SCORECARD_OPTIONS: {
       const options = {
         show_rank: action.payload.show_rank,
         empty_rows: action.payload.empty_rows,
@@ -210,7 +206,7 @@ export function viewReducer(
         ...state.highlighted_indicators,
         display: action.payload.show_highlighted_indicator
       };
-      return {...state, header, ...options, highlighted_indicators};
+      return { ...state, header, ...options, highlighted_indicators };
     }
   }
 
