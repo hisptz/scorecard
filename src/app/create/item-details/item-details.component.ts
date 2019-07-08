@@ -48,21 +48,26 @@ export class ItemDetailsComponent implements OnInit, OnChanges {
     this.current_holder_id = changes.current_indicator_holder
       ? changes.current_indicator_holder.currentValue.holder_id
       : this.current_holder_id;
-    if (this.current_holder_id && changes.indicator_holders.currentValue) {
+    if (
+      this.current_holder_id &&
+      changes.indicator_holders &&
+      changes.indicator_holders.currentValue
+    ) {
       const updated_indicator_holder: any = _.find(
         changes.indicator_holders.currentValue,
         {
           holder_id: this.current_indicator_holder.holder_id
         }
       );
-
-      this.current_indicator_holder_indicators = _.map(
-        _.map(updated_indicator_holder.indicators, _.cloneDeep),
-        indicator => {
-          const new_indicator = { ...{}, ...indicator };
-          return new_indicator;
-        }
-      );
+      if (updated_indicator_holder && updated_indicator_holder.indicators) {
+        this.current_indicator_holder_indicators = _.map(
+          _.map(updated_indicator_holder.indicators, _.cloneDeep),
+          indicator => {
+            const new_indicator = { ...{}, ...indicator };
+            return new_indicator;
+          }
+        );
+      }
     }
   }
 

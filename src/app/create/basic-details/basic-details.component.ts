@@ -84,12 +84,16 @@ export class BasicDetailsComponent implements OnInit {
   }
 
   deleteLegand(index) {
-    const legend_sets = this.legendset_definitions.slice();
+    const legend_sets = this.legendset_definitions_array.slice();
     const indicator_holders = this.indicator_holders.slice();
     legend_sets.splice(index, 1);
     this.show_delete_legend[index] = false;
+    this.legendset_definitions_array = _.map(legend_sets, _.cloneDeep);
+    //  loop through indicators and regenerate the legend set
+    const holder_indicator_legends_obj = {};
     indicator_holders.forEach(holder => {
       holder.indicators.forEach(indicator => {
+        const key = `${holder.holder_id}_${indicator.id}`;
         const legend_length = legend_sets.length - 2;
         const indicator_legend = [];
         let initial_value = 100;
@@ -103,11 +107,23 @@ export class BasicDetailsComponent implements OnInit {
           }
           initial_value = initial_value - Math.round(100 / legend_length);
         }
-        indicator.legendset = indicator_legend;
+        holder_indicator_legends_obj[key] = indicator_legend;
       });
     });
+    // update indicator legend sets
+    const updated_indicator_holders = _.map(indicator_holders, holder => {
+      const indicators = _.map(holder.indicators, indicator => {
+        const key = `${holder.holder_id}_${indicator.id}`;
+        const legendset =
+          holder_indicator_legends_obj[key] || indicator.legendset;
+        return { ...indicator, legendset };
+      });
+      return { ...holder, indicators };
+    });
     this.store.dispatch(new createActions.SetLegend(legend_sets));
-    this.store.dispatch(new createActions.SetHolders(indicator_holders));
+    this.store.dispatch(
+      new createActions.SetHolders(updated_indicator_holders)
+    );
   }
 
   cancelDeleteLegend(index) {
@@ -124,7 +140,7 @@ export class BasicDetailsComponent implements OnInit {
   }
 
   addLegend() {
-    const legends = this.legendset_definitions.slice();
+    const legends = this.legendset_definitions_array.slice();
     const indicator_holders = this.indicator_holders.slice();
     this.show_add_legend = false;
     const index = this.findFirstDefaultLegend();
@@ -133,15 +149,17 @@ export class BasicDetailsComponent implements OnInit {
       definition: this.new_definition
     };
     legends.splice(index, 0, new_legend);
+    this.legendset_definitions_array = _.map(legends, _.cloneDeep);
     this.new_color = '#fff';
     this.new_definition = '';
     //  loop through indicators and regenerate the legend set
+    const holder_indicator_legends_obj = {};
     indicator_holders.forEach(holder => {
       holder.indicators.forEach(indicator => {
+        const key = `${holder.holder_id}_${indicator.id}`;
         const legend_length = legends.length - 2;
         const indicator_legend = [];
         let initial_value = 100;
-
         for (const legend of legends) {
           if (!legend.hasOwnProperty('default')) {
             indicator_legend.push({
@@ -152,11 +170,24 @@ export class BasicDetailsComponent implements OnInit {
           }
           initial_value = initial_value - Math.round(100 / legend_length);
         }
-        indicator.legendset = indicator_legend;
+        holder_indicator_legends_obj[key] = indicator_legend;
       });
     });
+
+    // update indicator legend sets
+    const updated_indicator_holders = _.map(indicator_holders, holder => {
+      const indicators = _.map(holder.indicators, indicator => {
+        const key = `${holder.holder_id}_${indicator.id}`;
+        const legendset =
+          holder_indicator_legends_obj[key] || indicator.legendset;
+        return { ...indicator, legendset };
+      });
+      return { ...holder, indicators };
+    });
     this.store.dispatch(new createActions.SetLegend(legends));
-    this.store.dispatch(new createActions.SetHolders(indicator_holders));
+    this.store.dispatch(
+      new createActions.SetHolders(updated_indicator_holders)
+    );
   }
 
   cancelAddLegend() {
