@@ -5,26 +5,26 @@ import {
   Input,
   OnInit,
   Output
-} from "@angular/core";
-import { EventDataService } from "../../shared/services/event-data.service";
-import { ApplicationState } from "../../store/reducers";
-import { Store } from "@ngrx/store";
-import { ContextMenuService } from "ngx-contextmenu";
-import { DataElementGroupService } from "../../shared/services/data-element-group.service";
-import { FunctionService } from "../../shared/services/function.service";
-import { DatasetService } from "../../shared/services/dataset.service";
-import { DataService } from "../../shared/services/data.service";
-import { IndicatorGroupService } from "../../shared/services/indicator-group.service";
-import { ProgramIndicatorsService } from "../../shared/services/program-indicators.service";
-import { ScorecardService } from "../../shared/services/scorecard.service";
-import { getFunctions } from "../../store/selectors/static-data.selectors";
-import { ScoreCard } from "../../shared/models/scorecard";
-import { Observable } from "rxjs/Observable";
-import { Legend } from "../../shared/models/legend";
-import { IndicatorHolderGroup } from "../../shared/models/indicator-holders-group";
-import { IndicatorHolder } from "../../shared/models/indicator-holder";
-import * as _ from "lodash";
-import { VisualizerService } from "../../shared/services/visualizer.service";
+} from '@angular/core';
+import { EventDataService } from '../../shared/services/event-data.service';
+import { ApplicationState } from '../../store/reducers';
+import { Store } from '@ngrx/store';
+import { ContextMenuService } from 'ngx-contextmenu';
+import { DataElementGroupService } from '../../shared/services/data-element-group.service';
+import { FunctionService } from '../../shared/services/function.service';
+import { DatasetService } from '../../shared/services/dataset.service';
+import { DataService } from '../../shared/services/data.service';
+import { IndicatorGroupService } from '../../shared/services/indicator-group.service';
+import { ProgramIndicatorsService } from '../../shared/services/program-indicators.service';
+import { ScorecardService } from '../../shared/services/scorecard.service';
+import { getFunctions } from '../../store/selectors/static-data.selectors';
+import { ScoreCard } from '../../shared/models/scorecard';
+import { Observable } from 'rxjs/Observable';
+import { Legend } from '../../shared/models/legend';
+import { IndicatorHolderGroup } from '../../shared/models/indicator-holders-group';
+import { IndicatorHolder } from '../../shared/models/indicator-holder';
+import * as _ from 'lodash';
+import { VisualizerService } from '../../shared/services/visualizer.service';
 import {
   animate,
   group,
@@ -33,56 +33,56 @@ import {
   style,
   transition,
   trigger
-} from "@angular/animations";
-import { BehaviorSubject } from "rxjs/BehaviorSubject";
+} from '@angular/animations';
+import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 
 @Component({
-  selector: "app-bottleneck",
-  templateUrl: "./bottleneck.component.html",
+  selector: 'app-bottleneck',
+  templateUrl: './bottleneck.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  styleUrls: ["./bottleneck.component.css"],
+  styleUrls: ['./bottleneck.component.css'],
   animations: [
-    trigger("groupFade", [
-      state("void", style({ opacity: 0.2 })),
-      transition(":enter", [
-        style({ opacity: 0.5, transform: "scale(0.7)" }),
+    trigger('groupFade', [
+      state('void', style({ opacity: 0.2 })),
+      transition(':enter', [
+        style({ opacity: 0.5, transform: 'scale(0.7)' }),
         group([
           animate(
-            "300ms 100ms ease-out",
-            style({ opacity: 1, transform: "scale(1)" })
+            '300ms 100ms ease-out',
+            style({ opacity: 1, transform: 'scale(1)' })
           )
         ])
       ]),
-      transition(":leave", [
-        style({ opacity: 0.9, transform: "scale(1)" }),
+      transition(':leave', [
+        style({ opacity: 0.9, transform: 'scale(1)' }),
         group([
           animate(
-            "300ms 100ms ease-out",
-            style({ opacity: 0, transform: "scale(0)" })
+            '300ms 100ms ease-out',
+            style({ opacity: 0, transform: 'scale(0)' })
           )
         ])
       ])
     ]),
-    trigger("fadeOut", [
-      state("void", style({ opacity: 0.6 })),
-      transition(":enter", animate("300ms ease-in"))
+    trigger('fadeOut', [
+      state('void', style({ opacity: 0.6 })),
+      transition(':enter', animate('300ms ease-in'))
     ]),
-    trigger("hiddenItem", [
+    trigger('hiddenItem', [
       state(
-        "notHidden",
+        'notHidden',
         style({
-          transform: "scale(1, 1)"
+          transform: 'scale(1, 1)'
         })
       ),
       state(
-        "hidden",
+        'hidden',
         style({
-          transform: "scale(0.0, 0.00)",
-          visibility: "hidden",
-          height: "0px"
+          transform: 'scale(0.0, 0.00)',
+          visibility: 'hidden',
+          height: '0px'
         })
       ),
-      transition("notHidden <=> hidden", animate("300ms"))
+      transition('notHidden <=> hidden', animate('300ms'))
     ])
   ]
 })
@@ -114,22 +114,22 @@ export class BottleneckComponent implements OnInit {
   activeGroup: string = null;
   listQuery: string = null;
   groupQuery: string = null;
-  group_type: string = "indicators";
-  listReady: boolean = false;
-  done_loading_groups: boolean = false;
-  done_loading_list: boolean = false;
-  error_loading_groups: any = { occurred: false, message: "" };
-  error_loading_list: any = { occurred: false, message: "" };
-  use_group_in_bottleneck: boolean = true;
+  group_type = 'indicators';
+  listReady = false;
+  done_loading_groups = false;
+  done_loading_list = false;
+  error_loading_groups: any = { occurred: false, message: '' };
+  error_loading_list: any = { occurred: false, message: '' };
+  use_group_in_bottleneck = true;
   _current_groups$ = new BehaviorSubject([]);
   _current_listing$ = new BehaviorSubject([]);
   _done_loading_groups$ = new BehaviorSubject(false);
   _done_loading_list$ = new BehaviorSubject(false);
   _error_loading_groups$ = new BehaviorSubject({
     occurred: false,
-    message: ""
+    message: ''
   });
-  _error_loading_list$ = new BehaviorSubject({ occurred: false, message: "" });
+  _error_loading_list$ = new BehaviorSubject({ occurred: false, message: '' });
 
   p: number;
   r: number;
@@ -141,30 +141,30 @@ export class BottleneckComponent implements OnInit {
   enableGroupdragOperation = true;
   enableItemdragOperation = false;
   groupColors: string[] = [
-    "#7DB2E8",
-    "#80CC33",
-    "#40BF80",
-    "#75F0F0",
-    "#9485E0",
-    "#D98CCC",
-    "#D98C99",
-    "#D9998C",
-    "#9485E0",
-    "#E09485",
-    "#F7B26E",
-    "#E6C419",
-    "#BFBF40",
-    "#E09485",
-    "#808080",
-    "#B2B24D",
-    "#525214"
+    '#7DB2E8',
+    '#80CC33',
+    '#40BF80',
+    '#75F0F0',
+    '#9485E0',
+    '#D98CCC',
+    '#D98C99',
+    '#D9998C',
+    '#9485E0',
+    '#E09485',
+    '#F7B26E',
+    '#E6C419',
+    '#BFBF40',
+    '#E09485',
+    '#808080',
+    '#B2B24D',
+    '#525214'
   ];
   dataset_types = [
-    { id: ".REPORTING_RATE", name: "Reporting Rate" },
-    { id: ".REPORTING_RATE_ON_TIME", name: "Reporting Rate on time" },
-    { id: ".ACTUAL_REPORTS", name: "Actual Reports Submitted" },
-    { id: ".ACTUAL_REPORTS_ON_TIME", name: "Reports Submitted on time" },
-    { id: ".EXPECTED_REPORTS", name: "Expected Reports" }
+    { id: '.REPORTING_RATE', name: 'Reporting Rate' },
+    { id: '.REPORTING_RATE_ON_TIME', name: 'Reporting Rate on time' },
+    { id: '.ACTUAL_REPORTS', name: 'Actual Reports Submitted' },
+    { id: '.ACTUAL_REPORTS_ON_TIME', name: 'Reports Submitted on time' },
+    { id: '.EXPECTED_REPORTS', name: 'Expected Reports' }
   ];
   constructor(
     private contextMenuService: ContextMenuService,
@@ -184,9 +184,9 @@ export class BottleneckComponent implements OnInit {
 
   ngOnInit() {
     this.loadPriview();
-    if (this.indicator.hasOwnProperty("bottleneck_indicators_groups")) {
+    if (this.indicator.hasOwnProperty('bottleneck_indicators_groups')) {
       _.forEach(this.indicator.bottleneck_indicators_groups, (group, index) => {
-        if (!group.hasOwnProperty("color")) {
+        if (!group.hasOwnProperty('color')) {
           group.color = this.groupColors[index];
         }
       });
@@ -221,37 +221,37 @@ export class BottleneckComponent implements OnInit {
   initiateItems() {
     this.indicatorService.loadAll().subscribe(
       indicatorGroups => {
-        for (const group of indicatorGroups.indicatorGroups) {
+        for (const indicatorGroup of indicatorGroups.indicatorGroups) {
           this.indicatorGroups.push({
-            id: group.id,
-            name: group.name,
-            indicators: group.indicators
+            id: indicatorGroup.id,
+            name: indicatorGroup.name,
+            indicators: indicatorGroup.indicators
           });
         }
         // this.current_groups = this.indicatorGroups;
         // this.error_loading_groups.occurred = false;
         // this.done_loading_groups = true;
         this._current_groups$.next(this.indicatorGroups);
-        this._error_loading_groups$.next({ occurred: false, message: "" });
+        this._error_loading_groups$.next({ occurred: false, message: '' });
         this._done_loading_groups$.next(true);
         if (this.indicatorGroups.length !== 0) {
-          this.load_list(this.indicatorGroups[0], "indicators");
+          this.load_list(this.indicatorGroups[0], 'indicators');
         }
       },
       error => {
         this._error_loading_groups$.next({
           occurred: true,
-          message: "There was an error when loading Indicator Groups"
+          message: 'There was an error when loading Indicator Groups'
         });
       }
     );
     // get dataElementsGroups
     this.dataElementService.loadAll().subscribe(
       dataElementGroups => {
-        for (const group of dataElementGroups.dataElementGroups) {
+        for (const dataElementGroup of dataElementGroups.dataElementGroups) {
           this.dataElementGroups.push({
-            id: group.id,
-            name: group.name,
+            id: dataElementGroup.id,
+            name: dataElementGroup.name,
             dataElements: []
           });
         }
@@ -259,22 +259,22 @@ export class BottleneckComponent implements OnInit {
       error => {
         this._error_loading_groups$.next({
           occurred: true,
-          message: "There was an error when loading Indicator Groups"
+          message: 'There was an error when loading Indicator Groups'
         });
       }
     );
     // get Programs
     this.programService.loadAll().subscribe(
       programs => {
-        for (const group of programs.programs) {
+        for (const program of programs.programs) {
           this.programs.push({
-            id: group.id,
-            name: group.name,
+            id: program.id,
+            name: program.name,
             indicators: []
           });
           this.events.push({
-            id: group.id,
-            name: group.name,
+            id: program.id,
+            name: program.name,
             indicators: []
           });
         }
@@ -282,7 +282,7 @@ export class BottleneckComponent implements OnInit {
       error => {
         this._error_loading_groups$.next({
           occurred: true,
-          message: "There was an error when loading Indicator Groups"
+          message: 'There was an error when loading Indicator Groups'
         });
       }
     );
@@ -301,7 +301,7 @@ export class BottleneckComponent implements OnInit {
       error => {
         this._error_loading_groups$.next({
           occurred: true,
-          message: "There was an error when loading Indicator Groups"
+          message: 'There was an error when loading Indicator Groups'
         });
       }
     );
@@ -313,18 +313,20 @@ export class BottleneckComponent implements OnInit {
       error => {
         this._error_loading_groups$.next({
           occurred: true,
-          message: "There was an error when loading Indicator Groups"
+          message: 'There was an error when loading Indicator Groups'
         });
       }
     );
   }
 
   // load a single item for use in a score card
-  load_item(item, useGroup = false, group = null): void {
+  load_item(item, useGroup = false, group_data = null): void {
+    const group_item = _.cloneDeep(item);
+    const group = _.cloneDeep(group_data);
     if (useGroup) {
       if (group == null) {
         this.addGroup();
-        this.load_item(item, useGroup, this.current_bottleneck_group);
+        this.load_item(group_item, useGroup, this.current_bottleneck_group);
       } else {
         if (this.botteneckIndicatorExist(item)) {
           // this.indicator.bottleneck_indicators_groups.forEach((singlegroup) => {
@@ -333,45 +335,45 @@ export class BottleneckComponent implements OnInit {
           //   }
           // });
         } else {
-          if (this.group_type === "functions") {
-            item.bottleneck_title = item.name;
-            item.baseline = null;
-            item.target = null;
-            item.function = this.activeGroup;
+          if (this.group_type === 'functions') {
+            group_item.bottleneck_title = item.name;
+            group_item.baseline = null;
+            group_item.target = null;
+            group_item.function = this.activeGroup;
           } else {
-            item.bottleneck_title = item.name;
-            item.baseline = null;
-            item.target = null;
+            group_item.bottleneck_title = item.name;
+            group_item.baseline = null;
+            group_item.target = null;
           }
-          group.items.push(item);
+          group.items.push(group_item);
           this.prepareChart(this.indicator);
         }
       }
     } else {
-      if (this.botteneckIndicatorExist(item)) {
-        this.removeBottleneckIndicator(item);
+      if (this.botteneckIndicatorExist(group_item)) {
+        this.removeBottleneckIndicator(group_item);
       } else {
-        if (this.group_type === "functions") {
-          item.bottleneck_title = item.name;
-          item.baseline = null;
-          item.target = null;
-          item.function = this.activeGroup;
+        if (this.group_type === 'functions') {
+          group_item.bottleneck_title = item.name;
+          group_item.baseline = null;
+          group_item.target = null;
+          group_item.function = this.activeGroup;
         } else {
-          item.bottleneck_title = item.name;
-          item.baseline = null;
-          item.target = null;
+          group_item.bottleneck_title = item.name;
+          group_item.baseline = null;
+          group_item.target = null;
         }
-        this.indicator.bottleneck_indicators.push(item);
+        this.indicator.bottleneck_indicators.push(group_item);
       }
       this.prepareChart(this.indicator);
     }
   }
 
   clear(type) {
-    if (type === "items" && this.use_group_in_bottleneck) {
+    if (type === 'items' && this.use_group_in_bottleneck) {
       this.indicator.bottleneck_indicators = [];
     }
-    if (type === "groups" && !this.use_group_in_bottleneck) {
+    if (type === 'groups' && !this.use_group_in_bottleneck) {
       this.indicator.bottleneck_indicators = [];
     }
   }
@@ -398,7 +400,7 @@ export class BottleneckComponent implements OnInit {
    */
   addGroup() {
     const groupToBeAdded = {
-      name: "Determinant Name",
+      name: 'Determinant Name',
       id: this.scorecardService.makeid(),
       items: [],
       color: this.groupColors[0]
@@ -412,37 +414,37 @@ export class BottleneckComponent implements OnInit {
   generateGroups() {
     const groupsToBeAdded = [
       {
-        name: "Commodities",
+        name: 'Commodities',
         id: this.scorecardService.makeid(),
         items: [],
         color: this.groupColors[0]
       },
       {
-        name: "Human Resources",
+        name: 'Human Resources',
         id: this.scorecardService.makeid(),
         items: [],
         color: this.groupColors[1]
       },
       {
-        name: "Geographic Accessibility",
+        name: 'Geographic Accessibility',
         id: this.scorecardService.makeid(),
         items: [],
         color: this.groupColors[2]
       },
       {
-        name: "Initial Utilisation",
+        name: 'Initial Utilisation',
         id: this.scorecardService.makeid(),
         items: [],
         color: this.groupColors[3]
       },
       {
-        name: "Continuous Utilisation",
+        name: 'Continuous Utilisation',
         id: this.scorecardService.makeid(),
         items: [],
         color: this.groupColors[4]
       },
       {
-        name: "Effective Coverage",
+        name: 'Effective Coverage',
         id: this.scorecardService.makeid(),
         items: [],
         color: this.groupColors[5]
@@ -470,17 +472,17 @@ export class BottleneckComponent implements OnInit {
   switchType(current_type): void {
     this.listReady = false;
     this.groupQuery = null;
-    if (current_type === "indicators") {
+    if (current_type === 'indicators') {
       this.setList(current_type, this.indicatorGroups);
-    } else if (current_type === "dataElements") {
+    } else if (current_type === 'dataElements') {
       this.setList(current_type, this.dataElementGroups);
-    } else if (current_type === "datasets") {
+    } else if (current_type === 'datasets') {
       this.setList(current_type, this.dataset_types);
-    } else if (current_type === "programs") {
+    } else if (current_type === 'programs') {
       this.setList(current_type, this.programs);
-    } else if (current_type === "event") {
+    } else if (current_type === 'event') {
       this.setList(current_type, this.programs);
-    } else if (current_type === "functions") {
+    } else if (current_type === 'functions') {
       this.setList(current_type, this.functions);
     } else {
     }
@@ -501,7 +503,7 @@ export class BottleneckComponent implements OnInit {
     this.listReady = true;
     this._current_listing$.next([]);
     this._done_loading_list$.next(true);
-    if (current_type === "indicators") {
+    if (current_type === 'indicators') {
       let load_new = false;
       for (const indicatorGroup of this.indicatorGroups) {
         if (indicatorGroup.id === group_id) {
@@ -527,12 +529,12 @@ export class BottleneckComponent implements OnInit {
           error => {
             this._error_loading_list$.next({
               occurred: true,
-              message: "Something went wrong when trying to load Indicators"
+              message: 'Something went wrong when trying to load Indicators'
             });
           }
         );
       }
-    } else if (current_type === "dataElements") {
+    } else if (current_type === 'dataElements') {
       let load_new = false;
       for (const dataElementGroup of this.dataElementGroups) {
         if (dataElementGroup.id === group_id) {
@@ -558,14 +560,14 @@ export class BottleneckComponent implements OnInit {
           error => {
             this._error_loading_list$.next({
               occurred: true,
-              message: "Something went wrong when trying to load Indicators"
+              message: 'Something went wrong when trying to load Indicators'
             });
           }
         );
       }
-    } else if (current_type === "datasets") {
+    } else if (current_type === 'datasets') {
       const current_listing = [];
-      let group_name = "";
+      let group_name = '';
       for (const dataset_group of this.dataset_types) {
         if (dataset_group.id === group_id) {
           group_name = dataset_group.name;
@@ -574,19 +576,19 @@ export class BottleneckComponent implements OnInit {
       for (const dataset of this.datasets) {
         current_listing.push({
           id: dataset.id + group_id,
-          name: group_name + " " + dataset.name
+          name: group_name + ' ' + dataset.name
         });
       }
       this._current_listing$.next(current_listing);
       this.listReady = true;
       this._done_loading_list$.next(true);
       this.listQuery = null;
-    } else if (current_type === "programs") {
+    } else if (current_type === 'programs') {
       let load_new = false;
       for (const current_group of this.programs) {
         if (current_group.id === group_id) {
           if (
-            current_group.hasOwnProperty("indicators") &&
+            current_group.hasOwnProperty('indicators') &&
             current_group.indicators.length !== 0
           ) {
             this._current_listing$.next(current_group.indicators);
@@ -612,12 +614,12 @@ export class BottleneckComponent implements OnInit {
           error => {
             this._error_loading_list$.next({
               occurred: true,
-              message: "Something went wrong when trying to load Indicators"
+              message: 'Something went wrong when trying to load Indicators'
             });
           }
         );
       }
-    } else if (current_type === "event") {
+    } else if (current_type === 'event') {
       let load_new = false;
       for (const event of this.events) {
         if (event.id === group_id) {
@@ -636,8 +638,8 @@ export class BottleneckComponent implements OnInit {
             //noinspection TypeScriptUnresolvedVariable
             for (const event_data of indicators.programDataElements) {
               if (
-                event_data.valueType === "INTEGER_ZERO_OR_POSITIVE" ||
-                event_data.valueType === "BOOLEAN"
+                event_data.valueType === 'INTEGER_ZERO_OR_POSITIVE' ||
+                event_data.valueType === 'BOOLEAN'
               ) {
                 programDataElement.push(event_data);
               }
@@ -653,12 +655,12 @@ export class BottleneckComponent implements OnInit {
           error => {
             this._error_loading_list$.next({
               occurred: true,
-              message: "Something went wrong when trying to load Indicators"
+              message: 'Something went wrong when trying to load Indicators'
             });
           }
         );
       }
-    } else if (current_type === "functions") {
+    } else if (current_type === 'functions') {
       for (const functionItem of this.functions) {
         if (functionItem.id === group_id) {
           if (functionItem.rules.length !== 0) {
@@ -749,7 +751,7 @@ export class BottleneckComponent implements OnInit {
   botteneckIndicatorExist(item): boolean {
     let check = false;
     if (!this.indicator.use_bottleneck_groups) {
-      if (this.indicator.hasOwnProperty("bottleneck_indicators")) {
+      if (this.indicator.hasOwnProperty('bottleneck_indicators')) {
         for (const indicator of this.indicator.bottleneck_indicators) {
           if (indicator.id === item.id) {
             check = true;
@@ -796,23 +798,23 @@ export class BottleneckComponent implements OnInit {
     const titlesArr = [];
     const colors = [];
     const chartColors = [
-      "#7DB2E8",
-      "#80CC33",
-      "#40BF80",
-      "#75F0F0",
-      "#9485E0",
-      "#D98CCC",
-      "#D98C99",
-      "#D9998C",
-      "#9485E0",
-      "#E09485",
-      "#F7B26E",
-      "#E6C419",
-      "#BFBF40",
-      "#E09485",
-      "#80CC33",
-      "#40BF80",
-      "#75F0F0"
+      '#7DB2E8',
+      '#80CC33',
+      '#40BF80',
+      '#75F0F0',
+      '#9485E0',
+      '#D98CCC',
+      '#D98C99',
+      '#D9998C',
+      '#9485E0',
+      '#E09485',
+      '#F7B26E',
+      '#E6C419',
+      '#BFBF40',
+      '#E09485',
+      '#80CC33',
+      '#40BF80',
+      '#75F0F0'
     ];
     let colorCount = 0;
     const groupCateries = [];
@@ -824,14 +826,14 @@ export class BottleneckComponent implements OnInit {
           categories: bottleneck.items.map(i => i.bottleneck_title)
         });
         useGroups = true;
-        if (bottleneck.hasOwnProperty("color")) {
+        if (bottleneck.hasOwnProperty('color')) {
           colors.push(...bottleneck.items.map(i => bottleneck.color));
         } else {
           colors.push(...bottleneck.items.map(i => chartColors[colorCount]));
         }
 
         colorCount = colorCount + 1;
-        if (bottleneck.hasOwnProperty("function")) {
+        if (bottleneck.hasOwnProperty('function')) {
           function_indicatorsArray.push(...bottleneck.items);
         } else {
           indicatorsArray.push(...bottleneck.items.map(i => i.id));
@@ -844,7 +846,7 @@ export class BottleneckComponent implements OnInit {
         namesArr.push(
           ...bottleneck.items.map(i => {
             return {
-              id: i.bottleneck_title + ":" + bottleneck.name,
+              id: i.bottleneck_title + ':' + bottleneck.name,
               name: i.name
             };
           })
@@ -859,7 +861,7 @@ export class BottleneckComponent implements OnInit {
       }
     } else {
       for (const bottleneck of item.bottleneck_indicators) {
-        if (bottleneck.hasOwnProperty("function")) {
+        if (bottleneck.hasOwnProperty('function')) {
           function_indicatorsArray.push(bottleneck);
           labels.push({ id: bottleneck.id, name: bottleneck.bottleneck_title });
         } else {
@@ -874,14 +876,14 @@ export class BottleneckComponent implements OnInit {
       }
     }
     const visualizer_config: any = {
-      type: "chart",
+      type: 'chart',
       tableConfiguration: {},
       chartConfiguration: {
-        type: "column",
+        type: 'column',
         show_labels: false,
-        title: "Sample Related Indicators Chart",
-        xAxisType: "dx",
-        yAxisType: "ou",
+        title: 'Sample Related Indicators Chart',
+        xAxisType: 'dx',
+        yAxisType: 'ou',
         labels: labels,
         rotation: 0,
         dataGroups: groupCateries.length === 0 ? null : groupCateries
@@ -910,34 +912,34 @@ export class BottleneckComponent implements OnInit {
     const combined_analytics: any = {
       headers: [
         {
-          name: "dx",
-          column: "Data",
-          valueType: "TEXT",
-          type: "java.lang.String",
+          name: 'dx',
+          column: 'Data',
+          valueType: 'TEXT',
+          type: 'java.lang.String',
           hidden: false,
           meta: true
         },
         {
-          name: "ou",
-          column: "Organisation unit",
-          valueType: "TEXT",
-          type: "java.lang.String",
+          name: 'ou',
+          column: 'Organisation unit',
+          valueType: 'TEXT',
+          type: 'java.lang.String',
           hidden: false,
           meta: true
         },
         {
-          name: "pe",
-          column: "Period",
-          valueType: "TEXT",
-          type: "java.lang.String",
+          name: 'pe',
+          column: 'Period',
+          valueType: 'TEXT',
+          type: 'java.lang.String',
           hidden: false,
           meta: true
         },
         {
-          name: "value",
-          column: "Value",
-          valueType: "NUMBER",
-          type: "java.lang.Double",
+          name: 'value',
+          column: 'Value',
+          valueType: 'NUMBER',
+          type: 'java.lang.Double',
           hidden: false,
           meta: false
         }
@@ -957,17 +959,17 @@ export class BottleneckComponent implements OnInit {
     for (const lab of labels) {
       combined_analytics.metaData.names[lab.id] = lab.name;
     }
-    combined_analytics.metaData.names["ouid"] = "Organisation Unit";
-    combined_analytics.metaData.names["peid"] = "Selected Period";
-    combined_analytics.metaData.ou = ["ouid"];
-    combined_analytics.metaData.pe = ["peid"];
+    combined_analytics.metaData.names['ouid'] = 'Organisation Unit';
+    combined_analytics.metaData.names['peid'] = 'Selected Period';
+    combined_analytics.metaData.ou = ['ouid'];
+    combined_analytics.metaData.pe = ['peid'];
     combined_analytics.metaData.dx = labels.map(label => label.id);
     combined_analytics.rows = labels.map(label => {
       return [
         label.id,
-        "ouid",
-        "peid",
-        Math.floor(Math.random() * 80 + 20) + ""
+        'ouid',
+        'peid',
+        Math.floor(Math.random() * 80 + 20) + ''
       ];
     });
     return combined_analytics;
