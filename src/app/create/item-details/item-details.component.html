@@ -1,5 +1,5 @@
 <div class="thumbnail scorecard_details">
-  <div class="row" *ngFor="let indicator of current_indicator_holder_indicators"
+  <div class="row" *ngFor="let indicator of current_indicator_holder_indicators;trackBy: trackByFn"
     style="border-bottom: 1px solid #B3B3B3; padding-top: 3px;margin-left: 0px">
     <div class="container-fluid" style="margin-right: 20px">
       <div class="row">

@@ -4,7 +4,9 @@ import {
   EventEmitter,
   Input,
   OnInit,
-  Output
+  Output,
+  OnChanges,
+  SimpleChanges
 } from '@angular/core';
 import { ScorecardService } from '../../shared/services/scorecard.service';
 import { Store } from '@ngrx/store';
@@ -20,7 +22,7 @@ import * as _ from 'lodash';
   changeDetection: ChangeDetectionStrategy.OnPush,
   styleUrls: ['./item-details.component.css']
 })
-export class ItemDetailsComponent implements OnInit {
+export class ItemDetailsComponent implements OnInit, OnChanges {
   @Input() current_indicator_holder;
   @Input() scorecard;
   @Input() indicator_holders;
@@ -30,6 +32,8 @@ export class ItemDetailsComponent implements OnInit {
   @Output() onShowBottleneckEditor = new EventEmitter();
 
   show_score$: Observable<boolean>;
+  current_holder_id = '';
+
   current_indicator_holder_indicators = [];
   constructor(
     private scorecardService: ScorecardService,
@@ -38,12 +42,26 @@ export class ItemDetailsComponent implements OnInit {
     this.show_score$ = store.select(createSelector.getShowScore);
   }
 
-  ngOnInit() {
-    // current_indicator_holder.indicators
-    if (this.current_indicator_holder_indicators) {
+  ngOnInit() {}
+
+  ngOnChanges(changes: SimpleChanges) {
+    this.current_holder_id = changes.current_indicator_holder
+      ? changes.current_indicator_holder.currentValue.holder_id
+      : this.current_holder_id;
+    if (this.current_holder_id && changes.indicator_holders.currentValue) {
+      const updated_indicator_holder: any = _.find(
+        changes.indicator_holders.currentValue,
+        {
+          holder_id: this.current_indicator_holder.holder_id
+        }
+      );
+
       this.current_indicator_holder_indicators = _.map(
-        this.current_indicator_holder.indicators,
-        _.cloneDeep
+        _.map(updated_indicator_holder.indicators, _.cloneDeep),
+        indicator => {
+          const new_indicator = { ...{}, ...indicator };
+          return new_indicator;
+        }
       );
     }
   }
@@ -67,12 +85,12 @@ export class ItemDetailsComponent implements OnInit {
     this.onShowBottleneckEditor.emit(indicator);
   }
 
-  updateIndicatorDetails(indicator) {
-    const indicator_holders = this.indicator_holders;
-    const updated_indicator_holder: any = _.find(this.indicator_holders, {
+  updateIndicatorDetails(indicator: any) {
+    const indicator_holders = _.map(this.indicator_holders, _.cloneDeep);
+    const updated_indicator_holder: any = _.find(indicator_holders, {
       holder_id: this.current_indicator_holder.holder_id
     });
-    const updated_indicator_holder_index = _.findIndex(this.indicator_holders, {
+    const updated_indicator_holder_index = _.findIndex(indicator_holders, {
       holder_id: this.current_indicator_holder.holder_id
     });
     const updated_indicator_index = _.findIndex(
@@ -89,6 +107,11 @@ export class ItemDetailsComponent implements OnInit {
       1,
       updated_indicator_holder
     );
+    this.indicator_holders = _.map(indicator_holders, _.cloneDeep);
     this.store.dispatch(new createActions.SetHolders(indicator_holders));
+  }
+
+  trackByFn(index, item) {
+    return item && item.id ? item.id : index;
   }
 }
