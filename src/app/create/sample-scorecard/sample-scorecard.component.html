@@ -31,7 +31,7 @@
         </th>
         <!--holder groups stays here-->
         <th *ngFor="
-            let indicator_holder_group of indicator_holder_groups;
+            let indicator_holder_group of indicator_holder_groups_updated;
             trackBy: trackItem
           " dnd-droppable (onDropSuccess)="
             transferDataSuccess($event, 'group', indicator_holder_group)

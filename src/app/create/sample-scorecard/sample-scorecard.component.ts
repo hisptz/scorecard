@@ -4,7 +4,9 @@ import {
   EventEmitter,
   Input,
   OnInit,
-  Output
+  Output,
+  OnChanges,
+  SimpleChanges
 } from '@angular/core';
 import { ScoreCard } from '../../shared/models/scorecard';
 import { UserGroup } from '../../shared/models/user-group';
@@ -54,7 +56,7 @@ import {
     ])
   ]
 })
-export class SampleScorecardComponent implements OnInit {
+export class SampleScorecardComponent implements OnInit, OnChanges {
   @Input() scorecard: ScoreCard;
   @Input() current_indicator: IndicatorHolder = null;
   @Input() current_holder_group: IndicatorHolderGroup = null;
@@ -77,6 +79,8 @@ export class SampleScorecardComponent implements OnInit {
   need_for_indicator$: Observable<boolean>;
   deleting: string[] = [];
 
+  indicator_holder_groups_updated = [];
+
   group_loading = false;
   constructor(
     private store: Store<ApplicationState>,
@@ -92,6 +96,19 @@ export class SampleScorecardComponent implements OnInit {
   }
 
   ngOnInit() {}
+
+  ngOnChanges(changes: SimpleChanges) {
+    if (
+      changes &&
+      changes.indicator_holder_groups &&
+      changes.indicator_holder_groups.currentValue
+    ) {
+      this.indicator_holder_groups_updated = _.map(
+        changes.indicator_holder_groups.currentValue,
+        _.cloneDeep
+      );
+    }
+  }
 
   updatePeriod(event) {
     if (event) {
@@ -137,6 +154,10 @@ export class SampleScorecardComponent implements OnInit {
   }
 
   updateGroupName() {
+    this.indicator_holder_groups = _.map(
+      this.indicator_holder_groups_updated,
+      _.cloneDeep
+    );
     this.store.dispatch(
       new createActions.SetHoldersGroups(this.indicator_holder_groups)
     );
