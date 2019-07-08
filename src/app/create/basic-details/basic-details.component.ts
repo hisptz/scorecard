@@ -181,8 +181,13 @@ export class BasicDetailsComponent implements OnInit {
     if (this.newLabel !== '') {
       additional_labels.push(this.newLabel);
       for (const holder of indicator_holders) {
-        for (const indicator of holder.indicators) {
-          indicator.additional_label_values[this.newLabel] = '';
+        for (let indicator of holder.indicators) {
+          const additional_label_values = {
+            ...{},
+            ...indicator.additional_label_values
+          };
+          additional_label_values[this.newLabel] = '';
+          indicator = { ...indicator, additional_label_values };
         }
       }
       this.newLabel = '';
@@ -198,8 +203,12 @@ export class BasicDetailsComponent implements OnInit {
     const indicator_holders = this.indicator_holders.slice();
     additional_labels.splice(additional_labels.indexOf(label), 1);
     for (const holder of indicator_holders) {
-      for (const indicator of holder.indicators) {
-        indicator.additional_label_values[this.newLabel] = '';
+      for (let indicator of holder.indicators) {
+        const additional_label_values = {
+          ...{},
+          ...indicator.additional_label_values
+        };
+        indicator = { ...indicator, ...additional_label_values };
       }
     }
     this.store.dispatch(
