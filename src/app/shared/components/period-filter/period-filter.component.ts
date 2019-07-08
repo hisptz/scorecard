@@ -93,9 +93,9 @@ export class PeriodFilterComponent implements OnInit {
     placeholder: 'Select period'
   };
   @Input() selectedPeriods: any[] = [];
-  @Input() period_type: string = 'Monthly';
+  @Input() period_type = 'Monthly';
   @Input() starting_year: number = new Date().getFullYear();
-  @Input() showUpdate: boolean = false;
+  @Input() showUpdate = false;
   @Output() periodUpdate: EventEmitter<any> = new EventEmitter<any>();
   @Output() periodChange: EventEmitter<any> = new EventEmitter<any>();
   @Output() yearUpdate: EventEmitter<any> = new EventEmitter<any>();
@@ -293,6 +293,7 @@ export class PeriodFilterComponent implements OnInit {
     });
     return count;
   }
+
   // action to be called when a tree item is deselected(Remove item in array of selected items
   deactivatePeriod($event) {
     const index = this.selectedPeriods.indexOf($event);
@@ -350,7 +351,7 @@ export class PeriodFilterComponent implements OnInit {
     const last_year = this_year - 1;
     const periods = [];
     if (type === 'Weekly') {
-      periods.push({ id: '', name: '' });
+      periods.push({id: '', name: ''});
     } else if (type === 'Monthly') {
       periods.push(
         { id: year + '12', name: 'December ' + year },
@@ -392,7 +393,7 @@ export class PeriodFilterComponent implements OnInit {
         { id: year + 'S2', name: 'July - December ' + year }
       );
     } else if (type === 'SixMonthlyApril') {
-      const useYear = parseInt(year) + 1;
+      const useYear = parseInt(year, 10) + 1;
       periods.push(
         {
           id: year + 'AprilS2',
@@ -403,7 +404,7 @@ export class PeriodFilterComponent implements OnInit {
       );
     } else if (type === 'FinancialOct') {
       for (let i = 0; i <= 10; i++) {
-        const useYear = parseInt(year) - i;
+        const useYear = parseInt(year, 10) - i;
         const currentYear = useYear + 1;
         periods.push({
           id: useYear + 'Oct',
@@ -412,12 +413,12 @@ export class PeriodFilterComponent implements OnInit {
       }
     } else if (type === 'Yearly') {
       for (let i = 0; i <= 10; i++) {
-        const useYear = parseInt(year) - i;
-        periods.push({ id: useYear, name: useYear });
+        const useYear = parseInt(year, 10) - i;
+        periods.push({id: useYear, name: useYear});
       }
     } else if (type === 'FinancialJuly') {
       for (let i = 0; i <= 10; i++) {
-        const useYear = parseInt(year) - i;
+        const useYear = parseInt(year, 10) - i;
         const currentYear = useYear + 1;
         periods.push({
           id: useYear + 'July',
@@ -426,7 +427,7 @@ export class PeriodFilterComponent implements OnInit {
       }
     } else if (type === 'FinancialApril') {
       for (let i = 0; i <= 10; i++) {
-        const useYear = parseInt(year) - i;
+        const useYear = parseInt(year, 10) - i;
         const currentYear = useYear + 1;
         periods.push({
           id: useYear + 'April',
@@ -543,25 +544,25 @@ export class PeriodFilterComponent implements OnInit {
       );
     } else if (type === 'RelativeSixMonthly') {
       periods.push(
-        { id: 'THIS_SIX_MONTH', name: 'This Six-month' },
-        { id: 'LAST_SIX_MONTH', name: 'Last Six-month' },
-        { id: 'LAST_2_SIXMONTHS', name: 'Last 2 Six-month', selected: true }
+        {id: 'THIS_SIX_MONTH', name: 'This Six-month'},
+        {id: 'LAST_SIX_MONTH', name: 'Last Six-month'},
+        {id: 'LAST_2_SIXMONTHS', name: 'Last 2 Six-month', selected: true}
       );
     } else if (type === 'RelativeFinancialYear') {
       periods.push(
-        { id: 'THIS_FINANCIAL_YEAR', name: 'This Financial Year' },
+        {id: 'THIS_FINANCIAL_YEAR', name: 'This Financial Year'},
         {
           id: 'LAST_FINANCIAL_YEAR',
           name: 'Last Financial Year',
           selected: true
         },
-        { id: 'LAST_5_FINANCIAL_YEARS', name: 'Last 5 Financial Years' }
+        {id: 'LAST_5_FINANCIAL_YEARS', name: 'Last 5 Financial Years'}
       );
     } else if (type === 'RelativeYear') {
       periods.push(
-        { id: 'THIS_YEAR', name: 'This Year' },
-        { id: 'LAST_YEAR', name: 'Last Year', selected: true },
-        { id: 'LAST_5_YEARS', name: 'Last 5 Five Years' }
+        {id: 'THIS_YEAR', name: 'This Year'},
+        {id: 'LAST_YEAR', name: 'Last Year', selected: true},
+        {id: 'LAST_5_YEARS', name: 'Last 5 Five Years'}
       );
     }
     return periods;
@@ -569,32 +570,32 @@ export class PeriodFilterComponent implements OnInit {
 
   getFinencialPeriodArray(type, year) {
     const periods = [];
-    const last_yaer = parseInt(year) - 1;
+    const last_yaer = parseInt(year, 10) - 1;
     if (type === 'Monthly') {
       periods.push(
-        { id: last_yaer + '07', name: 'July ' + last_yaer },
-        { id: last_yaer + '08', name: 'August ' + last_yaer },
-        { id: last_yaer + '09', name: 'September ' + last_yaer },
-        { id: last_yaer + '10', name: 'October ' + last_yaer },
-        { id: last_yaer + '11', name: 'November ' + last_yaer },
-        { id: last_yaer + '12', name: 'December ' + last_yaer },
-        { id: year + '01', name: 'January ' + year, selected: true },
-        { id: year + '02', name: 'February ' + year },
-        { id: year + '03', name: 'March ' + year },
-        { id: year + '04', name: 'April ' + year },
-        { id: year + '05', name: 'May ' + year },
-        { id: year + '06', name: 'June ' + year }
+        {id: last_yaer + '07', name: 'July ' + last_yaer},
+        {id: last_yaer + '08', name: 'August ' + last_yaer},
+        {id: last_yaer + '09', name: 'September ' + last_yaer},
+        {id: last_yaer + '10', name: 'October ' + last_yaer},
+        {id: last_yaer + '11', name: 'November ' + last_yaer},
+        {id: last_yaer + '12', name: 'December ' + last_yaer},
+        {id: year + '01', name: 'January ' + year, selected: true},
+        {id: year + '02', name: 'February ' + year},
+        {id: year + '03', name: 'March ' + year},
+        {id: year + '04', name: 'April ' + year},
+        {id: year + '05', name: 'May ' + year},
+        {id: year + '06', name: 'June ' + year}
       );
     } else if (type === 'Quarterly') {
       periods.push(
-        { id: last_yaer + 'Q3', name: 'July - September ' + last_yaer },
-        { id: last_yaer + 'Q4', name: 'October - December ' + last_yaer },
-        { id: year + 'Q1', name: 'January - March ' + year, selected: true },
-        { id: year + 'Q2', name: 'April - June ' + year }
+        {id: last_yaer + 'Q3', name: 'July - September ' + last_yaer},
+        {id: last_yaer + 'Q4', name: 'October - December ' + last_yaer},
+        {id: year + 'Q1', name: 'January - March ' + year, selected: true},
+        {id: year + 'Q2', name: 'April - June ' + year}
       );
     } else if (type === 'FinancialJuly') {
       for (let i = 0; i <= 10; i++) {
-        const useYear = parseInt(year) - i;
+        const useYear = parseInt(year, 10) - i;
         const currentYear = useYear + 1;
         periods.push({
           id: useYear + 'July',
@@ -603,37 +604,38 @@ export class PeriodFilterComponent implements OnInit {
       }
     } else if (type === 'RelativeMonth') {
       periods.push(
-        { id: 'THIS_MONTH', name: 'This Month' },
-        { id: 'LAST_MONTH', name: 'Last Month' },
-        { id: 'LAST_3_MONTHS', name: 'Last 3 Months' },
-        { id: 'LAST_6_MONTHS', name: 'Last 6 Months' },
-        { id: 'LAST_12_MONTHS', name: 'Last 12 Months', selected: true }
+        {id: 'THIS_MONTH', name: 'This Month'},
+        {id: 'LAST_MONTH', name: 'Last Month'},
+        {id: 'LAST_3_MONTHS', name: 'Last 3 Months'},
+        {id: 'LAST_6_MONTHS', name: 'Last 6 Months'},
+        {id: 'LAST_12_MONTHS', name: 'Last 12 Months', selected: true}
       );
     } else if (type === 'RelativeQuarter') {
       periods.push(
-        { id: 'THIS_QUARTER', name: 'This Quarter' },
-        { id: 'LAST_QUARTER', name: 'Last Quarter' },
-        { id: 'LAST_4_QUARTERS', name: 'Last 4 Quarters', selected: true }
+        {id: 'THIS_QUARTER', name: 'This Quarter'},
+        {id: 'LAST_QUARTER', name: 'Last Quarter'},
+        {id: 'LAST_4_QUARTERS', name: 'Last 4 Quarters', selected: true}
       );
     } else if (type === 'RelativeFinancialYear') {
       periods.push(
-        { id: 'THIS_FINANCIAL_YEAR', name: 'This Financial Year' },
+        {id: 'THIS_FINANCIAL_YEAR', name: 'This Financial Year'},
         {
           id: 'LAST_FINANCIAL_YEAR',
           name: 'Last Financial Year',
           selected: true
         },
-        { id: 'LAST_5_FINANCIAL_YEARS', name: 'Last 5 Financial Years' }
+        {id: 'LAST_5_FINANCIAL_YEARS', name: 'Last 5 Financial Years'}
       );
     } else if (type === 'RelativeYear') {
       periods.push(
-        { id: 'THIS_YEAR', name: 'This Year' },
-        { id: 'LAST_YEAR', name: 'Last Year', selected: true },
-        { id: 'LAST_5_YEARS', name: 'Last 5 Five Years' }
+        {id: 'THIS_YEAR', name: 'This Year'},
+        {id: 'LAST_YEAR', name: 'Last Year', selected: true},
+        {id: 'LAST_5_YEARS', name: 'Last 5 Five Years'}
       );
     }
     return periods;
   }
+
   getLastPeriod(period: any, period_type: string = 'Quarterly'): any {
     if (period_type === 'Weekly') {
     } else if (period_type === 'Monthly') {
@@ -663,7 +665,7 @@ export class PeriodFilterComponent implements OnInit {
       } else if (month === '12') {
         time = year + '11';
       } else if (month === '01') {
-        const yr = parseInt(year) - 1;
+        const yr = parseInt(year, 10) - 1;
         time = yr + '12';
       }
       return time;
@@ -682,7 +684,7 @@ export class PeriodFilterComponent implements OnInit {
       } else if (month === '06') {
         time = year + '05B';
       } else if (month === '01') {
-        const yr = parseInt(year) - 1;
+        const yr = parseInt(year, 10) - 1;
         time = yr + '06B';
       }
       return time;
@@ -697,7 +699,7 @@ export class PeriodFilterComponent implements OnInit {
       } else if (quater === 'Q2') {
         time = year + 'Q1';
       } else if (quater === 'Q1') {
-        const yr = parseInt(year) - 1;
+        const yr = parseInt(year, 10) - 1;
         time = yr + 'Q4';
       }
       return time;
@@ -706,7 +708,7 @@ export class PeriodFilterComponent implements OnInit {
       const six_month = period.substring(4, 6);
       let time = '';
       if (six_month === 'S1') {
-        const yr = parseInt(year) - 1;
+        const yr = parseInt(year, 10) - 1;
         time = yr + 'S2';
       } else if (six_month === 'S2') {
         time = year + 'S1';
@@ -719,23 +721,23 @@ export class PeriodFilterComponent implements OnInit {
       if (six_month === 'AprilS2') {
         time = year + 'AprilS1';
       } else if (six_month === 'AprilS1') {
-        const yr = parseInt(year) - 1;
+        const yr = parseInt(year, 10) - 1;
         time = yr + 'AprilS2';
       }
       return time;
     } else if (period_type === 'FinancialOct') {
       const year = period.substring(0, 4);
-      const last_year = parseInt(year) - 1;
+      const last_year = parseInt(year, 10) - 1;
       return last_year + 'Oct';
     } else if (period_type === 'Yearly') {
-      return parseInt(period) - 1;
+      return parseInt(period, 10) - 1;
     } else if (period_type === 'FinancialJuly') {
       const year = period.substring(0, 4);
-      const last_year = parseInt(year) - 1;
+      const last_year = parseInt(year, 10) - 1;
       return last_year + 'July';
     } else if (period_type === 'FinancialApril') {
       const year = period.substring(0, 4);
-      const last_year = parseInt(year) - 1;
+      const last_year = parseInt(year, 10) - 1;
       return last_year + 'April';
     } else {
       return period;
@@ -769,7 +771,7 @@ export class PeriodFilterComponent implements OnInit {
       } else if (month === '11') {
         time = year + '12';
       } else if (month === '12') {
-        const yr = parseInt(year) + 1;
+        const yr = parseInt(year, 10) + 1;
         time = yr + '01';
       } else if (month === '01') {
         time = year + '02';
@@ -788,7 +790,7 @@ export class PeriodFilterComponent implements OnInit {
       } else if (month === '05') {
         time = year + '06B';
       } else if (month === '06') {
-        const yr = parseInt(year) + 1;
+        const yr = parseInt(year, 10) + 1;
         time = yr + '01B';
       } else if (month === '01') {
         time = year + '02B';
@@ -805,7 +807,7 @@ export class PeriodFilterComponent implements OnInit {
       } else if (quater === 'Q2') {
         time = year + 'Q3';
       } else if (quater === 'Q4') {
-        const yr = parseInt(year) + 1;
+        const yr = parseInt(year, 10) + 1;
         time = yr + 'Q1';
       }
       return time;
@@ -814,7 +816,7 @@ export class PeriodFilterComponent implements OnInit {
       const six_month = period.substring(4, 6);
       let time = '';
       if (six_month === 'S2') {
-        const yr = parseInt(year) + 1;
+        const yr = parseInt(year, 10) + 1;
         time = yr + 'S1';
       } else if (six_month === 'S1') {
         time = year + 'S2';
@@ -825,7 +827,7 @@ export class PeriodFilterComponent implements OnInit {
       const six_month = period.substring(4, 12);
       let time = '';
       if (six_month === 'AprilS2') {
-        const yr = parseInt(year) + 1;
+        const yr = parseInt(year, 10) + 1;
         time = yr + 'AprilS1';
       } else if (six_month === 'AprilS1') {
         time = year + 'AprilS2';
@@ -833,17 +835,17 @@ export class PeriodFilterComponent implements OnInit {
       return time;
     } else if (period_type === 'FinancialOct') {
       const year = period.substring(0, 4);
-      const last_year = parseInt(year) + 1;
+      const last_year = parseInt(year, 10) + 1;
       return last_year + 'Oct';
     } else if (period_type === 'Yearly') {
-      return parseInt(period) + 1;
+      return parseInt(period, 10) + 1;
     } else if (period_type === 'FinancialJuly') {
       const year = period.substring(0, 4);
-      const last_year = parseInt(year) + 1;
+      const last_year = parseInt(year, 10) + 1;
       return last_year + 'July';
     } else if (period_type === 'FinancialApril') {
       const year = period.substring(0, 4);
-      const last_year = parseInt(year) + 1;
+      const last_year = parseInt(year, 10) + 1;
       return last_year + 'April';
     } else {
       return period;

@@ -4,19 +4,17 @@ import {
   Input,
   OnDestroy,
   EventEmitter,
-  Output,
-  ViewChild
+  Output
 } from '@angular/core';
-import { ScorecardService } from '../../shared/services/scorecard.service';
-import { Subscription } from 'rxjs/Subscription';
-import { FilterService } from '../../shared/services/filter.service';
-import { Angular5Csv } from 'angular5-csv/dist/Angular5-csv';
-import { DataService } from '../../shared/services/data.service';
-import { HttpClientService } from '../../shared/services/http-client.service';
-import { VisualizerService } from '../../shared/services/visualizer.service';
+import {ScorecardService} from '../../shared/services/scorecard.service';
+import {Subscription} from 'rxjs/Subscription';
+import {FilterService} from '../../shared/services/filter.service';
+import {Angular5Csv} from 'angular5-csv/dist/Angular5-csv';
+import {DataService} from '../../shared/services/data.service';
+import {HttpClientService} from '../../shared/services/http-client.service';
+import {VisualizerService} from '../../shared/services/visualizer.service';
 
 import * as _ from 'lodash';
-import { ContextMenuComponent, ContextMenuService } from 'ngx-contextmenu';
 import {
   animate,
   state,
@@ -24,8 +22,8 @@ import {
   transition,
   trigger
 } from '@angular/animations';
-import { arr } from './arrayHelpers';
-import { ScoreCard } from '../../shared/models/scorecard';
+import {arr} from './arrayHelpers';
+import {ScoreCard} from '../../shared/models/scorecard';
 
 @Component({
   selector: 'app-scorecard',
@@ -105,14 +103,13 @@ export class ScorecardComponent implements OnInit, OnDestroy {
     private scorecardService: ScorecardService,
     private visualizerService: VisualizerService,
     private httpService: HttpClientService
-  ) {}
+  ) {
+  }
 
   ngOnInit() {
-    // if (this.is_children) {
     setTimeout(() => {
       this.loadScoreCard();
     });
-    // }
   }
 
   // load scorecard after changes has occur
@@ -134,8 +131,8 @@ export class ScorecardComponent implements OnInit, OnDestroy {
       this.loading = true;
       this.orgunits = [];
       this.loading_message = ' Getting scorecard details ';
-      const orgUnits: any = { ...this.selectedOrganisationUnit };
-      const period: any = { ...this.selectedPeriod };
+      const orgUnits: any = {...this.selectedOrganisationUnit};
+      const period: any = {...this.selectedPeriod};
       this.periods_list = [...this.selectedPeriod.items];
       this.organisation_unit_title =
         orgUnits.starting_name + ' ' + this.getSummarizedName(orgUnits.items);
@@ -152,10 +149,10 @@ export class ScorecardComponent implements OnInit, OnDestroy {
         this.httpService
           .get(
             'analytics.json?dimension=pe:' +
-              period.value +
-              '&filter=ou:' +
-              orgUnits.value +
-              '&displayProperty=NAME&skipData=true'
+            period.value +
+            '&filter=ou:' +
+            orgUnits.value +
+            '&displayProperty=NAME&skipData=true'
           )
           .subscribe(
             (initialAnalyticsResult: any) => {
@@ -188,8 +185,8 @@ export class ScorecardComponent implements OnInit, OnDestroy {
                     this.scorecard.data.highlighted_indicators.definitions.forEach(
                       highlighted_indicator => {
                         const data_config = [
-                          { type: 'pe', value: highlighted_indicators_pe },
-                          { type: 'dx', value: highlighted_indicator.id }
+                          {type: 'pe', value: highlighted_indicators_pe},
+                          {type: 'dx', value: highlighted_indicator.id}
                         ];
                         highlighted_indicator.value = this.visualizerService.getDataValue(
                           highlighted_indicators_data,
@@ -305,7 +302,7 @@ export class ScorecardComponent implements OnInit, OnDestroy {
                   }
                 });
                 // reassign all holder_indicators into holder object
-                holder = { ...holder, title, indicators: holder_indicators };
+                holder = {...holder, title, indicators: holder_indicators};
                 indicator_holder_obj[holder.holder_id] = holder;
               });
               const transformed_holders = _.map(
@@ -318,7 +315,8 @@ export class ScorecardComponent implements OnInit, OnDestroy {
               };
               this.loadScoreCardData(orgUnits);
             },
-            error => {}
+            error => {
+            }
           );
       }
     }
@@ -354,23 +352,24 @@ export class ScorecardComponent implements OnInit, OnDestroy {
                 pe: current_period.id,
                 rule: this.getFunctionRule(use_function['rules'], indicator.id),
                 success: data => {
+                  console.log(data);
                   // This will run on successfully function return, which will save the result to the data store for analytics
                   const values = [];
-                  for (const orgunit of data.metaData.ou) {
+                  for (const orgunit of data.metaData.dimensions.ou) {
                     const value_key = orgunit + '.' + current_period.id;
                     const data_config = [
-                      { type: 'ou', value: orgunit },
-                      { type: 'pe', value: current_period.id }
+                      {type: 'ou', value: orgunit},
+                      {type: 'pe', value: current_period.id}
                     ];
                     values[value_key] = this.visualizerService.getDataValue(
                       data,
                       data_config
                     );
                   }
-                  indicator = { ...indicator, values };
+                  indicator = {...indicator, values};
                   this.all_indicator_holder_obj[
                     `${holder.holder_id}_${indicator.id}`
-                  ] = { ...indicator, loading: false };
+                    ] = {...indicator, loading: false};
                   this.shown_records = this.orgunits.length;
                   this.indicator_loading[loading_key] = false;
                   old_proccesed_indicators++;
@@ -387,7 +386,8 @@ export class ScorecardComponent implements OnInit, OnDestroy {
                   indicator.has_error = true;
                   this.error_occured = true;
                 },
-                progress: progress => {}
+                progress: progress => {
+                }
               };
               const execute = Function('parameters', use_function['function']);
               execute(parameters);
@@ -420,7 +420,7 @@ export class ScorecardComponent implements OnInit, OnDestroy {
                     for (const orgunit of data.metaData.ou) {
                       const value_key = orgunit + '.' + current_period.id;
                       const data_config = [
-                        { type: 'ou', value: orgunit },
+                        {type: 'ou', value: orgunit},
                         {
                           type: 'pe',
                           value: current_period.id
@@ -438,7 +438,7 @@ export class ScorecardComponent implements OnInit, OnDestroy {
                         )
                       });
                       // update key_value and values
-                      indicator = { ...indicator, values };
+                      indicator = {...indicator, values};
                       const uniqueArr = _.uniqBy(key_values, 'key');
                       indicator.key_values = _.orderBy(
                         uniqueArr.map((val: any) => {
@@ -480,7 +480,7 @@ export class ScorecardComponent implements OnInit, OnDestroy {
                               prev_orgunit.id + '.' + current_period.id;
                             previous_values[
                               prev_key
-                            ] = this.dataService.getIndicatorData(
+                              ] = this.dataService.getIndicatorData(
                               prev_orgunit.id,
                               this.filterService.getLastPeriod(
                                 current_period.id
@@ -488,7 +488,7 @@ export class ScorecardComponent implements OnInit, OnDestroy {
                               olddata
                             );
                           }
-                          indicator = { ...indicator, previous_values };
+                          indicator = {...indicator, previous_values};
                           if (indicator.hasOwnProperty('arrow_settings')) {
                             const showTopArrow = [];
                             const showBottomArrow = [];
@@ -507,14 +507,14 @@ export class ScorecardComponent implements OnInit, OnDestroy {
                                       indicator.previous_values[key],
                                       10
                                     ) +
-                                      effective_gap;
+                                    effective_gap;
                                   const checkBottomArror =
                                     parseInt(indicator.values[key], 10) <
                                     parseInt(
                                       indicator.previous_values[key],
                                       10
                                     ) -
-                                      effective_gap;
+                                    effective_gap;
                                   // A check to make sure the arrows are always arrays before assignment
                                   if (
                                     !(indicator.showTopArrow instanceof Array)
@@ -602,7 +602,7 @@ export class ScorecardComponent implements OnInit, OnDestroy {
                             100;
                           this.all_indicator_holder_obj[
                             `${holder.holder_id}_${indicator.id}`
-                          ] = { ...indicator, loading: false };
+                            ] = {...indicator, loading: false};
                           this.doneLoadingIndicator(
                             indicator,
                             this.allIndicatorsLength,
@@ -688,7 +688,7 @@ export class ScorecardComponent implements OnInit, OnDestroy {
         }
       );
       // reassign all holder_indicators into holder object
-      holder = { ...holder, indicators: holder_indicators };
+      holder = {...holder, indicators: holder_indicators};
       indicator_holder_obj[holder.holder_id] = holder;
     });
     const transformed_holders = _.map(
@@ -701,7 +701,8 @@ export class ScorecardComponent implements OnInit, OnDestroy {
     };
   }
 
-  errorLoadingIndicator(indicator) {}
+  errorLoadingIndicator(indicator) {
+  }
 
   initiateScorecard(period, orgunit) {
     this.selectedPeriod = period;
@@ -711,27 +712,22 @@ export class ScorecardComponent implements OnInit, OnDestroy {
 
   // get function details from id
   getFunction(id) {
-    let return_function = null;
-    this.functions.forEach(funct => {
-      if (id === funct.id) {
-        return_function = funct;
-      }
+    return this.functions.find((func: any) => {
+      return func.id === id;
     });
-    return return_function;
   }
 
   // get rule from a function details from id
   getFunctionRule(rules, id) {
-    let return_rule = null;
-    rules.forEach(funct => {
-      if (id === funct.id) {
-        return_rule = funct;
-        if (typeof return_rule.json === 'string') {
-          return_rule.json = JSON.parse(return_rule.json);
-        }
-      }
+    let rule = rules.find((r: any) => {
+      return r.id === id;
     });
-    return return_rule;
+
+    if (rule) {
+      rule = {...rule, json: typeof rule.json === 'string' ? JSON.parse(rule.json) : rule.json};
+    }
+    return rule;
+
   }
 
   // prepare scorecard data and download them as csv
@@ -758,13 +754,13 @@ export class ScorecardComponent implements OnInit, OnDestroy {
 
     const options = {
       fieldSeparator: ',',
-      quoteStrings: "'",
+      quoteStrings: '\'',
       decimalseparator: '.',
       showLabels: true,
       showTitle: false
     };
 
-    new Angular5Csv(data, 'My Report', { headers: Object.keys(data[0]) });
+    return new Angular5Csv(data, 'My Report', {headers: Object.keys(data[0])});
   }
 
   // A function used to decouple indicator list and prepare them for a display
@@ -888,8 +884,8 @@ export class ScorecardComponent implements OnInit, OnDestroy {
 
   // sorting scorecard by clicking the header(if two item in same list will use first item)
   sortScoreCardFromColumn(event) {
-    let { sortAscending } = event;
-    const { sortingColumn, orguUnits, period, lower_level } = event;
+    let {sortAscending} = event;
+    const {sortingColumn, orguUnits, period, lower_level} = event;
     this.current_sorting = !this.current_sorting;
     this.sorting_column = sortingColumn;
     this.sorting_period = period;
@@ -1003,7 +999,7 @@ export class ScorecardComponent implements OnInit, OnDestroy {
 
   // load a preview function
   loadPreview(event) {
-    const { holderGroup, indicator, ou, period, periods, bottleneck } = event;
+    const {holderGroup, indicator, ou, period, periods, bottleneck} = event;
     const selected_indicator = [];
     let show_trend = false;
     if (holderGroup == null) {
@@ -1021,7 +1017,7 @@ export class ScorecardComponent implements OnInit, OnDestroy {
 
     // Organisation unit settings
     const selected_ou = Object.assign({}, this.selectedOrganisationUnit);
-    const ou_model = { ...selected_ou.orgunit_model };
+    const ou_model = {...selected_ou.orgunit_model};
     if (ou) {
       ou_model.selection_mode = 'orgUnit';
       ou_model.selected_levels = [];
@@ -1034,7 +1030,7 @@ export class ScorecardComponent implements OnInit, OnDestroy {
     // period settings
     const selected_pe = Object.assign({}, this.selectedPeriod);
     let period_list = [...this.selectedPeriod.items];
-    const periodObject = { ...this.selectedPeriod };
+    const periodObject = {...this.selectedPeriod};
     const year = this.selectedPeriod.starting_year;
     const pe_type = this.selectedPeriod.type;
     if (period) {
@@ -1078,7 +1074,7 @@ export class ScorecardComponent implements OnInit, OnDestroy {
 
   // deals with the drag and drop issue
   dragItemSuccessfull(event) {
-    const { $event, drop_area, object } = event;
+    const {$event, drop_area, object} = event;
     if (drop_area === 'orgunit') {
       if ($event.dragData.hasOwnProperty('holder_id')) {
         this.scorecard.data.show_data_in_column = !this.scorecard.data
@@ -1207,7 +1203,7 @@ export class ScorecardComponent implements OnInit, OnDestroy {
           if (
             holder === current_holder.holder_id &&
             group.indicator_holder_ids.indexOf(holder_to_insert.holder_id) ===
-              -1
+            -1
           ) {
             group.indicator_holder_ids.splice(
               indicator_index + num,
@@ -1229,7 +1225,7 @@ export class ScorecardComponent implements OnInit, OnDestroy {
       (group, holder_index) => {
         if (
           group.indicator_holder_ids.indexOf(holder_to_check.holder_id) !==
-            -1 &&
+          -1 &&
           group.indicator_holder_ids.indexOf(current_holder.holder_id) !== -1
         ) {
           holders_in_same_group = true;
@@ -1309,7 +1305,7 @@ export class ScorecardComponent implements OnInit, OnDestroy {
   }
 
   loadChildrenData(event) {
-    const { selectedorgunit, indicator } = event;
+    const {selectedorgunit, indicator} = event;
     this.subscorecard = Object.assign({}, this.scorecard);
     if (indicator === null) {
       if (
@@ -1398,7 +1394,7 @@ export class ScorecardComponent implements OnInit, OnDestroy {
               holder_style: null
             }
           ];
-          this.sub_model = { ...this.selectedOrganisationUnit };
+          this.sub_model = {...this.selectedOrganisationUnit};
           created_scorecard.data.show_data_in_column = true;
           created_scorecard.data.is_bottleck = true;
           created_scorecard.data.name =
@@ -1413,7 +1409,7 @@ export class ScorecardComponent implements OnInit, OnDestroy {
   }
 
   hideClicked(event) {
-    const { item, type } = event;
+    const {item, type} = event;
     if (type) {
       this.hidenColums = [];
     } else {

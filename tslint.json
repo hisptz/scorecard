@@ -117,7 +117,6 @@
       "check-separator",
       "check-type"
     ],
-    "no-output-on-prefix": true,
     "no-inputs-metadata-property": true,
     "no-outputs-metadata-property": true,
     "no-host-metadata-property": true,

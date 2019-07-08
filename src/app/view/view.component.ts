@@ -5,8 +5,8 @@ import {
   OnInit,
   ViewChild
 } from '@angular/core';
-import { Store } from '@ngrx/store';
-import { Observable } from 'rxjs/Observable';
+import {Store} from '@ngrx/store';
+import {Observable} from 'rxjs/Observable';
 import {
   animate,
   state,
@@ -14,32 +14,32 @@ import {
   transition,
   trigger
 } from '@angular/animations';
-import { ApplicationState } from '../store/reducers';
-import { ScorecardService } from '../shared/services/scorecard.service';
+import {ApplicationState} from '../store/reducers';
+import {ScorecardService} from '../shared/services/scorecard.service';
 import * as viewActions from '../store/actions/view.actions';
 import * as viewSelectors from '../store/selectors/view.selectors';
-import { ScoreCard } from '../shared/models/scorecard';
-import { IndicatorHolder } from '../shared/models/indicator-holder';
-import { IndicatorHolderGroup } from '../shared/models/indicator-holders-group';
-import { Legend } from '../shared/models/legend';
-import { Go } from '../store/actions/router.action';
-import { LoadOrganisationUnitItem } from '../store/actions/orgunits.actions';
+import {ScoreCard} from '../shared/models/scorecard';
+import {IndicatorHolder} from '../shared/models/indicator-holder';
+import {IndicatorHolderGroup} from '../shared/models/indicator-holders-group';
+import {Legend} from '../shared/models/legend';
+import {Go} from '../store/actions/router.action';
+import {LoadOrganisationUnitItem} from '../store/actions/orgunits.actions';
 import {
   getFunctions,
   getFunctionsLoaded
 } from '../store/selectors/static-data.selectors';
 import * as orgunitSelector from '../store/selectors/orgunits.selectors';
-import { ScorecardComponent } from './scorecard/scorecard.component';
+import {ScorecardComponent} from './scorecard/scorecard.component';
 import tourSteps from '../shared/tourGuide/tour.view';
-import { TourService } from 'ngx-tour-ng-bootstrap';
-import { SetSortingColumn } from '../store/actions/view.actions';
+import {TourService} from 'ngx-tour-ng-bootstrap';
+import {SetSortingColumn} from '../store/actions/view.actions';
 import {
   fadeIn,
   fadeOut,
   fadeSmooth,
   zoomCard
 } from '../shared/animations/basic-animations';
-import { DomSanitizer } from '@angular/platform-browser';
+import {DomSanitizer} from '@angular/platform-browser';
 import * as _ from 'lodash';
 
 @Component({
@@ -84,12 +84,12 @@ import * as _ from 'lodash';
     trigger('fadeInOut', [
       transition(':enter', [
         // :enter is alias to 'void => *'
-        style({ opacity: 0 }),
-        animate(600, style({ opacity: 1 }))
+        style({opacity: 0}),
+        animate(600, style({opacity: 1}))
       ]),
       transition(':leave', [
         // :leave is alias to '* => void'
-        animate(500, style({ opacity: 0 }))
+        animate(500, style({opacity: 0}))
       ])
     ]),
     trigger('newhiddenState', [
@@ -140,12 +140,13 @@ export class ViewComponent implements OnInit, AfterViewInit {
   hoverState = 'notHovered';
   indicatorDetails = null;
   showPreview = false;
-  sorting_column: string = 'none';
+  sorting_column = 'none';
 
-  @ViewChild(ScorecardComponent, { static: true })
+  @ViewChild(ScorecardComponent, {static: true})
   private childScoreCard: ScorecardComponent;
   downloadJsonHref: any;
   downloadOUJsonHref: any;
+
   constructor(
     private store: Store<ApplicationState>,
     private scorecardService: ScorecardService,
@@ -188,12 +189,14 @@ export class ViewComponent implements OnInit, AfterViewInit {
     this.tourService.start();
   }
 
-  ngOnInit() {}
+  ngOnInit() {
+  }
 
-  ngAfterViewInit() {}
+  ngAfterViewInit() {
+  }
 
   goToHomePage() {
-    this.store.dispatch(new Go({ path: [''] }));
+    this.store.dispatch(new Go({path: ['']}));
   }
 
   loadPreview($event) {
@@ -313,7 +316,7 @@ export class ViewComponent implements OnInit, AfterViewInit {
             name: indicator.name,
             legendSet: indicator.legendset
           };
-          indicatorMetadatas.push({ id: indicator.id, name: indicator.name });
+          indicatorMetadatas.push({id: indicator.id, name: indicator.name});
           if (indicatorIds.indexOf(indicator.id) === -1) {
             indicatorIds.push(indicator.id);
           }
@@ -395,8 +398,8 @@ export class ViewComponent implements OnInit, AfterViewInit {
 
       dataValues.rows = dataValue;
       dataValues.height = dataValues.rows.length;
-      dataValues.width = dataValues.rows[0].length;
-      const theJSON = JSON.stringify({ dataValues: [dataValues] });
+      dataValues.width = dataValues.rows.length > 0 ? dataValues.rows[0].length : 4;
+      const theJSON = JSON.stringify({dataValues: [dataValues]});
       const theJSON1 = JSON.stringify({
         organisationUnits: {
           organisationUnits: _.sortBy(organisationUnitMetadatas, ['name'])
@@ -415,7 +418,8 @@ export class ViewComponent implements OnInit, AfterViewInit {
     });
   }
 
-  downloadAlma() {}
+  downloadAlma() {
+  }
 
   loadScorecard() {
     if (this.childScoreCard) {
