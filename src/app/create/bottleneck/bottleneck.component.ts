@@ -976,6 +976,6 @@ export class BottleneckComponent implements OnInit {
   }
 
   trackItem(index, item) {
-    return item ? item.id : undefined;
+    return item && item.id ? item.id : index;
   }
 }

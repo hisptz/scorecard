@@ -123,9 +123,13 @@ export class ScorecardComponent implements OnInit, OnDestroy, OnChanges {
   ngOnChanges(changes: SimpleChanges) {
     if (changes && changes.scorecard && !changes.scorecard.firstChange) {
       const data_settings = changes.scorecard.previousValue.data.data_settings;
+      const highlighted_indicators = this.scorecard.data.highlighted_indicators;
+      const definitions =
+        changes.scorecard.previousValue.data.highlighted_indicators.definitions;
       this.scorecard.data = {
         ...this.scorecard.data,
-        data_settings
+        data_settings,
+        highlighted_indicators: { ...highlighted_indicators, definitions }
       };
     }
   }
@@ -204,18 +208,28 @@ export class ScorecardComponent implements OnInit, OnDestroy, OnChanges {
                     const highlighted_indicators_data = this.visualizerService._sanitizeIncomingAnalytics(
                       return_data
                     );
-                    this.scorecard.data.highlighted_indicators.definitions.forEach(
+                    console.log({
+                      d: this.scorecard.data.highlighted_indicators,
+                      highlighted_indicators_data
+                    });
+                    const definitions = _.map(
+                      this.scorecard.data.highlighted_indicators.definitions,
                       highlighted_indicator => {
                         const data_config = [
                           { type: 'pe', value: highlighted_indicators_pe },
                           { type: 'dx', value: highlighted_indicator.id }
                         ];
-                        highlighted_indicator.value = this.visualizerService.getDataValue(
+                        const value = this.visualizerService.getDataValue(
                           highlighted_indicators_data,
                           data_config
                         );
+                        return { ...highlighted_indicator, value };
                       }
                     );
+                    this.scorecard.data.highlighted_indicators = {
+                      ...this.scorecard.data.highlighted_indicators,
+                      definitions
+                    };
                   });
               }
 

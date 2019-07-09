@@ -315,7 +315,7 @@ export class OrgUnitFilterComponent implements OnInit {
       if (node) {
         node.setIsActive(true, true);
       }
-      if (first) {
+      if (first && node) {
         node.toggleExpanded();
       }
     }, 0);
