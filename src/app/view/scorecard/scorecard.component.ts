@@ -208,10 +208,6 @@ export class ScorecardComponent implements OnInit, OnDestroy, OnChanges {
                     const highlighted_indicators_data = this.visualizerService._sanitizeIncomingAnalytics(
                       return_data
                     );
-                    console.log({
-                      d: this.scorecard.data.highlighted_indicators,
-                      highlighted_indicators_data
-                    });
                     const definitions = _.map(
                       this.scorecard.data.highlighted_indicators.definitions,
                       highlighted_indicator => {
