@@ -5,7 +5,9 @@ import {
   OnDestroy,
   EventEmitter,
   Output,
-  ViewChild
+  ViewChild,
+  OnChanges,
+  SimpleChanges
 } from '@angular/core';
 import { ScorecardService } from '../../shared/services/scorecard.service';
 import { Subscription } from 'rxjs/Subscription';
@@ -55,7 +57,7 @@ import {
     ])
   ]
 })
-export class ScorecardComponent implements OnInit, OnDestroy {
+export class ScorecardComponent implements OnInit, OnDestroy, OnChanges {
   @Input() scorecard: ScoreCard;
   @Input() selectedOrganisationUnit: any;
   @Input() selectedPeriod: any;
@@ -113,11 +115,19 @@ export class ScorecardComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit() {
-    // if (this.is_children) {
     setTimeout(() => {
       this.loadScoreCard();
     });
-    // }
+  }
+
+  ngOnChanges(changes: SimpleChanges) {
+    if (changes && changes.scorecard && !changes.scorecard.firstChange) {
+      const data_settings = changes.scorecard.previousValue.data.data_settings;
+      this.scorecard.data = {
+        ...this.scorecard.data,
+        data_settings
+      };
+    }
   }
 
   // load scorecard after changes has occur
@@ -340,7 +350,6 @@ export class ScorecardComponent implements OnInit, OnDestroy {
       this.scorecard.data.data_settings.indicator_holders,
       _.cloneDeep
     );
-    const indicator_holder_obj = {};
     _.each(indicator_holders, (holder: any) => {
       // copy array to un immutable array
       const holder_indicators = _.map(holder.indicators, _.cloneDeep);
@@ -795,15 +804,6 @@ export class ScorecardComponent implements OnInit, OnDestroy {
 
   // A function used to decouple indicator list and prepare them for a display
   getItemsFromGroups() {
-    // let indicators_list = [];
-    // _.each(this.scorecard.data.data_settings.indicator_holder_groups, (group: any) => {
-    //   indicators_list = [...indicators_list, ..._.map(group.indicator_holder_ids, (holder_id) => {
-    //     return _.find(_.filter(this.scorecard.data.data_settings.indicator_holders,
-    //       (holder: any) => _.difference(_.map(holder.indicators, (indicator: any) => indicator.id), this.hidenColums).length !== 0)
-    //       , {'holder_id': holder_id});
-    //   })];
-    // });
-    // return indicators_list;
     const indicators_list = [];
     for (const data of this.scorecard.data.data_settings
       .indicator_holder_groups) {
