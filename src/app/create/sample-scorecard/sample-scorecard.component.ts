@@ -28,6 +28,8 @@ import {
   transition,
   trigger
 } from '@angular/animations';
+import { take } from 'rxjs/operators';
+import { of } from 'rxjs';
 
 @Component({
   selector: 'app-sample-scorecard',
@@ -513,5 +515,42 @@ export class SampleScorecardComponent implements OnInit, OnChanges {
 
   trackItemId(index, item) {
     return item && item.holder_id ? item.holder_id : index;
+  }
+
+  onUpdateIndicatorLabelValue(e, holder: any, label: string) {
+    e.stopPropagation();
+
+    this.holders_list$.pipe(take(1)).subscribe((holderList: any[]) => {
+      const currentHolder = _.find(holderList, ['holder_id', holder.holder_id]);
+
+      const holderIndex = holderList.indexOf(currentHolder);
+
+      if (holderIndex !== -1) {
+        const newHolder = {
+          ...currentHolder,
+          indicators: currentHolder.indicators.map(
+            (indicator: any, indicatorIndex: number) => {
+              if (indicatorIndex === 0) {
+                return {
+                  ...indicator,
+                  additional_label_values: {
+                    ...indicator.additional_label_values,
+                    [label]: e.target.value
+                  }
+                };
+              }
+
+              return indicator;
+            }
+          )
+        };
+
+        this.holders_list$ = of([
+          ..._.slice(holderList, 0, holderIndex),
+          newHolder,
+          ..._.slice(holderList, holderIndex + 1)
+        ]);
+      }
+    });
   }
 }
