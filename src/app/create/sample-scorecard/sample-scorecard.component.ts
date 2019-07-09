@@ -508,10 +508,10 @@ export class SampleScorecardComponent implements OnInit, OnChanges {
   }
 
   trackItem(index, item) {
-    return item ? item.id : undefined;
+    return item && item.id ? item.id : index;
   }
 
   trackItemId(index, item) {
-    return item ? item.holder_id : undefined;
+    return item && item.holder_id ? item.holder_id : index;
   }
 }
