@@ -221,7 +221,6 @@ _scorecards: ScoreCard[] = [];
 			year --;
 			periodInstance.setYear(year).get().list();
 		}
-		console.log({d : periodInstance.list() })
 		const selectedPeriods = [(periodInstance.list() || [])[0]];
 
 		return {
