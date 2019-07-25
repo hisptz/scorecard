@@ -215,8 +215,13 @@ _scorecards: ScoreCard[] = [];
 	// Define default scorecard sample
 	getEmptyScoreCard(systemInfo: SystemInfo): ScoreCard {
 		const periodInstance = new Fn.Period();
-
-		periodInstance.setType('Quarterly').setCalendar(systemInfo.keyCalendar).get();
+		const periodList = periodInstance.setType('Quarterly').setCalendar(systemInfo.keyCalendar).get().list();
+		let year = periodInstance.currentYear();
+		if (periodList.length === 0 ) {
+			year --;
+			periodInstance.setYear(year).get().list();
+		}
+		console.log({d : periodInstance.list() })
 		const selectedPeriods = [(periodInstance.list() || [])[0]];
 
 		return {
