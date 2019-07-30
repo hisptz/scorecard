@@ -223,6 +223,7 @@ export class PeriodFilterComponent implements OnInit {
   }
 
   // setting the period to next or previous
+  // @todo check this to should be supported by ethiopian cander
   setPeriod(type) {
     const periods = [];
     if (type === 'down') {

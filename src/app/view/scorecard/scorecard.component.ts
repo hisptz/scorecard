@@ -268,13 +268,17 @@ export class ScorecardComponent implements OnInit, OnDestroy, OnChanges {
                 }
               );
               // Prepare a list of period to use from analytics this will help to cover the relative period issue
+              const periods_list = _.map(this.periods_list, _.cloneDeep);
               this.periods_list = _.map(
                 initialAnalyticsResult.metaData.pe,
                 (pe: any) => {
-                  return {
-                    id: pe,
-                    name: initialAnalyticsResult.metaData.names[pe]
-                  };
+                  const periodObj = _.find(periods_list, { id: pe });
+                  return periodObj
+                    ? periodObj
+                    : {
+                        id: pe,
+                        name: initialAnalyticsResult.metaData.names[pe]
+                      };
                 }
               );
               this.allIndicatorsLength =
@@ -507,7 +511,9 @@ export class ScorecardComponent implements OnInit, OnDestroy, OnChanges {
                       this.dataService
                         .getIndicatorsRequest(
                           orgUnits.value,
-                          this.filterService.getLastPeriod(current_period.id),
+                          this.filterService.getLastPeriodByCurrentPeriod(
+                            current_period
+                          ),
                           indicator.id
                         )
                         .subscribe((olddata: any) => {
@@ -522,8 +528,8 @@ export class ScorecardComponent implements OnInit, OnDestroy, OnChanges {
                               prev_key
                             ] = this.dataService.getIndicatorData(
                               prev_orgunit.id,
-                              this.filterService.getLastPeriod(
-                                current_period.id
+                              this.filterService.getLastPeriodByCurrentPeriod(
+                                current_period
                               ),
                               olddata
                             );
@@ -596,7 +602,7 @@ export class ScorecardComponent implements OnInit, OnDestroy, OnChanges {
                                       changeInValue.toFixed(2) +
                                       ' from ' +
                                       this.filterService.getPeriodName(
-                                        current_period.id
+                                        current_period
                                       ) +
                                       ' for ' +
                                       data.metaData.names[splited_key[0]] +
@@ -622,7 +628,7 @@ export class ScorecardComponent implements OnInit, OnDestroy, OnChanges {
                                       changeInValue.toFixed(2) +
                                       ' from ' +
                                       this.filterService.getPeriodName(
-                                        current_period.id
+                                        current_period
                                       ) +
                                       ' for ' +
                                       data.metaData.names[splited_key[0]] +
