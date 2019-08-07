@@ -143,27 +143,20 @@ export class DetailsComponent implements OnInit {
     }
   }
   // get function details from id
-  getFunction(id) {
-    let return_function = null;
-    this.functions.forEach(funct => {
-      if (id === funct.id) {
-        return_function = funct;
-      }
-    });
-    return return_function;
+  getFunction(id: string) {
+    return _.find(this.functions, { id });
   }
 
   // get rule from a function details from id
   getFunctionRule(rules, id) {
     let return_rule = null;
-    rules.forEach(funct => {
-      if (id === funct.id) {
-        return_rule = funct;
-        if (typeof return_rule.json === 'string') {
-          return_rule.json = JSON.parse(return_rule.json);
-        }
+    const filtered_rule = _.find(rules, { id });
+    if (filtered_rule && filtered_rule.id) {
+      return_rule = _.cloneDeep(filtered_rule);
+      if (typeof return_rule.json === 'string') {
+        return_rule.json = JSON.parse(return_rule.json);
       }
-    });
+    }
     return return_rule;
   }
 
@@ -699,7 +692,12 @@ export class DetailsComponent implements OnInit {
                   ),
                   success: function_data => {
                     completed_functions++;
-                    analytics_calls.push(function_data);
+                    analytics_calls.push(
+                      this.visulizationService._sanitizeIncomingAnalytics(
+                        function_data
+                      )
+                    );
+                    console.log({ analytics_calls });
                     if (
                       completed_functions === function_indicatorsArray.length
                     ) {
@@ -719,6 +717,7 @@ export class DetailsComponent implements OnInit {
                           this.current_analytics_data,
                           this.visualizer_config.tableConfiguration
                         );
+                        console.log({ tableData: this.tableData });
                       }
                       this.error_occured = false;
                     }
