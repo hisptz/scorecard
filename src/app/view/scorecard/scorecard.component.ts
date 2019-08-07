@@ -5,7 +5,6 @@ import {
   OnDestroy,
   EventEmitter,
   Output,
-  ViewChild,
   OnChanges,
   SimpleChanges
 } from '@angular/core';
@@ -18,7 +17,6 @@ import { HttpClientService } from '../../shared/services/http-client.service';
 import { VisualizerService } from '../../shared/services/visualizer.service';
 
 import * as _ from 'lodash';
-import { ContextMenuComponent, ContextMenuService } from 'ngx-contextmenu';
 import {
   animate,
   state,
@@ -385,7 +383,10 @@ export class ScorecardComponent implements OnInit, OnDestroy, OnChanges {
                 ou: orgUnits.value,
                 pe: current_period.id,
                 rule: this.getFunctionRule(use_function['rules'], indicator.id),
-                success: data => {
+                success: (data: any) => {
+                  data = this.visualizerService._sanitizeIncomingAnalytics(
+                    data
+                  );
                   // This will run on successfully function return, which will save the result to the data store for analytics
                   const values = [];
                   for (const orgunit of data.metaData.ou) {
@@ -761,27 +762,20 @@ export class ScorecardComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   // get function details from id
-  getFunction(id) {
-    let return_function = null;
-    this.functions.forEach(funct => {
-      if (id === funct.id) {
-        return_function = funct;
-      }
-    });
-    return return_function;
+  getFunction(id: string) {
+    return _.find(this.functions, { id });
   }
 
   // get rule from a function details from id
-  getFunctionRule(rules, id) {
+  getFunctionRule(rules: any[], id: string) {
     let return_rule = null;
-    rules.forEach(funct => {
-      if (id === funct.id) {
-        return_rule = funct;
-        if (typeof return_rule.json === 'string') {
-          return_rule.json = JSON.parse(return_rule.json);
-        }
+    const filtered_rule = _.find(rules, { id });
+    if (filtered_rule && filtered_rule.id) {
+      return_rule = _.cloneDeep(filtered_rule);
+      if (typeof return_rule.json === 'string') {
+        return_rule.json = JSON.parse(return_rule.json);
       }
-    });
+    }
     return return_rule;
   }
 
