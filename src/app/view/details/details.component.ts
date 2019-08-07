@@ -697,17 +697,15 @@ export class DetailsComponent implements OnInit {
                         function_data
                       )
                     );
-                    console.log({ analytics_calls });
                     if (
                       completed_functions === function_indicatorsArray.length
                     ) {
-                      this.current_analytics_data = this.mergeAnalyticsCalls(
-                        analytics_calls,
-                        labels
-                      );
+                      this.current_analytics_data =
+                        analytics_calls && analytics_calls.length === 1
+                          ? analytics_calls[0]
+                          : this.mergeAnalyticsCalls(analytics_calls, labels);
                       this.loading = false;
                       if (type === 'csv') {
-                        // this.downloadCSV(data);
                       } else {
                         this.chartData = this.visulizationService.drawChart(
                           this.current_analytics_data,
@@ -717,7 +715,6 @@ export class DetailsComponent implements OnInit {
                           this.current_analytics_data,
                           this.visualizer_config.tableConfiguration
                         );
-                        console.log({ tableData: this.tableData });
                       }
                       this.error_occured = false;
                     }
@@ -835,6 +832,8 @@ export class DetailsComponent implements OnInit {
       });
       combined_analytics.metaData.dx = newDxOrder;
       analytic.rows.forEach(row => {
+        combined_analytics.height += 1;
+        combined_analytics.width = row.length;
         combined_analytics.rows.push(row);
       });
     });
