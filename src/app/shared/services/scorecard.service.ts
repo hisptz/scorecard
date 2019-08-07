@@ -873,14 +873,18 @@ showBottomArrow: indicator.hasOwnProperty('showBottomArrow') && indicator.showBo
 			}
 			// this.current_indicator_holder.holder_id = this.current_group_id;
 			if (current_indicator_holder.indicators.length < 2 && pair) {
-				current_indicator_holder.indicators.push(indicator);
+				const indicators = _.map(current_indicator_holder.indicators, _.cloneDeep);
+				indicators.push(indicator);
+				current_indicator_holder = {...current_indicator_holder, indicators};
 			} else {
 				const current_group_id = this.getStartingIndicatorId(indicator_holders) + 1;
 				current_indicator_holder = {
 					holder_id: current_group_id,
 					indicators: []
 				};
-				current_indicator_holder.indicators.push(indicator);
+				const indicators = _.map(current_indicator_holder.indicators, _.cloneDeep);
+				indicators.push(indicator);
+				current_indicator_holder = {...current_indicator_holder, indicators};
 				this.store.dispatch(new createActions.SetNeedForIndicator(false));
 				this.cleanUpEmptyColumns(indicator_holders, indicator_holder_groups);
 			}
