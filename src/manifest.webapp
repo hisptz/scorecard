@@ -1,22 +1,27 @@
+
 {
-    "version": "2.4.1-beta.16",
-    "name": "Scorecard",
-    "description": "Score Card Generation",
+    "version": "1.0.0-alpha.1",
+    "name": "Seed App",
+    "description": "Seed App",
+    "appType": "APP",
     "launch_path": "index.html",
-    "language": "en",
     "icons": {
-        "16": "scorecard.png",
-        "48": "scorecard.png",
-        "128": "scorecard.png"
+        "16": "assets/icons/icon-16x16.png",
+        "48": "assets/icons/icon-48x48.png",
+        "128": "assets/icons/icon-128x128.png"
     },
     "developer": {
-        "name": "HISP Tanzania",
-        "url": "http://hisptanzania.org/"
+        "name": "HISPTZ",
+        "url": "https://hisptanzania.org"
     },
     "default_locale": "en",
     "activities": {
         "dhis": {
-            "href": "../../.."
+            "href": "../../../"
         }
-    }
+    },
+     "authorities": [
+         "MY_APP_ADD_NEW",
+         "MY_APP_UPDATE",
+         "MY_APP_DELETE"]
 }

@@ -1,50 +1,56 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="utf-8">
-  <title>Scorecard</title>
-  <base href="">
+  <head>
+    <meta charset="utf-8" />
+    <title></title>
+    <base href="" />
 
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link rel="icon" type="image/x-icon" href="favicon.ico">
-  <script src="https://cdn.ckeditor.com/4.5.11/full/ckeditor.js"></script>
-  <style>
-    @font-face{font-family:Scorecard-Averta;font-style:normal;font-weight:400;src:url(assets/fonts/averta-regular.woff2) format('woff2')}
-    @font-face{font-family:Scorecard-Averta;font-style:normal;font-weight:700;src:url(assets/fonts/averta-bold.woff2) format('woff2')}
-    body *{
-      font-family: Scorecard-Averta, sans-serif, appleLogo;
-    }
-  </style>
-  <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500" rel="stylesheet">
-  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="icon" type="image/x-icon" href="favicon.ico" />
+    <style>
+      @font-face {
+        font-family: Scorecard-Averta;
+        font-style: normal;
+        font-weight: 400;
+        src: url(assets/fonts/averta-regular.woff2) format('woff2');
+      }
+
+      @font-face {
+        font-family: Scorecard-Averta;
+        font-style: normal;
+        font-weight: 700;
+        src: url(assets/fonts/averta-bold.woff2) format('woff2');
+      }
+
+      body * {
+        font-family: Scorecard-Averta, sans-serif, appleLogo;
+      }
+
+      .body-wrapper {
+        background-color: #fafafa;
+      }
+
+      @media print {
+        .body-wrapper {
+          background-color: #ffffff;
+        }
+      }
+    </style>
+    <link rel="manifest" href="manifest.json" />
+    <meta name="theme-color" content="#1976d2" />
+      <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 </head>
-<body>
-  <app-root>
-    <div class="text-center" style="margin-top: 3%;">
-      <h3 style="font-family: Scorecard-Averta,sans-serif; font-weight: 500; text-align: center">
-        Interactive Scorecard
-      </h3>
-      <img src="assets/img/scorecardplaceholder.jpg" style="margin-top: 3%; height: 250px; width: 400px"><br>
-      <div class="container">
-        <div class="row">
-          <div class="col-md-4">
-            <i class="fa fa-table fa-5x" style="font-size: 50px"></i>
-            <p class="lead">View scorecards</p>
-          </div>
-          <div class="col-md-4">
-            <i class="fa fa-bar-chart fa-5x" style="font-size: 50px"></i>
-            <p class="lead">Deep Analysis</p>
-          </div>
-          <div class="col-md-4">
-            <i class="fa fa-tachometer fa-5x" style="font-size: 50px"></i>
-            <p class="lead">Add to Dashboard</p>
-          </div>
-        </div>
+
+  <body>
+    <app-root>
+      <div style="padding-top: 15%; text-align: center;">
+        <img src="assets/icons/balls-5.svg" alt="" />
+        <h4 style="margin-top: 50px;">Discovering Seed app Awesomeness</h4>
       </div>
-      <h3 style="font-family: Scorecard-Averta,sans-serif; font-weight: 500">
-        <img src="balls-5.svg" style=" height: 70px; width: 50px"><br>
-      </h3>
-    </div>
-  </app-root>
-</body>
+    </app-root>
+    <noscript
+      >Please enable JavaScript to continue using this application.</noscript
+    >
+  </body>
 </html>

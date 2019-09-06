@@ -1,0 +1,11 @@
+<div>
+    <ngx-dhis2-org-unit-filter
+    [orgUnitFilterConfig]="orgUnitFilterConfig"
+    [selectedOrgUnitItems]="selectedOrgUnitItems"
+    (orgUnitUpdate)="onOrgUnitUpdate($event, 'UPDATE')"
+    (orgUnitClose)="onOrgUnitUpdate($event, 'CLOSE')">
+</ngx-dhis2-org-unit-filter>
+  </div>
+  <div>
+    <ngx-dhis2-period-filter></ngx-dhis2-period-filter>
+  </div>

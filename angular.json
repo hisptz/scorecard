@@ -19,34 +19,18 @@
             "polyfills": "src/polyfills.ts",
             "tsConfig": "src/tsconfig.app.json",
             "assets": [
-              "src/assets",
               "src/favicon.ico",
-              "src/icon.png",
-              "src/balls-3.svg",
-              "src/balls-4.svg",
-              "src/balls-5.svg",
-              "src/scorecard.svg",
-              "src/scorecard.png",
-              "src/manifest.webapp"
+              "src/assets",
+              "src/manifest.webapp",
+              "src/manifest.json"
             ],
             "styles": [
               "src/custom-theme.scss",
-              "src/styles.css",
               "node_modules/bootstrap/dist/css/bootstrap.css",
-              "node_modules/bootstrap/dist/css/bootstrap.min.css",
-              "node_modules/font-awesome/css/font-awesome.css"
+              "node_modules/font-awesome/css/font-awesome.css",
+              "src/styles.css"
             ],
-            "scripts": [
-              "node_modules/jquery/dist/jquery.min.js",
-              "node_modules/popper.js/dist/umd/popper.min.js",
-              "node_modules/bootstrap/dist/js/bootstrap.min.js",
-              "node_modules/highcharts/highcharts.js",
-              "node_modules/highcharts/highcharts-more.js",
-              "node_modules/highcharts/modules/solid-gauge.js",
-              "src/assets/grouped-categories.js",
-              "node_modules/highcharts/modules/exporting.js",
-              "node_modules/highcharts/modules/offline-exporting.js"
-            ]
+            "scripts": []
           },
           "configurations": {
             "production": {
@@ -65,20 +49,15 @@
               "extractLicenses": true,
               "vendorChunk": false,
               "buildOptimizer": true,
-              "budgets": [
-                {
-                  "type": "initial",
-                  "maximumWarning": "2mb",
-                  "maximumError": "5mb"
-                }
-              ]
+              "serviceWorker": true
             }
           }
         },
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
           "options": {
-            "browserTarget": "scorecard:build"
+            "browserTarget": "scorecard:build",
+            "proxyConfig": "proxy-config.json"
           },
           "configurations": {
             "production": {
@@ -99,33 +78,15 @@
             "polyfills": "src/polyfills.ts",
             "tsConfig": "src/tsconfig.spec.json",
             "karmaConfig": "src/karma.conf.js",
+            "codeCoverage": true,
             "styles": [
-              "src/styles.css",
-              "node_modules/bootstrap/dist/css/bootstrap.css",
-              "node_modules/bootstrap/dist/css/bootstrap.min.css",
-              "node_modules/font-awesome/css/font-awesome.css"
+              "src/styles.css"
             ],
-            "scripts": [
-              "node_modules/jquery/dist/jquery.min.js",
-              "node_modules/popper.js/dist/umd/popper.min.js",
-              "node_modules/bootstrap/dist/js/bootstrap.min.js",
-              "node_modules/highcharts/highcharts.js",
-              "node_modules/highcharts/highcharts-more.js",
-              "node_modules/highcharts/modules/solid-gauge.js",
-              "assets/grouped-categories.js",
-              "node_modules/highcharts/modules/exporting.js",
-              "node_modules/highcharts/modules/offline-exporting.js"
-            ],
+            "scripts": [],
             "assets": [
-              "assets",
-              "favicon.ico",
-              "icon.png",
-              "balls-3.svg",
-              "balls-4.svg",
-              "balls-5.svg",
-              "scorecard.svg",
-              "scorecard.png",
-              "manifest.webapp"
+              "src/favicon.ico",
+              "src/assets",
+              "src/manifest.json"
             ]
           }
         },
@@ -146,7 +107,6 @@
     "scorecard-e2e": {
       "root": "e2e/",
       "projectType": "application",
-      "prefix": "",
       "architect": {
         "e2e": {
           "builder": "@angular-devkit/build-angular:protractor",
@@ -172,5 +132,8 @@
       }
     }
   },
-  "defaultProject": "scorecard"
+  "defaultProject": "scorecard",
+  "cli": {
+    "defaultCollection": "@ngrx/schematics"
+  }
 }

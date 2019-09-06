@@ -1,8 +1,5 @@
-import { RouterEffects } from './router.effect';
-import { ScorecardEffects } from './scorecard.effects';
-import { CreateEffects } from './create.effects';
-import { StaticDataEffect } from './static-data.effect';
-import { OrgunitsEffects } from './orgunits.effects';
+import { UserEffects } from './user.effects';
+import { SystemInfoEffects } from './system-info.effects';
+import { RouterEffects } from './router.effects';
 
-export const effects: any[] = [RouterEffects, ScorecardEffects, CreateEffects, StaticDataEffect, OrgunitsEffects];
-
+export const effects: any[] = [UserEffects, SystemInfoEffects, RouterEffects];
