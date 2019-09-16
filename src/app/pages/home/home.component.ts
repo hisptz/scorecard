@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { CardsService } from '../../core/services/cards.service';
 
 @Component({
   selector: 'app-home',
@@ -7,9 +8,31 @@ import { Component, OnInit } from '@angular/core';
 })
 export class HomeComponent implements OnInit {
 
-  constructor() { }
+  scorecards: Object;
+  config: any;
+  count: any;
+
+  public labels: any = {};
+
+  constructor(private data: CardsService) {
+
+    this.config = {
+      itemsPerPage: 4,
+      currentPage: 1,
+      totalItems: this.count
+    };
+  }
+ 
+  pageChanged(event){
+    this.config.currentPage = event;
+
+   }
 
   ngOnInit() {
+    this.data.getCards().subscribe(data => {
+      this.scorecards = data
+    }
+  );
   }
 
 }

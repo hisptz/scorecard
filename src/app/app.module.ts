@@ -29,6 +29,7 @@ import { ServiceWorkerModule } from '@angular/service-worker';
 
 import { NgxDhis2OrgUnitFilterModule } from '@iapps/ngx-dhis2-org-unit-filter';
 import { NgxDhis2PeriodFilterModule } from '@iapps/ngx-dhis2-period-filter';
+import {NgxPaginationModule} from 'ngx-pagination';
 
 
 // AoT requires an exported function for factories
@@ -40,6 +41,7 @@ export function HttpLoaderFactory(http: HttpClient) {
   declarations: [AppComponent, ...fromPages.pages],
   imports: [
     BrowserModule,
+    NgxPaginationModule,
     HttpClientModule,
     RoutingModule,
     CoreModule.forRoot({

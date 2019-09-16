@@ -1,11 +1,47 @@
-<div>
-    <ngx-dhis2-org-unit-filter
-    [orgUnitFilterConfig]="orgUnitFilterConfig"
-    [selectedOrgUnitItems]="selectedOrgUnitItems"
-    (orgUnitUpdate)="onOrgUnitUpdate($event, 'UPDATE')"
-    (orgUnitClose)="onOrgUnitUpdate($event, 'CLOSE')">
-</ngx-dhis2-org-unit-filter>
+
+<div
+*ngIf="scorecards"
+>
+  <div
+  class = "row"
+  style="padding-bottom: 40px"
+  *ngFor="let card of scorecards | paginate: config"
+  >
+  <div class = "col-sm-3">
+  <img src="assets/images/scorecard.png">
+</div>
+<div class = "col-sm-9">
+  <h4>{{card.name}}</h4>
+  <p>{{ card.description }}</p>
+   <a
+          style="cursor: pointer"
+          class="btn btn-outline-primary sans-pro"
+          role="button"
+    >
+    view
+    </a>
+    <a 
+          class="btn btn-outline-info sans-pro"
+          role="button"
+          style="cursor: pointer"
+    >
+        <i class="fa fa-pencil text-primary"></i>
+    </a>
+    <button
+        class="btn btn-outline-dark sans-pro"
+        role="button"
+        style="cursor: pointer"
+    >
+        <i class="fa fa-trash-o text-danger"></i>
+    </button>
   </div>
-  <div>
-    <ngx-dhis2-period-filter></ngx-dhis2-period-filter>
   </div>
+</div>
+
+  <pagination-controls 
+                       (pageChange)="pageChanged($event)"
+                       [previousLabel]="labels.previousLabel"
+                       [nextLabel]="labels.nextLabel"
+  ></pagination-controls>
+  
+  
