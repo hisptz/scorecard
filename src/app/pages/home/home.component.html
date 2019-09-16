@@ -1,47 +1,39 @@
-
-<div
-*ngIf="scorecards"
->
-  <div
-  class = "row"
-  style="padding-bottom: 40px"
-  *ngFor="let card of scorecards | paginate: config"
-  >
-  <div class = "col-sm-3">
-  <img src="assets/images/scorecard.png">
-</div>
-<div class = "col-sm-9">
-  <h4>{{card.name}}</h4>
-  <p>{{ card.description }}</p>
-   <a
-          style="cursor: pointer"
-          class="btn btn-outline-primary sans-pro"
-          role="button"
-    >
-    view
-    </a>
-    <a 
-          class="btn btn-outline-info sans-pro"
-          role="button"
-          style="cursor: pointer"
-    >
-        <i class="fa fa-pencil text-primary"></i>
-    </a>
-    <button
-        class="btn btn-outline-dark sans-pro"
-        role="button"
-        style="cursor: pointer"
-    >
-        <i class="fa fa-trash-o text-danger"></i>
-    </button>
+<div class="container-fluid">
+<div class="row">
+  <div class="col-md-2 col-xs-12">
+    <img src="assets/images/score.png" >
   </div>
+  <div class="col-md-8 col-xs-12" style="margin-top: 14px">
+    <input type="search" class="form-control input-sm"
+      placeholder="Search score card by name" [(ngModel)]="filter">
   </div>
+  <div class="col-md-2 col-xs-12 hidden-sm" style="margin-top: 14px">
+  <button style="height: 34px" class="btn btn-outline-secondary btn-sm float-md-right cursor">
+    Create<i class="fa fa-plus" aria-hidden="true"></i>
+  </button>
+    </div>
 </div>
 
-  <pagination-controls 
-                       (pageChange)="pageChanged($event)"
-                       [previousLabel]="labels.previousLabel"
-                       [nextLabel]="labels.nextLabel"
-  ></pagination-controls>
-  
-  
+<div *ngIf="scorecards" style="margin-top: 50px">
+  <div class = "row" style="padding-bottom: 40px" *ngFor="let card of scorecards |filter:filter| paginate: config">
+    <div class = "col-sm-3">
+    <img src="assets/images/scorecard.png">
+  </div>
+  <div class = "col-sm-9">
+    <h4>{{card.name}}</h4>
+    <p>{{ card.description }}</p>
+     <a style="cursor: pointer" class="btn btn-outline-primary sans-pro" role="button">view</a>
+      <a class="btn btn-outline-info sans-pro" role="button" style="cursor: pointer">
+          <i class="fa fa-pencil text-primary"></i>
+      </a>
+      <button class="btn btn-outline-dark sans-pro" role="button" style="cursor: pointer">
+          <i class="fa fa-trash-o text-danger"></i>
+      </button>
+    </div>
+    </div>
+  </div>
+    <pagination-controls (pageChange)="pageChanged($event)" [previousLabel]="labels.previousLabel" 
+    [nextLabel]="labels.nextLabel">
+    </pagination-controls>
+  </div>
+    
